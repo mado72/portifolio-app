@@ -1,8 +1,8 @@
 <span class="d-flex justify-content-between" [style.color]="elementStyle">
     <span>{{this.currency}}</span>
     <span>
-        @if (this.value || displayZero) {
-            {{this.value | number: format}}
+        @if (this.amount || displayZero) {
+            {{this.amount | number: format}}
         }
         @else { - }
     </span>

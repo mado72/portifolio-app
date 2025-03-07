@@ -1,0 +1,14 @@
+<table mat-table [dataSource]="datasource">
+    <ng-container matColumnDef="class">
+        <th mat-header-cell *matHeaderCellDef>Classe</th>
+        <td mat-cell *matCellDef="let item">{{item.class}}</td>
+        <td mat-footer-cell *matFooterCellDef>Total</td>
+    </ng-container>
+    <ng-container matColumnDef="financial">
+        <th mat-header-cell *matHeaderCellDef>Financeiro</th>
+        <td mat-cell *matCellDef="let item">
+            <app-currency [amount]="item.financial"></app-currency>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>Total</td>
+    </ng-container>
+</table>

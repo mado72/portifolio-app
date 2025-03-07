@@ -1,0 +1,88 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "account": "Itaú",
+            "balance": 370.36,
+            "currency": "BRL",
+            "type": "CHECKING"
+        },
+        {
+            "id": 2,
+            "account": "NuBank",
+            "balance": 11.07,
+            "currency": "BRL",
+            "type": "CHECKING"
+        },
+        {
+            "id": 3,
+            "account": "Nu Bank Finfor",
+            "balance": 0,
+            "currency": "BRL",
+            "type": "CHECKING"
+        },
+        {
+            "id": 4,
+            "account": "Rico",
+            "balance": 0,
+            "currency": "BRL",
+            "type": "CHECKING"
+        },
+        {
+            "id": 5,
+            "account": "Rico Inv",
+            "balance": 0,
+            "currency": "BRL",
+            "type": "INVESTMENT"
+        },
+        {
+            "id": 6,
+            "account": "Nomad",
+            "balance": 1.36,
+            "currency": "USD",
+            "type": "CHECKING"
+        },
+        {
+            "id": 7,
+            "account": "BMG Vasco",
+            "balance": 0,
+            "currency": "BRL",
+            "type": "INVESTMENT"
+        },
+        {
+            "id": 8,
+            "account": "BTG",
+            "balance": -10.54,
+            "currency": "BRL",
+            "type": "CHECKING"
+        },
+        {
+            "id": 9,
+            "account": "BTG Inv",
+            "balance": 0,
+            "currency": "BRL",
+            "type": "INVESTMENT"
+        },
+        {
+            "id": 10,
+            "account": "XP",
+            "balance": 0,
+            "currency": "BRL",
+            "type": "CHECKING"
+        },
+        {
+            "id": 11,
+            "account": "XP Inv",
+            "balance": 386.49,
+            "currency": "BRL",
+            "type": "INVESTMENT"
+        },
+        {
+            "id": 12,
+            "account": "Binance",
+            "balance": 0,
+            "currency": "USD",
+            "type": "INVESTMENT"
+        }
+    ]
+}

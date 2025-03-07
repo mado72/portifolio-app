@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Currency, toCurrencyCode } from '../../model/domain.model';
+import { Currency, CurrencyAmount as CurrencyAmount, toCurrencyCode } from '../../model/domain.model';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -11,9 +11,32 @@ import { DecimalPipe } from '@angular/common';
 })
 export class CurrencyComponent {
 
-  @Input() currency: Currency = Currency.BRL;
+  @Input() value?: CurrencyAmount = {
+    amount: 0,
+    currency: Currency.BRL
+  }
 
-  @Input() value: number = 0;
+  get currency(): Currency {
+    return this.value?.currency || Currency.BRL;
+  }
+  @Input()
+  set currency(value: Currency) {
+    if (!this.value) {
+      this.value = { amount: 0, currency: value };
+    }
+    this.value.currency = value;
+  }
+
+  get amount(): number {
+    return this.value?.amount || 0; 
+  }
+  @Input()
+  set amount(value: number) {
+    if (!this.value) {
+      this.value = { amount: value, currency: Currency.BRL };
+    }
+    this.value.amount = value;
+  }
 
   @Input() color: string | undefined = undefined;
 
@@ -26,6 +49,6 @@ export class CurrencyComponent {
   }
 
   get elementStyle() {
-    return this.color ? this.color : this.value < 0 ? 'red' : 'rgb(0,80,0)';
+    return this.color ? this.color : this.amount < 0 ? 'red' : 'rgb(0,80,0)';
   }
 }

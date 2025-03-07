@@ -2,15 +2,17 @@ import { Component, inject, Input, signal, WritableSignal } from '@angular/core'
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { MatTableModule } from '@angular/material/table';
 import { BalanceService } from '../../service/balance.service';
-import { AccountBalanceQuote, AccountTypeEnum, Currency } from '../../model/domain.model';
+import { AccountBalanceExchange, AccountTypeEnum, Currency } from '../../model/domain.model';
 import { tap } from 'rxjs';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-balances',
   standalone: true,
   imports: [
     MatTableModule,
-    CurrencyComponent
+    CurrencyComponent,
+    JsonPipe
   ],
   templateUrl: './balances.component.html',
   styleUrl: './balances.component.scss'
@@ -33,7 +35,7 @@ export class BalancesComponent {
   totalBalance: WritableSignal<number> = signal(0);
   totalBalanceChecking: WritableSignal<number> = signal(0);
 
-  balances = this.contaService.getBalanceQuotationByCurrency(this.currency).pipe(
+  balances = this.contaService.getBalancesByCurrencyExchange(this.currency).pipe(
     tap(item=>{
       this.actives = item.slice();
       this.totalBalance.set(this.summarize(this.actives));
@@ -41,15 +43,15 @@ export class BalancesComponent {
     })
   )
 
-  actives: AccountBalanceQuote[] = [];
+  actives: AccountBalanceExchange[] = [];
 
-  summarize(balances: AccountBalanceQuote[]) {
+  summarize(balances: AccountBalanceExchange[]) {
     return balances
-      .map(item => item.balanceQuote)
+      .map(item => item.exchange.amount)
       .reduce((acc, vl) => acc += vl, 0);
   }
 
-  rowClicked(account: AccountBalanceQuote) {
+  rowClicked(account: AccountBalanceExchange) {
     if (this.isNotActivated(account)) {
       this.actives.push(account);
     }
@@ -60,12 +62,12 @@ export class BalancesComponent {
     this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
   }
 
-  isNotActivated(account: AccountBalanceQuote) {
+  isNotActivated(account: AccountBalanceExchange) {
     return ! this.actives.includes(account);
   }
 
-  isSameCurrency(balance: AccountBalanceQuote) {
-    return this.currency === balance.currency;
+  isSameCurrency(item: AccountBalanceExchange) {
+    return this.currency === item.balance.currency;
   }
 
 }

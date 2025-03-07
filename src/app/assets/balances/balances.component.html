@@ -8,16 +8,16 @@
     </ng-container>
     <ng-container matColumnDef="balanceQuote">
         <td mat-cell *matCellDef="let item" class="number"> 
-            <app-currency [value]="item.balanceQuote"></app-currency>
+            <app-currency [value]="item.exchange"></app-currency>
         </td>
         <td mat-footer-cell *matFooterCellDef>
-            <app-currency [value]="totalBalance()"></app-currency>
+            <app-currency [amount]="totalBalance()"></app-currency>
         </td>
     </ng-container>
     <ng-container matColumnDef="balance">
         <td mat-cell *matCellDef="let item" class="number"> 
             @if( ! isSameCurrency(item)) {
-                <app-currency [value]="item.balanceQuote" [currency]="item.currency"></app-currency>
+                <app-currency [value]="item.balance"></app-currency>
             }
         </td>
         <td mat-footer-cell *matFooterCellDef></td>
@@ -29,7 +29,7 @@
     </ng-container>
     <ng-container matColumnDef="balanceWithoutInvest">
         <td mat-footer-cell *matFooterCellDef>
-            <app-currency [value]="totalBalanceChecking()"></app-currency>
+            <app-currency [amount]="totalBalanceChecking()"></app-currency>
         </td>
     </ng-container>
     
