@@ -47,12 +47,6 @@
       "financial": 0,
       "currency": "BRL",
       "percentagePlanned": 5
-    },
-    {
-      "class": "TOTAL",
-      "financial": 44443.54,
-      "currency": "BRL",
-      "percentagePlanned": 100
     }
   ]
 }

@@ -86,7 +86,7 @@ export class BalanceService {
           const items: AccountBalanceSummaryItem[] = allocations.map(item => {
             return {
               ...item,
-              percentageActual: item.percentagePlanned / total
+              percentageActual: item.exchange.amount / total
             }
           });
 

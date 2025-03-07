@@ -13,3 +13,12 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 $valor-positivo: rgb(0, 80, 0);
 $valor-negativo: rgb(215, 0, 0);
+
+.table-total {
+    td, th { border-top: 3px double var(--mat-table-row-item-outline-color) };
+    font-weight: bold !important;
+}
+
+.cell-number {
+    text-align: end;
+}

@@ -1,18 +1,16 @@
 import { Component, inject, Input, signal, WritableSignal } from '@angular/core';
-import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { MatTableModule } from '@angular/material/table';
-import { BalanceService } from '../../service/balance.service';
-import { AccountBalanceExchange, AccountTypeEnum, Currency } from '../../model/domain.model';
 import { tap } from 'rxjs';
-import { JsonPipe } from '@angular/common';
+import { AccountBalanceExchange, AccountTypeEnum, Currency } from '../../model/domain.model';
+import { BalanceService } from '../../service/balance.service';
+import { CurrencyComponent } from '../../utils/currency/currency.component';
 
 @Component({
   selector: 'app-balances',
   standalone: true,
   imports: [
     MatTableModule,
-    CurrencyComponent,
-    JsonPipe
+    CurrencyComponent
   ],
   templateUrl: './balances.component.html',
   styleUrl: './balances.component.scss'
