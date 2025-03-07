@@ -4,7 +4,11 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: '/balances',
+        redirectTo: '/dashboard',
+    },
+    {
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard/portfolio/portfolio.component').then(mod => mod.PortfolioComponent),
     },
     {
         path: 'balances',
