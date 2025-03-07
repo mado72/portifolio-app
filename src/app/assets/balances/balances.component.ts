@@ -1,8 +1,8 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, inject, Input, signal, WritableSignal } from '@angular/core';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { MatTableModule } from '@angular/material/table';
 import { BalanceService } from '../../service/balance.service';
-import { AccountBalanceQuote, Currency } from '../../model/domain.model';
+import { AccountBalanceQuote, AccountTypeEnum, Currency } from '../../model/domain.model';
 import { tap } from 'rxjs';
 
 @Component({
@@ -30,13 +30,14 @@ export class BalancesComponent {
     this._currency = value;
   }
   
-  totalBalance: number = 0;
+  totalBalance: WritableSignal<number> = signal(0);
+  totalBalanceChecking: WritableSignal<number> = signal(0);
 
   balances = this.contaService.getBalanceQuotationByCurrency(this.currency).pipe(
     tap(item=>{
-      this.totalBalance = 0;
       this.actives = item.slice();
-      this.totalBalance = this.summarize(this.actives);
+      this.totalBalance.set(this.summarize(this.actives));
+      this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
     })
   )
 
@@ -48,7 +49,20 @@ export class BalancesComponent {
       .reduce((acc, vl) => acc += vl, 0);
   }
 
-  rowClicked(account: AccountBalanceQuote): void {}
+  rowClicked(account: AccountBalanceQuote) {
+    if (this.isNotActivated(account)) {
+      this.actives.push(account);
+    }
+    else {
+      this.actives = this.actives.filter(b => b!== account);
+    }
+    this.totalBalance.set(this.summarize(this.actives));
+    this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
+  }
+
+  isNotActivated(account: AccountBalanceQuote) {
+    return ! this.actives.includes(account);
+  }
 
   isSameCurrency(balance: AccountBalanceQuote) {
     return this.currency === balance.currency;

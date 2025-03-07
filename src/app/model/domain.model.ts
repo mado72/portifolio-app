@@ -14,6 +14,14 @@ export enum CurrencyCode {
 
 export type CurrencyType = `${Currency}`;
 
+export enum AccountTypeEnum {
+    CHECKING = 'CHECKING',
+    SAVINGS = 'SAVINGS',
+    INVESTMENT = 'INVESTMENT',
+    LOAN = 'LOAN',
+    OTHER = 'OTHER'
+}
+
 export function toCurrencyCode(currency: Currency): CurrencyCode {
     return CurrencyCode[currency as keyof typeof CurrencyCode];
 }
@@ -28,6 +36,7 @@ export type Quote = {
 export type AccountPosition = {
     id: string;
     account: string;
+    type: AccountTypeEnum;
     balance: number;
     currency: Currency;
 }
