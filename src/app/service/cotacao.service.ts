@@ -12,10 +12,10 @@ export class CotacaoService {
   obterCotacoes(): Observable<Cotacao[]> {
     // Simulação de chamada à API de cotação
     const cotacoes: Cotacao[] = [
-      { data: new Date(), de: Moeda.REAL, para: Moeda.DOLAR, cotacao: 5.5 },
-      { data: new Date(), de: Moeda.DOLAR, para: Moeda.REAL, cotacao: 0.19 },
-      { data: new Date(), de: Moeda.REAL, para: Moeda.UTC, cotacao: 3.5 },
-      { data: new Date(), de: Moeda.UTC, para: Moeda.REAL, cotacao: 0.28 }
+      { data: new Date(), de: Moeda.BRL, para: Moeda.USD, cotacao: 1/5.76 },
+      { data: new Date(), de: Moeda.USD, para: Moeda.BRL, cotacao: 5.76 },
+      { data: new Date(), de: Moeda.BRL, para: Moeda.UTC, cotacao: 1/5.90 },
+      { data: new Date(), de: Moeda.UTC, para: Moeda.BRL, cotacao: 5.90 }
     ];
     return of(cotacoes);
   }

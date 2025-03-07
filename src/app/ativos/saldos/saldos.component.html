@@ -1,0 +1,25 @@
+<table>
+    <tbody>
+        @for (conta of contas; track $index) {
+        <tr>
+            <td>{{ conta.conta }}</td>
+            <td>{{ conta.saldo | number:'1.2-2' }}</td>
+            <td>
+                @if( ! mesmaMoedaComponente(conta)) {
+                    <span class="moeda">
+                        {{ conta.moeda }}
+                    </span>
+                    <span class="saldoMoeda">
+                        {{ conta.saldoMoeda | number:'1.2-2' }}
+                    </span>
+                }
+            </td>
+        </tr>
+        }
+    </tbody>
+    <tfoot>
+        <!-- <tr>
+            <td colspan="2">Saldo: {{ conta.calculaSaldo() | currency }}</td>
+        </tr> -->
+    </tfoot>
+</table>

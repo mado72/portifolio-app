@@ -14,18 +14,18 @@ export class ContaService {
 
   obterSaldos() : Observable<ContaPosicao[]>{
     const saldos: ContaPosicao[] = [
-      { id: '1', conta: 'Itaú', saldo: 370.36, moeda: Moeda.REAL },
-      { id: '2', conta: 'NuBank', saldo: 11.07, moeda: Moeda.REAL },
-      { id: '3', conta: 'Nu Bank Finfor', saldo: 0, moeda: Moeda.REAL },
-      { id: '4', conta: 'Rico', saldo: 0, moeda: Moeda.REAL },
-      { id: '5', conta: 'Rico Inv.', saldo: 0, moeda: Moeda.REAL },
-      { id: '6', conta: 'Nomad', saldo: 7.83, moeda: Moeda.REAL },
-      { id: '7', conta: 'BMG Vasco', saldo: 0, moeda: Moeda.REAL },
-      { id: '8', conta: 'BTG', saldo: 0, moeda: Moeda.REAL },
-      { id: '9', conta: 'BTG Inv.', saldo: 0, moeda: Moeda.REAL },
-      { id: '10', conta: 'XP', saldo: 0, moeda: Moeda.REAL },
-      { id: '11', conta: 'XP Inv.', saldo: 386.49, moeda: Moeda.REAL },
-      { id: '12', conta: 'Binance', saldo: 0, moeda: Moeda.DOLAR }
+      { id: '1', conta: 'Itaú', saldo: 370.36, moeda: Moeda.BRL },
+      { id: '2', conta: 'NuBank', saldo: 11.07, moeda: Moeda.BRL },
+      { id: '3', conta: 'Nu Bank Finfor', saldo: 0, moeda: Moeda.BRL },
+      { id: '4', conta: 'Rico', saldo: 0, moeda: Moeda.BRL },
+      { id: '5', conta: 'Rico Inv.', saldo: 0, moeda: Moeda.BRL },
+      { id: '6', conta: 'Nomad', saldo: 1.36, moeda: Moeda.USD },
+      { id: '7', conta: 'BMG Vasco', saldo: 0, moeda: Moeda.BRL },
+      { id: '8', conta: 'BTG', saldo: 0, moeda: Moeda.BRL },
+      { id: '9', conta: 'BTG Inv.', saldo: 0, moeda: Moeda.BRL },
+      { id: '10', conta: 'XP', saldo: 0, moeda: Moeda.BRL },
+      { id: '11', conta: 'XP Inv.', saldo: 386.49, moeda: Moeda.BRL },
+      { id: '12', conta: 'Binance', saldo: 0, moeda: Moeda.USD }
     ];
 
     return of(saldos);

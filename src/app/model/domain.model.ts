@@ -1,10 +1,18 @@
 export enum Moeda {
-    REAL = 'REAL',
-    DOLAR = 'DOLAR',
+    BRL = 'BRL',
+    USD = 'USD',
     UTC = 'UTC'
 } 
 
-export type MoedaSigla = 'R$' | 'USD' | 'UTC';
+export enum MoedaSigla {
+    BRL = 'R$',
+    USD = '$',
+    UTC = 'UTC'
+};
+
+export function moedaSiglaConverter(moeda: Moeda): MoedaSigla {
+    return MoedaSigla[moeda as keyof typeof MoedaSigla];
+}
 
 export type Cotacao = {
     data: Date;
