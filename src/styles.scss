@@ -1,9 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+@use '@angular/material' as mat;
 @import "bootstrap/scss/bootstrap-grid";
 @import "bootstrap/scss/bootstrap-utilities";
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+// Configurar o tema do Material 3
+$theme: mat.define-theme((
+  color: (
+    primary: mat.$green-palette,
+    tertiary: mat.$orange-palette
+  ),
+  typography: (
+    plain-family: 'Roboto, sans-serif',
+  ),
+));
+
+// Aplicar o tema
+@include mat.core();
+
+html, body { 
+    height: 100%; 
+    color-scheme: light dark;
+}
+body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif;
+    background: var(--mat-sys-surface);
+    color: var(--mat-sys-on-surface);
+}
+
 .debug {
     display: none;
     border: 1px solid red;
@@ -21,4 +45,12 @@ $valor-negativo: rgb(215, 0, 0);
 
 .cell-number {
     text-align: end;
+}
+
+.mat-mdc-table {
+    caption {
+        font-size: 1.2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
 }
