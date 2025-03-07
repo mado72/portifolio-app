@@ -1,9 +1,8 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { CotacaoService } from '../../service/cotacao.service';
+import { Moeda, MoedaSigla, moedaSiglaConverter } from '../../model/domain.model';
 import { ContaService } from '../../service/conta.service';
-import { Moeda, moedaSiglaConverter, MoedaSigla } from '../../model/domain.model';
-import { forkJoin, map, mergeAll, mergeMap } from 'rxjs';
-import { CurrencyPipe, DecimalPipe } from '@angular/common';
+import { MatTableModule } from '@angular/material/table';
 
 type Saldo = {
   id: string;
@@ -17,7 +16,8 @@ type Saldo = {
   selector: 'app-saldos',
   standalone: true,
   imports: [
-    DecimalPipe
+    DecimalPipe,
+    MatTableModule,
   ],
   templateUrl: './saldos.component.html',
   styleUrl: './saldos.component.scss'

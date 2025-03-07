@@ -1,25 +1,22 @@
-<table>
-    <tbody>
-        @for (conta of contas; track $index) {
-        <tr>
-            <td>{{ conta.conta }}</td>
-            <td>{{ conta.saldo | number:'1.2-2' }}</td>
-            <td>
-                @if( ! mesmaMoedaComponente(conta)) {
-                    <span class="moeda">
-                        {{ conta.moeda }}
-                    </span>
-                    <span class="saldoMoeda">
-                        {{ conta.saldoMoeda | number:'1.2-2' }}
-                    </span>
-                }
-            </td>
-        </tr>
-        }
-    </tbody>
-    <tfoot>
-        <!-- <tr>
-            <td colspan="2">Saldo: {{ conta.calculaSaldo() | currency }}</td>
-        </tr> -->
-    </tfoot>
+<table mat-table [dataSource]="contas" class="mat-elevation-z8">
+    <ng-container matColumnDef="conta">
+        <td mat-cell *matCellDef="let conta"> {{ conta.conta }}</td>
+    </ng-container>
+    <ng-container matColumnDef="saldo">
+        <td mat-cell *matCellDef="let conta" class="number"> {{ conta.saldo | number:'1.2-2' }}</td>
+    </ng-container>
+    <ng-container matColumnDef="saldoMoeda">
+        <td mat-cell *matCellDef="let conta" class="number"> 
+            @if( ! mesmaMoedaComponente(conta)) {
+                <span class="moeda">
+                    {{ conta.moeda }}
+                </span>
+                <span class="saldoMoeda">
+                    {{ conta.saldoMoeda | number:'1.2-2' }}
+                </span>
+            }
+        </td>
+    </ng-container>
+    
+    <tr mat-row *matRowDef="let row; columns: ['conta', 'saldo', 'saldoMoeda'];"></tr>
 </table>
