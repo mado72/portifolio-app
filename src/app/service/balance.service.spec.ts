@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ContaService } from './conta.service';
+import { BalanceService } from './balance.service';
 
 describe('ContaService', () => {
-  let service: ContaService;
+  let service: BalanceService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ContaService);
+    service = TestBed.inject(BalanceService);
   });
 
   it('should be created', () => {

@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Moeda, moedaSiglaConverter } from '../../model/domain.model';
+import { Currency, toCurrencyCode } from '../../model/domain.model';
 import { DecimalPipe } from '@angular/common';
 
 @Component({
@@ -11,17 +11,21 @@ import { DecimalPipe } from '@angular/common';
 })
 export class CurrencyComponent {
 
-  @Input() moeda: Moeda = Moeda.BRL;
+  @Input() currency: Currency = Currency.BRL;
 
-  @Input() valor: number = 0;
+  @Input() value: number = 0;
 
   @Input() color: string | undefined = undefined;
 
+  @Input() displayZero: boolean = false;
+
+  @Input() format: string = '1.2-2';
+
   get sigla() {
-    return moedaSiglaConverter(this.moeda)
+    return toCurrencyCode(this.currency)
   }
 
   get elementStyle() {
-    return this.color ? this.color : this.valor < 0 ? 'red' : 'rgb(0,80,0)';
+    return this.color ? this.color : this.value < 0 ? 'red' : 'rgb(0,80,0)';
   }
 }

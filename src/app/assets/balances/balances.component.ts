@@ -1,21 +1,21 @@
 import { Component, inject, Input } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
-import { tap } from 'rxjs';
-import { AccountBalanceQuote, Currency } from '../../model/domain.model';
-import { BalanceService } from '../../service/balance.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { MatTableModule } from '@angular/material/table';
+import { BalanceService } from '../../service/balance.service';
+import { AccountBalanceQuote, Currency } from '../../model/domain.model';
+import { tap } from 'rxjs';
 
 @Component({
-  selector: 'app-saldos',
+  selector: 'app-balances',
   standalone: true,
   imports: [
     MatTableModule,
     CurrencyComponent
   ],
-  templateUrl: './saldos.component.html',
-  styleUrl: './saldos.component.scss'
+  templateUrl: './balances.component.html',
+  styleUrl: './balances.component.scss'
 })
-export class SaldosComponent {
+export class BalancesComponent {
 
   private contaService = inject(BalanceService);
 
@@ -53,4 +53,5 @@ export class SaldosComponent {
   isSameCurrency(balance: AccountBalanceQuote) {
     return this.currency === balance.currency;
   }
+
 }

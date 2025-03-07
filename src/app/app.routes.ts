@@ -4,10 +4,10 @@ export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
-        redirectTo: '/saldos',
+        redirectTo: '/balances',
     },
     {
-        path: 'saldos',
-        loadComponent: () => import('./ativos/saldos/saldos.component').then(mod => mod.SaldosComponent),
+        path: 'balances',
+        loadComponent: () => import('./assets/balances/balances.component').then(mod => mod.BalancesComponent),
     },
 ];

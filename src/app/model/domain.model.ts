@@ -1,29 +1,37 @@
-export enum Moeda {
+export enum Currency {
     BRL = 'BRL',
     USD = 'USD',
+    EUR = 'EUR',
     UTC = 'UTC'
 } 
 
-export enum MoedaSigla {
+export enum CurrencyCode {
     BRL = 'R$',
     USD = '$',
+    EUR = '€',
     UTC = 'UTC'
 };
 
-export function moedaSiglaConverter(moeda: Moeda): MoedaSigla {
-    return MoedaSigla[moeda as keyof typeof MoedaSigla];
+export type CurrencyType = `${Currency}`;
+
+export function toCurrencyCode(currency: Currency): CurrencyCode {
+    return CurrencyCode[currency as keyof typeof CurrencyCode];
 }
 
-export type Cotacao = {
-    data: Date;
-    de: Moeda;
-    para: Moeda;
-    cotacao: number;
+export type Quote = {
+    date: Date;
+    from: Currency;
+    to: Currency;
+    factor: number;
 }
 
-export type ContaPosicao = {
+export type AccountPosition = {
     id: string;
-    conta: string;
-    saldo: number;
-    moeda: Moeda;
+    account: string;
+    balance: number;
+    currency: Currency;
+}
+
+export type AccountBalanceQuote = AccountPosition & {
+    balanceQuote: number
 }
