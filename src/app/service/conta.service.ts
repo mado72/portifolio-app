@@ -21,7 +21,7 @@ export class ContaService {
       { id: '5', conta: 'Rico Inv.', saldo: 0, moeda: Moeda.BRL },
       { id: '6', conta: 'Nomad', saldo: 1.36, moeda: Moeda.USD },
       { id: '7', conta: 'BMG Vasco', saldo: 0, moeda: Moeda.BRL },
-      { id: '8', conta: 'BTG', saldo: 0, moeda: Moeda.BRL },
+      { id: '8', conta: 'BTG', saldo: -10.54, moeda: Moeda.BRL },
       { id: '9', conta: 'BTG Inv.', saldo: 0, moeda: Moeda.BRL },
       { id: '10', conta: 'XP', saldo: 0, moeda: Moeda.BRL },
       { id: '11', conta: 'XP Inv.', saldo: 386.49, moeda: Moeda.BRL },

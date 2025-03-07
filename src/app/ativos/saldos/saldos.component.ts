@@ -1,23 +1,26 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, inject, Input, OnInit } from '@angular/core';
-import { Moeda, MoedaSigla, moedaSiglaConverter } from '../../model/domain.model';
-import { ContaService } from '../../service/conta.service';
 import { MatTableModule } from '@angular/material/table';
+import { Moeda } from '../../model/domain.model';
+import { ContaService } from '../../service/conta.service';
+import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { JsonPipe } from '@angular/common';
 
 type Saldo = {
   id: string;
   conta: string;
   saldo: number;
   saldoMoeda: number;
-  moeda: MoedaSigla;
+  moeda: Moeda;
+  selecionado: boolean;
 }
 
 @Component({
   selector: 'app-saldos',
   standalone: true,
   imports: [
-    DecimalPipe,
+    JsonPipe,
     MatTableModule,
+    CurrencyComponent
   ],
   templateUrl: './saldos.component.html',
   styleUrl: './saldos.component.scss'
@@ -38,30 +41,38 @@ export class SaldosComponent implements OnInit {
   public set moeda(value: Moeda) {
     this._moeda = value;
     if (this.iniciado) {
-      this.atualizarSaldos();
+      this.obterSaldos();
     }
   }
 
   contas: Saldo[] = []
 
+  saldoTotal: number = 0;
+
   ngOnInit(): void {
-    this.atualizarSaldos();
+    this.obterSaldos();
   }
 
 
-  private atualizarSaldos() {
+  private obterSaldos() {
+    this.saldoTotal = 0;
     this.contaService.obterSaldosCotacaoParaMoeda(this.moeda).subscribe(contas => {
-      this.contas = contas.map(conta => ({
-        ...conta,
-        moeda: moedaSiglaConverter(conta.moeda)
-      }));
       this.iniciado = true;
+      this.contas = contas.map(conta=> ({...conta, selecionado: true}));
+      this.atualizarTotais();
     });
   }
 
-  mesmaMoedaComponente(conta: Saldo) {
-    const mesmaMoeda = moedaSiglaConverter(this.moeda) === conta.moeda;
-    console.log(`mesmaMoeda: ${mesmaMoeda}, moedaConta: ${conta.moeda}, moeda: ${this.moeda}`)
-    return mesmaMoeda;
+  private atualizarTotais() {
+    this.saldoTotal = this.contas
+      .filter(conta=> conta.selecionado)
+      .map(conta => this.mesmaMoedaComponente(conta) ? conta.saldo : conta.saldoMoeda)
+      .reduce((acc, vl) => acc += vl, 0);
   }
+
+  mesmaMoedaComponente(conta: Saldo) {
+    return this.moeda === conta.moeda;
+  }
+
+
 }
