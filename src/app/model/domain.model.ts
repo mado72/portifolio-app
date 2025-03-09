@@ -102,6 +102,6 @@ export type StatementItem = Statement$ & {
 }
 
 export type ForecastDateItem = Statement$ & {
-    due: number;
+    date: number;
     done?: boolean;
 }

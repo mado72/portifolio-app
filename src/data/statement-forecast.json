@@ -4,7 +4,7 @@
           "id": 1,
           "type": "EXPENSE",
           "movement": "Fundação",
-          "due": 5,
+          "date": 5,
           "currency": "BRL",
           "amount": 350.00
         },
@@ -12,7 +12,7 @@
           "id": 2,
           "type": "EXPENSE",
           "movement": "Gás",
-          "due": 5,
+          "date": 5,
           "currency": "BRL",
           "amount": 70.00
         },
@@ -20,7 +20,7 @@
           "id": 3,
           "type": "EXPENSE",
           "movement": "Cartão Itaú",
-          "due": 6,
+          "date": 6,
           "currency": "BRL",
           "amount": 736.63
         },
@@ -28,7 +28,7 @@
           "id": 4,
           "type": "DEPOSIT",
           "movement": "Globality",
-          "due": 6,
+          "date": 6,
           "currency": "BRL",
           "amount": 6360.29
         },
@@ -36,7 +36,7 @@
           "id": 5,
           "type": "EXPENSE",
           "movement": "Alessandra",
-          "due": 10,
+          "date": 10,
           "currency": "BRL",
           "amount": 2277.00
         },
@@ -44,7 +44,7 @@
           "id": 6,
           "type": "EXPENSE",
           "movement": "Enzo I",
-          "due": 10,
+          "date": 10,
           "currency": "BRL",
           "amount": 200.00
         },
@@ -52,7 +52,7 @@
           "id": 7,
           "type": "EXPENSE",
           "movement": "Cartão Rico",
-          "due": 12,
+          "date": 12,
           "currency": "BRL",
           "amount": 3481.76
         },
@@ -60,7 +60,7 @@
           "id": 8,
           "type": "EXPENSE",
           "movement": "GRERJ",
-          "due": 14,
+          "date": 14,
           "currency": "BRL",
           "amount": 8019.75
         },
@@ -68,7 +68,7 @@
           "id": 9,
           "type": "EXPENSE",
           "movement": "Plano de Saúde",
-          "due": 15,
+          "date": 15,
           "currency": "BRL",
           "amount": 934.82
         },
@@ -76,7 +76,7 @@
           "id": 10,
           "type": "DEPOSIT",
           "movement": "Globality",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 14840.67
         },
@@ -84,7 +84,7 @@
           "id": 11,
           "type": "EXPENSE",
           "movement": "Bernardo",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 112.00
         },
@@ -92,7 +92,7 @@
           "id": 12,
           "type": "EXPENSE",
           "movement": "Bernardo",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 616.00
         },
@@ -100,7 +100,7 @@
           "id": 13,
           "type": "EXPENSE",
           "movement": "Enzo II",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 200.00
         },
@@ -108,7 +108,7 @@
           "id": 14,
           "type": "EXPENSE",
           "movement": "Impostos Folha",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 954.60
         },
@@ -116,7 +116,7 @@
           "id": 15,
           "type": "EXPENSE",
           "movement": "Impostos DAS",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 1667.94
         },
@@ -124,7 +124,7 @@
           "id": 16,
           "type": "EXPENSE",
           "movement": "Papai",
-          "due": 20,
+          "date": 20,
           "currency": "BRL",
           "amount": 500.00
         },
@@ -132,7 +132,7 @@
           "id": 17,
           "type": "EXPENSE",
           "movement": "Emp. Itaú Dia 10/02",
-          "due": 21,
+          "date": 21,
           "currency": "BRL",
           "amount": 2037.14
         },
@@ -140,7 +140,7 @@
           "id": 18,
           "type": "EXPENSE",
           "movement": "Cartão NuBank",
-          "due": 22,
+          "date": 22,
           "currency": "BRL",
           "amount": 5890.66
         },
@@ -148,7 +148,7 @@
           "id": 19,
           "type": "EXPENSE",
           "movement": "Cartão Nu Finfor",
-          "due": 25,
+          "date": 25,
           "currency": "BRL",
           "amount": 204.56
         },
@@ -156,7 +156,7 @@
           "id": 20,
           "type": "EXPENSE",
           "movement": "Carro",
-          "due": 26,
+          "date": 26,
           "currency": "BRL",
           "amount": 500.00
         }

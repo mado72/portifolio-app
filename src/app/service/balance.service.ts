@@ -134,7 +134,7 @@ export class BalanceService {
     });
   }
 
-  getForecastSummary(currency: Currency, month: number): Observable<ForecastDateItem[]> {
+  getForecastSummary(currency: Currency): Observable<ForecastDateItem[]> {
     return forkJoin({
       statements: of(this.statementForecastData),
       exchanges: this.quoteService.getAllExchanges()
@@ -150,8 +150,8 @@ export class BalanceService {
               amount: item.amount * (quote?.factor || 1),
               currency
             },
-            due: item.due,
-            done: item.due <= getDate(new Date())
+            date: item.date,
+            done: item.date <= getDate(new Date()) // TODO should be defined by database query
           }
         });
         return statements;
@@ -160,6 +160,6 @@ export class BalanceService {
   } 
 
   getCurrentMonthForecast(currency: Currency) {
-    return this.getForecastSummary(currency, getMonth(new Date()));
+    return this.getForecastSummary(currency);
   }
 }
