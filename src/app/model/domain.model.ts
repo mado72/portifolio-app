@@ -101,7 +101,12 @@ export type StatementItem = Statement$ & {
     account: Account
 }
 
+export type ForecastDayItem = Statement$ & {
+    day: number;
+    done?: boolean;
+}
+
 export type ForecastDateItem = Statement$ & {
-    date: number;
+    date: Date;
     done?: boolean;
 }

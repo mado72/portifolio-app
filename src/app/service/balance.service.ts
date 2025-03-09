@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
-import { getDate, getMonth } from 'date-fns';
+import { eachMonthOfInterval, getDate, getMonth, setDay } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import allocations from '../../data/allocation.json';
 import balances from '../../data/balance.json';
 import statementForecast from '../../data/statement-forecast.json';
-import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, StatementEnum } from '../model/domain.model';
+import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, ForecastDayItem, StatementEnum } from '../model/domain.model';
 import { QuoteService } from './quote.service';
 
 @Injectable({
@@ -134,7 +134,7 @@ export class BalanceService {
     });
   }
 
-  getForecastSummary(currency: Currency): Observable<ForecastDateItem[]> {
+  getForecastSummary(currency: Currency): Observable<ForecastDayItem[]> {
     return forkJoin({
       statements: of(this.statementForecastData),
       exchanges: this.quoteService.getAllExchanges()
@@ -150,7 +150,7 @@ export class BalanceService {
               amount: item.amount * (quote?.factor || 1),
               currency
             },
-            date: item.date,
+            day: item.date,
             done: item.date <= getDate(new Date()) // TODO should be defined by database query
           }
         });
@@ -161,5 +161,25 @@ export class BalanceService {
 
   getCurrentMonthForecast(currency: Currency) {
     return this.getForecastSummary(currency);
+  }
+
+  getPeriodForecast(currency: Currency, start: Date, end: Date) {
+    
+    return this.getForecastSummary(currency).pipe(
+      map(statements => {
+        // MOCK logic
+        const months = eachMonthOfInterval({start, end});
+        const result: ForecastDateItem[] = [];
+        // TODO: Implement real logic to calculate forecast for each month
+        for (var i = 0; i < months.length; i++) {
+          result.push(... statements.map(item=> ({
+            ...item,
+            date: setDay(getDate(months[i]), item.day),
+            done: getMonth(months[i]) === getMonth(start) && item.day < getDate(new Date()) // TODO should be defined by database query
+          })))
+        }
+        return result;
+      })
+    );
   }
 }
