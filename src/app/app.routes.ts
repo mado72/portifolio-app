@@ -17,5 +17,9 @@ export const routes: Routes = [
     {
         path: 'allocations',
         loadComponent: () => import('./assets/allocation-summary/allocation-summary.component').then(mod => mod.AllocationSummaryComponent),
+    },
+    {
+        path: 'forecast',
+        loadComponent: () => import('./assets/financial-forecast/financial-forecast.component').then(mod => mod.FinancialForecastComponent),
     }
 ];

@@ -1,8 +1,10 @@
 import { inject, Injectable } from '@angular/core';
+import { getDate, getMonth } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import allocations from '../../data/allocation.json';
 import balances from '../../data/balance.json';
-import { AccountBalanceExchange as AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange } from '../model/domain.model';
+import statementForecast from '../../data/statement-forecast.json';
+import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, StatementEnum } from '../model/domain.model';
 import { QuoteService } from './quote.service';
 
 @Injectable({
@@ -15,6 +17,8 @@ export class BalanceService {
   readonly balancesData = balances.data;
 
   readonly allocationsData = allocations.data;
+
+  readonly statementForecastData = statementForecast.data;
 
   constructor() { }
 
@@ -128,5 +132,34 @@ export class BalanceService {
         percentageActual: 0 // This should be calculated using total allocated amount
       } as AccountBalanceSummaryItem;
     });
+  }
+
+  getForecastSummary(currency: Currency, month: number): Observable<ForecastDateItem[]> {
+    return forkJoin({
+      statements: of(this.statementForecastData),
+      exchanges: this.quoteService.getAllExchanges()
+    }).pipe(
+      map(data=> {
+        const statements = data.statements.map(item=> {
+          const quote = data.exchanges.find(c => c.from === currencyOf(item.currency) && c.to === currency);
+          return {
+            id: item.id,
+            type: StatementEnum[item.type as keyof typeof StatementEnum],
+            movement: item.movement,
+            value: {
+              amount: item.amount * (quote?.factor || 1),
+              currency
+            },
+            due: item.due,
+            done: item.due <= getDate(new Date())
+          }
+        });
+        return statements;
+      })
+    );
+  } 
+
+  getCurrentMonthForecast(currency: Currency) {
+    return this.getForecastSummary(currency, getMonth(new Date()));
   }
 }

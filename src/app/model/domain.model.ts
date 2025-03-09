@@ -65,3 +65,43 @@ export type AccountBalanceSummary = {
     items: AccountBalanceSummaryItem[];
     total: number;
 }
+
+export enum StatementEnum {
+    DEPOSIT = 'DEPOSIT',
+    INCOME = 'INCOME',
+    TRANSFER_IN = 'TRANSFER_IN',
+    WITHDRAWAL = 'WITHDRAWAL',
+    EXPENSE = 'EXPENSE',
+    TRANSFER_OUT = 'TRANSFER_OUT',
+    OTHER = 'OTHER'
+}
+
+export function isStatementExpense(item: StatementEnum) {
+    return [StatementEnum.EXPENSE, StatementEnum.TRANSFER_OUT, StatementEnum.WITHDRAWAL].includes(item);
+}
+
+export type Account = {
+    id: string;
+    name: string;
+    type: AccountTypeEnum;
+    balance: CurrencyAmount;
+}
+
+export type StatementType = `${StatementEnum}`;
+
+type Statement$ = {
+    id: number;
+    type: StatementEnum;
+    movement: string;
+    value: CurrencyAmount;
+}
+
+export type StatementItem = Statement$ & {
+    date: Date;
+    account: Account
+}
+
+export type ForecastDateItem = Statement$ & {
+    due: number;
+    done?: boolean;
+}
