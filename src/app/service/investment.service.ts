@@ -3,7 +3,8 @@ import { parseJSON } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
-import { AssetAllocation, AssetEnum, Portfolio } from '../model/investment.model';
+import { Asset, AssetAllocation, AssetEnum, Portfolio } from '../model/investment.model';
+import { Currency } from '../model/domain.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +13,18 @@ export class InvestmentService {
 
   constructor() { }
 
-  getAssets() {
-    return of(assetSource.data);
+  getAssets() : Observable<Asset[]> {
+    return of(assetSource.data).pipe(
+      map(list=> list.map(data=> ({
+        ...data,
+        type: AssetEnum[data.type as keyof typeof AssetEnum],
+        lastUpdate: parseJSON(data.lastUpdate),
+        quote: {
+          amount: data.price,
+          currency: Currency[data.currency as keyof typeof Currency]
+        }
+      })))
+    );
   }
 
   getPortfolios() {
@@ -51,9 +62,7 @@ export class InvestmentService {
               }
               return ({
                 ...allocation,
-                ...asset,
-                type: AssetEnum[asset.type as keyof typeof AssetEnum],
-                lastUpdate: parseJSON(asset.lastUpdate)
+                ...asset
               })
             })
             .filter(item => !!item) as AssetAllocation[]

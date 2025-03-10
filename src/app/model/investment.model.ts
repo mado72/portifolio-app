@@ -1,19 +1,20 @@
-import { Currency } from "./domain.model";
+import { Currency, CurrencyAmount } from "./domain.model";
 
 export enum AssetEnum {
-    Stocks,
-    Bonds,
-    Cryptocurrencies,
-    RealEstate,
-    Other
+    STOCK = "STOCK",
+    BOND = "BOND",
+    ETF = "ETF",
+    CRYPTO = "CRYPTO",
+    REAL_ESTATE = "REAL_ESTATE",
+    CURRENCY = "CURRENCY",
+    OTHER = "OTHER"
 }
 
 export type Asset = {
     name: string;
     code: string;
     type: AssetEnum;
-    price: number;
-    currency: Currency;
+    quote: CurrencyAmount;
     lastUpdate: Date;
     controlByQty: boolean;
     marketPlace: string;
