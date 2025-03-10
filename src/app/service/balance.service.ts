@@ -4,8 +4,9 @@ import { forkJoin, map, Observable, of } from 'rxjs';
 import allocations from '../../data/allocation.json';
 import balances from '../../data/balance.json';
 import statementForecast from '../../data/statement-forecast.json';
-import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, ForecastDayItem, StatementEnum } from '../model/domain.model';
+import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, ForecastDayItem, isStatementExpense, StatementEnum } from '../model/domain.model';
 import { QuoteService } from './quote.service';
+import { groupBy } from '../model/functions.model';
 
 @Injectable({
   providedIn: 'root'
@@ -69,6 +70,37 @@ export class BalanceService {
   }
 
   /**
+   * Retrieves the total balance amount for all account positions, excluding the specified account types,
+   * and calculates the balance quotation in the specified currency.
+   *
+   * @param currency - The target currency for the balance quotation calculation.
+   * @param excludeAccTypes - An optional array of account types to exclude from the balance calculation.
+   *
+   * @returns An Observable emitting the total balance amount in the specified currency,
+   * after excluding the specified account types.
+   *
+   * @example
+   * ```typescript
+   * const currency = Currency.USD;
+   * const excludeAccTypes = [AccountTypeEnum.SAVINGS, AccountTypeEnum.CREDIT_CARD];
+   * const totalBalance = balanceService.getBalancesSummarized(currency, excludeAccTypes);
+   * totalBalance.subscribe(balance => {
+   *   console.log(balance);
+   *   // Output: 12345.67 (example balance amount)
+   * });
+   * ```
+   */
+  getBalancesSummarized(currency: Currency, excludeAccTypes: AccountTypeEnum[] = []) {
+    return this.getBalancesByCurrencyExchange(currency).pipe(
+      map(balances => balances.filter(acc => !excludeAccTypes.includes(acc.type))
+          .map(item => item.exchange.amount)
+          .reduce((acc, vl) => acc += vl, 0)
+      )
+    )
+  }
+
+
+  /**
    * Retrieves a summary of account allocations based on the provided currency.
    * The summary includes the allocation class, financial amount, value in the specified currency,
    * planned percentage, and calculated percentageActual.
@@ -100,6 +132,72 @@ export class BalanceService {
           };
         })
       );
+  }
+
+  
+  /**
+   * Retrieves a summary of forecasted income and expenses for the current year, grouped by periods.
+   * The summary includes the start and end days of each period, and the net amount for that period.
+   *
+   * @param currency - The target currency for the forecast calculation.
+   *
+   * @returns An Observable emitting an array of objects, each representing a forecasted period.
+   * Each object contains the start and end days of the period, and the net amount for that period.
+   *
+   * @example
+   * ```typescript
+   * const currency = Currency.USD;
+   * const forecastSummary = balanceService.getForecastSummary(currency);
+   * forecastSummary.subscribe(summary => {
+   *   console.log(summary);
+   *   // Output:
+   *   // [
+   *   //   { start: 1, end: 15, amount: -100 },
+   *   //   { start: 16, end: 16, amount: 200 },
+   *   //   { start: 17, end: 31, amount: -150 },
+   *   // ]
+   * });
+   * ```
+   */
+  getForecastSummary(currency: Currency): Observable<{start: number, end: number, amount: number}[]>{
+    return this.getRecurringStatements(currency).pipe(
+      map(statements => {
+        const depositStatements = statements.filter(statement => !isStatementExpense(statement.type));
+
+        const mapPeriods : number[][] = [];
+        let initialDate = 1;
+        depositStatements.forEach((depositStatement) => {
+          const day = depositStatement.day;
+          mapPeriods.push([initialDate, day]);
+          initialDate = day + 1;
+        });
+        mapPeriods.push([initialDate, 31]);
+
+        const expensePeriods = groupBy(statements, (statement) => {
+          return (mapPeriods.find(period => period[0] <= statement.day && statement.day <= period[1]) || [])
+        });
+        const summaryPeriod = Array.from(
+          expensePeriods
+          .entries()).reduce((accSt, [period, group])=>{
+            const item = {
+              start: period[0],
+              end: period[1],
+              amount: group.reduce((acc, item) => acc - item.value.amount, 0)
+            }
+            accSt.push(item);
+            return accSt;
+          }, [] as {start: number, end: number, amount: number}[]);
+
+        for (let i = 0; i < depositStatements.length; i++) {
+          summaryPeriod.splice((i*2)+1, 0, {
+            start: depositStatements[i].day,
+            end: depositStatements[i].day,
+            amount: depositStatements[i].value.amount
+          });
+        }
+        return summaryPeriod;
+      })
+    )
   }
 
 
@@ -134,7 +232,9 @@ export class BalanceService {
     });
   }
 
-  getForecastSummary(currency: Currency): Observable<ForecastDayItem[]> {
+  
+  // FIXME: This method should be refactored to include database query.
+  getRecurringStatements(currency: Currency): Observable<ForecastDayItem[]> {
     return forkJoin({
       statements: of(this.statementForecastData),
       exchanges: this.quoteService.getAllExchanges()
@@ -157,15 +257,16 @@ export class BalanceService {
         return statements;
       })
     );
-  } 
+  }
+
 
   getCurrentMonthForecast(currency: Currency) {
-    return this.getForecastSummary(currency);
+    return this.getRecurringStatements(currency);
   }
 
   getPeriodForecast(currency: Currency, start: Date, end: Date) {
     
-    return this.getForecastSummary(currency).pipe(
+    return this.getRecurringStatements(currency).pipe(
       map(statements => {
         // MOCK logic
         const months = eachMonthOfInterval({start, end});
@@ -181,5 +282,6 @@ export class BalanceService {
         return result;
       })
     );
+
   }
 }
