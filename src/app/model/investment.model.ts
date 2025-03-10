@@ -35,5 +35,6 @@ export type AssetPosition = AssetAllocation & {
 export type Portfolio = {
     id: string;
     name: string;
+    currency: Currency;
     assets: AssetAllocation[];
 }

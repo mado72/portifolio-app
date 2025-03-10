@@ -29,5 +29,9 @@ export const routes: Routes = [
     {
         path: 'investment-assets',
         loadComponent: () => import('./investment/investment-assets-table/investment-assets-table.component').then(mod => mod.InvestmentAssetsTableComponent),
+    },
+    {
+        path: 'investment-portfolio',
+        loadComponent: () => import('./investment/investment-portfolio-table/investment-portfolio-table.component').then(mod => mod.InvestmentPortfolioTableComponent),
     }
 ];

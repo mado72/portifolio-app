@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Exchange, Currency } from '../model/domain.model';
 import { map, Observable, of } from 'rxjs';
+import assetSource from '../../data/assets.json';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,19 @@ export class QuoteService {
     return of(cotacoes);
   }
 
-  getQuotation(de: Currency, para: Currency) {
+  getExchangeQuote(de: Currency, para: Currency) {
     return this.getAllExchanges().pipe(
       map(cotacoes => cotacoes.find(c => c.from === de && c.to === para))
     );
+  }
+
+  getQuoteFactor(code: string, marketPlace: string, toCurrency: Currency): Observable<Exchange | undefined> {
+    const asset = assetSource.data.find(a => a.code === code && a.marketPlace === marketPlace);
+    if (asset) {
+      const fromCurrency: Currency = Currency[asset.currency as keyof typeof Currency];
+      return this.getExchangeQuote(fromCurrency, toCurrency)
+    }
+    return of(undefined); // Caso não encontre o ativo, retorna 0
   }
 
 }

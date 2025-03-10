@@ -1,15 +1,18 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { parseJSON } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import { Asset, AssetAllocation, AssetEnum, Portfolio } from '../model/investment.model';
 import { Currency } from '../model/domain.model';
+import { QuoteService } from './quote.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvestmentService {
+
+  private quoteService = inject(QuoteService);
 
   constructor() { }
 
@@ -32,6 +35,7 @@ export class InvestmentService {
       [key: string]: {
         id: string;
         name: string;
+        currency: Currency;
         allocation: {
           code: string;
           quantity: number;
@@ -45,14 +49,26 @@ export class InvestmentService {
     });
   }
 
+  getMarketValue(asset: Pick<AssetAllocation, "code" | "marketPlace" | "quantity" | "quote">, currency: Currency) {
+    return forkJoin({
+      assets: this.getAssets(),
+      portfolioData: this.getPortfolios(),
+    })
+  }
+
   // FIXME: Replace this with queries
   getAllDataMock() {
     return forkJoin({
       assets: this.getAssets(),
       portfolioData: this.getPortfolios(),
+      exchanges: this.quoteService.getAllExchanges()
     }).pipe(
-      map(({ assets, portfolioData }) => {
+      map(({ assets, portfolioData, exchanges }) => {
+        const fnMap = (from: Currency, to: Currency ) => `${from}-${to}`;
+
         const assetMap = new Map(assets.map(item=>[`${item.code}:${item.marketPlace}`, item]))
+        const exchangeMap = new Map(exchanges.map(exchange=> ([fnMap(exchange.from, exchange.to), exchange.factor])));
+
         return Object.values(portfolioData).map(portfolio=>{
           const assets = portfolio.allocation
             .map(allocation=>{
@@ -60,9 +76,11 @@ export class InvestmentService {
               if (!asset) {
                 return undefined;
               }
+              const factor = exchangeMap.get(fnMap(asset.quote.currency, portfolio.currency))
               return ({
                 ...allocation,
-                ...asset
+                ...asset,
+                marketValue: (factor ? factor : 1) * asset.quote.amount * allocation.quantity
               })
             })
             .filter(item => !!item) as AssetAllocation[]
@@ -70,6 +88,7 @@ export class InvestmentService {
           return {
             id: portfolio.id,
             name: portfolio.name,
+            currency: portfolio.currency,
             assets
           } as Portfolio;
         });
@@ -80,7 +99,7 @@ export class InvestmentService {
   getPortfolioNames(): Observable<Portfolio[]> {
     // FIXME: Replace this with code to query the portfolio data
     return this.getPortfolios().pipe(
-      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, assets: []})) )
+      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, currency: Currency.BRL, assets: []})) )
     );
   }
 
