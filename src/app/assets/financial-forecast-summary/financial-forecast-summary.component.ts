@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { forkJoin, map } from 'rxjs';
-import { Currency } from '../../model/domain.model';
+import { AccountTypeEnum, Currency } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
@@ -26,7 +26,7 @@ export class FinancialForecastSummaryComponent {
   inOutTotal = 0;
 
   datasource = forkJoin({
-    balance: this.balanceService.getBalancesSummarized(Currency.BRL),
+    balance: this.balanceService.getBalancesSummarized(Currency.BRL, [AccountTypeEnum.INVESTMENT, AccountTypeEnum.LOAN]),
     forecastSummary: this.balanceService.getForecastSummary(Currency.BRL)
   }).pipe(
     map(({ balance, forecastSummary }) => {
