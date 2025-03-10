@@ -1,0 +1,134 @@
+{
+    "data": [
+        {
+            "code": "STKA",
+            "marketPlace": "NYSE",
+            "controlByQty": true,
+            "price": 50.5,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "STOCK",
+            "name": "Stock A"
+        },
+        {
+            "code": "STKB",
+            "marketPlace": "NASDAQ",
+            "controlByQty": true,
+            "price": 20.75,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "STOCK",
+            "name": "Stock B"
+        },
+        {
+            "code": "BND1",
+            "marketPlace": "Euronext",
+            "controlByQty": false,
+            "price": 1000,
+            "currency": "EUR",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "BOND",
+            "name": "Bond A"
+        },
+        {
+            "code": "ETFA",
+            "marketPlace": "NYSE",
+            "controlByQty": true,
+            "price": 75.3,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "ETF",
+            "name": "ETF A"
+        },
+        {
+            "code": "BTC",
+            "marketPlace": "Binance",
+            "controlByQty": true,
+            "price": 45000,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "CRYPTO",
+            "name": "Crypto A"
+        },
+        {
+            "code": "STKC",
+            "marketPlace": "NYSE",
+            "controlByQty": true,
+            "price": 35.4,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "STOCK",
+            "name": "Stock C"
+        },
+        {
+            "code": "STKF",
+            "marketPlace": "NASDAQ",
+            "controlByQty": true,
+            "price": 60.2,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "STOCK",
+            "name": "Stock F"
+        },
+        {
+            "code": "BND3",
+            "marketPlace": "Euronext",
+            "controlByQty": false,
+            "price": 950,
+            "currency": "EUR",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "BOND",
+            "name": "Bond C"
+        },
+        {
+            "code": "ETFC",
+            "marketPlace": "NYSE",
+            "controlByQty": true,
+            "price": 90.7,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "ETF",
+            "name": "ETF C"
+        },
+        {
+            "code": "LTC",
+            "marketPlace": "Binance",
+            "controlByQty": true,
+            "price": 180,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "CRYPTO",
+            "name": "Crypto C"
+        },
+        {
+            "code": "REFB",
+            "marketPlace": "NASDAQ",
+            "controlByQty": true,
+            "price": 110.3,
+            "currency": "USD",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "REAL_ESTATE",
+            "name": "Real Estate Fund B"
+        },
+        {
+            "code": "VALE3",
+            "marketPlace": "BVMF",
+            "controlByQty": true,
+            "price": 58.11,
+            "currency": "BRL",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "STOCK",
+            "name": "Vale ON"
+        },
+        {
+            "code": "PETR3",
+            "marketPlace": "BVMF",
+            "controlByQty": true,
+            "price": 31.12,
+            "currency": "BRL",
+            "lastUpdate": "2025-03-10T12:00:00Z",
+            "type": "STOCK",
+            "name": "Petrobras ON"
+        }
+    ]
+}

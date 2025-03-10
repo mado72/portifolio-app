@@ -1,0 +1,151 @@
+{
+    "data": {
+        "Portfolio1": {
+            "id": "Portfolio1",
+            "name": "Portfolio 1",
+            "allocation": [
+                {
+                    "code": "STKA",
+                    "quantity": 100,
+                    "marketPlace": "NYSE",
+                    "marketValue": 5050,
+                    "performance": 5.2,
+                    "percAllocation": 10,
+                    "percPlanned": 12
+                },
+                {
+                    "code": "ETFA",
+                    "quantity": 300,
+                    "marketPlace": "NYSE",
+                    "marketValue": 22590,
+                    "performance": 4.1,
+                    "percAllocation": 12,
+                    "percPlanned": 14
+                },
+                {
+                    "code": "STKC",
+                    "quantity": 150,
+                    "marketPlace": "NYSE",
+                    "marketValue": 5310,
+                    "performance": 4.7,
+                    "percAllocation": 9,
+                    "percPlanned": 11
+                },
+                {
+                    "code": "ETFC",
+                    "quantity": 280,
+                    "marketPlace": "NYSE",
+                    "marketValue": 25400,
+                    "performance": 4.2,
+                    "percAllocation": 12,
+                    "percPlanned": 14
+                }
+            ]
+        },
+        "Portfolio2": {
+            "id": "Portfolio2",
+            "name": "Portfolio 2",
+            "allocation": [
+                {
+                    "code": "STKB",
+                    "quantity": 200,
+                    "marketPlace": "NASDAQ",
+                    "marketValue": 4150,
+                    "performance": 3.8,
+                    "percAllocation": 8,
+                    "percPlanned": 10
+                },
+                {
+                    "code": "STKF",
+                    "quantity": 130,
+                    "marketPlace": "NASDAQ",
+                    "marketValue": 7826,
+                    "performance": 6.1,
+                    "percAllocation": 11,
+                    "percPlanned": 13
+                },
+                {
+                    "code": "REFB",
+                    "quantity": 500,
+                    "marketPlace": "NASDAQ",
+                    "marketValue": 55150,
+                    "performance": 5.5,
+                    "percAllocation": 14,
+                    "percPlanned": 16
+                }
+            ]
+        },
+        "Portfolio3": {
+            "id": "Portfolio3",
+            "name": "Portfolio 3",
+            "allocation": [
+                {
+                    "code": "BND1",
+                    "quantity": 50,
+                    "marketPlace": "Euronext",
+                    "marketValue": 50000,
+                    "performance": 2.5,
+                    "percAllocation": 15,
+                    "percPlanned": 18
+                },
+                {
+                    "code": "BND3",
+                    "quantity": 90,
+                    "marketPlace": "Euronext",
+                    "marketValue": 85500,
+                    "performance": 3.3,
+                    "percAllocation": 18,
+                    "percPlanned": 20
+                }
+            ]
+        },
+        "Portfolio4": {
+            "id": "Portfolio4",
+            "name": "Portfolio 4",
+            "allocation": [
+                {
+                    "code": "BTC",
+                    "quantity": 1.5,
+                    "marketPlace": "Binance",
+                    "marketValue": 67500,
+                    "performance": 10.2,
+                    "percAllocation": 20,
+                    "percPlanned": 22
+                },
+                {
+                    "code": "LTC",
+                    "quantity": 5,
+                    "marketPlace": "Binance",
+                    "marketValue": 900,
+                    "performance": 6.8,
+                    "percAllocation": 10,
+                    "percPlanned": 12
+                }
+            ]
+        },
+        "Portfolio5": {
+            "id": "Portfolio5",
+            "name": "Portfolio 5",
+            "allocation": [
+                {
+                    "code": "VALE3",
+                    "quantity": 22,
+                    "marketPlace": "BVMF",
+                    "marketValue": 1278.52,
+                    "performance": 4.9,
+                    "percAllocation": 16,
+                    "percPlanned": 18
+                },
+                {
+                    "code": "VALE3",
+                    "quantity": 22,
+                    "marketPlace": "BVMF",
+                    "marketValue": 1278.52,
+                    "performance": 4.9,
+                    "percAllocation": 16,
+                    "percPlanned": 18
+                }
+            ]
+        }
+    }
+}
