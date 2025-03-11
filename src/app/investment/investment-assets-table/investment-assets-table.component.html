@@ -22,7 +22,7 @@
 
     <ng-container matColumnDef="lastUpdate">
         <th mat-header-cell *matHeaderCellDef> Última Atualização </th>
-        <td mat-cell *matCellDef="let row"> {{row.lastUpdate | date}} </td>
+        <td mat-cell *matCellDef="let row"> {{row.lastUpdate | date:'HH:mm:ss.S'}} </td>
     </ng-container>
 
     <ng-container matColumnDef="controlByQty">

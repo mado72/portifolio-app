@@ -1,11 +1,13 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { parseJSON } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import { Asset, AssetAllocation, AssetEnum, Portfolio } from '../model/investment.model';
 import { Currency } from '../model/domain.model';
-import { QuoteService } from './quote.service';
+import { getMarketPlaceCode, QuoteService } from './quote.service';
+import { toRecord } from '../model/functions.model';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -14,20 +16,28 @@ export class InvestmentService {
 
   private quoteService = inject(QuoteService);
 
-  constructor() { }
-
-  getAssets() : Observable<Asset[]> {
-    return of(assetSource.data).pipe(
-      map(list=> list.map(data=> ({
+  assertsSignal = computed(() => {
+    const quotes = this.quoteService.quotes();
+    return assetSource.data.reduce((acc, data) => {
+      const code = getMarketPlaceCode(data.marketPlace, data.code);
+      acc[code] = {
         ...data,
         type: AssetEnum[data.type as keyof typeof AssetEnum],
-        lastUpdate: parseJSON(data.lastUpdate),
+        lastUpdate: quotes[code].lastUpdate,
         quote: {
-          amount: data.price,
-          currency: Currency[data.currency as keyof typeof Currency]
+          amount: quotes[code].quote.amount,
+          currency: quotes[code].quote.currency
         }
-      })))
-    );
+      };
+      return acc;
+    }, {} as Record<string, Asset>)
+  })
+
+
+  constructor() {}
+
+  getAssets() {
+    return toObservable(this.assertsSignal);
   }
 
   getPortfolios() {
@@ -59,20 +69,19 @@ export class InvestmentService {
   // FIXME: Replace this with queries
   getAllDataMock() {
     return forkJoin({
-      assets: this.getAssets(),
+      assetsRec: this.getAssets(),
       portfolioData: this.getPortfolios(),
       exchanges: this.quoteService.getAllExchanges()
     }).pipe(
-      map(({ assets, portfolioData, exchanges }) => {
+      map(({ assetsRec, portfolioData, exchanges }) => {
         const fnMap = (from: Currency, to: Currency ) => `${from}-${to}`;
 
-        const assetMap = new Map(assets.map(item=>[`${item.code}:${item.marketPlace}`, item]))
         const exchangeMap = new Map(exchanges.map(exchange=> ([fnMap(exchange.from, exchange.to), exchange.factor])));
 
         return Object.values(portfolioData).map(portfolio=>{
           const assets = portfolio.allocation
             .map(allocation=>{
-              const asset = assetMap.get(`${allocation.code}:${allocation.marketPlace}`);
+              const asset = assetsRec[getMarketPlaceCode(allocation.marketPlace, allocation.code)];
               if (!asset) {
                 return undefined;
               }
