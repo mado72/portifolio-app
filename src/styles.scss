@@ -1,25 +1,25 @@
 /* You can add global styles to this file, and also import other style files */
 @use '@angular/material' as mat;
+
 @import "bootstrap/scss/bootstrap-grid";
 @import "bootstrap/scss/bootstrap-utilities";
 
-// Configurar o tema do Material 3
 $theme: mat.define-theme((
   color: (
-    primary: mat.$green-palette,
-    tertiary: mat.$orange-palette
+    theme-type: dark,
+    primary: mat.$red-palette,
   ),
   typography: (
-    plain-family: 'Roboto, sans-serif',
+    brand-family: 'Roboto',
+    bold-weight: 900
   ),
+  density: (
+    scale: -1
+  )
 ));
-
-// Aplicar o tema
-@include mat.core();
 
 html, body { 
     height: 100%; 
-    color-scheme: light dark;
 }
 body { 
     margin: 0; 
