@@ -31,5 +31,5 @@ export class InvestmentAssetsTableComponent {
   );
 
 
-  readonly displayedColumns: string[] = ['name', 'code', 'marketPlace', 'type', 'quote', 'lastUpdate', 'controlByQty'];
+  readonly displayedColumns: string[] = ['name', 'code', 'marketPlace', 'type', 'quote', 'trend', 'lastUpdate', 'controlByQty'];
 }

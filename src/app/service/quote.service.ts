@@ -2,17 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 import { Exchange, Currency, CurrencyAmount } from '../model/domain.model';
 import { map, Observable, of } from 'rxjs';
 import assetSource from '../../data/assets.json';
-
-export type AssetQuote = Record<string,{
-  lastUpdate: Date;
-  quote: CurrencyAmount
-}>;
-
-export type QuoteExchangeInfo = {
-  original: CurrencyAmount;
-  value: CurrencyAmount;
-  exchange: Exchange;
-}
+import { AssetQuoteRecord, QuoteExchangeInfo } from '../model/investment.model';
 
 export const getMarketPlaceCode = (marketPlace: string, code: string): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
@@ -23,19 +13,23 @@ export const getMarketPlaceCode = (marketPlace: string, code: string): string =>
 })
 export class QuoteService {
 
-  readonly quotes = signal<AssetQuote>({});
+  readonly quotes = signal<AssetQuoteRecord>({});
 
   readonly lastUpdate = signal<{code: string, before: number, after: number}>({code: '', before: 0, after: 0});
 
   timerId: any;
 
   constructor() {
-    const aux : AssetQuote = {};
+    const aux : AssetQuoteRecord = {};
 
     assetSource.data.forEach(asset => {
       aux[getMarketPlaceCode(asset.marketPlace, asset.code)] = {
         lastUpdate: new Date(asset.lastUpdate),
         quote: {
+          amount: asset.price,
+          currency: Currency[asset.currency as keyof typeof Currency]
+        },
+        initialQuote: {
           amount: asset.price,
           currency: Currency[asset.currency as keyof typeof Currency]
         }
@@ -45,7 +39,7 @@ export class QuoteService {
     this.quotes.set(aux);
 
     this.timerId = setInterval(() => {
-      const aux: AssetQuote = {...this.quotes()};
+      const aux: AssetQuoteRecord = {...this.quotes()};
 
       const assetsCode = Object.keys(this.quotes());
 
@@ -54,14 +48,14 @@ export class QuoteService {
       const code = assetsCode[idx];
 
       const before = aux[code].quote.amount;
-      aux[code].quote.amount += Math.random() * 10 - 5;
+      aux[code].quote.amount *= .01 * (105 - 10 * Math.random());
       aux[code].lastUpdate = new Date();
       const after = aux[code].quote.amount;
       this.lastUpdate.set({code, before, after});
       console.log({code, before, after});
 
       this.quotes.set(aux);
-    }, 5000);
+    }, 1000);
   }
 
   destroy() {

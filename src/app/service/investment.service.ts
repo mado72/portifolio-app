@@ -1,13 +1,11 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { parseJSON } from 'date-fns';
+import { computed, inject, Injectable } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
-import { Asset, AssetAllocation, AssetEnum, Portfolio } from '../model/investment.model';
 import { Currency } from '../model/domain.model';
+import { Asset, AssetAllocation, AssetEnum, AssetQuote, AssetQuoteRecord, fnTrend, Portfolio, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
-import { toRecord } from '../model/functions.model';
-import { toObservable } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root'
@@ -18,19 +16,21 @@ export class InvestmentService {
 
   assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
+    
     return assetSource.data.reduce((acc, data) => {
       const code = getMarketPlaceCode(data.marketPlace, data.code);
+      const initialQuote = acc[code]?.initialQuote || quotes[code].quote;
+      const trend = fnTrend(quotes[code]);
       acc[code] = {
         ...data,
         type: AssetEnum[data.type as keyof typeof AssetEnum],
         lastUpdate: quotes[code].lastUpdate,
-        quote: {
-          amount: quotes[code].quote.amount,
-          currency: quotes[code].quote.currency
-        }
+        quote: quotes[code].quote,
+        initialQuote,
+        trend
       };
       return acc;
-    }, {} as Record<string, Asset>)
+    }, {} as Record<string, Asset & {trend: TrendType}>)
   })
 
 
@@ -86,10 +86,12 @@ export class InvestmentService {
                 return undefined;
               }
               const factor = exchangeMap.get(fnMap(asset.quote.currency, portfolio.currency))
+              const marketValue = (factor ? factor : 1) * asset.quote.amount * allocation.quantity;
               return ({
                 ...allocation,
                 ...asset,
-                marketValue: (factor ? factor : 1) * asset.quote.amount * allocation.quantity
+                marketValue,
+                initialValue: marketValue
               })
             })
             .filter(item => !!item) as AssetAllocation[]
