@@ -4,7 +4,7 @@ import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocation, AssetEnum, AssetQuote, AssetQuoteRecord, fnTrend, Portfolio, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocation, AssetEnum, fnTrend, Portfolio, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 
 @Injectable({
@@ -33,12 +33,9 @@ export class InvestmentService {
     }, {} as Record<string, Asset & {trend: TrendType}>)
   })
 
+  assertsObservable = toObservable(this.assertsSignal);
 
   constructor() {}
-
-  getAssets() {
-    return toObservable(this.assertsSignal);
-  }
 
   getPortfolios() {
     return of(portfoliosSource.data as {
@@ -59,21 +56,15 @@ export class InvestmentService {
     });
   }
 
-  getMarketValue(asset: Pick<AssetAllocation, "code" | "marketPlace" | "quantity" | "quote">, currency: Currency) {
-    return forkJoin({
-      assets: this.getAssets(),
-      portfolioData: this.getPortfolios(),
-    })
-  }
 
   // FIXME: Replace this with queries
   getAllDataMock() {
     return forkJoin({
-      assetsRec: this.getAssets(),
       portfolioData: this.getPortfolios(),
       exchanges: this.quoteService.getAllExchanges()
     }).pipe(
-      map(({ assetsRec, portfolioData, exchanges }) => {
+      map(({ portfolioData, exchanges }) => {
+        const assetsRec = this.assertsSignal();
         const fnMap = (from: Currency, to: Currency ) => `${from}-${to}`;
 
         const exchangeMap = new Map(exchanges.map(exchange=> ([fnMap(exchange.from, exchange.to), exchange.factor])));

@@ -52,7 +52,7 @@ export class QuoteService {
       aux[code].lastUpdate = new Date();
       const after = aux[code].quote.amount;
       this.lastUpdate.set({code, before, after});
-      console.log({code, before, after});
+      // console.debug({code, before, after});
 
       this.quotes.set(aux);
     }, 1000);
