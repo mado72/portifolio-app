@@ -1,19 +1,22 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { map } from 'rxjs';
-import { AssetAllocation } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
-import { QuoteService } from '../../service/quote.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faXmarkCircle, faCircleCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons';
+import { Asset } from '../../model/investment.model';
+import { TrendComponent } from '../../utils/trend/trend.component';
 
 @Component({
   selector: 'app-investment-assets-table',
   standalone: true,
   imports: [
     MatTableModule,
+    DatePipe,
+    FontAwesomeModule,
     CurrencyComponent,
-    DatePipe
+    TrendComponent
   ],
   templateUrl: './investment-assets-table.component.html',
   styleUrl: './investment-assets-table.component.scss'
@@ -22,7 +25,14 @@ export class InvestmentAssetsTableComponent {
 
   private investmentService = inject(InvestmentService);
 
-  private quoteService = inject(QuoteService);
+  readonly iconTrue = faCircleCheck;
+  readonly iconFalse = faXmarkCircle;
+
+  readonly displayedColumns: string[] = ['name', 'code', 'marketPlace', 'type', 'quote', 'trend', 'lastUpdate', 'controlByQty'];
+
+  @Input() enableSelection: boolean = false;
+
+  @Output() onSelected = new EventEmitter<Asset>();
 
   asserts = this.investmentService.assertsSignal;
 
@@ -30,6 +40,9 @@ export class InvestmentAssetsTableComponent {
     const asserts = Object.values(this.asserts());
     return asserts;
   })
+
+  rowClick(asset: Asset) {
+    this.onSelected.emit(asset);
+  }
   
-  readonly displayedColumns: string[] = ['name', 'code', 'marketPlace', 'type', 'quote', 'trend', 'lastUpdate', 'controlByQty'];
 }
