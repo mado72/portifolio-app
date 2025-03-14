@@ -1,4 +1,4 @@
-import { Currency, CurrencyAmount, Exchange } from "./domain.model";
+import { CurrencyAmount, Exchange } from "./domain.model";
 
 export enum AssetEnum {
     STOCK = "STOCK",
@@ -14,52 +14,37 @@ export type Asset = {
     name: string;
     code: string;
     type: AssetEnum;
-    quote: CurrencyAmount;
     lastUpdate: Date;
     controlByQty: boolean;
     marketPlace: string;
-    initialQuote?: CurrencyAmount;
+    quote: CurrencyAmount;
+    initialQuote?: number;
 }
 
 export type AssetAllocation = Asset & {
     quantity: number;
-    marketValue: number;
     percPlanned: number;
-    averageBuy?: number;
-    performance?: number;
-}
-
-export type AssetPosition = AssetAllocation & {
-    percAllocation: number;
+    averageBuy: number;
 }
 
 export type AssetAllocationRecord = Record<string,AssetAllocation>;
-
-export type AssetPositionRecord = Record<string,AssetPosition>;
-
-export type Portfolio = {
-    id: string;
-    name: string;
-    currency: Currency;
-    assets: AssetPositionRecord;
-}
 
 export type TrendType = 'up' | 'down' | 'unchanged';
 
 export type AssetQuote = {
     lastUpdate: Date;
     quote: CurrencyAmount;
-    initialQuote: CurrencyAmount;
+    initialQuote: number;
     trend?: TrendType;
 };
 
+export type AssetQuoteRecord = Record<string,AssetQuote>;
+
 export const fnTrend = (quote: AssetQuote): TrendType => {
-    const up =  quote.quote.amount > quote.initialQuote.amount;
-    const down = quote.quote.amount < quote.initialQuote.amount;
+    const up =  quote.quote.amount > quote.initialQuote;
+    const down = quote.quote.amount < quote.initialQuote;
     return up? 'up' : down? 'down' : 'unchanged';
 };
-
-export type AssetQuoteRecord = Record<string,AssetQuote>;
 
 export type QuoteExchangeInfo = {
   original: CurrencyAmount;

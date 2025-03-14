@@ -36,19 +36,19 @@
     <td mat-cell *matCellDef="let row">
       {{row.marketValue | number:'1.2-2'}}
     </td>
-    <td mat-footer-cell *matFooterCellDef>{{total().marketValue | number:'1.2-2'}}</td>
+    <td mat-footer-cell *matFooterCellDef>{{total.position.marketValue| number:'1.2-2'}}</td>
   </ng-container>
   
   <ng-container matColumnDef="percPlanned">
     <th mat-header-cell *matHeaderCellDef> % Planejada </th>
     <td mat-cell *matCellDef="let row"> {{row.percPlanned}}% </td>
-    <td mat-footer-cell *matFooterCellDef>{{total().percPlanned | number:'1.2-2'}}%</td>
+    <td mat-footer-cell *matFooterCellDef>{{total.position.percPlanned | number:'1.2-2'}}%</td>
   </ng-container>
   
   <ng-container matColumnDef="percAllocation">
     <th mat-header-cell *matHeaderCellDef> % Alocação </th>
-    <td mat-cell *matCellDef="let row"> {{percAllocation()[row | assetCode] | percent:'1.2-2'}} </td>
-    <td mat-footer-cell *matFooterCellDef>{{percAllocation()['total'] | percent:'1.2-2'}}</td>
+    <td mat-cell *matCellDef="let row"> {{row.position.percAllocation | percent:'1.2-2'}} </td>
+    <td mat-footer-cell *matFooterCellDef>{{total.position.percAllocation | percent:'1.2-2'}}</td>
   </ng-container>
   
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

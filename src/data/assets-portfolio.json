@@ -4,7 +4,7 @@
             "id": "Portfolio1",
             "name": "Portfolio 1",
             "currency": "BRL",
-            "allocation": [
+            "assets": [
                 {
                     "code": "STKA",
                     "quantity": 100,
@@ -47,7 +47,7 @@
             "id": "Portfolio2",
             "name": "Portfolio 2",
             "currency": "BRL",
-            "allocation": [
+            "assets": [
                 {
                     "code": "STKB",
                     "quantity": 200,
@@ -81,7 +81,7 @@
             "id": "Portfolio3",
             "name": "Portfolio 3",
             "currency": "BRL",
-            "allocation": [
+            "assets": [
                 {
                     "code": "BND1",
                     "quantity": 50,
@@ -106,7 +106,7 @@
             "id": "Portfolio4",
             "name": "Portfolio 4",
             "currency": "BRL",
-            "allocation": [
+            "assets": [
                 {
                     "code": "BTC",
                     "quantity": 1.5,
@@ -131,7 +131,7 @@
             "id": "Portfolio5",
             "name": "Portfolio 5",
             "currency": "BRL",
-            "allocation": [
+            "assets": [
                 {
                     "code": "VALE3",
                     "quantity": 22,

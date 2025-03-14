@@ -9,7 +9,7 @@ import { getMarketPlaceCode } from '../service/quote.service';
 export class AssetCodePipe implements PipeTransform {
 
   transform(value: Asset): string {
-    return getMarketPlaceCode(value.marketPlace, value.code);
+    return getMarketPlaceCode({ marketPlace: value.marketPlace, code: value.code });
   }
 
 }

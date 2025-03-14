@@ -2,7 +2,7 @@ import { DecimalPipe, PercentPipe } from '@angular/common';
 import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { AssetPosition, Portfolio } from '../../model/investment.model';
+import { AssetValueRecord, Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { AssetCodePipe } from '../../util/asset-code.pipe';
@@ -33,22 +33,16 @@ export class InvestmentPortfolioTableComponent implements OnInit{
 
   portfolio = signal<Portfolio | undefined>(undefined);
 
-  datasource = computed(() => Object.values(this.portfolio()?.assets || {}));
+  positions = computed(() =>this.portfolio()?.position() || {} as AssetValueRecord)
 
-  total = computed(() => this.datasource().reduce((acc, item) => {
-    acc.marketValue += item.marketValue;
-    acc.percPlanned += item.percPlanned;
-    return acc;
-  }, {marketValue: 0, percPlanned: 0} as Pick<AssetPosition, "marketValue" | "percPlanned">))
+  datasource = computed(() => Object.values(this.portfolio()?.assets() || {})
+    .map(asset=>{
+      return {
+        ...asset,
+        position: this.positions()[getMarketPlaceCode(asset)]
+      }
+    }));
 
-  percAllocation = computed(() => this.datasource()
-      .reduce((acc, item) => {
-        const code = getMarketPlaceCode(item.marketPlace, item.code);
-        const perc = item.marketValue / this.total().marketValue;
-        acc[code]= perc
-        acc["total"] += perc;
-        return acc;
-      }, {"total": 0} as Record<string,number>))
 
   get portfolioCurrency() {
     return this.portfolio()?.currency || Currency.BRL;
@@ -57,8 +51,15 @@ export class InvestmentPortfolioTableComponent implements OnInit{
   ngOnInit(): void {
     this.investmentService.getPortfolio(this.portfolioId).subscribe(porfolio => {
       this.portfolio.set(porfolio);
+      console.log(porfolio)
     });
-    
+  }
+
+  get total() {
+    return {
+      ...this.portfolio()?.assets()['total'],
+      position: this.positions()['total']
+    }
   }
 
 }

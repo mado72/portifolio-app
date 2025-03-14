@@ -4,8 +4,9 @@ import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocation, AssetAllocationRecord, AssetEnum, fnTrend, Portfolio, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
+import { AssetPosition, AssetPositionRecord, Portfolio } from '../model/portfolio.model';
 
 @Injectable({
   providedIn: 'root'
@@ -16,10 +17,10 @@ export class InvestmentService {
 
   assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
-    
+
     return assetSource.data.reduce((acc, data) => {
-      const code = getMarketPlaceCode(data.marketPlace, data.code);
-      const initialQuote = acc[code]?.initialQuote || quotes[code].quote;
+      const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
+      const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
       acc[code] = {
         ...data,
@@ -37,13 +38,13 @@ export class InvestmentService {
 
   constructor() {}
 
-  getPortfolios() {
+  private getPortfolios() {
     return of(portfoliosSource.data as {
       [key: string]: {
         id: string;
         name: string;
         currency: Currency;
-        allocation: {
+        assets: {
           code: string;
           quantity: number;
           marketPlace: string;
@@ -69,43 +70,51 @@ export class InvestmentService {
 
         const exchangeMap = new Map(exchanges.map(exchange=> ([fnMap(exchange.from, exchange.to), exchange.factor])));
 
-        return Object.values(portfolioData).map(portfolio=>{
-          const assets = portfolio.allocation
+        return Object.values(portfolioData).map(portfolioItem=>{
+          const assets = portfolioItem.assets
             .map(allocation=>{
-              const asset = assetsRec[getMarketPlaceCode(allocation.marketPlace, allocation.code)];
+              const asset = assetsRec[getMarketPlaceCode({ marketPlace: allocation.marketPlace, code: allocation.code })];
               if (!asset) {
                 return undefined;
               }
-              const factor = exchangeMap.get(fnMap(asset.quote.currency, portfolio.currency))
+              const factor = exchangeMap.get(fnMap(asset.quote.currency, portfolioItem.currency))
               const marketValue = (factor ? factor : 1) * asset.quote.amount * allocation.quantity;
               return ({
                 ...allocation,
                 ...asset,
                 marketValue,
-                initialValue: marketValue
+                initialValue: marketValue,
+                averageBuy: asset.quote.amount // FIXME: It should be gotten from datasource.
               })
             })
             .filter(item => !!item)
             .reduce((acc, item)=>{
-              acc[getMarketPlaceCode(item.marketPlace, item.code)] = item;
+              acc[getMarketPlaceCode({ marketPlace: item.marketPlace, code: item.code })] = item;
               return acc;
             }, {} as AssetAllocationRecord)
 
-          return {
-            id: portfolio.id,
-            name: portfolio.name,
-            currency: portfolio.currency,
-            assets
-          } as Portfolio;
+          const portfolio = new Portfolio(portfolioItem.id, portfolioItem.name, portfolioItem.currency, this.quoteService.quotes);
+          const positions = Object.entries(assets)
+            .reduce((acc, [key,value])=> {
+              acc[key] = {
+                ...value,
+                averageBuy: value.averageBuy || value.quote.amount,
+                quantity: value.quantity
+              };
+              return acc;
+            }, {} as AssetPositionRecord);
+
+          portfolio.assets.set(positions);
+          return portfolio
         });
       })
     )
   }
 
-  getPortfolioNames(): Observable<Portfolio[]> {
+  getPortfolioNames(): Observable<{id: string, name: string, currency: Currency}[]> {
     // FIXME: Replace this with code to query the portfolio data
     return this.getPortfolios().pipe(
-      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, currency: Currency.BRL, assets: {}})) )
+      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, currency: Currency.BRL})) )
     );
   }
 

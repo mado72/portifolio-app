@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
-import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { MatCardModule } from '@angular/material/card';
 import { InvestmentService } from '../../service/investment.service';
-import { Portfolio } from '../../model/investment.model';
-import { MatCardModule } from '@angular/material/card'
+import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { Portfolio } from '../../model/portfolio.model';
 
 @Component({
   selector: 'app-investment-portfolio-container',
@@ -18,10 +18,12 @@ export class InvestmentPortfolioContainerComponent {
 
   private investmentService = inject(InvestmentService);
 
-  portfolios: Portfolio[] = [];
+  portfolios: Partial<Portfolio>[] = [];
 
   constructor() {
-    this.investmentService.getPortfolioNames().subscribe(portfolios => this.portfolios = portfolios);
+    this.investmentService.getPortfolioNames().subscribe(portfolios => {
+      return this.portfolios = portfolios;
+    });
 
   }
 }

@@ -4,7 +4,7 @@ import { map, Observable, of } from 'rxjs';
 import assetSource from '../../data/assets.json';
 import { AssetQuoteRecord, QuoteExchangeInfo } from '../model/investment.model';
 
-export const getMarketPlaceCode = (marketPlace: string, code: string): string => {
+export const getMarketPlaceCode = ({ marketPlace, code }: { marketPlace: string; code: string; }): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
 }
 
@@ -20,23 +20,20 @@ export class QuoteService {
   timerId: any;
 
   constructor() {
-    const aux : AssetQuoteRecord = {};
-
-    assetSource.data.forEach(asset => {
-      aux[getMarketPlaceCode(asset.marketPlace, asset.code)] = {
+    const records = assetSource.data.reduce((acc, asset)=>{
+      const code = getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code });
+      acc[code] = {
         lastUpdate: new Date(asset.lastUpdate),
         quote: {
           amount: asset.price,
           currency: Currency[asset.currency as keyof typeof Currency]
         },
-        initialQuote: {
-          amount: asset.price,
-          currency: Currency[asset.currency as keyof typeof Currency]
-        }
+        initialQuote: asset.price
       }
-    });
+      return acc;
+    }, {} as AssetQuoteRecord)
 
-    this.quotes.set(aux);
+    this.quotes.set(records);
 
     this.timerId = setInterval(() => {
       const aux: AssetQuoteRecord = {...this.quotes()};
@@ -82,7 +79,7 @@ export class QuoteService {
   getExchangeFactor(code: string, marketPlace: string, toCurrency: Currency): Observable<QuoteExchangeInfo> {
     const asset = assetSource.data.find(a => a.code === code && a.marketPlace === marketPlace);
     if (!asset)
-      throw `${getMarketPlaceCode(marketPlace, code)} not found`;
+      throw `${getMarketPlaceCode({ marketPlace, code })} not found`;
 
     const fromCurrency: Currency = Currency[asset.currency as keyof typeof Currency];
 
@@ -91,7 +88,7 @@ export class QuoteService {
         if (!exchange)
           throw `Exchange rate from ${fromCurrency} to ${toCurrency} not found`;
 
-        asset.price = this.quotes()[getMarketPlaceCode(asset.marketPlace, asset.code)].quote.amount;
+        asset.price = this.quotes()[getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code })].quote.amount;
 
         return {
           original: {
