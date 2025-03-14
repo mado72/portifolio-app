@@ -1,0 +1,13 @@
+<h3>Cadastro de Ativos</h3>
+@if (!assetSelected) {
+    <app-investment-assets-table 
+        [datasource]="datasource"
+        [enableSelection]="true" 
+        (onSelected)="selectAsset($event)"></app-investment-assets-table>
+}
+@else {
+    <app-asset-details [asset]="assetSelected"
+        (canceled)="canceled()"
+        (assetChange)="saved($event)"
+        ></app-asset-details>
+}

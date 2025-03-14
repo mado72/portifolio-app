@@ -1,0 +1,48 @@
+<mat-card>
+    <form [formGroup]="formAsset" class="p-4">
+        <div class="d-flex flex-column">
+            <mat-form-field>
+                <mat-label>Ativo</mat-label>
+                <input matInput type="text" name="name" formControlName="name" />
+            </mat-form-field>
+    
+            <div class="d-flex justify-content-between">
+                <div>
+                    <mat-form-field>
+                        <mat-label>Mercado</mat-label>
+                        <mat-select formControlName="marketPlace">
+                            @for (item of marketPlaces; track $index) {
+                                <mat-option [value]="item">{{ item }}</mat-option>
+                            }
+                        </mat-select>
+                    </mat-form-field>
+                    
+                    <mat-form-field>
+                        <mat-label>Sigla</mat-label>
+                        <input matInput type="text" name="name" formControlName="code" 
+                            class="ps-2"/>
+                    </mat-form-field>
+                </div>
+                <mat-form-field>
+                    <mat-label>Tipo</mat-label>
+                    <mat-select formControlName="type">
+                        @for (item of assetTypes; track $index) {
+                            <mat-option [value]="item">{{ item | assetType }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                <mat-checkbox formControlName="controlByQty">Controlado por quantidade</mat-checkbox>
+                <mat-checkbox formControlName="manualQuote">Cotação Manual</mat-checkbox>
+            </div>
+        </div>
+    </form>
+
+    <div class="d-flex justify-content-end px-4 pb-4">
+        <button mat-stroked-button (click)="clickSave()" class="m-2 primary">Salvar</button>
+        <button mat-stroked-button (click)="clickCancel()" class="m-2 secondary">Cancelar</button>
+    </div>
+</mat-card>
+<pre class="debug">
+{{ formAsset.value | json }}
+</pre>
+    

@@ -1,4 +1,4 @@
-import { CurrencyAmount, Exchange } from "./domain.model";
+import { Currency, CurrencyAmount, Exchange } from "./domain.model";
 
 export enum AssetEnum {
     STOCK = "STOCK",
@@ -21,6 +21,10 @@ export type Asset = {
     initialQuote?: number;
     manualQuote?: boolean;
 }
+
+export type AssetFormModel = Pick<Asset, "name" | "code" | "type" | "marketPlace" | "controlByQty" | "manualQuote"> & {
+    currency: Currency;
+};
 
 export type AssetAllocation = Asset & {
     quantity: number;
@@ -51,4 +55,21 @@ export type QuoteExchangeInfo = {
   original: CurrencyAmount;
   value: CurrencyAmount;
   exchange: Exchange;
+}
+
+export enum MarketPlaceEnum {
+    BVMF = 'BVMF',
+    NASDAQ = 'NASDAQ',
+    NYSE = 'NYSE',
+    // BSE = 'BSE',
+    IEX = 'IEX',
+    FOREX = 'FOREX',
+    // CFD = 'CFD',
+    COIN = 'COIN'
+}
+
+export type MarketPlaceType = `${MarketPlaceEnum}`;
+
+export function marketPlaceOf(marketPlace: string) {
+    return MarketPlaceEnum[marketPlace as keyof typeof MarketPlaceEnum];
 }

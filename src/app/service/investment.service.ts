@@ -1,12 +1,13 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, fnTrend, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { AssetPosition, AssetPositionRecord, Portfolio } from '../model/portfolio.model';
+import { formatISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -15,10 +16,12 @@ export class InvestmentService {
 
   private quoteService = inject(QuoteService);
 
+  assertMap = signal(assetSource.data.slice());
+
   assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
 
-    return assetSource.data.reduce((acc, data) => {
+    return this.assertMap().reduce((acc, data) => {
       const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
@@ -135,6 +138,45 @@ export class InvestmentService {
       const asserts = Object.values(this.assertsSignal());
       return asserts;
     })
+  }
+
+  addAsset(data: AssetFormModel) {
+    const asset = {
+      ...data,
+      price: Math.random() * 200 + 10,
+      initialQuote: 0,
+      manualQuote: data.manualQuote,
+      lastUpdate:  formatISO(new Date()),
+      trend: "unchanged"
+    }
+    this.assertMap().push(asset);
+  }
+
+  updateAsset(code: string, data: AssetFormModel) {
+    const quotes = this.quoteService.quotes();
+    const changedCode = code != getMarketPlaceCode(data);
+    if (changedCode) {
+      const newCode = getMarketPlaceCode(data);
+      quotes[newCode] = quotes[code];
+    }
+    this.quoteService.quotes.set(quotes);
+
+    this.assertMap.update(assertMap => {
+      const idx = assertMap.findIndex(item => getMarketPlaceCode(item) === code);
+      let asset = assertMap[idx];
+      asset = {... asset, ...data,
+        price: Math.random() * 200 + 10,
+        lastUpdate:  formatISO(new Date())
+      };
+      assertMap[idx] = asset;
+      return assertMap;
+    })
+
+    this.quoteService.quotes.update(quotes=>{
+      delete quotes[code];
+      return quotes;
+    });
+
   }
 
 }
