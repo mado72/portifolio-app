@@ -33,5 +33,9 @@ export const routes: Routes = [
     {
         path: 'investment-portfolio',
         loadComponent: () => import('./investment/investment-portfolio-container/investment-portfolio-container.component').then(mod => mod.InvestmentPortfolioContainerComponent),
+    },
+    {
+        path: 'registration',
+        loadChildren: () => import('./registration/registration.route').then(mod => mod.registrationRoutes)
     }
 ];
