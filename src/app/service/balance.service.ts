@@ -1,8 +1,8 @@
 import { inject, Injectable } from '@angular/core';
 import { eachMonthOfInterval, getDate, getMonth, setDay } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
-import allocations from '../../data/allocation.json';
-import balances from '../../data/balance.json';
+import allocationsSource from '../../data/allocation.json';
+import balancesSource from '../../data/balance.json';
 import statementForecast from '../../data/statement-forecast.json';
 import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, ForecastDayItem, isStatementExpense, StatementEnum } from '../model/domain.model';
 import { QuoteService } from './quote.service';
@@ -15,9 +15,9 @@ export class BalanceService {
 
   private quoteService = inject(QuoteService);
 
-  readonly balancesData = balances.data;
+  readonly balancesData = balancesSource.data;
 
-  readonly allocationsData = allocations.data;
+  readonly allocationsData = allocationsSource.data;
 
   readonly statementForecastData = statementForecast.data;
 

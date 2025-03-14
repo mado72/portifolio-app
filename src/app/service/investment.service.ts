@@ -4,7 +4,7 @@ import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocation, AssetEnum, fnTrend, Portfolio, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocation, AssetAllocationRecord, AssetEnum, fnTrend, Portfolio, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 
 @Injectable({
@@ -85,7 +85,11 @@ export class InvestmentService {
                 initialValue: marketValue
               })
             })
-            .filter(item => !!item) as AssetAllocation[]
+            .filter(item => !!item)
+            .reduce((acc, item)=>{
+              acc[getMarketPlaceCode(item.marketPlace, item.code)] = item;
+              return acc;
+            }, {} as AssetAllocationRecord)
 
           return {
             id: portfolio.id,
@@ -101,7 +105,7 @@ export class InvestmentService {
   getPortfolioNames(): Observable<Portfolio[]> {
     // FIXME: Replace this with code to query the portfolio data
     return this.getPortfolios().pipe(
-      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, currency: Currency.BRL, assets: []})) )
+      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, currency: Currency.BRL, assets: {}})) )
     );
   }
 
@@ -111,9 +115,9 @@ export class InvestmentService {
     );
   }
 
-  getPortfolioAllocations(portfolio: Portfolio): Observable<AssetAllocation[]> {
+  getPortfolioAllocations(portfolio: Portfolio): Observable<AssetAllocationRecord> {
     return this.getAllDataMock().pipe(
-      map(portfolios => portfolios.find(p => p.id === portfolio.id)?.assets || [])
+      map(portfolios => portfolios.find(p => p.id === portfolio.id)?.assets || {})
     );
   }
 

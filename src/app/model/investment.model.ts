@@ -33,11 +33,15 @@ export type AssetPosition = AssetAllocation & {
     percAllocation: number;
 }
 
+export type AssetAllocationRecord = Record<string,AssetAllocation>;
+
+export type AssetPositionRecord = Record<string,AssetPosition>;
+
 export type Portfolio = {
     id: string;
     name: string;
     currency: Currency;
-    assets: AssetAllocation[];
+    assets: AssetPositionRecord;
 }
 
 export type TrendType = 'up' | 'down' | 'unchanged';

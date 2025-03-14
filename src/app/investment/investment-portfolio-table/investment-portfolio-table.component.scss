@@ -3,9 +3,13 @@
     width: 7% !important;
 }
 .mat-column-name {
-    width: 22% !important;
+    width: 17% !important;
 }
-.mat-column-code, 
+.mat-column-code {
+    width: 14% !important;
+    overflow: hidden !important;
+    word-break: break-all;
+}
 .mat-column-type,
 .mat-column-trend
 {
@@ -18,4 +22,5 @@
 {
     width: 15% !important;
     word-break: break-all;
+    text-align: end !important;
 }
