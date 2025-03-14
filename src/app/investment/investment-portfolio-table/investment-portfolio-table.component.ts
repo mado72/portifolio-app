@@ -27,7 +27,7 @@ export class InvestmentPortfolioTableComponent implements OnInit{
 
   private investmentService = inject(InvestmentService);
 
-  readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'marketValue', 'percPlanned', 'percAllocation'];
+  readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
 
   @Input() portfolioId = '';
 

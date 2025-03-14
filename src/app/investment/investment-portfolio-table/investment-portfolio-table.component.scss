@@ -1,23 +1,35 @@
 .mat-column-quantity, .mat-column-percPlanned, .mat-column-percAllocation {
     text-align: right !important;
-    width: 7% !important;
+    width: 6% !important;
 }
 .mat-column-name {
-    width: 17% !important;
+    width: 14% !important;
 }
 .mat-column-code {
-    width: 14% !important;
+    width: 13% !important;
     overflow: hidden !important;
     word-break: break-all;
 }
-.mat-column-type,
+.mat-column-type
+{
+    width: 7% !important;
+    overflow: hidden !important;
+    word-break: break-all;
+}
 .mat-column-trend
 {
     width: 9% !important;
     overflow: hidden !important;
     word-break: break-all;
 }
-.mat-column-quote, 
+.mat-column-quote {
+    width: 15% !important;
+    text-align: end !important;
+}
+.mat-column-profit {
+    width: 8% !important;
+    text-align: end !important;
+}
 .mat-column-marketValue
 {
     width: 15% !important;
