@@ -19,6 +19,7 @@ export type Asset = {
     marketPlace: string;
     quote: CurrencyAmount;
     initialQuote?: number;
+    manualQuote?: boolean;
 }
 
 export type AssetAllocation = Asset & {

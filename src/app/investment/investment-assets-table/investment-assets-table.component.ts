@@ -7,6 +7,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faXmarkCircle, faCircleCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { Asset } from '../../model/investment.model';
 import { TrendComponent } from '../../utils/trend/trend.component';
+import { AssetTypePipe } from '../../util/asset-type.pipe';
+import { AssetCodePipe } from '../../util/asset-code.pipe';
 
 @Component({
   selector: 'app-investment-assets-table',
@@ -16,7 +18,9 @@ import { TrendComponent } from '../../utils/trend/trend.component';
     DatePipe,
     FontAwesomeModule,
     CurrencyComponent,
-    TrendComponent
+    TrendComponent,
+    AssetTypePipe,
+    AssetCodePipe
   ],
   templateUrl: './investment-assets-table.component.html',
   styleUrl: './investment-assets-table.component.scss'
@@ -28,7 +32,7 @@ export class InvestmentAssetsTableComponent {
   readonly iconTrue = faCircleCheck;
   readonly iconFalse = faXmarkCircle;
 
-  readonly displayedColumns: string[] = ['name', 'code', 'marketPlace', 'type', 'quote', 'trend', 'lastUpdate', 'controlByQty'];
+  readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'trend', 'lastUpdate', 'controlByQty', 'manualQuote'];
 
   @Input() enableSelection: boolean = false;
 
