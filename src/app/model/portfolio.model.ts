@@ -32,7 +32,7 @@ export class Portfolio {
                 marketValue: quote * asset.quantity,
                 percPlanned: asset.percPlanned,
                 percAllocation: 0,
-                profit: quote * asset.quantity - asset.averageBuy,
+                profit: asset.quantity * (quote - asset.averageBuy),
                 performance: (quote * asset.quantity - asset.averageBuy) / quote * asset.quantity
             };
             acc['total'].marketValue += acc[key].marketValue;
