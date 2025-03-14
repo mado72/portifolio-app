@@ -37,22 +37,23 @@ export class QuoteService {
 
     this.timerId = setInterval(() => {
       const aux: AssetQuoteRecord = {...this.quotes()};
-
       const assetsCode = Object.keys(this.quotes());
 
-      const idx = Math.trunc(Math.random() * assetsCode.length);
-
-      const code = assetsCode[idx];
-
-      const before = aux[code].quote.amount;
-      aux[code].quote.amount *= .01 * (105 - 10 * Math.random());
-      aux[code].lastUpdate = new Date();
-      const after = aux[code].quote.amount;
-      this.lastUpdate.set({code, before, after});
+      for (let i = 0; i < 10; i++) {
+        const idx = Math.trunc(Math.random() * assetsCode.length);
+  
+        const code = assetsCode[idx];
+  
+        const before = aux[code].quote.amount;
+        aux[code].quote.amount *= .01 * (105 - 10 * Math.random());
+        aux[code].lastUpdate = new Date();
+        const after = aux[code].quote.amount;
+        this.lastUpdate.set({code, before, after});
+      }
       // console.debug({code, before, after});
 
       this.quotes.set(aux);
-    }, 1000);
+    }, 30000);
   }
 
   destroy() {
