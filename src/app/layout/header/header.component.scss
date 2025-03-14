@@ -1,25 +1,5 @@
-// header {
-//     height: 48px;
-//     width: 100%;
-//     border: 1px solid #cc092f;
-//     background-color: #cc092f;
-// }
-
-// #breadcrumb {
-//     color: #FFFFFF;
-//     margin-left: 0px;
-// }
-
-// .imagemLogo {
-//     width: 45px;
-//     padding-right: 10px;
-//     margin-top: -5px;
-// }
-
-// .nav-link {
-//     color: #ffffff;
-// }
-
-// .nav-link:hover {
-//     color: #dddddd;
-// }
+:host {
+    position: sticky !important;
+    top: 0;
+    z-index: 1020;
+}
