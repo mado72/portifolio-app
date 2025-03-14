@@ -3,6 +3,10 @@
 
 @import "bootstrap/scss/bootstrap-grid";
 @import "bootstrap/scss/bootstrap-utilities";
+@import "bootstrap/scss/_nav";
+@import "bootstrap/scss/_navbar";
+@import "bootstrap/scss/_dropdown";
+@import "bootstrap/scss/_variables";
 
 $theme: mat.define-theme((
   color: (
