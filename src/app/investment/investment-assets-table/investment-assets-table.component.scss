@@ -4,3 +4,9 @@
 .mat-column-lastUpdate {
     text-align: end !important;
 }
+.mat-table-hover {
+    .mat-mdc-row:hover {
+        background-color: #b8ccb2;
+        cursor: pointer !important;
+    }
+}

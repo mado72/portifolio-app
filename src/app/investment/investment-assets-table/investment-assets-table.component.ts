@@ -1,14 +1,14 @@
 import { DatePipe } from '@angular/common';
-import { Component, computed, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output, Signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { InvestmentService } from '../../service/investment.service';
-import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faXmarkCircle, faCircleCheck, IconDefinition } from '@fortawesome/free-solid-svg-icons';
-import { Asset } from '../../model/investment.model';
-import { TrendComponent } from '../../utils/trend/trend.component';
-import { AssetTypePipe } from '../../util/asset-type.pipe';
+import { faCircleCheck, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { Asset, TrendType } from '../../model/investment.model';
+import { InvestmentService } from '../../service/investment.service';
 import { AssetCodePipe } from '../../util/asset-code.pipe';
+import { AssetTypePipe } from '../../util/asset-type.pipe';
+import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { TrendComponent } from '../../utils/trend/trend.component';
 
 @Component({
   selector: 'app-investment-assets-table',
@@ -38,12 +38,9 @@ export class InvestmentAssetsTableComponent {
 
   @Output() onSelected = new EventEmitter<Asset>();
 
-  asserts = this.investmentService.assertsSignal;
-
-  datasource = computed(()=> {
-    const asserts = Object.values(this.asserts());
-    return asserts;
-  })
+  @Input() datasource!: Signal<(Asset & {
+    trend: TrendType;
+  })[]>;
 
   rowClick(asset: Asset) {
     this.onSelected.emit(asset);

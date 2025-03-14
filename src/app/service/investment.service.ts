@@ -130,4 +130,11 @@ export class InvestmentService {
     );
   }
 
+  getAssetsDatasourceComputed() {
+    return computed(()=> {
+      const asserts = Object.values(this.assertsSignal());
+      return asserts;
+    })
+  }
+
 }

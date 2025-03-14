@@ -1,4 +1,4 @@
-<table mat-table [dataSource]="datasource()" class="mat-elevation-z8">
+<table mat-table [dataSource]="datasource()" class="mat-elevation-z8 primary" [class.mat-table-hover]="enableSelection">
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Nome </th>
         <td mat-cell *matCellDef="let row"> {{row.name}} </td>
