@@ -3,11 +3,12 @@ import { toObservable } from '@angular/core/rxjs-interop';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
+import earningsSource from '../../data/earnings.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, fnTrend, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Earning, EarningsEnum, fnTrend, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { AssetPosition, AssetPositionRecord, Portfolio } from '../model/portfolio.model';
-import { formatISO } from 'date-fns';
+import { formatISO, parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +17,21 @@ export class InvestmentService {
 
   private quoteService = inject(QuoteService);
 
-  assertMap = signal(assetSource.data.slice());
+  private static earningsId = 4;
+
+  private assertsDataSignal = signal(assetSource.data.slice());
+
+  private earningsData = earningsSource.data.map(item=>{
+    return {
+      ...item,
+      date: parseISO(item.date),
+    } as Earning
+  });
 
   assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
 
-    return this.assertMap().reduce((acc, data) => {
+    return this.assertsDataSignal().reduce((acc, data) => {
       const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
@@ -36,8 +46,6 @@ export class InvestmentService {
       return acc;
     }, {} as Record<string, Asset & {trend: TrendType}>)
   })
-
-  assertsObservable = toObservable(this.assertsSignal);
 
   constructor() {}
 
@@ -149,7 +157,7 @@ export class InvestmentService {
       lastUpdate:  formatISO(new Date()),
       trend: "unchanged"
     }
-    this.assertMap().push(asset);
+    this.assertsDataSignal().push(asset);
   }
 
   updateAsset(code: string, data: AssetFormModel) {
@@ -161,7 +169,7 @@ export class InvestmentService {
     }
     this.quoteService.quotes.set(quotes);
 
-    this.assertMap.update(assertMap => {
+    this.assertsDataSignal.update(assertMap => {
       const idx = assertMap.findIndex(item => getMarketPlaceCode(item) === code);
       let asset = assertMap[idx];
       asset = {... asset, ...data,
@@ -177,6 +185,44 @@ export class InvestmentService {
       return quotes;
     });
 
+  }
+
+  deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {
+    return this.getPortfolios().pipe(
+      map(portfolios=>{
+        const assetFound = Object.values(portfolios)
+          .flatMap(item=>item.assets)
+          .find(item=>item.code === code && item.marketPlace === marketPlace);
+        if (assetFound) {
+          throw new Error('Asset is in use.');
+        }
+        this.assertsDataSignal.update(data => data.filter(item => getMarketPlaceCode(item) !== getMarketPlaceCode({marketPlace, code})));
+      })
+    )
+  }
+
+  findEarningsBetween(from: Date, to: Date) {
+    return of(this.earningsData);
+  }
+
+  findEarningsOfAsset({marketPlace, code}: {marketPlace: string, code: string}) {
+    return of(this.earningsData.filter(item=>item.ticket === getMarketPlaceCode({marketPlace, code})));
+  }
+
+  addEarning(data: { date: Date; ticket: string; type: EarningsEnum, amount: number; }) {
+    const reg = {
+      ...data,
+      id: InvestmentService.earningsId++
+    }
+    this.earningsData.push(reg);
+  }
+
+  updateEarning(id: number, data: { date: Date; ticket: string; type: EarningsEnum, amount: number; }) {
+    this.earningsData = this.earningsData.map(item=>item.id === id ? {...item, ...data} : item);
+  }
+
+  deleteEarning(id: number) {
+    this.earningsData = this.earningsData.filter(item=>item.id !== id);
   }
 
 }

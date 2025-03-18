@@ -73,3 +73,25 @@ export type MarketPlaceType = `${MarketPlaceEnum}`;
 export function marketPlaceOf(marketPlace: string) {
     return MarketPlaceEnum[marketPlace as keyof typeof MarketPlaceEnum];
 }
+
+export enum EarningsEnum {
+    DIVIDENDS = 'DIVIDENDS',
+    RENT_RETURN = 'RENT_RETURN',
+    IOE_RETURN = 'IOE_RETURN', // Intereset on Equity
+}
+
+type EarningsEnumType = `${EarningsEnum}`;
+
+export const EarningsDesc : Record<EarningsEnumType, string> = {
+    "DIVIDENDS": 'Dividendos',
+    "RENT_RETURN": 'Aluguel',
+    "IOE_RETURN": 'JCP',
+}
+
+export type Earning = {
+    id: number;
+    date: Date;
+    ticket: string;
+    amount: number;
+    type: EarningsEnum
+}
