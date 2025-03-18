@@ -77,6 +77,12 @@ $valor-negativo: rgb(215, 0, 0);
 }
 .mat-table-hover {
     .mat-mdc-row:hover {
+        background-color: #ecffe4;
+        cursor: pointer !important;
+    }
+}
+.mat-table-selectable {
+    .mat-mdc-row:hover {
         background-color: #b8ccb2;
         cursor: pointer !important;
     }
