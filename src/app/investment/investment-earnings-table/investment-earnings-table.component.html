@@ -1,4 +1,4 @@
-<mat-table [dataSource]="dataSource" #table class="mat-table-hover">
+<mat-table [dataSource]="dataSource" #table [class.mat-table-selectable]="selectable" [class.mat-table-hover]="!selectable">
     <ng-container matColumnDef="id">
         <mat-header-cell *matHeaderCellDef>#</mat-header-cell>
         <mat-cell *matCellDef="let element">
