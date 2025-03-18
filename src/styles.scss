@@ -75,3 +75,9 @@ $valor-negativo: rgb(215, 0, 0);
         margin-bottom: 1rem;
     }
 }
+.mat-table-hover {
+    .mat-mdc-row:hover {
+        background-color: #b8ccb2;
+        cursor: pointer !important;
+    }
+}
