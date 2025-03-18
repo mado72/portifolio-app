@@ -27,12 +27,8 @@ export const routes: Routes = [
         loadComponent: () => import('./assets/financial-forecast-summary/financial-forecast-summary.component').then(mod => mod.FinancialForecastSummaryComponent),
     },
     {
-        path: 'investment-assets',
-        loadComponent: () => import('./investment/investment-assets-portlet/investment-assets-portlet.component').then(mod => mod.InvestmentAssetsPortletComponent),
-    },
-    {
-        path: 'investment-portfolio',
-        loadComponent: () => import('./investment/investment-portfolio-container/investment-portfolio-container.component').then(mod => mod.InvestmentPortfolioContainerComponent),
+        path: 'investment',
+        loadChildren: () => import('./investment/investment.route').then(mod => mod.investmentRoutes),
     },
     {
         path: 'registration',
