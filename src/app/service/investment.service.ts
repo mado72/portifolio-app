@@ -1,14 +1,13 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
+import { formatISO, getYear, setDayOfYear, setYear } from 'date-fns';
 import { forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
 import { Currency } from '../model/domain.model';
 import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Earning, EarningsEnum, fnTrend, TrendType } from '../model/investment.model';
+import { AssetPositionRecord, Portfolio } from '../model/portfolio.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
-import { AssetPosition, AssetPositionRecord, Portfolio } from '../model/portfolio.model';
-import { addDays, differenceInDays, formatISO, parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -17,16 +16,15 @@ export class InvestmentService {
 
   private quoteService = inject(QuoteService);
 
-  private static earningsId = 4;
+  private static earningsId = 0;
 
   private assertsDataSignal = signal(assetSource.data.slice());
 
-  private earningsData = earningsSource.data.map(item=>{
-    return {
-      ...item,
-      date: parseISO(item.date),
-    } as Earning
-  });
+  private earningsData = earningsSource.data.map(item => ({
+    ...item,
+    id: ++InvestmentService.earningsId,
+    date: setDayOfYear(new Date(), Math.random() * 365),
+  } as Earning));
 
   assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
@@ -35,7 +33,7 @@ export class InvestmentService {
       const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
-      
+
       acc[code] = {
         ...data,
         type: AssetEnum[data.type as keyof typeof AssetEnum],
@@ -45,10 +43,10 @@ export class InvestmentService {
         trend
       };
       return acc;
-    }, {} as Record<string, Asset & {trend: TrendType}>)
+    }, {} as Record<string, Asset & { trend: TrendType }>)
   })
 
-  constructor() {}
+  constructor() { }
 
   private getPortfolios() {
     return of(portfoliosSource.data as {
@@ -78,13 +76,13 @@ export class InvestmentService {
     }).pipe(
       map(({ portfolioData, exchanges }) => {
         const assetsRec = this.assertsSignal();
-        const fnMap = (from: Currency, to: Currency ) => `${from}-${to}`;
+        const fnMap = (from: Currency, to: Currency) => `${from}-${to}`;
 
-        const exchangeMap = new Map(exchanges.map(exchange=> ([fnMap(exchange.from, exchange.to), exchange.factor])));
+        const exchangeMap = new Map(exchanges.map(exchange => ([fnMap(exchange.from, exchange.to), exchange.factor])));
 
-        return Object.values(portfolioData).map(portfolioItem=>{
+        return Object.values(portfolioData).map(portfolioItem => {
           const assets = portfolioItem.assets
-            .map(allocation=>{
+            .map(allocation => {
               const asset = assetsRec[getMarketPlaceCode({ marketPlace: allocation.marketPlace, code: allocation.code })];
               if (!asset) {
                 return undefined;
@@ -100,14 +98,14 @@ export class InvestmentService {
               })
             })
             .filter(item => !!item)
-            .reduce((acc, item)=>{
+            .reduce((acc, item) => {
               acc[getMarketPlaceCode({ marketPlace: item.marketPlace, code: item.code })] = item;
               return acc;
             }, {} as AssetAllocationRecord)
 
           const portfolio = new Portfolio(portfolioItem.id, portfolioItem.name, portfolioItem.currency, this.quoteService.quotes);
           const positions = Object.entries(assets)
-            .reduce((acc, [key,value])=> {
+            .reduce((acc, [key, value]) => {
               acc[key] = {
                 ...value,
                 averageBuy: value.averageBuy || value.quote.amount,
@@ -123,10 +121,10 @@ export class InvestmentService {
     )
   }
 
-  getPortfolioNames(): Observable<{id: string, name: string, currency: Currency}[]> {
+  getPortfolioNames(): Observable<{ id: string, name: string, currency: Currency }[]> {
     // FIXME: Replace this with code to query the portfolio data
     return this.getPortfolios().pipe(
-      map((portfolios) => Object.keys(portfolios).map(item=>({id: item, name: item, currency: Currency.BRL})) )
+      map((portfolios) => Object.keys(portfolios).map(item => ({ id: item, name: item, currency: Currency.BRL })))
     );
   }
 
@@ -143,7 +141,7 @@ export class InvestmentService {
   }
 
   getAssetsDatasourceComputed() {
-    return computed(()=> {
+    return computed(() => {
       const asserts = Object.values(this.assertsSignal());
       return asserts;
     })
@@ -155,7 +153,7 @@ export class InvestmentService {
       price: Math.random() * 200 + 10,
       initialQuote: 0,
       manualQuote: data.manualQuote,
-      lastUpdate:  formatISO(new Date()),
+      lastUpdate: formatISO(new Date()),
       trend: "unchanged"
     }
     this.assertsDataSignal().push(asset);
@@ -173,15 +171,16 @@ export class InvestmentService {
     this.assertsDataSignal.update(assertMap => {
       const idx = assertMap.findIndex(item => getMarketPlaceCode(item) === code);
       let asset = assertMap[idx];
-      asset = {... asset, ...data,
+      asset = {
+        ...asset, ...data,
         price: Math.random() * 200 + 10,
-        lastUpdate:  formatISO(new Date())
+        lastUpdate: formatISO(new Date())
       };
       assertMap[idx] = asset;
       return assertMap;
     })
 
-    this.quoteService.quotes.update(quotes=>{
+    this.quoteService.quotes.update(quotes => {
       delete quotes[code];
       return quotes;
     });
@@ -190,42 +189,55 @@ export class InvestmentService {
 
   deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {
     return this.getPortfolios().pipe(
-      map(portfolios=>{
+      map(portfolios => {
         const assetFound = Object.values(portfolios)
-          .flatMap(item=>item.assets)
-          .find(item=>item.code === code && item.marketPlace === marketPlace);
+          .flatMap(item => item.assets)
+          .find(item => item.code === code && item.marketPlace === marketPlace);
         if (assetFound) {
           throw new Error('Asset is in use.');
         }
-        this.assertsDataSignal.update(data => data.filter(item => getMarketPlaceCode(item) !== getMarketPlaceCode({marketPlace, code})));
+        this.assertsDataSignal.update(data => data.filter(item => getMarketPlaceCode(item) !== getMarketPlaceCode({ marketPlace, code })));
       })
     )
   }
 
   findEarningsBetween(from: Date, to: Date) {
     return of(this.earningsData).pipe(
-      map(earnings => earnings.map(item=>({...item, date: addDays(from, Math.random() * differenceInDays(to, from))}))
-    ));
+      map(earnings => earnings.map(item => ({ ...item, date: setYear(item.date, getYear(from)) }))
+      ));
   }
 
-  findEarningsOfAsset({marketPlace, code}: {marketPlace: string, code: string}) {
-    return of(this.earningsData.filter(item=>item.ticket === getMarketPlaceCode({marketPlace, code})));
+  findEarningsOfAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
+    return of(this.earningsData.filter(item => item.ticket === getMarketPlaceCode({ marketPlace, code })));
   }
 
-  addEarning(data: { date: Date; ticket: string; type: EarningsEnum, amount: number; }) {
-    const reg = {
-      ...data,
-      id: InvestmentService.earningsId++
-    }
-    this.earningsData.push(reg);
+  addEarning(ticket: string, data: { date: Date; type: EarningsEnum, amount: number; }) {
+    return new Observable<Earning>((observer) => {
+      const reg = {
+        ...data,
+        ticket,
+        id: ++InvestmentService.earningsId
+      }
+      this.earningsData.push(reg);
+      observer.next(reg);
+      observer.complete();
+    })
   }
 
-  updateEarning(id: number, data: { date: Date; ticket: string; type: EarningsEnum, amount: number; }) {
-    this.earningsData = this.earningsData.map(item=>item.id === id ? {...item, ...data} : item);
+  updateEarning(id: number, data: { date: Date; type: EarningsEnum, amount: number; }) {
+    return new Observable<void>((observer) => {
+      this.earningsData = this.earningsData.map(item => item.id === id ? { ...item, ...data } : item);
+      observer.next();
+      observer.complete();
+    });
   }
 
   deleteEarning(id: number) {
-    this.earningsData = this.earningsData.filter(item=>item.id !== id);
+    return new Observable<void>((observer) => {
+      this.earningsData = this.earningsData.filter(item => item.id !== id);
+      observer.next();
+      observer.complete();
+    });
   }
 
 }

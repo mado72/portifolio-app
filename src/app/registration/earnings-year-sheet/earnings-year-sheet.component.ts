@@ -1,15 +1,17 @@
-import { DecimalPipe, JsonPipe } from '@angular/common';
+import { DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { endOfYear, format, getMonth, startOfYear } from 'date-fns';
-import { Earning } from '../../model/investment.model';
+import { endOfYear, format, getMonth, setMonth, startOfYear } from 'date-fns';
+import { timer } from 'rxjs';
+import { Earning, EarningsEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
-import { EditableNumberComponent } from '../../utils/editable-number/editable-number.component';
+import { EarningsEntryDialogComponent } from '../earnings-entry-dialog/earnings-entry-dialog.component';
 
 
 const YEAR_FORMATS = {
@@ -27,6 +29,7 @@ const YEAR_FORMATS = {
 type EarningEntry = {
   id?: number;
   date?: Date;
+  type?: EarningsEnum;
   amount: number;
 };
 
@@ -45,9 +48,7 @@ type SheetRow = {
     MatInputModule,
     MatDatepickerModule,
     FormsModule,
-    EditableNumberComponent,
-    DecimalPipe,
-    JsonPipe
+    DecimalPipe
   ],
   providers: [
     provideAppDateAdapter(YEAR_FORMATS)
@@ -61,12 +62,16 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
+  private dialog = inject(MatDialog);
+
   dateReference = new Date();
 
   readonly months = new Array(12).fill(0).map((_, i) => format(new Date(0, i), 'MMM'));
   readonly vlMonths = new Array(12).fill(0).map((_, i) => `vl${i}`);
 
   data = signal<SheetRow[]>([]);
+
+  queue = signal<EarningEntry[]>([]);
 
   asset = this.investmentService.assertsSignal();
 
@@ -98,18 +103,15 @@ export class EarningsYearSheetComponent implements OnInit {
     row.entries[month] = data;
   }
 
-  findRow(earning: Earning) {
-    return this.data().find((row: SheetRow) => row.ticket === earning.ticket);
-  }
-
   doFilter(): void {
     this.investmentService.findEarningsBetween(startOfYear(this.dateReference), endOfYear(this.dateReference))
       .subscribe(earnings => {
+        earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id)
         const data: SheetRow[] = [];
+        this.data.set([]);
 
         earnings.forEach(earning => {
-          let group = this.findRow(earning);
-          earning.amount = Math.round(1) * earning.amount - .5;
+          let group = data.find((row: SheetRow) => row.ticket === earning.ticket);
           if (!group) {
             group = this.createGroup(earning);
             data.push(group);
@@ -137,5 +139,53 @@ export class EarningsYearSheetComponent implements OnInit {
 
   totalMonth(vlMonth: number): number {
     return parseFloat(this.data().reduce((acc, row) => acc += row.entries[vlMonth].amount, 0).toFixed(2));
+  }
+
+  openDialog(index: number, element: SheetRow) {
+    const entry = element.entries[index];
+    if (!entry.date) {
+      entry.date = setMonth(new Date(), index);
+    }
+    const dialogRef = this.dialog.open(EarningsEntryDialogComponent, {
+      data: {entry, title: 'Cadastro de Provento'}
+    });
+
+    dialogRef.afterClosed().subscribe((result: EarningEntry) => {
+      if (result) {
+        element.entries[index] = result;
+        this.changeDetectorRef.detectChanges();
+
+        if (this.queue().length == 0) {
+
+          timer(1000).subscribe(() => {
+            this.queue().forEach(entry => {
+              this.queue().shift();
+
+              this.saveEarning(element, entry);
+            })
+          })
+
+        }
+        this.queue().push(result);
+      }});
+  }
+
+  private saveEarning(element: SheetRow, entry: EarningEntry) {
+    let [marketPlace, code] = element.ticket.split(':');
+    this.investmentService.findEarningsOfAsset({ marketPlace, code }).subscribe(earnings => {
+      const earning: Earning | undefined = earnings.find(item => item.id === entry.id);
+      if (!!earning) {
+        const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Earning>;
+        this.investmentService.updateEarning(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
+      }
+      else {
+        const entryData = { ...entry, ticket: element.ticket } as Required<Earning>;
+        this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
+          // this.setEarningValue(earning, element);
+          this.doFilter();
+        });
+      }
+      this.changeDetectorRef.detectChanges();
+    });
   }
 }

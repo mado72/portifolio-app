@@ -24,12 +24,17 @@
   @for(month of months; track $index) {
       <ng-container [matColumnDef]="vlMonths[$index]">
         <mat-header-cell *matHeaderCellDef class="vlMonth"> {{month}} </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="number cell vlMonth">
-          <app-editable-number step="0.01" class="w-100"
-            [(ngModel)]="element.entries[$index].amount"
-            (ngModelChange)="updateEntry($event, $index, element)"
-            />
-           <!-- {{ element.entries[$index] | json}} -->
+        <mat-cell *matCellDef="let element" class="number cell vlMonth"  (click)="openDialog($index, element)">
+          @if (element.entries[$index].amount == 0) {
+            <span class="w-100 text-center">
+              -
+            </span>
+          }
+          @else {
+            <span class="w-100 text-end pe-2">
+              {{ element.entries[$index].amount | number:'1.2-2'}}
+            </span>
+          }
         </mat-cell>
         <mat-footer-cell *matFooterCellDef class="number vlMonth">
           <div class="w-100 text-end pe-3">
@@ -41,9 +46,9 @@
 
   <!-- Cabeçalho e linhas -->
   <mat-header-row *matHeaderRowDef="displayedColumns"/>
-  <mat-row *matRowDef="let row; columns: displayedColumns;"/>
+  <mat-row *matRowDef="let row; columns: displayedColumns"/>
   <mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"/>
 </mat-table>
-<code>
+<!-- <code>
   <pre>{{data() | json}}</pre>
-</code>
+</code> -->

@@ -1,0 +1,43 @@
+<h3 mat-dialog-title>{{title}}</h3>
+<form [formGroup]="entryForm" (submit)="submitForm()">
+    <mat-dialog-content>
+        <div class="d-flex flex-column">
+
+            <mat-form-field>
+                <mat-label>Data do evento</mat-label>
+                <input matInput [matDatepicker]="picker" formControlName="date" required>
+                <mat-error *ngIf="entryForm.get('date')?.invalid && entryForm.get('date')?.touched">
+                    Campo obrigatório
+                </mat-error>
+                <mat-hint>DD/MM/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Valor</mat-label>
+                <input matInput type="number" step="0.01" class="text-end" formControlName="amount" required
+                    (focus)="selectText($event)">
+                <mat-error *ngIf="entryForm.get('amount')?.invalid && entryForm.get('amount')?.touched">
+                    Campo obrigatório
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>Tipo do Evento:</mat-label>
+                <mat-select formControlName="type" required>
+                    @for(type of typeOptions; track $index) {
+                    <mat-option [value]="type">{{earningDesc(type)}}</mat-option>
+                    }
+                </mat-select>
+                <mat-error *ngIf="entryForm.get('type')?.invalid && entryForm.get('type')?.touched">
+                    Campo obrigatório
+                </mat-error>
+                <mat-hint>Selecione um tipo de evento</mat-hint>
+            </mat-form-field>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-button (click)="cancelClick()">Cancelar</button>
+        <button mat-button type="submit" [mat-dialog-close]="entryForm.value"
+            [disabled]="entryForm.invalid">Salvar</button>
+    </mat-dialog-actions>
+</form>
