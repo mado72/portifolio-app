@@ -2,7 +2,7 @@ import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { routes } from './app.routes';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { provideHttpClient } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
@@ -10,7 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
     provideAnimationsAsync(),
-    provideNativeDateAdapter(),
-    provideHttpClient()
+    provideHttpClient(),
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
   ]
 };
