@@ -1,9 +1,23 @@
-<form>
+<form class="d-flex">
+  <div class="pe-3">
     <mat-form-field>
-        <input matInput [matDatepicker]="dp" placeholder="Month and Year" [(ngModel)]="dateReference" [ngModelOptions]="{standalone: true}">
-        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-        <mat-datepicker #dp startView="multi-year" (yearSelected)="choosenYear($event, dp)"></mat-datepicker>
+      <input matInput [matDatepicker]="dp" placeholder="Month and Year" [(ngModel)]="filter.dateReference"
+        [ngModelOptions]="{standalone: true}">
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp startView="multi-year" (yearSelected)="choosenYear($event, dp)"></mat-datepicker>
     </mat-form-field>
+  </div>
+  <div class="pe-3">
+    <mat-form-field>
+      <mat-select matSelect [(ngModel)]="filter.typeReference" [ngModelOptions]="{standalone: true}" 
+          placeholder="Todos" (ngModelChange)="doFilter()">
+        <mat-option [value]="">Todos</mat-option>
+        @for (type of assetTypes; track $index) {
+          <mat-option [value]="type">{{ type | assetType }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
 </form>
 
 <!-- Criação do formArray -->
@@ -18,36 +32,36 @@
   <ng-container matColumnDef="description">
     <mat-header-cell *matHeaderCellDef> Ativo </mat-header-cell>
     <mat-cell *matCellDef="let element" class="cell"> {{element.description}} </mat-cell>
-    <mat-footer-cell *matFooterCellDef/>
+    <mat-footer-cell *matFooterCellDef />
   </ng-container>
 
   @for(month of months; track $index) {
-      <ng-container [matColumnDef]="vlMonths[$index]">
-        <mat-header-cell *matHeaderCellDef class="vlMonth"> {{month}} </mat-header-cell>
-        <mat-cell *matCellDef="let element" class="number cell vlMonth"  (click)="openDialog($index, element)">
-          @if (element.entries[$index].amount == 0) {
-            <span class="w-100 text-center">
-              -
-            </span>
-          }
-          @else {
-            <span class="w-100 text-end pe-2">
-              {{ element.entries[$index].amount | number:'1.2-2'}}
-            </span>
-          }
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef class="number vlMonth">
-          <div class="w-100 text-end pe-3">
-            {{ totalMonth($index) | number:'1.2-2' }}
-          </div>
-        </mat-footer-cell>
-      </ng-container>
+  <ng-container [matColumnDef]="vlMonths[$index]">
+    <mat-header-cell *matHeaderCellDef class="vlMonth"> {{month}} </mat-header-cell>
+    <mat-cell *matCellDef="let element" class="number cell vlMonth" (click)="openDialog($index, element)">
+      @if (element.entries[$index].amount == 0) {
+      <span class="w-100 text-center">
+        -
+      </span>
+      }
+      @else {
+      <span class="w-100 text-end pe-2">
+        {{ element.entries[$index].amount | number:'1.2-2'}}
+      </span>
+      }
+    </mat-cell>
+    <mat-footer-cell *matFooterCellDef class="number vlMonth">
+      <div class="w-100 text-end pe-3">
+        {{ totalMonth($index) | number:'1.2-2' }}
+      </div>
+    </mat-footer-cell>
+  </ng-container>
   }
 
   <!-- Cabeçalho e linhas -->
-  <mat-header-row *matHeaderRowDef="displayedColumns"/>
-  <mat-row *matRowDef="let row; columns: displayedColumns"/>
-  <mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"/>
+  <mat-header-row *matHeaderRowDef="displayedColumns" />
+  <mat-row *matRowDef="let row; columns: displayedColumns" />
+  <mat-footer-row *matFooterRowDef="displayedColumns" class="table-total" />
 </mat-table>
 <!-- <code>
   <pre>{{data() | json}}</pre>

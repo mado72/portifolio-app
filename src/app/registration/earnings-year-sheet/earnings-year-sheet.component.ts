@@ -8,10 +8,12 @@ import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { endOfYear, format, getMonth, setMonth, startOfYear } from 'date-fns';
 import { timer } from 'rxjs';
-import { Earning, EarningsEnum } from '../../model/investment.model';
+import { AssetEnum, Earning, EarningsDesc, EarningsEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { EarningsEntryDialogComponent } from '../earnings-entry-dialog/earnings-entry-dialog.component';
+import { MatSelectModule } from '@angular/material/select';
+import { AssetTypePipe } from '../../utils/asset-type.pipe';
 
 
 const YEAR_FORMATS = {
@@ -47,6 +49,8 @@ type SheetRow = {
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
+    MatSelectModule,
+    AssetTypePipe,
     FormsModule,
     DecimalPipe
   ],
@@ -64,7 +68,10 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private dialog = inject(MatDialog);
 
-  dateReference = new Date();
+  filter : { dateReference: Date, typeReference: AssetEnum | null }= {
+    dateReference : new Date(),
+    typeReference: null
+  }
 
   readonly months = new Array(12).fill(0).map((_, i) => format(new Date(0, i), 'MMM'));
   readonly vlMonths = new Array(12).fill(0).map((_, i) => `vl${i}`);
@@ -76,6 +83,8 @@ export class EarningsYearSheetComponent implements OnInit {
   asset = this.investmentService.assertsSignal();
 
   readonly displayedColumns = ['ticket', 'description', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
+
+  readonly assetTypes = Object.values(AssetEnum);
 
   ngOnInit(): void {
     this.doFilter();
@@ -104,8 +113,14 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   doFilter(): void {
-    this.investmentService.findEarningsBetween(startOfYear(this.dateReference), endOfYear(this.dateReference))
+    this.investmentService.findEarningsBetween(startOfYear(this.filter.dateReference), endOfYear(this.filter.dateReference))
       .subscribe(earnings => {
+        if (!! this.filter.typeReference) {
+          const assets = Object.entries(this.investmentService.assertsSignal())
+            .filter(([ticket, asset])=>asset.type === this.filter.typeReference)
+            .map(([ticket, _])=>ticket)
+          earnings = earnings.filter(earning => assets.includes(earning.ticket));
+        }
         earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id)
         const data: SheetRow[] = [];
         this.data.set([]);
@@ -127,7 +142,7 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   choosenYear(d: Date, picker: MatDatepicker<any>): void {
-    this.dateReference = d;
+    this.filter.dateReference = d;
     picker.close();
     this.data.set([]);
     this.doFilter();
