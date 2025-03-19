@@ -5,8 +5,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleCheck, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { Asset, TrendType } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
-import { AssetCodePipe } from '../../util/asset-code.pipe';
-import { AssetTypePipe } from '../../util/asset-type.pipe';
+import { AssetCodePipe } from '../../utils/asset-code.pipe';
+import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TrendComponent } from '../../utils/trend/trend.component';
 

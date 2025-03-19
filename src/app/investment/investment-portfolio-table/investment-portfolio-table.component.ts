@@ -5,8 +5,8 @@ import { Currency } from '../../model/domain.model';
 import { AssetValueRecord, Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
-import { AssetCodePipe } from '../../util/asset-code.pipe';
-import { AssetTypePipe } from '../../util/asset-type.pipe';
+import { AssetCodePipe } from '../../utils/asset-code.pipe';
+import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
 @Component({

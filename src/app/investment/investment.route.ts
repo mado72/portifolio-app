@@ -11,7 +11,7 @@ export const investmentRoutes: Routes = [
     },
     {
         path: 'earnings',
-        loadComponent: () => import('./investment-earnings-table/investment-earnings-table.component').then(mod => mod.InvestmentEarningsTableComponent)
+        loadComponent: () => import('./investment-earnings-month/investment-earnings-month.component').then(mod => mod.InvestmentEarningsMonthComponent)
     }
 
 ]

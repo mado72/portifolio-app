@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AssetEnum, AssetFormModel, MarketPlaceType } from '../../model/investment.model';
-import { AssetTypePipe } from '../../util/asset-type.pipe';
+import { AssetTypePipe } from '../../utils/asset-type.pipe';
 
 @Component({
   selector: 'app-asset-details',
