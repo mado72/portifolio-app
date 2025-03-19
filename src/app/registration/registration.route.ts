@@ -7,7 +7,7 @@ export const registrationRoutes: Routes = [
     },
     {
         path: 'earnings',
-        loadComponent: () => import('./investment-earnings-details/investment-earnings-details.component').then(mod => mod.InvestmentEarningsDetailsComponent)
+        loadComponent: () => import('./earnings-year-sheet/earnings-year-sheet.component').then(mod => mod.EarningsYearSheetComponent)
     }
 
 ]

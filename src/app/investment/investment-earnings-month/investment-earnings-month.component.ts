@@ -1,16 +1,14 @@
-import { DatePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Earning } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
-import { AppDateAdapter, provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
+import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { InvestmentEarningsTableComponent } from '../investment-earnings-table/investment-earnings-table.component';
 
 
@@ -37,8 +35,7 @@ const MONTH_FORMATS = {
     MatButtonModule,
     InvestmentEarningsTableComponent,
     FormsModule,
-    ReactiveFormsModule,
-    DatePipe
+    ReactiveFormsModule
   ],
   encapsulation: ViewEncapsulation.None,
   providers: [
@@ -48,7 +45,7 @@ const MONTH_FORMATS = {
   styleUrl: './investment-earnings-month.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InvestmentEarningsMonthComponent {
+export class InvestmentEarningsMonthComponent implements OnInit {
 
   private investmentService = inject(InvestmentService);
   
@@ -56,10 +53,14 @@ export class InvestmentEarningsMonthComponent {
 
   earnings: Earning[] = [];
 
+  ngOnInit(): void {
+    this.doFilter();
+  }
+
   doFilter() {
     const date = this.date.value as Date;
     this.investmentService.findEarningsBetween(startOfMonth(date), endOfMonth(date))
-      .subscribe(earnings => this.earnings = earnings);
+      .subscribe(earnings => this.earnings = earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id));
   }
 
   setMonthAndYear($date: Date, datePicker: MatDatepicker<any>) {

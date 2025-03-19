@@ -8,7 +8,7 @@ import { Currency } from '../model/domain.model';
 import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Earning, EarningsEnum, fnTrend, TrendType } from '../model/investment.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { AssetPosition, AssetPositionRecord, Portfolio } from '../model/portfolio.model';
-import { formatISO, parseISO } from 'date-fns';
+import { addDays, differenceInDays, formatISO, parseISO } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -203,7 +203,7 @@ export class InvestmentService {
 
   findEarningsBetween(from: Date, to: Date) {
     return of(this.earningsData).pipe(
-      map(earnings => earnings.map(item=>({...item, date: from}))
+      map(earnings => earnings.map(item=>({...item, date: addDays(from, Math.random() * differenceInDays(to, from))}))
     ));
   }
 

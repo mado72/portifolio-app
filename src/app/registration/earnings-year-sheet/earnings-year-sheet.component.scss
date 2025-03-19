@@ -1,0 +1,53 @@
+.number {
+    text-align: right;
+
+    .mat-mdc-form-field-infix {
+        padding: 0 !important;
+    }
+
+    input[type="number"] {
+        text-align: right;
+        height: auto;
+        border: 0;
+        padding: 8px 4px;
+    }
+
+    input[value="0.00"] {
+        background-color: yellow;
+    }
+}
+
+.mat-row {
+    height: 36px;
+    min-height: 0 !important;
+}
+
+.mat-cell,
+.cell {
+    padding: 0;
+    margin: 0;
+}
+
+.number-footer {
+    font-weight: bold;
+}
+
+.mat-column-ticket {
+    width: 8%;
+}
+.mat-column-description {
+    width: 14%;
+}
+
+.vlMonth {
+    max-width: 6.5%;
+    margin: 0;
+    padding: 0;
+}
+
+
+mat-row, mat-footer-row {
+    .vlMonth {
+        border-left : 1px solid #ddd;
+    }
+}
