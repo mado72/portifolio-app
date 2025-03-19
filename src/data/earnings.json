@@ -67,7 +67,7 @@
             "id": 10,
             "ticket": "Binance:LTC",
             "date": "2022-01-01",
-            "type": "rent_return",
+            "type": "RENT_RETURN",
             "amount": 0.00
         },
         {
@@ -88,7 +88,7 @@
             "id": 13,
             "ticket": "BVMF:PETR3",
             "date": "2022-01-01",
-            "type": "rent_return",
+            "type": "RENT_RETURN",
             "amount": 0.10
         }
     ]
