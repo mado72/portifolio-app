@@ -51,7 +51,7 @@ export class InvestmentPortfolioTableComponent implements OnInit{
   ngOnInit(): void {
     this.investmentService.getPortfolio(this.portfolioId).subscribe(porfolio => {
       this.portfolio.set(porfolio);
-      console.log(porfolio)
+      // console.log(porfolio)
     });
   }
 

@@ -53,8 +53,6 @@ export class FinancialForecastComponent implements OnInit {
   displayedColumns = ["movement", "due", "amount", "done"];
   
   ngOnInit(): void {
-    console.log(this.datasource());
-    console.log(this.total());
   }
 
   checkboxClicked(id: number, checked: boolean): void {

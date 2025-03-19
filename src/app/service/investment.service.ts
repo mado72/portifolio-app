@@ -35,6 +35,7 @@ export class InvestmentService {
       const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
+      
       acc[code] = {
         ...data,
         type: AssetEnum[data.type as keyof typeof AssetEnum],

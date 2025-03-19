@@ -42,8 +42,6 @@ export class AllocationSummaryComponent implements OnInit {
 
   displayedColumns: string[] = ['class', 'financial', 'percPlanned', 'percActual'];
 
-  ngOnInit(): void {
-    console.log(this.summarySignal())
-  }
+  ngOnInit(): void {}
 
 }
