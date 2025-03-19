@@ -1,8 +1,8 @@
 import { DatePipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { map } from 'rxjs';
-import { EarningsDesc, EarningsEnum } from '../../model/investment.model';
+import { Earning, EarningsDesc, EarningsEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
@@ -22,16 +22,27 @@ export class InvestmentEarningsTableComponent {
 
   private investmentService = inject(InvestmentService);
 
-  dataSource = this.investmentService.findEarningsBetween(new Date(), new Date()).pipe(
-    map(earnings => earnings.map(earning => {
-      const asserts = this.investmentService.assertsSignal();
-      return {
-        ...earning,
-        currency: asserts[earning.ticket].quote.currency,
-        description: asserts[earning.ticket].name
-      }
-    })
-  ));
+  @Input() selectable = false;
+
+  selected : Earning | undefined = undefined;
+
+  @Output() itemSelected = new EventEmitter<Earning>();
+
+  private _dataSource: Earning[] = [];
+  @Input()
+  public get dataSource(): Earning[] {
+    return this._dataSource;
+  }
+  public set dataSource(earnings: Earning[]) {
+    this._dataSource = earnings.map(earning => {
+        const asserts = this.investmentService.assertsSignal();
+        return {
+          ...earning,
+          currency: asserts[earning.ticket].quote.currency,
+          description: asserts[earning.ticket].name
+        }
+      });
+  }
 
   earningsEnum = EarningsEnum;
 
@@ -39,6 +50,11 @@ export class InvestmentEarningsTableComponent {
 
   getEarningEnumDisplayName(type: EarningsEnum) {
     return EarningsDesc[type];
+  }
+
+  rowClicked(row: Earning) {
+    this.selected = row;
+    this.itemSelected.emit(row);
   }
 
 }

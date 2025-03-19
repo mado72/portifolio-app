@@ -202,7 +202,9 @@ export class InvestmentService {
   }
 
   findEarningsBetween(from: Date, to: Date) {
-    return of(this.earningsData);
+    return of(this.earningsData).pipe(
+      map(earnings => earnings.map(item=>({...item, date: from}))
+    ));
   }
 
   findEarningsOfAsset({marketPlace, code}: {marketPlace: string, code: string}) {
