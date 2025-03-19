@@ -1,6 +1,11 @@
-@if(isEditing) {
-  <div (click)="toggleEdit()">
-    {{ number | number:numberFormat }}
+@if(! isEditing) {
+  <div (click)="toggleEdit()" >
+    @if (!!value) {
+      {{ value | number:numberFormat }}
+    }
+    @else {
+      <span class="text-center">-</span>
+    }
   </div>
 }
 @else {
@@ -9,8 +14,9 @@
     [step]="step"
     [min]="min"
     [max]="max"
-    [value]="number"
-    (blur)="updateNumber($event)"
-    (keydown.enter)="updateNumber($event)"
+    [value]="value"
+    (blur)="updateNumber($event); toggleEdit()"
+    (keydown.enter)="updateNumber($event); toggleEdit()"
+    (change)="updateNumber($event)"
   />
 }

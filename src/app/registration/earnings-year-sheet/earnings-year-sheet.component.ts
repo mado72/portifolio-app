@@ -1,14 +1,15 @@
-import { Component, inject, ChangeDetectorRef, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DecimalPipe, JsonPipe } from '@angular/common';
+import { ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
-import { InvestmentService } from '../../service/investment.service';
-import { Earning, EarningsEnum } from '../../model/investment.model';
 import { endOfYear, format, getMonth, startOfYear } from 'date-fns';
+import { Earning } from '../../model/investment.model';
+import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
-import { DecimalPipe, JsonPipe } from '@angular/common';
+import { EditableNumberComponent } from '../../utils/editable-number/editable-number.component';
 
 
 const YEAR_FORMATS = {
@@ -23,27 +24,16 @@ const YEAR_FORMATS = {
   },
 };
 
-
 type EarningEntry = {
-  amount: number,
-  date: Date
-}
+  id?: number;
+  date?: Date;
+  amount: number;
+};
+
 type SheetRow = {
   ticket: string;
   description: string;
-  type: EarningsEnum;
-  vlJan: EarningEntry;
-  vlFev: EarningEntry;
-  vlMar: EarningEntry;
-  vlAbr: EarningEntry;
-  vlMai: EarningEntry;
-  vlJun: EarningEntry;
-  vlJul: EarningEntry;
-  vlAgo: EarningEntry;
-  vlSet: EarningEntry;
-  vlOut: EarningEntry;
-  vlNov: EarningEntry;
-  vlDez: EarningEntry;
+  entries: EarningEntry[];
 }
 
 @Component({
@@ -55,7 +45,7 @@ type SheetRow = {
     MatInputModule,
     MatDatepickerModule,
     FormsModule,
-    ReactiveFormsModule,
+    EditableNumberComponent,
     DecimalPipe,
     JsonPipe
   ],
@@ -67,8 +57,6 @@ type SheetRow = {
 })
 export class EarningsYearSheetComponent implements OnInit {
 
-  private fb = inject(FormBuilder);
-
   private investmentService = inject(InvestmentService);
 
   private changeDetectorRef = inject(ChangeDetectorRef);
@@ -78,9 +66,11 @@ export class EarningsYearSheetComponent implements OnInit {
   readonly months = new Array(12).fill(0).map((_, i) => format(new Date(0, i), 'MMM'));
   readonly vlMonths = new Array(12).fill(0).map((_, i) => `vl${i}`);
 
-  form = this.fb.group({
-    data: this.fb.array([] as FormGroup[])
-  });
+  data = signal<SheetRow[]>([]);
+
+  totals = computed(() => {
+    return this.vlMonths.map((_, i) => this.totalMonth(i));
+  })
 
   asset = this.investmentService.assertsSignal();
 
@@ -90,69 +80,50 @@ export class EarningsYearSheetComponent implements OnInit {
     this.doFilter();
   }
 
-  createGroup(earning: Earning): FormGroup {
-    let group = this.fb.group({
-      ticket: [earning.ticket],
-      description: [this.asset[earning.ticket].name],
-      vl0: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl1: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl2: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl3: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl4: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl5: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl6: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl7: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl8: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl9: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl10: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] }),
-      vl11: this.fb.group({ id: [], amount: [0], type: [EarningsEnum.DIVIDENDS] })
-    });
+  createGroup(earning: Earning): SheetRow {
+    let itemData: SheetRow = {
+      ticket: earning.ticket,
+      description: this.asset[earning.ticket].name,
+      entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
+    };
 
-    this.setEarningValue(earning, group);
-    return group;
+    this.setEarningValue(earning, itemData);
+    return itemData;
   }
 
-  setEarningValue(earning: Earning, group: FormGroup) {
-    const month = `vl${getMonth(earning.date)}`;
-    const vlMonth = group.get(month);
-    if (vlMonth) {
-      const data = {
-        id: earning.id,
-        amount: parseFloat(earning.amount.toFixed(2)),
-        type: earning.type,
-        date: earning.date
-      };
-      vlMonth.patchValue(data);
-    }
+  setEarningValue(earning: Earning, row: SheetRow) {
+    const month = getMonth(earning.date);
+    const data = {
+      id: earning.id,
+      amount: parseFloat(earning.amount.toFixed(2)),
+      type: earning.type,
+      date: earning.date
+    };
+    row.entries[month] = data;
   }
 
-  findGroup(earning: Earning) {
-    return this.data.controls.find((g: FormGroup) => g.get('ticket')?.value === earning.ticket);
-  }
-
-  get data(): FormArray<FormGroup> {
-    return this.form.get('data') as FormArray;
-  }
-
-  get rows() {
-    return this.data.controls;
+  findRow(earning: Earning) {
+    return this.data().find((row: SheetRow) => row.ticket === earning.ticket);
   }
 
   doFilter(): void {
     this.investmentService.findEarningsBetween(startOfYear(this.dateReference), endOfYear(this.dateReference))
       .subscribe(earnings => {
-        this.data.clear();
+        const data: SheetRow[] = [];
+
         earnings.forEach(earning => {
-          let group = this.findGroup(earning);
+          let group = this.findRow(earning);
           earning.amount = Math.round(1) * earning.amount - .5;
           if (!group) {
             group = this.createGroup(earning);
-            this.data.push(group);
+            data.push(group);
           }
           else {
             this.setEarningValue(earning, group);
           }
         });
+
+        this.data.set(data);
         this.changeDetectorRef.detectChanges();
       });
   }
@@ -160,11 +131,18 @@ export class EarningsYearSheetComponent implements OnInit {
   choosenYear(d: Date, picker: MatDatepicker<any>): void {
     this.dateReference = d;
     picker.close();
-    this.data.clear();
+    this.data.set([]);
     this.doFilter();
   }
 
-  totalMonth(vlMonth: string): number {
-    return parseFloat(this.data.value.reduce((acc, item)=>acc += item[vlMonth].amount, 0).toFixed(2));
+  updateEntry($event: any, index: number) {
+    console.log($event);
+  }
+  updateTotal($event: any, index: number) {
+    console.log($event);
+  }
+
+  totalMonth(vlMonth: number): number {
+    return parseFloat(this.data().reduce((acc, row) => acc += row.entries[vlMonth].amount, 0).toFixed(2));
   }
 }

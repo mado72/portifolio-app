@@ -49,5 +49,6 @@
 mat-row, mat-footer-row {
     .vlMonth {
         border-left : 1px solid #ddd;
+        text-align: end !important;
     }
 }
