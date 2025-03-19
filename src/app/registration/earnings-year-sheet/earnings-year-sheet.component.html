@@ -27,14 +27,14 @@
         <mat-cell *matCellDef="let element" class="number cell vlMonth">
           <app-editable-number step="0.01" class="w-100"
             [(ngModel)]="element.entries[$index].amount"
-            (ngModelChange)="updateEntry($event, $index); updateTotal($event, $index)"
+            (ngModelChange)="updateEntry($event, $index, element)"
             />
            <!-- {{ element.entries[$index] | json}} -->
         </mat-cell>
         <mat-footer-cell *matFooterCellDef class="number vlMonth">
-          <!-- <div class="w-100 text-end pe-3">
+          <div class="w-100 text-end pe-3">
             {{ totalMonth($index) | number:'1.2-2' }}
-          </div> -->
+          </div>
         </mat-footer-cell>
       </ng-container>
   }

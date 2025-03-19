@@ -1,5 +1,5 @@
 import { DecimalPipe, JsonPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -68,10 +68,6 @@ export class EarningsYearSheetComponent implements OnInit {
 
   data = signal<SheetRow[]>([]);
 
-  totals = computed(() => {
-    return this.vlMonths.map((_, i) => this.totalMonth(i));
-  })
-
   asset = this.investmentService.assertsSignal();
 
   readonly displayedColumns = ['ticket', 'description', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
@@ -135,11 +131,8 @@ export class EarningsYearSheetComponent implements OnInit {
     this.doFilter();
   }
 
-  updateEntry($event: any, index: number) {
-    console.log($event);
-  }
-  updateTotal($event: any, index: number) {
-    console.log($event);
+  updateEntry($event: any, index: number, element: SheetRow) {
+    element.entries[index].date = new Date();
   }
 
   totalMonth(vlMonth: number): number {
