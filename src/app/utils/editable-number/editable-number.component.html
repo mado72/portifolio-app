@@ -1,0 +1,16 @@
+@if(isEditing) {
+  <div (click)="toggleEdit()">
+    {{ number | number:numberFormat }}
+  </div>
+}
+@else {
+  <input
+    type="number"
+    [step]="step"
+    [min]="min"
+    [max]="max"
+    [value]="number"
+    (blur)="updateNumber($event)"
+    (keydown.enter)="updateNumber($event)"
+  />
+}
