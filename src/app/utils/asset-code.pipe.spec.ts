@@ -1,4 +1,4 @@
-import { AssetCodePipe } from './asset-code.pipe';
+import { AssetCodePipe } from '../utils/asset-code.pipe';
 
 describe('AssetCodePipe', () => {
   it('create an instance', () => {
