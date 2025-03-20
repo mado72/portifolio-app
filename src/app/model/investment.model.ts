@@ -80,7 +80,7 @@ export enum EarningsEnum {
     IOE_RETURN = 'IOE_RETURN', // Intereset on Equity
 }
 
-type EarningsEnumType = `${EarningsEnum}`;
+export type EarningsEnumType = `${EarningsEnum}`;
 
 export const EarningsDesc : Record<EarningsEnumType, string> = {
     "DIVIDENDS": 'Dividendos',

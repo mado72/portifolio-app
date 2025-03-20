@@ -2,8 +2,7 @@
 <form [formGroup]="entryForm" (submit)="submitForm()">
     <mat-dialog-content>
         <div class="d-flex flex-column">
-
-            <mat-form-field>
+            <mat-form-field class="mb-2">
                 <mat-label>Data do evento</mat-label>
                 <input matInput [matDatepicker]="picker" formControlName="date" required>
                 <mat-error *ngIf="entryForm.get('date')?.invalid && entryForm.get('date')?.touched">
@@ -13,7 +12,7 @@
                 <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
                 <mat-datepicker #picker></mat-datepicker>
             </mat-form-field>
-            <mat-form-field>
+            <mat-form-field class="mb-2">
                 <mat-label>Valor</mat-label>
                 <input matInput type="number" step="0.01" class="text-end" formControlName="amount" required
                     (focus)="selectText($event)">
@@ -21,7 +20,7 @@
                     Campo obrigatório
                 </mat-error>
             </mat-form-field>
-            <mat-form-field>
+            <mat-form-field class="mb-2">
                 <mat-label>Tipo do Evento:</mat-label>
                 <mat-select formControlName="type" required>
                     @for(type of typeOptions; track $index) {

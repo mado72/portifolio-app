@@ -24,11 +24,12 @@ const PTBR_FORMATS = {
 
 export type EarningsEntryDialogType = {
   "title": string;
+  "type": EarningsEnum;
   "entry": {
     id?: number;
     date?: Date;
     amount: number;
-    type?: EarningsEnum;
+    acronym?: string;
   }
 }
 @Component({
@@ -70,6 +71,11 @@ export class EarningsEntryDialogComponent implements OnInit {
 
   ngOnInit() {
     this.entryForm.patchValue(this.data.entry);
+    const type = this.entryForm.get('type');
+    if (!! this.data.type && !! type) {
+      this.entryForm.get('type')?.setValue(this.data.type)
+      type.disable();
+    }
     this.title = this.data.title;
   }
 

@@ -22,46 +22,60 @@
 
 <!-- Criação do formArray -->
 <mat-table [dataSource]="data()" class="mat-elevation-z8">
-  <!-- Definição das colunas -->
+
   <ng-container matColumnDef="ticket">
-    <mat-header-cell *matHeaderCellDef> Código </mat-header-cell>
-    <mat-cell *matCellDef="let element"> {{element.ticket}} </mat-cell>
-    <mat-footer-cell *matFooterCellDef>Total</mat-footer-cell>
+    <th mat-header-cell *matHeaderCellDef> Código </th>
+    <td mat-cell *matCellDef="let element; let idx = index" 
+      [attr.rowspan]="3"
+      [style.display]="element.acronym !== 'DY' ? 'none': ''">
+
+      <div>
+        {{element.ticket}}
+      </div>
+      <div>
+        <i>
+          {{element.description}}
+        </i>
+      </div>
+    </td>
+    <th mat-footer-cell *matFooterCellDef>Total</th>
   </ng-container>
 
-  <ng-container matColumnDef="description">
-    <mat-header-cell *matHeaderCellDef> Ativo </mat-header-cell>
-    <mat-cell *matCellDef="let element" class="cell"> {{element.description}} </mat-cell>
-    <mat-footer-cell *matFooterCellDef />
+  
+  <ng-container matColumnDef="acronym">
+    <th mat-header-cell *matHeaderCellDef> T </th>
+    <td mat-cell *matCellDef="let element"> {{element.acronym}} </td>
+    <th mat-footer-cell *matFooterCellDef ></th>
   </ng-container>
 
   @for(month of months; track $index) {
-  <ng-container [matColumnDef]="vlMonths[$index]">
-    <mat-header-cell *matHeaderCellDef class="vlMonth"> {{month}} </mat-header-cell>
-    <mat-cell *matCellDef="let element" class="number cell vlMonth" (click)="openDialog($index, element)">
-      @if (element.entries[$index].amount == 0) {
-      <span class="w-100 text-center">
-        -
-      </span>
-      }
-      @else {
-      <span class="w-100 text-end pe-2">
-        {{ element.entries[$index].amount | number:'1.2-2'}}
-      </span>
-      }
-    </mat-cell>
-    <mat-footer-cell *matFooterCellDef class="number vlMonth">
-      <div class="w-100 text-end pe-3">
-        {{ totalMonth($index) | number:'1.2-2' }}
-      </div>
-    </mat-footer-cell>
-  </ng-container>
+    <ng-container [matColumnDef]="vlMonths[$index]">
+      <th mat-header-cell *matHeaderCellDef class="vlMonth"> {{month}} </th>
+      <td mat-cell *matCellDef="let element" class="number cell vlMonth" (click)="openDialog($index, element.acronym, element)">
+        @if (element.entries[$index].amount == 0) {
+        <div class="w-100 text-center">
+          -
+        </div>
+        }
+        @else {
+        <div class="w-100 text-end">
+          {{ element.entries[$index].amount | number:'1.2-2'}}
+        </div>
+        }
+      </td>
+      <th mat-footer-cell *matFooterCellDef class="number vlMonth">
+        <div class="w-100 text-end pe-3">
+          {{ totalMonth($index) | number:'1.2-2' }}
+        </div>
+      </th>
+    </ng-container>
   }
 
+
   <!-- Cabeçalho e linhas -->
-  <mat-header-row *matHeaderRowDef="displayedColumns" />
-  <mat-row *matRowDef="let row; columns: displayedColumns" />
-  <mat-footer-row *matFooterRowDef="displayedColumns" class="table-total" />
+  <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns" ></tr>
+  <tr mat-footer-row *matFooterRowDef="displayedColumns" class="table-total" ></tr>
 </mat-table>
 <!-- <code>
   <pre>{{data() | json}}</pre>
