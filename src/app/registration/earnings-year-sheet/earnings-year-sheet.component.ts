@@ -1,19 +1,15 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { endOfYear, format, getMonth, setMonth, startOfYear } from 'date-fns';
-import { timer } from 'rxjs';
+import { firstValueFrom, forkJoin, of, timer } from 'rxjs';
 import { AssetEnum, Earning, EarningsEnum, EarningsEnumType } from '../../model/investment.model';
+import { PortfolioAssetsSummary } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
-import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { EarningsEntryDialogComponent } from '../earnings-entry-dialog/earnings-entry-dialog.component';
+import { EarningsFilterComponent, EarningsFilterType } from '../earnings-filter/earnings-filter.component';
 
 
 const YEAR_FORMATS = {
@@ -43,7 +39,7 @@ type SheetRow = {
   entries: EarningEntry[];
 }
 
-const EARNING_ACRONYM : Record<EarningsEnumType, string> = {
+const EARNING_ACRONYM: Record<EarningsEnumType, string> = {
   "DIVIDENDS": 'DY',
   "RENT_RETURN": 'AL',
   "IOE_RETURN": 'JC',
@@ -54,13 +50,8 @@ const EARNING_ACRONYM : Record<EarningsEnumType, string> = {
   standalone: true,
   imports: [
     MatTableModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatSelectModule,
-    AssetTypePipe,
-    FormsModule,
-    DecimalPipe
+    DecimalPipe,
+    EarningsFilterComponent
   ],
   providers: [
     provideAppDateAdapter(YEAR_FORMATS)
@@ -76,11 +67,6 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private dialog = inject(MatDialog);
 
-  filter : { dateReference: Date, typeReference: AssetEnum | null }= {
-    dateReference : new Date(),
-    typeReference: null
-  }
-
   readonly months = new Array(12).fill(0).map((_, i) => format(new Date(0, i), 'MMM'));
 
   readonly vlMonths = this.months.map((_, idx) => `vl${idx}`);
@@ -93,14 +79,10 @@ export class EarningsYearSheetComponent implements OnInit {
 
   readonly displayedColumns = ['ticket', 'acronym', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
 
-  readonly assetTypes = Object.values(AssetEnum);
-
-  readonly earningTypes = Object.values(EarningsEnum);
-
-  readonly DIVIDENDS = EarningsEnum.DIVIDENDS;
+  filter: EarningsFilterType = {dateReference: new Date(), typeReference: null, portfolioReference: null};
 
   ngOnInit(): void {
-    this.doFilter();
+    this.filter = this.doFilter(this.filter);
   }
 
   createGroup(earning: Earning): SheetRow[] {
@@ -128,39 +110,63 @@ export class EarningsYearSheetComponent implements OnInit {
     row.entries[month] = data;
   }
 
-  doFilter(): void {
-    this.investmentService.findEarningsBetween(startOfYear(this.filter.dateReference), endOfYear(this.filter.dateReference))
-      .subscribe(earnings => {
-        if (!! this.filter.typeReference) {
-          const assets = Object.entries(this.investmentService.assertsSignal())
-            .filter(([ticket, asset])=>asset.type === this.filter.typeReference)
-            .map(([ticket, _])=>ticket)
-          earnings = earnings.filter(earning => assets.includes(earning.ticket));
-        }
-        earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id)
-        let data: SheetRow[] = [];
-        this.data.set([]);
-
-        earnings.forEach(earning => {
-          let group = data.find((row: SheetRow) => row.ticket === earning.ticket);
-          if (!group) {
-            data = data.concat(this.createGroup(earning));
-          }
-          else {
-            this.setEarningValue(earning, group);
-          }
-        });
-
-        this.data.set(data);
-        this.changeDetectorRef.detectChanges();
-      });
+  async getPortfoliosSummary() {
+    const items = await firstValueFrom(this.investmentService.getPortfolioAssetsSummary());
+    return items;
   }
 
-  choosenYear(d: Date, picker: MatDatepicker<any>): void {
-    this.filter.dateReference = d;
-    picker.close();
+  doFilter(filter: EarningsFilterType) {
+    const joinSetup = {
+      earnings: this.investmentService.findEarningsBetween(startOfYear(filter.dateReference), endOfYear(filter.dateReference)),
+      portfolios: !!filter.portfolioReference ?
+        this.investmentService.getPortfolioAssetsSummary() : of([] as PortfolioAssetsSummary[])
+    };
+
+    forkJoin(joinSetup).subscribe(({ earnings, portfolios }) => {
+      if (!!filter.typeReference) {
+        earnings = this.filterByTypeReference(filter.typeReference, earnings);
+      }
+
+      if (!!filter.portfolioReference) {
+        earnings = this.filterByPortfolioAssets(filter.portfolioReference, portfolios, earnings);
+      }
+
+      earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id);
+      let data: SheetRow[] = this.prepareSheetRows(earnings);
+
+      this.data.set(data);
+      this.changeDetectorRef.detectChanges();
+    });
+    return filter;
+  }
+
+  private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningsEnum; }[]) {
+    let data: SheetRow[] = [];
     this.data.set([]);
-    this.doFilter();
+
+    earnings.forEach(earning => {
+      let group = data.find((row: SheetRow) => row.ticket === earning.ticket);
+      if (!group) {
+        data = data.concat(this.createGroup(earning));
+      }
+      else {
+        this.setEarningValue(earning, group);
+      }
+    });
+    return data;
+  }
+
+  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningsEnum; }[]) {
+    const assets = portfolios.find(item => item.id === portfolioReference)?.assets || [];
+    earnings = earnings.filter(earning => assets.includes(earning.ticket));
+    return earnings;
+  }
+
+  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningsEnum; }[]) {
+    const assets = Object.entries(this.investmentService.assertsSignal())
+      .filter(([_, asset]) => asset.type === typeReference)
+      .map(([ticket, _]) => ticket);
+    return earnings.filter(earning => assets.includes(earning.ticket));
   }
 
   updateEntry($event: any, index: number, element: SheetRow) {
@@ -178,11 +184,11 @@ export class EarningsYearSheetComponent implements OnInit {
     }
 
     const earningTypeFound = Object.entries(EARNING_ACRONYM)
-        .map(([key, value]) => ({key, value}))
-        .find(item => item.value === acronym);
+      .map(([key, value]) => ({ key, value }))
+      .find(item => item.value === acronym);
 
     const dialogRef = this.dialog.open(EarningsEntryDialogComponent, {
-      data: {entry, type: earningTypeFound?.key, title: 'Cadastro de Provento'}
+      data: { entry, type: earningTypeFound?.key, title: 'Cadastro de Provento' }
     });
 
     dialogRef.afterClosed().subscribe((result: EarningEntry) => {
@@ -202,7 +208,8 @@ export class EarningsYearSheetComponent implements OnInit {
 
         }
         this.queue().push(result);
-      }});
+      }
+    });
   }
 
   private saveEarning(element: SheetRow, entry: EarningEntry) {
@@ -217,7 +224,7 @@ export class EarningsYearSheetComponent implements OnInit {
         const entryData = { ...entry, ticket: element.ticket } as Required<Earning>;
         this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
           // this.setEarningValue(earning, element);
-          this.doFilter();
+          this.filter = this.doFilter(this.filter);
         });
       }
       this.changeDetectorRef.detectChanges();

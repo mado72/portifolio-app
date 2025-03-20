@@ -1,12 +1,12 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { formatISO, getYear, setDayOfYear, setYear } from 'date-fns';
-import { forkJoin, map, Observable, of } from 'rxjs';
+import { delay, forkJoin, map, Observable, of } from 'rxjs';
 import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
 import { Currency } from '../model/domain.model';
 import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Earning, EarningsEnum, fnTrend, TrendType } from '../model/investment.model';
-import { AssetPositionRecord, Portfolio } from '../model/portfolio.model';
+import { AssetPositionRecord, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 
 @Injectable({
@@ -121,11 +121,22 @@ export class InvestmentService {
     )
   }
 
-  getPortfolioNames(): Observable<{ id: string, name: string, currency: Currency }[]> {
+  getPortfolioSummary(): Observable<{ id: string, name: string, currency: Currency }[]> {
     // FIXME: Replace this with code to query the portfolio data
     return this.getPortfolios().pipe(
       map((portfolios) => Object.keys(portfolios).map(item => ({ id: item, name: item, currency: Currency.BRL })))
     );
+  }
+
+  getPortfolioAssetsSummary(): Observable<PortfolioAssetsSummary[]> {
+    // FIXME: Replace this with code to query the portfolio data
+    return this.getPortfolios().pipe(
+      map((portfolios) => Object.entries(portfolios).map(([k, v]) =>
+      ({
+        ...v,
+        assets: v.assets.map(asset => getMarketPlaceCode(asset))
+      }))
+      ));
   }
 
   getPortfolio(id: string): Observable<Portfolio | undefined> {
@@ -203,8 +214,9 @@ export class InvestmentService {
 
   findEarningsBetween(from: Date, to: Date) {
     return of(this.earningsData).pipe(
-      map(earnings => earnings.map(item => ({ ...item, date: setYear(item.date, getYear(from)) }))
-      ));
+      map(earnings => earnings.map(item => ({ ...item, date: setYear(item.date, getYear(from)) }))),
+      delay(250)
+    );
   }
 
   findEarningsOfAsset({ marketPlace, code }: { marketPlace: string, code: string }) {

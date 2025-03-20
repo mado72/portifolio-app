@@ -21,7 +21,7 @@ export class InvestmentPortfolioContainerComponent {
   portfolios: Partial<Portfolio>[] = [];
 
   constructor() {
-    this.investmentService.getPortfolioNames().subscribe(portfolios => {
+    this.investmentService.getPortfolioSummary().subscribe(portfolios => {
       return this.portfolios = portfolios;
     });
 

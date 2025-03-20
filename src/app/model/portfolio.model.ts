@@ -65,3 +65,10 @@ export class Portfolio {
     }
 
 }
+
+export type PortfolioAssetsSummary = {
+    assets: string[];
+    id: string;
+    name: string;
+    currency: Currency;
+};
