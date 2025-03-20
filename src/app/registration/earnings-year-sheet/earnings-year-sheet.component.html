@@ -9,8 +9,9 @@
   </div>
   <div class="pe-3">
     <mat-form-field>
+      <mat-label>Tipo de Ação</mat-label>
       <mat-select matSelect [(ngModel)]="filter.typeReference" [ngModelOptions]="{standalone: true}" 
-          placeholder="Todos" (ngModelChange)="doFilter()">
+          placeholder="Selecione..." (ngModelChange)="doFilter()">
         <mat-option [value]="">Todos</mat-option>
         @for (type of assetTypes; track $index) {
           <mat-option [value]="type">{{ type | assetType }}</mat-option>
@@ -21,7 +22,7 @@
 </form>
 
 <!-- Criação do formArray -->
-<mat-table [dataSource]="data()" class="mat-elevation-z8">
+<table mat-table [dataSource]="data()" class="mat-elevation-z8 w-100 mat-table-hover">
 
   <ng-container matColumnDef="ticket">
     <th mat-header-cell *matHeaderCellDef> Código </th>
@@ -76,7 +77,7 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns" ></tr>
   <tr mat-footer-row *matFooterRowDef="displayedColumns" class="table-total" ></tr>
-</mat-table>
+</table>
 <!-- <code>
   <pre>{{data() | json}}</pre>
 </code> -->
