@@ -1,4 +1,4 @@
-<h3 mat-dialog-title>{{title}}</h3>
+<h3 mat-dialog-title>{{data.title}}</h3>
 <form [formGroup]="entryForm" (submit)="submitForm()">
     <mat-dialog-content>
         <div class="d-flex flex-column">
@@ -19,6 +19,7 @@
                 <mat-error *ngIf="entryForm.get('amount')?.invalid && entryForm.get('amount')?.touched">
                     Campo obrigatório
                 </mat-error>
+                <mat-hint>Ex: 100.00</mat-hint>
             </mat-form-field>
             <mat-form-field class="mb-2">
                 <mat-label [attr.for]="'controlType'">Tipo do Evento:</mat-label>
@@ -30,7 +31,7 @@
                 <mat-error *ngIf="entryForm.get('type')?.invalid && entryForm.get('type')?.touched">
                     Campo obrigatório
                 </mat-error>
-                <mat-hint>Selecione um tipo de evento</mat-hint>
+                <mat-hint>Selecione um tipo de provento</mat-hint>
             </mat-form-field>
         </div>
     </mat-dialog-content>

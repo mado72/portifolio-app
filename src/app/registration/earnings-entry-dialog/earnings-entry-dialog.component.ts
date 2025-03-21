@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import { Component, inject, Input, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { EarningsDesc, EarningEnum } from '../../model/investment.model';
+import { EarningEnum, EarningsDesc } from '../../model/investment.model';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 
 const PTBR_FORMATS = {
@@ -69,8 +69,6 @@ export class EarningsEntryDialogComponent implements OnInit {
 
   readonly typeOptions = Object.values(EarningEnum);
 
-  @Input() title = 'Earning Entry';
-
   ngOnInit() {
     this.entryForm.patchValue(this.data.entry);
     const type = this.entryForm.get('type');
@@ -78,7 +76,7 @@ export class EarningsEntryDialogComponent implements OnInit {
       this.entryForm.get('type')?.setValue(this.data.type)
       type.disable();
     }
-    this.title = this.data.title;
+    this.data.title = this.data.title || 'Earning entry'
   }
 
   earningDesc(earningEnum: EarningEnum) {
