@@ -186,7 +186,7 @@ export class EarningsYearSheetComponent implements OnInit {
     element.entries[index].date = new Date();
   }
 
-  editCell(index: number, element: SheetRow, acronym?: string) {
+  editCell(index: number, element: SheetRow) {
     const entry = element.entries[index];
     if (!entry.date) {
       entry.date = setMonth(new Date(), index);
@@ -194,15 +194,16 @@ export class EarningsYearSheetComponent implements OnInit {
 
     const earningTypeFound = Object.entries(EARNING_ACRONYM)
       .map(([key, value]) => ({ key, value }))
-      .find(item => item.value === acronym);
+      .find(item => item.value === element.acronymEarn);
 
     const dialogRef = this.dialog.open(EarningsEntryDialogComponent, {
-      data: { entry, type: earningTypeFound?.key, title: 'Cadastro de Provento' }
+      data: { entry, type: earningTypeFound?.key, title: 'Cadastro de Provento', disabled: true }
     });
 
     this.processDialogResults(dialogRef, element).subscribe(earning => {
       if (!earning) return;
       const month = getMonth(earning.date as Date);
+      
       if (month !== index) {
         element.entries[index] = { amount: 0 };
         this.changeDetectorRef.detectChanges();
@@ -222,29 +223,8 @@ export class EarningsYearSheetComponent implements OnInit {
       data: { newRow, title: 'Cadastro de Novo Provento' }
     });
 
-    this.processDialogResults(dialogRef, newRow).subscribe(earning=>{
+    this.processDialogResults(dialogRef, newRow).subscribe(_=>{
       this.doFilter(this.filter);
-      // // if return earning
-      // if (!earning) return;
-      
-      // const month = getMonth(earning.date as Date);
-
-      // // if new earning uses the same old earning's type, don't create a new row.
-      // if (EARNING_ACRONYM[earning.type as EarningEnum] === row.acronymEarn) {
-      //   row.entries[month] = earning;
-      //   return;
-      // }
-
-      // newRow.acronymEarn = EARNING_ACRONYM[earning.type as EarningEnum];
-      // newRow.entries[month] = earning;
-
-      // this.data.update(data=> {
-      //   const idx = this.data().indexOf(row);
-      //   data.splice(idx + 1, 0, newRow)
-      //   row.rowspan = (row.rowspan || 1) + 1;
-      //   this.changeDetectorRef.detectChanges();
-      //   return data;
-      // })
     });
   }
 
@@ -262,15 +242,22 @@ export class EarningsYearSheetComponent implements OnInit {
     this.investmentService.findEarningsOfAsset({ marketPlace, code }).subscribe(earnings => {
       const earning: Earning | undefined = earnings.find(item => item.id === entry.id);
       if (!!earning) {
-        const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Earning>;
-        this.investmentService.updateEarning(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
+        if (!entry.amount) {
+          this.investmentService.deleteEarning(earning.id).subscribe();
+        }
+        else {
+          const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Earning>;
+          this.investmentService.updateEarning(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
+        }
       }
       else {
         const entryData = { ...entry, ticket: element.ticket } as Required<Earning>;
-        this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
-          // this.setEarningValue(earning, element);
-          this.filter = this.doFilter(this.filter);
-        });
+        if (entry.amount) {
+          this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
+            // this.setEarningValue(earning, element);
+            this.filter = this.doFilter(this.filter);
+          });
+        }
       }
       this.changeDetectorRef.detectChanges();
     });

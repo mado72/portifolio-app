@@ -35,7 +35,7 @@
         </div>
     </mat-dialog-content>
     <mat-dialog-actions>
-        <button mat-button (click)="cancelClick()">Cancelar</button>
+        <button mat-button [mat-dialog-close]="undefined">Cancelar</button>
         <button mat-button type="submit" [mat-dialog-close]="entryForm.value"
             [disabled]="entryForm.invalid">Salvar</button>
     </mat-dialog-actions>

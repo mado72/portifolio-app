@@ -25,6 +25,7 @@ const PTBR_FORMATS = {
 export type EarningsEntryDialogType = {
   "title": string;
   "type": EarningEnum;
+  "disabled"?: boolean;
   "entry": {
     id?: number;
     date?: Date;
@@ -60,6 +61,7 @@ export class EarningsEntryDialogComponent implements OnInit {
   readonly data = inject<EarningsEntryDialogType>(MAT_DIALOG_DATA);
 
   readonly entryForm = this.fb.group({
+    id: [NaN],
     date: [new Date(), []],
     amount: [0, []],
     type: [EarningEnum.DIVIDENDS, []]
@@ -72,7 +74,7 @@ export class EarningsEntryDialogComponent implements OnInit {
   ngOnInit() {
     this.entryForm.patchValue(this.data.entry);
     const type = this.entryForm.get('type');
-    if (!! this.data.type && !! type) {
+    if (!! this.data.disabled && type) {
       this.entryForm.get('type')?.setValue(this.data.type)
       type.disable();
     }
@@ -83,9 +85,6 @@ export class EarningsEntryDialogComponent implements OnInit {
     return EarningsDesc[earningEnum];
   }
 
-  cancelClick() {
-    this.dialogRef.close();
-  }
   selectText($event: FocusEvent) {
     ($event.target as HTMLInputElement)?.select();
   }
