@@ -87,7 +87,7 @@ export class EarningsYearSheetComponent implements OnInit {
   filter: EarningsFilterType = { dateReference: new Date(), typeReference: null, portfolioReference: null };
 
   ngOnInit(): void {
-    this.filter = this.doFilter(this.filter);
+    this.doFilter(this.filter);
   }
 
   async getPortfoliosSummary() {
@@ -95,7 +95,8 @@ export class EarningsYearSheetComponent implements OnInit {
     return items;
   }
 
-  doFilter(filter: EarningsFilterType) {
+  doFilter(filter?: EarningsFilterType) {
+    filter = this.filter = filter || this.filter;
     const joinSetup = {
       earnings: this.investmentService.findEarningsBetween(startOfYear(filter.dateReference), endOfYear(filter.dateReference)),
       portfolios: !!filter.portfolioReference ?
@@ -117,7 +118,6 @@ export class EarningsYearSheetComponent implements OnInit {
       this.data.set(data);
       this.changeDetectorRef.detectChanges();
     });
-    return filter;
   }
 
   private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
@@ -241,6 +241,7 @@ export class EarningsYearSheetComponent implements OnInit {
     let [marketPlace, code] = element.ticket.split(':');
     this.investmentService.findEarningsOfAsset({ marketPlace, code }).subscribe(earnings => {
       const earning: Earning | undefined = earnings.find(item => item.id === entry.id);
+
       if (!!earning) {
         if (!entry.amount) {
           this.investmentService.deleteEarning(earning.id).subscribe();
@@ -251,11 +252,15 @@ export class EarningsYearSheetComponent implements OnInit {
         }
       }
       else {
-        const entryData = { ...entry, ticket: element.ticket } as Required<Earning>;
+        const earningTypeFound = Object.entries(EARNING_ACRONYM)
+          .map(([key, value]) => ({ key: key as EarningEnum, value }))
+          .find(item => item.value === element.acronymEarn);
+          
+        const entryData = { type: earningTypeFound?.key, ...entry, ticket: element.ticket } as Required<Earning>;
         if (entry.amount) {
           this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
             // this.setEarningValue(earning, element);
-            this.filter = this.doFilter(this.filter);
+            this.doFilter(this.filter);
           });
         }
       }

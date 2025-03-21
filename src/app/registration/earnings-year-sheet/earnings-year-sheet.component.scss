@@ -65,3 +65,11 @@
         padding-right: 4px;
     }
 }
+
+.mat-column-vl0, .mat-column-vl1, .mat-column-vl2, .mat-column-vl3, .mat-column-vl4,
+    .mat-column-vl5, .mat-column-vl6, .mat-column-vl7, .mat-column-vl8,
+    .mat-column-vl9, .mat-column-vl10, .mat-column-vl11 {
+    &:hover {
+        background-color: #f1f1f1;
+    }
+}

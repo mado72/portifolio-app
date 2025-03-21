@@ -21,8 +21,8 @@
                 </mat-error>
             </mat-form-field>
             <mat-form-field class="mb-2">
-                <mat-label>Tipo do Evento:</mat-label>
-                <mat-select formControlName="type" required>
+                <mat-label [attr.for]="'controlType'">Tipo do Evento:</mat-label>
+                <mat-select formControlName="type" required id="controlType">
                     @for(type of typeOptions; track $index) {
                     <mat-option [value]="type">{{earningDesc(type)}}</mat-option>
                     }
