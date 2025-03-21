@@ -8,6 +8,13 @@ export const registrationRoutes: Routes = [
     {
         path: 'earnings',
         loadComponent: () => import('./earnings-year-sheet/earnings-year-sheet.component').then(mod => mod.EarningsYearSheetComponent)
+    },
+    {
+        path: 'accounts',
+        loadComponent: () => import('../assets/balances/balances.component').then(mod => mod.BalancesComponent),
+        data: {
+            editEnable: true
+        }
     }
 
 ]
