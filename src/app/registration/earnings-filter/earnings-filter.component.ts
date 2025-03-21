@@ -5,7 +5,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { FormsModule } from '@angular/forms';
-import { AssetEnum, EarningsEnum } from '../../model/investment.model';
+import { AssetEnum, EarningEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getYear } from 'date-fns';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -40,9 +40,9 @@ export class EarningsFilterComponent {
 
   readonly assetTypes = Object.values(AssetEnum);
 
-  readonly earningTypes = Object.values(EarningsEnum);
+  readonly earningTypes = Object.values(EarningEnum);
 
-  readonly DIVIDENDS = EarningsEnum.DIVIDENDS;
+  readonly DIVIDENDS = EarningEnum.DIVIDENDS;
 
   porfolios = toSignal(this.investmentService.getPortfolioSummary());
 

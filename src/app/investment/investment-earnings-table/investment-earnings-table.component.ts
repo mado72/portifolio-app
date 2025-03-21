@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { map } from 'rxjs';
-import { Earning, EarningsDesc, EarningsEnum } from '../../model/investment.model';
+import { Earning, EarningsDesc, EarningEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
@@ -44,11 +44,11 @@ export class InvestmentEarningsTableComponent {
       });
   }
 
-  earningsEnum = EarningsEnum;
+  earningsEnum = EarningEnum;
 
   readonly displayedColumns = ["id", "ticket", "description", "type", "date", "amount"];
 
-  getEarningEnumDisplayName(type: EarningsEnum) {
+  getEarningEnumDisplayName(type: EarningEnum) {
     return EarningsDesc[type];
   }
 

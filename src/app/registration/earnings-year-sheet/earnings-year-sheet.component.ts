@@ -1,10 +1,12 @@
 import { DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { endOfYear, format, getMonth, setMonth, startOfYear } from 'date-fns';
-import { firstValueFrom, forkJoin, of, timer } from 'rxjs';
-import { AssetEnum, Earning, EarningsEnum, EarningsEnumType } from '../../model/investment.model';
+import { firstValueFrom, forkJoin, map, of } from 'rxjs';
+import { AssetEnum, Earning, EarningEnum, EarningsEnumType } from '../../model/investment.model';
 import { PortfolioAssetsSummary } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
@@ -27,15 +29,16 @@ const YEAR_FORMATS = {
 type EarningEntry = {
   id?: number;
   date?: Date;
-  type?: EarningsEnum;
+  type?: EarningEnum;
   amount: number;
 };
 
 type SheetRow = {
   ticket: string;
   description: string;
+  main?: boolean;
   rowspan?: number;
-  acronym: string;
+  acronymEarn: string;
   entries: EarningEntry[];
 }
 
@@ -50,6 +53,8 @@ const EARNING_ACRONYM: Record<EarningsEnumType, string> = {
   standalone: true,
   imports: [
     MatTableModule,
+    MatIconModule,
+    MatButtonModule,
     DecimalPipe,
     EarningsFilterComponent
   ],
@@ -79,35 +84,10 @@ export class EarningsYearSheetComponent implements OnInit {
 
   readonly displayedColumns = ['ticket', 'acronym', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
 
-  filter: EarningsFilterType = {dateReference: new Date(), typeReference: null, portfolioReference: null};
+  filter: EarningsFilterType = { dateReference: new Date(), typeReference: null, portfolioReference: null };
 
   ngOnInit(): void {
     this.filter = this.doFilter(this.filter);
-  }
-
-  createGroup(earning: Earning): SheetRow[] {
-    let rows = Object.values(EARNING_ACRONYM).map(acronym => ({
-      ticket: earning.ticket,
-      description: this.asset[earning.ticket].name,
-      acronym,
-      entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
-    } as SheetRow))
-
-    const idx = Object.keys(EARNING_ACRONYM).indexOf(earning.type);
-
-    this.setEarningValue(earning, rows[idx]);
-    return rows;
-  }
-
-  setEarningValue(earning: Earning, row: SheetRow) {
-    const month = getMonth(earning.date);
-    const data = {
-      id: earning.id,
-      amount: parseFloat(earning.amount.toFixed(2)),
-      acronym: EARNING_ACRONYM[earning.type],
-      date: earning.date
-    };
-    row.entries[month] = data;
   }
 
   async getPortfoliosSummary() {
@@ -131,7 +111,7 @@ export class EarningsYearSheetComponent implements OnInit {
         earnings = this.filterByPortfolioAssets(filter.portfolioReference, portfolios, earnings);
       }
 
-      earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id);
+      // earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id);
       let data: SheetRow[] = this.prepareSheetRows(earnings);
 
       this.data.set(data);
@@ -140,44 +120,73 @@ export class EarningsYearSheetComponent implements OnInit {
     return filter;
   }
 
-  private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningsEnum; }[]) {
+  private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
     let data: SheetRow[] = [];
     this.data.set([]);
 
     earnings.forEach(earning => {
-      let group = data.find((row: SheetRow) => row.ticket === earning.ticket);
-      if (!group) {
-        data = data.concat(this.createGroup(earning));
+      let mainRowIdx = data.findIndex((row: SheetRow) => row.ticket === earning.ticket && row.main);
+      let row = data.find((row: SheetRow) => row.ticket === earning.ticket && row.acronymEarn === EARNING_ACRONYM[earning.type]);
+      if (!row) {
+        row = this.earningToRow(earning)
+        if (mainRowIdx > -1) {
+          const mainRow = data[mainRowIdx];
+          mainRow.rowspan = (mainRow.rowspan || 1) + 1;
+          data.splice(mainRowIdx+1, 0, row);
+        }
+        else {
+          row.main = true;
+          data.push(row);
+        }
       }
-      else {
-        this.setEarningValue(earning, group);
-      }
+      this.setEarningValue(earning, row);
     });
     return data;
   }
 
-  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningsEnum; }[]) {
+  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
     const assets = portfolios.find(item => item.id === portfolioReference)?.assets || [];
     earnings = earnings.filter(earning => assets.includes(earning.ticket));
     return earnings;
   }
 
-  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningsEnum; }[]) {
+  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
     const assets = Object.entries(this.investmentService.assertsSignal())
       .filter(([_, asset]) => asset.type === typeReference)
       .map(([ticket, _]) => ticket);
     return earnings.filter(earning => assets.includes(earning.ticket));
   }
 
-  updateEntry($event: any, index: number, element: SheetRow) {
-    element.entries[index].date = new Date();
-  }
-
   totalMonth(vlMonth: number): number {
     return parseFloat(this.data().reduce((acc, row) => acc += row.entries[vlMonth].amount, 0).toFixed(2));
   }
 
-  openDialog(index: number, acronym: string, element: SheetRow) {
+  earningToRow(earning: Earning) {
+    return {
+      ticket: earning.ticket,
+      description: this.asset[earning.ticket].name,
+      acronymEarn: EARNING_ACRONYM[earning.type],
+      rowspan: 1,
+      entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
+    } as SheetRow;
+  }
+
+  setEarningValue(earning: Earning, row: SheetRow) {
+    const month = getMonth(earning.date);
+    const data = {
+      id: earning.id,
+      amount: parseFloat(earning.amount.toFixed(2)),
+      acronymEarn: EARNING_ACRONYM[earning.type],
+      date: earning.date
+    };
+    row.entries[month] = data;
+  }
+
+  updateEntry($event: any, index: number, element: SheetRow) {
+    element.entries[index].date = new Date();
+  }
+
+  editCell(index: number, element: SheetRow, acronym?: string) {
     const entry = element.entries[index];
     if (!entry.date) {
       entry.date = setMonth(new Date(), index);
@@ -191,25 +200,61 @@ export class EarningsYearSheetComponent implements OnInit {
       data: { entry, type: earningTypeFound?.key, title: 'Cadastro de Provento' }
     });
 
-    dialogRef.afterClosed().subscribe((result: EarningEntry) => {
-      if (result) {
-        element.entries[index] = result;
+    this.processDialogResults(dialogRef, element).subscribe(earning => {
+      if (!earning) return;
+      const month = getMonth(earning.date as Date);
+      if (month !== index) {
+        element.entries[index] = { amount: 0 };
         this.changeDetectorRef.detectChanges();
-
-        if (this.queue().length == 0) {
-
-          timer(1000).subscribe(() => {
-            this.queue().forEach(entry => {
-              this.queue().shift();
-
-              this.saveEarning(element, entry);
-            })
-          })
-
-        }
-        this.queue().push(result);
       }
+      element.entries[month] = earning;
     });
+  }
+
+  addRow(row: SheetRow) {
+    const newRow = {
+      ...row,
+      main: false,
+      entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
+    };
+
+    const dialogRef = this.dialog.open(EarningsEntryDialogComponent, {
+      data: { newRow, title: 'Cadastro de Novo Provento' }
+    });
+
+    this.processDialogResults(dialogRef, newRow).subscribe(earning=>{
+      this.doFilter(this.filter);
+      // // if return earning
+      // if (!earning) return;
+      
+      // const month = getMonth(earning.date as Date);
+
+      // // if new earning uses the same old earning's type, don't create a new row.
+      // if (EARNING_ACRONYM[earning.type as EarningEnum] === row.acronymEarn) {
+      //   row.entries[month] = earning;
+      //   return;
+      // }
+
+      // newRow.acronymEarn = EARNING_ACRONYM[earning.type as EarningEnum];
+      // newRow.entries[month] = earning;
+
+      // this.data.update(data=> {
+      //   const idx = this.data().indexOf(row);
+      //   data.splice(idx + 1, 0, newRow)
+      //   row.rowspan = (row.rowspan || 1) + 1;
+      //   this.changeDetectorRef.detectChanges();
+      //   return data;
+      // })
+    });
+  }
+
+  private processDialogResults(dialogRef: MatDialogRef<EarningsEntryDialogComponent, EarningEntry | undefined>, element: SheetRow) {
+    return dialogRef.afterClosed().pipe(
+      map((result?: EarningEntry) => {
+        result && this.saveEarning(element, result);
+        return result;
+      })
+    );
   }
 
   private saveEarning(element: SheetRow, entry: EarningEntry) {

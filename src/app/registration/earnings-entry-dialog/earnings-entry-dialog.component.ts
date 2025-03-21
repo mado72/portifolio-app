@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { EarningsDesc, EarningsEnum } from '../../model/investment.model';
+import { EarningsDesc, EarningEnum } from '../../model/investment.model';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 
 const PTBR_FORMATS = {
@@ -24,7 +24,7 @@ const PTBR_FORMATS = {
 
 export type EarningsEntryDialogType = {
   "title": string;
-  "type": EarningsEnum;
+  "type": EarningEnum;
   "entry": {
     id?: number;
     date?: Date;
@@ -62,10 +62,10 @@ export class EarningsEntryDialogComponent implements OnInit {
   readonly entryForm = this.fb.group({
     date: [new Date(), []],
     amount: [0, []],
-    type: [EarningsEnum.DIVIDENDS, []]
+    type: [EarningEnum.DIVIDENDS, []]
   });
 
-  readonly typeOptions = Object.values(EarningsEnum);
+  readonly typeOptions = Object.values(EarningEnum);
 
   @Input() title = 'Earning Entry';
 
@@ -79,7 +79,7 @@ export class EarningsEntryDialogComponent implements OnInit {
     this.title = this.data.title;
   }
 
-  earningDesc(earningEnum: EarningsEnum) {
+  earningDesc(earningEnum: EarningEnum) {
     return EarningsDesc[earningEnum];
   }
 
