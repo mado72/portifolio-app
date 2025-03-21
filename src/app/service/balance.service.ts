@@ -1,12 +1,21 @@
 import { inject, Injectable } from '@angular/core';
 import { eachMonthOfInterval, getDate, getMonth, setDay } from 'date-fns';
-import { forkJoin, map, Observable, of } from 'rxjs';
+import { forkJoin, map, Observable, of, tap } from 'rxjs';
 import allocationsSource from '../../data/allocation.json';
 import balancesSource from '../../data/balance.json';
 import statementForecast from '../../data/statement-forecast.json';
 import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountPosition, AccountTypeEnum, Currency, currencyOf, Exchange, ForecastDateItem, ForecastDayItem, isStatementExpense, StatementEnum } from '../model/domain.model';
 import { QuoteService } from './quote.service';
 import { groupBy } from '../model/functions.model';
+import { v4 as uuid }  from 'uuid';
+
+type BalanceDataType = {
+  id: string;
+  account: string;
+  balance: number;
+  currency: string;
+  type: string;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +24,7 @@ export class BalanceService {
 
   private quoteService = inject(QuoteService);
 
-  readonly balancesData = balancesSource.data;
+  readonly balancesData = balancesSource.data as BalanceDataType[];
 
   readonly allocationsData = allocationsSource.data;
 
@@ -284,4 +293,35 @@ export class BalanceService {
     );
 
   }
+
+  addAccount(account: AccountPosition) : Observable<BalanceDataType>{
+    const data = {
+      id: uuid(),
+      account: account.account,
+      type: account.type,
+      balance: account.balance.amount,
+      currency: account.balance.currency
+    };
+
+    return of(data).pipe(
+      tap(data => this.balancesData.push(data))
+    )
+  }
+
+  updateAccount(id: string, result: AccountPosition) : Observable<void>{
+    const idx = this.balancesData.findIndex(account => account.id === id);
+    let account = {
+      ...this.balancesData[idx],
+      account: result.account,
+      type: result.type,
+      balance: result.balance.amount,
+      currency: result.balance.currency
+    }
+    return of(account).pipe( 
+      map(account => {
+        this.balancesData[idx] = account
+      })
+    );
+  }
+
 }

@@ -69,4 +69,8 @@ export class BalanceDialogComponent implements OnInit {
     return this.entryForm.get('balance.amount') as FormControl;
   }
 
+  submitForm() {
+    this.dialogRef.close(this.entryForm.value);
+  }
+
 }

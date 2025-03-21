@@ -1,5 +1,5 @@
 <h3 mat-dialog-title>{{data.title}}</h3>
-<form [formGroup]="entryForm" [mat-dialog-close]="entryForm.value">
+<form [formGroup]="entryForm" (submit)="submitForm()">
     <mat-dialog-content>
         <div class="d-flex flex-column">
             <mat-form-field>
@@ -13,7 +13,7 @@
             </mat-form-field>
             <mat-form-field>
                 <mat-label>Tipo da Conta</mat-label>
-                <mat-select formControlName="accountType" required>
+                <mat-select formControlName="type" required>
                 @for (type of accountTypeOptions; track $index) {
                     <mat-option [value]="type">{{ type | accountType }}</mat-option>
                 }
@@ -27,7 +27,7 @@
             <ng-container formGroupName="balance">
                 <mat-form-field>
                     <mat-label>Saldo</mat-label>
-                    <input type="number" matInput formControlName="balance" required>
+                    <input type="number" matInput formControlName="amount" required>
                     @if (amount.invalid && amount.touched) {
                         @if(amount.getError('required')) {
                             <mat-error >
