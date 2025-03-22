@@ -1,10 +1,11 @@
-import { AfterViewInit, Component, inject, OnInit, viewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, OnInit, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { Portfolio } from '../../model/portfolio.model';
+import { AssetPosition, AssetValueRecord, Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { Asset } from '../../model/investment.model';
 
 @Component({
   selector: 'app-investment-portfolio-container',
@@ -25,6 +26,7 @@ export class InvestmentPortfolioContainerComponent implements OnInit, AfterViewI
 
   portfolios: Partial<Portfolio>[] = [];
 
+  @Input() editMode = false;
 
   ngOnInit(): void {
     this.investmentService.getPortfolioSummary().subscribe(portfolios => {
@@ -42,4 +44,8 @@ export class InvestmentPortfolioContainerComponent implements OnInit, AfterViewI
     this.accordion().openAll();
   }
 
+  rowSelected(row: AssetPosition&AssetValueRecord) {
+    console.log(row)
+  }
+    
 }

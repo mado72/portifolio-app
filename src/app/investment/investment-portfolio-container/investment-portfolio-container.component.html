@@ -1,11 +1,13 @@
-<div class="d-flex justify-content-end small mb-3">
-    <button  mat-mini-fab class="me-2" (click)="expandAll()">
-        <mat-icon>unfold_more</mat-icon>
-    </button>
-    <button  mat-mini-fab class="me-2" (click)="closeAll()">
-        <mat-icon>unfold_less</mat-icon>
-    </button>
-</div>
+@if (! editMode) {
+    <div class="d-flex justify-content-end small mb-3">
+        <button  mat-mini-fab class="me-2" (click)="expandAll()">
+            <mat-icon>unfold_more</mat-icon>
+        </button>
+        <button  mat-mini-fab class="me-2" (click)="closeAll()">
+            <mat-icon>unfold_less</mat-icon>
+        </button>
+    </div>
+}
 <mat-accordion multi>
     @for (portfolio of portfolios; track portfolio.id) {
         <mat-expansion-panel class="remove-mat-expansion-panel-padding" expanded="true">
@@ -14,7 +16,9 @@
                     {{ portfolio.name }}
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <app-investment-portfolio-table [portfolioId]="portfolio.id || ''"></app-investment-portfolio-table>
+            <app-investment-portfolio-table [portfolioId]="portfolio.id || ''" 
+                [editMode]="editMode"
+                (rowSelected)="rowSelected($event)"></app-investment-portfolio-table>
         </mat-expansion-panel>
     }
 </mat-accordion>

@@ -1,8 +1,8 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { AssetValueRecord, Portfolio } from '../../model/portfolio.model';
+import { AssetPosition, AssetValueRecord, Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { AssetCodePipe } from '../../utils/asset-code.pipe';
@@ -29,7 +29,11 @@ export class InvestmentPortfolioTableComponent implements OnInit{
 
   readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
 
+  @Input() editMode = false;
+
   @Input() portfolioId = '';
+
+  @Output() rowSelected = new EventEmitter<AssetPosition & AssetValueRecord>();
 
   portfolio = signal<Portfolio | undefined>(undefined);
 
@@ -62,4 +66,8 @@ export class InvestmentPortfolioTableComponent implements OnInit{
     }
   }
 
+  selectRow(row: AssetPosition & AssetValueRecord) {
+    this.rowSelected.emit(row);
+  }
+    
 }
