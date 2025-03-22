@@ -1,5 +1,7 @@
 import { AfterViewInit, Component, inject, OnInit, viewChild } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 import { Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
@@ -9,6 +11,8 @@ import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table
   standalone: true,
   imports: [
     MatExpansionModule,
+    MatIconModule,
+    MatButtonModule,
     InvestmentPortfolioTableComponent
   ],
   templateUrl: './investment-portfolio-container.component.html',
@@ -18,17 +22,24 @@ export class InvestmentPortfolioContainerComponent implements OnInit, AfterViewI
 
   accordion = viewChild.required(MatAccordion);
   private investmentService = inject(InvestmentService);
-  
+
   portfolios: Partial<Portfolio>[] = [];
-  
-  
+
+
   ngOnInit(): void {
     this.investmentService.getPortfolioSummary().subscribe(portfolios => {
       this.portfolios = portfolios;
     });
   }
-  
+
   ngAfterViewInit(): void {
+  }
+  
+  closeAll() {
+    this.accordion().closeAll();
+  }
+  expandAll() {
     this.accordion().openAll();
   }
+
 }
