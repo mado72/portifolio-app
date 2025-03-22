@@ -1,8 +1,29 @@
 <div class="row">
-    <div class="col-4 me-2">
-        <div class="my-3"><app-allocation-summary></app-allocation-summary></div>
-        <div class="my-3"><app-balances></app-balances></div>
-        <div class="my-3"><app-financial-forecast-summary></app-financial-forecast-summary></div>
+    <div class="col-4 me-2 d-flex flex-column">
+        <mat-accordion multi>
+            
+            <mat-expansion-panel class="remove-mat-expansion-panel-padding" >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Alocações</mat-panel-title>
+                </mat-expansion-panel-header>
+                <app-allocation-summary></app-allocation-summary>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="remove-mat-expansion-panel-padding" >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Saldos</mat-panel-title>
+                </mat-expansion-panel-header>
+                <app-balances></app-balances>
+            </mat-expansion-panel>
+
+            <mat-expansion-panel class="remove-mat-expansion-panel-padding" >
+                <mat-expansion-panel-header>
+                    <mat-panel-title>Previsão</mat-panel-title>
+                </mat-expansion-panel-header>
+                <app-financial-forecast-summary></app-financial-forecast-summary>
+            </mat-expansion-panel>
+
+        </mat-accordion>
     </div>
     <div class="col">
         <app-investment-portfolio-container></app-investment-portfolio-container>

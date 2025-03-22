@@ -1,5 +1,4 @@
 <table mat-table [dataSource]="balances()" class="mat-elevation-z2">
-    <caption>Saldos</caption>
     <ng-container matColumnDef="account">
         <td mat-cell *matCellDef="let item"> {{ item.account }}</td>
         <td mat-footer-cell *matFooterCellDef>

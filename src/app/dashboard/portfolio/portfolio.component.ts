@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, viewChild } from '@angular/core';
+import { MatAccordion, MatExpansionModule } from "@angular/material/expansion";
 import { AllocationSummaryComponent } from '../../assets/allocation-summary/allocation-summary.component';
 import { BalancesComponent } from '../../assets/balances/balances.component';
 import { FinancialForecastSummaryComponent } from '../../assets/financial-forecast-summary/financial-forecast-summary.component';
@@ -8,14 +9,20 @@ import { InvestmentPortfolioContainerComponent } from "../../investment/investme
   selector: 'app-portfolio',
   standalone: true,
   imports: [
+    MatExpansionModule,
     AllocationSummaryComponent,
     BalancesComponent,
     FinancialForecastSummaryComponent,
-    InvestmentPortfolioContainerComponent
+    InvestmentPortfolioContainerComponent,
 ],
   templateUrl: './portfolio.component.html',
   styleUrl: './portfolio.component.scss'
 })
-export class PortfolioComponent {
+export class PortfolioComponent implements OnInit{
 
+  accordion = viewChild.required(MatAccordion);
+
+  ngOnInit(): void {
+    this.accordion().openAll();
+  }
 }

@@ -87,3 +87,7 @@ $valor-negativo: rgb(215, 0, 0);
         cursor: pointer !important;
     }
 }
+
+.mat-accordion .remove-mat-expansion-panel-padding .mat-expansion-panel-content .mat-expansion-panel-body {
+    padding: 0 !important;
+}
