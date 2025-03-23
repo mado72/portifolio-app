@@ -36,6 +36,12 @@
                         }
                     }
                 </mat-form-field>
+                <div class="button-add">
+                    <button mat-button type="button" (click)="add(1000)">+1000</button>
+                    <button mat-button type="button" (click)="add(100)">+100</button>
+                    <button mat-button type="button" (click)="add(10)">+10</button>
+                    <button mat-button type="button" (click)="add(1)">+1</button>
+                </div>
                 <mat-form-field>
                     <mat-label>Moeda</mat-label>
                     <mat-select formControlName="currency" required>

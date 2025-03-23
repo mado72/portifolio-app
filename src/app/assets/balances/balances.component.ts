@@ -23,16 +23,7 @@ export class BalancesComponent implements OnInit {
 
   private dialog = inject(MatDialog);
 
-  private _currency: Currency = Currency.BRL;
-
-  public get currency(): Currency {
-    return this._currency;
-  }
-  
-  @Input()
-  public set currency(value: Currency) {
-    this._currency = value;
-  }
+  currency: Currency = Currency.BRL;
 
   @Input() editEnable = false;
   
@@ -64,18 +55,23 @@ export class BalancesComponent implements OnInit {
 
   rowClicked(account: AccountBalanceExchange) {
     if (! this.editEnable) {
-      if (this.isNotActivated(account)) {
-        this.actives.push(account);
-      }
-      else {
-        this.actives = this.actives.filter(b => b!== account);
-      }
-      this.totalBalance.set(this.summarize(this.actives));
-      this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
+      this.toggleSelect(account);
     }
     else {
       this.editAccount(account);
     }
+  }
+
+  toggleSelect(account: AccountBalanceExchange) {
+    if (this.isNotActivated(account)) {
+      this.actives.push(account);
+    }
+    else {
+      this.actives = this.actives.filter(b => b !== account);
+    }
+    
+    this.totalBalance.set(this.summarize(this.actives));
+    this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
   }
 
   editAccount(account: AccountBalanceExchange) {

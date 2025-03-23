@@ -73,4 +73,8 @@ export class BalanceDialogComponent implements OnInit {
     this.dialogRef.close(this.entryForm.value);
   }
 
+  add(value: number) {
+    this.amount.setValue(this.amount.value + value);
+  }
+    
 }
