@@ -67,11 +67,12 @@ export enum MarketPlaceEnum {
     BVMF = 'BVMF',
     NASDAQ = 'NASDAQ',
     NYSE = 'NYSE',
-    // BSE = 'BSE',
+    CRYPTO = 'CRYPTO',
+    COIN = 'COIN',
     IEX = 'IEX',
     FOREX = 'FOREX',
-    // CFD = 'CFD',
-    COIN = 'COIN'
+    BRTD = 'TD', // Tesouro Direto
+    OTHER = 'OTHER',
 }
 
 export type MarketPlaceType = `${MarketPlaceEnum}`;
@@ -147,7 +148,7 @@ export const TransactionStatusDesc : Record<TransactionStatusType, string> = {
 }
 
 export type TransactionType = {
-    id: string;
+    id?: string;
     ticket: string;
     date: Date;
     accountId: string;

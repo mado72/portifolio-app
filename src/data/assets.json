@@ -26,7 +26,7 @@
         },
         {
             "code": "BND1",
-            "marketPlace": "Euronext",
+            "marketPlace": "IEX",
             "controlByQty": false,
             "quote": {
                 "amount": 1000,
@@ -50,7 +50,7 @@
         },
         {
             "code": "BTC",
-            "marketPlace": "Binance",
+            "marketPlace": "CRYPTO",
             "controlByQty": true,
             "quote": {
                 "amount": 45000,
@@ -86,7 +86,7 @@
         },
         {
             "code": "BND3",
-            "marketPlace": "Euronext",
+            "marketPlace": "IEX",
             "controlByQty": false,
             "quote": {
                 "amount": 950,
@@ -110,7 +110,7 @@
         },
         {
             "code": "LTC",
-            "marketPlace": "Binance",
+            "marketPlace": "CRYPTO",
             "controlByQty": true,
             "quote": {
                 "amount": 180,

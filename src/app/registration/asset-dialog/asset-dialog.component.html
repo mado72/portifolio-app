@@ -1,0 +1,54 @@
+<h3 mat-dialog-title>{{data.title}}</h3>
+<mat-dialog-content>
+    <form [formGroup]="formAsset" class="d-flex flex-column p-2">
+        <mat-form-field>
+            <mat-label>Ativo</mat-label>
+            <input matInput type="text" name="name" formControlName="name" />
+        </mat-form-field>
+
+        <div class="d-flex justify-content-between">
+            <div>
+                <mat-form-field>
+                    <mat-label>Mercado</mat-label>
+                    <mat-select formControlName="marketPlace">
+                        @for (item of marketPlaces; track $index) {
+                            <mat-option [value]="item">{{ item }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
+                
+                <mat-form-field>
+                    <mat-label>Sigla</mat-label>
+                    <input matInput type="text" name="name" formControlName="code" 
+                        class="ps-2"/>
+                </mat-form-field>
+            </div>
+        </div>
+        <mat-form-field>
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="type">
+                @for (item of assetTypes; track $index) {
+                    <mat-option [value]="item">{{ item | assetType }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        <mat-form-field formGroupName="quote">
+            <mat-label>Moeda</mat-label>
+            <mat-select formControlName="currency">
+                @for (item of currencies; track $index) {
+                    <mat-option [value]="item">{{ item }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        
+        <div class="d-flex justify-content-between">
+            <mat-checkbox formControlName="controlByQty">Controlado por quantidade</mat-checkbox>
+            <mat-checkbox formControlName="manualQuote">Cotação Manual</mat-checkbox>
+        </div>
+    </form>
+<!-- <code><pre>{{this.formAsset.value | json}}</pre></code> -->
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-stroked-button [mat-dialog-close]="formAsset.value">Salvar</button>
+    <button mat-button [mat-dialog-close]="undefined">Cancelar</button>
+</mat-dialog-actions>
