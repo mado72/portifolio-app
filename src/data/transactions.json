@@ -2,7 +2,7 @@
     "data": [
         {
             "id": "tx-1a2b3c",
-            "ticket": "BVMF:PETR4",
+            "ticker": "BVMF:PETR4",
             "date": "2024-03-15T00:00:00.000Z",
             "accountId": "CC-123456",
             "quantity": 100,
@@ -17,7 +17,7 @@
         },
         {
             "id": "tx-4d5e6f",
-            "ticket": "BVMF:VALE3",
+            "ticker": "BVMF:VALE3",
             "date": "2024-03-16T00:00:00.000Z",
             "accountId": "CC-123456",
             "quantity": 50,
@@ -31,7 +31,7 @@
         },
         {
             "id": "tx-7g8h9i",
-            "ticket": "NASDAQ:REFB",
+            "ticker": "NASDAQ:REFB",
             "date": "2024-03-17T00:00:00.000Z",
             "accountId": "CC-123456",
             "quantity": 200,

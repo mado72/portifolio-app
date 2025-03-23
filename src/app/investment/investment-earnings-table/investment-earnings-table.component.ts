@@ -38,15 +38,15 @@ export class InvestmentEarningsTableComponent {
         const asserts = this.investmentService.assertsSignal();
         return {
           ...earning,
-          currency: asserts[earning.ticket].quote.currency,
-          description: asserts[earning.ticket].name
+          currency: asserts[earning.ticker].quote.currency,
+          description: asserts[earning.ticker].name
         }
       });
   }
 
   earningsEnum = IncomeEnum;
 
-  readonly displayedColumns = ["id", "ticket", "description", "type", "date", "amount"];
+  readonly displayedColumns = ["id", "ticker", "description", "type", "date", "amount"];
 
   getEarningEnumDisplayName(type: IncomeEnum) {
     return IncomeDesc[type];

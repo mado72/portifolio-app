@@ -34,7 +34,7 @@ type EarningEntry = {
 };
 
 type SheetRow = {
-  ticket: string;
+  ticker: string;
   description: string;
   main?: boolean;
   rowspan?: number;
@@ -82,7 +82,7 @@ export class EarningsYearSheetComponent implements OnInit {
 
   asset = this.investmentService.assertsSignal();
 
-  readonly displayedColumns = ['ticket', 'acronym', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
+  readonly displayedColumns = ['ticker', 'acronym', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
 
   filter: EarningsFilterType = { dateReference: new Date(), typeReference: null, portfolioReference: null };
 
@@ -120,13 +120,13 @@ export class EarningsYearSheetComponent implements OnInit {
     });
   }
 
-  private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: IncomeEnum; }[]) {
+  private prepareSheetRows(earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
     let data: SheetRow[] = [];
     this.data.set([]);
 
     earnings.forEach(earning => {
-      let mainRowIdx = data.findIndex((row: SheetRow) => row.ticket === earning.ticket && row.main);
-      let row = data.find((row: SheetRow) => row.ticket === earning.ticket && row.acronymEarn === EARNING_ACRONYM[earning.type]);
+      let mainRowIdx = data.findIndex((row: SheetRow) => row.ticker === earning.ticker && row.main);
+      let row = data.find((row: SheetRow) => row.ticker === earning.ticker && row.acronymEarn === EARNING_ACRONYM[earning.type]);
       if (!row) {
         row = this.earningToRow(earning)
         if (mainRowIdx > -1) {
@@ -144,17 +144,17 @@ export class EarningsYearSheetComponent implements OnInit {
     return data;
   }
 
-  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticket: string; amount: number; type: IncomeEnum; }[]) {
+  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
     const assets = portfolios.find(item => item.id === portfolioReference)?.assets || [];
-    earnings = earnings.filter(earning => assets.includes(earning.ticket));
+    earnings = earnings.filter(earning => assets.includes(earning.ticker));
     return earnings;
   }
 
-  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticket: string; amount: number; type: IncomeEnum; }[]) {
+  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
     const assets = Object.entries(this.investmentService.assertsSignal())
       .filter(([_, asset]) => asset.type === typeReference)
-      .map(([ticket, _]) => ticket);
-    return earnings.filter(earning => assets.includes(earning.ticket));
+      .map(([ticker, _]) => ticker);
+    return earnings.filter(earning => assets.includes(earning.ticker));
   }
 
   totalMonth(vlMonth: number): number {
@@ -163,8 +163,8 @@ export class EarningsYearSheetComponent implements OnInit {
 
   earningToRow(earning: Income) {
     return {
-      ticket: earning.ticket,
-      description: this.asset[earning.ticket].name,
+      ticker: earning.ticker,
+      description: this.asset[earning.ticker].name,
       acronymEarn: EARNING_ACRONYM[earning.type],
       rowspan: 1,
       entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
@@ -238,7 +238,7 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   private saveEarning(element: SheetRow, entry: EarningEntry) {
-    let [marketPlace, code] = element.ticket.split(':');
+    let [marketPlace, code] = element.ticker.split(':');
     this.investmentService.findIncomesOfAsset({ marketPlace, code }).subscribe(earnings => {
       const earning: Income | undefined = earnings.find(item => item.id === entry.id);
 
@@ -247,7 +247,7 @@ export class EarningsYearSheetComponent implements OnInit {
           this.investmentService.deleteIncome(earning.id).subscribe();
         }
         else {
-          const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Income>;
+          const entryData = { ...earning, ...entry, ticker: element.ticker } as Required<Income>;
           this.investmentService.updateIncome(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
         }
       }
@@ -256,9 +256,9 @@ export class EarningsYearSheetComponent implements OnInit {
           .map(([key, value]) => ({ key: key as IncomeEnum, value }))
           .find(item => item.value === element.acronymEarn);
           
-        const entryData = { type: earningTypeFound?.key, ...entry, ticket: element.ticket } as Required<Income>;
+        const entryData = { type: earningTypeFound?.key, ...entry, ticker: element.ticker } as Required<Income>;
         if (entry.amount) {
-          this.investmentService.addIncome(element.ticket, entryData).subscribe(() => {
+          this.investmentService.addIncome(element.ticker, entryData).subscribe(() => {
             // this.setEarningValue(earning, element);
             this.doFilter(this.filter);
           });

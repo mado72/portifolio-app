@@ -2,7 +2,7 @@
 <!-- Criação do formArray -->
 <table mat-table [dataSource]="data()" class="mat-elevation-z8 w-100 mat-table-hover">
 
-  <ng-container matColumnDef="ticket">
+  <ng-container matColumnDef="ticker">
     <th mat-header-cell *matHeaderCellDef> Código </th>
     <td mat-cell *matCellDef="let element; let idx = index" 
       [attr.rowspan]="element.rowspan"
@@ -10,7 +10,7 @@
       <div class="d-flex justify-contents-between">
         <div class="d-flex flex-column align-middle">
           <div>
-            {{element.ticket}}
+            {{element.ticker}}
           </div>
           <em>
             {{element.description}}

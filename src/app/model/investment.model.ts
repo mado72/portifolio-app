@@ -98,7 +98,7 @@ export const IncomeDesc : Record<IncomeEnumType, string> = {
 export type Income = {
     id: number;
     date: Date;
-    ticket: string;
+    ticker: string;
     amount: number;
     type: IncomeEnum
 }
@@ -149,7 +149,7 @@ export const TransactionStatusDesc : Record<TransactionStatusType, string> = {
 
 export type TransactionType = {
     id?: string;
-    ticket: string;
+    ticker: string;
     date: Date;
     accountId: string;
     quantity: number;

@@ -1,20 +1,19 @@
+import { KeyValuePipe } from '@angular/common';
 import { Component, computed, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { TransactionTypePipe } from '../transaction-type.pipe';
-import { TransactionStatusPipe } from '../transaction-status.pipe';
-import { Asset, TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
 import { Currency } from '../../model/domain.model';
-import { JsonPipe, KeyValuePipe } from '@angular/common';
-import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { Asset, TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
+import { TransactionStatusPipe } from '../transaction-status.pipe';
+import { TransactionTypePipe } from '../transaction-type.pipe';
 
 export type TransactionDialogType = {
   title: string,
@@ -28,7 +27,6 @@ export type TransactionDialogType = {
   imports: [
     ReactiveFormsModule,
     KeyValuePipe,
-    JsonPipe,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
@@ -56,7 +54,7 @@ export class TransactionDialogComponent implements OnInit {
 
   readonly transactionForm = this.fb.group({
     id: this.fb.control(this.data.transaction.id),
-    ticket: this.fb.control(this.data.transaction.ticket),
+    ticker: this.fb.control(this.data.transaction.ticker),
     date: this.fb.control(this.data.transaction.date, []),
     accountId: this.fb.control(this.data.transaction.accountId, []),
     quantity: this.fb.control(this.data.transaction.quantity, []),
@@ -76,7 +74,7 @@ export class TransactionDialogComponent implements OnInit {
 
   
   assets = computed(() => {
-    if (!this.data.transaction.ticket) {
+    if (!this.data.transaction.ticker) {
       return Object.values(this.investmentService.assertsSignal()).reduce((acc, asset)=>{
         acc[getMarketPlaceCode(asset)] = asset;
         return acc;
@@ -87,12 +85,12 @@ export class TransactionDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.data.newTransaction) {
-      this.ticket.disable();
+      this.ticker.disable();
     }
   }
 
-  get ticket() {
-    return this.transactionForm.get('ticket') as FormControl;
+  get ticker() {
+    return this.transactionForm.get('ticker') as FormControl;
   }
 
   get date() {
@@ -133,8 +131,8 @@ export class TransactionDialogComponent implements OnInit {
 
   get assetSelected() {
     const assets = this.assets();
-    if (this.ticket.value && assets) {
-      return assets[this.ticket.value];
+    if (this.ticker.value && assets) {
+      return assets[this.ticker.value];
     }
     return undefined ;
   }

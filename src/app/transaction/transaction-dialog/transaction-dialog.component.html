@@ -3,21 +3,21 @@
     <mat-dialog-content>
         <div class="d-flex flex-column">
             <mat-form-field>
-                <mat-label>Ticket</mat-label>
+                <mat-label>ticker</mat-label>
                 @if (!assets()) {
-                    <input matInput type="text" formControlName="ticket" required>
+                    <input matInput type="text" formControlName="ticker" required>
                 }
                 @else {
-                    <mat-select formControlName="ticket" required>
+                    <mat-select formControlName="ticker" required>
                         <mat-select-trigger>
-                            {{ticket.value}} - {{ assetSelected?.name }}
+                            {{ticker.value}} - {{ assetSelected?.name }}
                         </mat-select-trigger>
                         @for (asset of assets() | keyvalue; track asset.key) {
                         <mat-option [value]="asset.key">{{ asset.key }}<br><em class="display-small small">{{asset.value.name}}</em></mat-option>
                         }
                     </mat-select>
                 }
-                @if (ticket.invalid && ticket.touched) {
+                @if (ticker.invalid && ticker.touched) {
                 <mat-error>
                     Campo obrigatório
                 </mat-error>

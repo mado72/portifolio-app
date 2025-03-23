@@ -225,14 +225,14 @@ export class InvestmentService {
   }
 
   findIncomesOfAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
-    return of(this.earningsData.filter(item => item.ticket === getMarketPlaceCode({ marketPlace, code })));
+    return of(this.earningsData.filter(item => item.ticker === getMarketPlaceCode({ marketPlace, code })));
   }
 
-  addIncome(ticket: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
+  addIncome(ticker: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
     return new Observable<Income>((observer) => {
       const reg = {
         ...data,
-        ticket,
+        ticker,
         id: ++InvestmentService.earningsId
       }
       this.earningsData.push(reg);

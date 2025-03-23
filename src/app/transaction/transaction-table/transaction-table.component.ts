@@ -37,7 +37,7 @@ export class TransactionTableComponent {
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
-  readonly displayedColumns = ["ticket", "date", "type", "quote", "value", "status", "account", "brokerage", "actions"];
+  readonly displayedColumns = ["ticker", "date", "type", "quote", "value", "status", "account", "brokerage", "actions"];
 
   // tData = this.transactionService.transactionsData();
 
@@ -61,7 +61,7 @@ export class TransactionTableComponent {
       newTransaction: true,
       title: 'Adicionar Transação',
       transaction: {
-        ticket: '',
+        ticker: '',
         date: new Date(),
         accountId: '',
         quantity: 1,
