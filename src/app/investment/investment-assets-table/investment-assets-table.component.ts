@@ -38,9 +38,7 @@ export class InvestmentAssetsTableComponent {
 
   @Output() onSelected = new EventEmitter<Asset>();
 
-  @Input() datasource!: Signal<(Asset & {
-    trend: TrendType;
-  })[]>;
+  @Input() datasource!: (Asset & { trend: TrendType; })[];
 
   rowClick(asset: Asset) {
     this.onSelected.emit(asset);
