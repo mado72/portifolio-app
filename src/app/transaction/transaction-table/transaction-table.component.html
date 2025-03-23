@@ -62,7 +62,7 @@
     <ng-container matColumnDef="actions">
         <mat-header-cell *matHeaderCellDef></mat-header-cell>
         <mat-cell *matCellDef="let row">
-            <button mat-icon-button color="warn" (click)="deleteTransaction(row)">
+            <button mat-icon-button color="warn" (click)="deleteTransaction($event, row)">
                 <mat-icon>delete</mat-icon>
             </button>
         </mat-cell>
@@ -73,3 +73,5 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editTransaction(row)"></mat-row>
     <mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"></mat-footer-row>
 </mat-table>
+
+<!-- <code><pre>{{tData | json}}</pre></code> -->

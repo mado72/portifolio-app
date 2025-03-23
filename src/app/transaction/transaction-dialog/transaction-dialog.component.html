@@ -1,1 +1,157 @@
-<p>transaction-dialog works!</p>
+<h3 mat-dialog-title>{{data.title}}</h3>
+<form [formGroup]="transactionForm" (submit)="submitForm()">
+    <mat-dialog-content>
+        <div class="d-flex flex-column">
+            <mat-form-field>
+                <mat-label>Ticket</mat-label>
+                @if (!assets()) {
+                    <input matInput type="text" formControlName="ticket" required>
+                }
+                @else {
+                    <mat-select formControlName="ticket" required>
+                        <mat-select-trigger>
+                            {{ticket.value}} - {{ assetSelected?.name }}
+                        </mat-select-trigger>
+                        @for (asset of assets() | keyvalue; track asset.key) {
+                        <mat-option [value]="asset.key">{{ asset.key }}<br><em class="display-small small">{{asset.value.name}}</em></mat-option>
+                        }
+                    </mat-select>
+                }
+                @if (ticket.invalid && ticket.touched) {
+                <mat-error>
+                    Campo obrigatório
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field>
+                <input matInput [matDatepicker]="dp" placeholder="DD/MM/YYYY" formControlName="date">
+                <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                <mat-datepicker #dp></mat-datepicker>
+                @if (date.invalid && date.touched) {
+                <mat-error>
+                    Campo obrigatório
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <mat-form-field>
+                <mat-label>Quantidade</mat-label>
+                <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="quantity"
+                    (input)="quantityQuoteUpdated()" (focus)="selectAll($event)">
+                @if (quantity.invalid && quantity.touched) {
+                <mat-error>
+                    Campo obrigatório
+                </mat-error>
+                }
+            </mat-form-field>
+
+            <div class="d-flex">
+                <ng-container formGroupName="value">
+                    <mat-form-field>
+                        <mat-label>Moeda</mat-label>
+                        <mat-select formControlName="currency" required>
+                            @for (currency of currencies; track $index) {
+                            <mat-option [value]="currency">{{ currency }}</mat-option>
+                            }
+                        </mat-select>
+                        @if (currency.invalid && currency.touched) {
+                        <mat-error>
+                            Campo obrigatório
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </ng-container>
+
+                <mat-form-field class="ms-2">
+                    <mat-label>Cotação</mat-label>
+                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="quote"
+                        (input)="quantityQuoteUpdated()" (focus)="selectAll($event)">
+                    @if (quote.invalid && quote.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+            </div>
+
+            <ng-container formGroupName="value">
+                <mat-form-field>
+                    <mat-label>Valor</mat-label>
+                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="amount" required
+                        (input)="amountUpdated()" (focus)="selectAll($event)">
+                    @if (amount.invalid && amount.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+            </ng-container>
+
+            <div class="d-flex">
+                <mat-form-field>
+                    <mat-label>Tipo</mat-label>
+                    <mat-select formControlName="type" placeholder="Tipo da transação" required>
+                        @for (type of transactionTypes; track $index) {
+                        <mat-option [value]="type">{{ type | transactionType }} </mat-option>
+                        }
+                    </mat-select>
+                    @if (type.invalid && type.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field class="ms-2">
+                    <mat-label>Tipo</mat-label>
+                    <mat-select formControlName="status" placeholder="Status da transação" required>
+                        @for (status of transactionStatuses; track $index) {
+                        <mat-option [value]="status">{{ status | transactionStatus }} </mat-option>
+                        }
+                    </mat-select>
+                    @if (type.invalid && type.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+            </div>
+
+            <div class="d-flex">
+                <mat-form-field>
+                    <mat-label>Conta</mat-label>
+                    <input type="text" matInput formControlName="accountId" required>
+                    @if (accountId.invalid && accountId.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+
+                <mat-form-field class="ms-2">
+                    <mat-label>Comissão</mat-label>
+                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="brokerage"
+                        (focus)="selectAll($event)">
+                    @if (brokerage.invalid && brokerage.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+            </div>
+
+        </div>
+
+        <!-- <code>
+    <pre>{{transactionForm.value | json}}</pre>
+    <pre>{{data | json}}</pre>
+</code> -->
+    </mat-dialog-content>
+
+    <mat-dialog-actions>
+        <button type="submit" mat-stroked-button mat-dialog-close color="primary">Salvar</button>
+        <button type="button" mat-button [mat-dialog-close]="undefined">Cancelar</button>
+    </mat-dialog-actions>
+
+</form>
