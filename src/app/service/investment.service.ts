@@ -172,12 +172,13 @@ export class InvestmentService {
 
   updateAsset(code: string, data: AssetFormModel) {
     const quotes = this.quoteService.quotes();
-    const changedCode = code != getMarketPlaceCode(data);
-    if (changedCode) {
+    const codeChanged = code != getMarketPlaceCode(data);
+    if (codeChanged) {
       const newCode = getMarketPlaceCode(data);
       quotes[newCode] = quotes[code];
+      delete quotes[code];
+      this.quoteService.quotes.set(quotes);
     }
-    this.quoteService.quotes.set(quotes);
 
     this.assertsDataSignal.update(assertMap => {
       const idx = assertMap.findIndex(item => getMarketPlaceCode(item) === code);
@@ -190,11 +191,6 @@ export class InvestmentService {
       assertMap[idx] = asset;
       return assertMap;
     })
-
-    this.quoteService.quotes.update(quotes => {
-      delete quotes[code];
-      return quotes;
-    });
 
   }
 
