@@ -67,7 +67,10 @@ export class Portfolio {
 }
 
 export type PortfolioAssetsSummary = {
-    assets: string[];
+    assets: {
+        ticker: string,
+        quantity: number
+    }[];
     id: string;
     name: string;
     currency: Currency;

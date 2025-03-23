@@ -136,7 +136,10 @@ export class InvestmentService {
       map((portfolios) => Object.entries(portfolios).map(([k, v]) =>
       ({
         ...v,
-        assets: v.assets.map(asset => getMarketPlaceCode(asset))
+        assets: v.assets.map(asset => ({
+          ticker: getMarketPlaceCode(asset),
+          quantity: asset.quantity
+        }))
       }))
       ));
   }
@@ -150,6 +153,13 @@ export class InvestmentService {
   getPortfolioAllocations(portfolio: Portfolio): Observable<AssetAllocationRecord> {
     return this.getAllDataMock().pipe(
       map(portfolios => portfolios.find(p => p.id === portfolio.id)?.assets || {})
+    );
+  }
+
+  getPorfoliosByAsset(asset: Asset): Observable<Portfolio[]> {
+    const ticker = getMarketPlaceCode(asset);
+    return this.getAllDataMock().pipe(
+      map(portfolios => portfolios.filter(p => !! p.assets()[ticker]))
     );
   }
 

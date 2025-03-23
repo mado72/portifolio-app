@@ -145,7 +145,9 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
-    const assets = portfolios.find(item => item.id === portfolioReference)?.assets || [];
+    const assets = (portfolios.filter(item => item.id === portfolioReference))
+        .flatMap(item=> item?.assets || [])
+        .map(item=> item.ticker);
     earnings = earnings.filter(earning => assets.includes(earning.ticker));
     return earnings;
   }
