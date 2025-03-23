@@ -2,7 +2,7 @@
     <mat-icon>add</mat-icon>
     Adicionar
 </button>
-<mat-table [dataSource]="dataSource" class="mat-table-hover">
+<mat-table [dataSource]="dataSource()" class="mat-table-hover">
     <ng-container matColumnDef="ticker">
         <mat-header-cell *matHeaderCellDef class="text-break"> Ativo </mat-header-cell>
         <mat-cell *matCellDef="let row">

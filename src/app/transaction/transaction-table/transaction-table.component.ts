@@ -1,5 +1,5 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, effect, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -41,15 +41,9 @@ export class TransactionTableComponent {
 
   // tData = this.transactionService.transactionsData();
 
-  dataSource: TransactionType[] = [];
-
-  constructor() {
-    effect(()=>{
-      this.dataSource = Object.values(this.transactionService.transactionsData()).slice().sort((a, b) => isAfter(a.date, b.date) ? -1: isBefore(a.date, b.date) ? 1 : 0);
-      console.log(`Datasource changed:`, this.dataSource);
-    })
-
-  }
+  dataSource = computed(() => {
+    return this.transactionService.transactionSignal();
+  });
 
   getAccount(accountId: string) {
     // Simulate fetching account details
