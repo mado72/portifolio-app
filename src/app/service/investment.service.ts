@@ -217,18 +217,18 @@ export class InvestmentService {
     )
   }
 
-  findEarningsBetween(from: Date, to: Date) {
+  findIncomesBetween(from: Date, to: Date) {
     return of(this.earningsData).pipe(
       map(earnings => earnings.map(item => ({ ...item, date: setYear(item.date, getYear(from)) }))),
       delay(250)
     );
   }
 
-  findEarningsOfAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
+  findIncomesOfAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
     return of(this.earningsData.filter(item => item.ticket === getMarketPlaceCode({ marketPlace, code })));
   }
 
-  addEarning(ticket: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
+  addIncome(ticket: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
     return new Observable<Income>((observer) => {
       const reg = {
         ...data,
@@ -241,7 +241,7 @@ export class InvestmentService {
     })
   }
 
-  updateEarning(id: number, data: { date: Date; type: IncomeEnum, amount: number; }) {
+  updateIncome(id: number, data: { date: Date; type: IncomeEnum, amount: number; }) {
     return new Observable<void>((observer) => {
       this.earningsData = this.earningsData.map(item => item.id === id ? { ...item, ...data } : item);
       observer.next();
@@ -249,7 +249,7 @@ export class InvestmentService {
     });
   }
 
-  deleteEarning(id: number) {
+  deleteIncome(id: number) {
     return new Observable<void>((observer) => {
       this.earningsData = this.earningsData.filter(item => item.id !== id);
       observer.next();

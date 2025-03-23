@@ -98,7 +98,7 @@ export class EarningsYearSheetComponent implements OnInit {
   doFilter(filter?: EarningsFilterType) {
     filter = this.filter = filter || this.filter;
     const joinSetup = {
-      earnings: this.investmentService.findEarningsBetween(startOfYear(filter.dateReference), endOfYear(filter.dateReference)),
+      earnings: this.investmentService.findIncomesBetween(startOfYear(filter.dateReference), endOfYear(filter.dateReference)),
       portfolios: !!filter.portfolioReference ?
         this.investmentService.getPortfolioAssetsSummary() : of([] as PortfolioAssetsSummary[])
     };
@@ -239,16 +239,16 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private saveEarning(element: SheetRow, entry: EarningEntry) {
     let [marketPlace, code] = element.ticket.split(':');
-    this.investmentService.findEarningsOfAsset({ marketPlace, code }).subscribe(earnings => {
+    this.investmentService.findIncomesOfAsset({ marketPlace, code }).subscribe(earnings => {
       const earning: Income | undefined = earnings.find(item => item.id === entry.id);
 
       if (!!earning) {
         if (!entry.amount) {
-          this.investmentService.deleteEarning(earning.id).subscribe();
+          this.investmentService.deleteIncome(earning.id).subscribe();
         }
         else {
           const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Income>;
-          this.investmentService.updateEarning(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
+          this.investmentService.updateIncome(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
         }
       }
       else {
@@ -258,7 +258,7 @@ export class EarningsYearSheetComponent implements OnInit {
           
         const entryData = { type: earningTypeFound?.key, ...entry, ticket: element.ticket } as Required<Income>;
         if (entry.amount) {
-          this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
+          this.investmentService.addIncome(element.ticket, entryData).subscribe(() => {
             // this.setEarningValue(earning, element);
             this.doFilter(this.filter);
           });

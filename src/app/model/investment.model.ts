@@ -10,6 +10,16 @@ export enum AssetEnum {
     OTHER = "OTHER"
 }
 
+export const AssetDesc : Record<`${AssetEnum}`, string> = {
+    STOCK: 'Ação',
+    BOND: 'Fundo',
+    ETF: 'ETF',
+    CRYPTO: 'Crypto',
+    REAL_ESTATE: 'FI',
+    CURRENCY: 'Moeda',
+    OTHER: 'Outro'
+}
+
 export type Asset = {
     name: string;
     code: string;
@@ -21,10 +31,6 @@ export type Asset = {
     initialQuote?: number;
     manualQuote?: boolean;
 }
-
-export type AssetFormModel = Pick<Asset, "name" | "code" | "type" | "marketPlace" | "controlByQty" | "manualQuote"> & {
-    currency: Currency;
-};
 
 export type AssetAllocation = Asset & {
     quantity: number;
