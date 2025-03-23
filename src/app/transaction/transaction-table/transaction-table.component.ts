@@ -39,8 +39,6 @@ export class TransactionTableComponent {
 
   readonly displayedColumns = ["ticker", "date", "type", "quote", "value", "status", "account", "brokerage", "actions"];
 
-  // tData = this.transactionService.transactionsData();
-
   dataSource = computed(() => {
     return this.transactionService.transactionSignal();
   });

@@ -16,7 +16,6 @@ export class TransactionService {
   transactionSignal = computed(() => {
     const data = this.transactionsData();
     const values = Object.values(data).slice();
-    console.log(values);
     return values;
   })
 
@@ -48,11 +47,11 @@ export class TransactionService {
 
   saveTransaction(result: TransactionType) {
     return new Observable<TransactionType>(observer => {
-      const items = { ...this.transactionsData() }; // Cria uma cópia do estado atual
-      result.id = result.id || uuid(); // Gera um ID se não existir
-      items[result.id] = result; // Adiciona ou atualiza a transação
+      const items = { ...this.transactionsData() }; // Creates a copy of the current state
+      result.id = result.id || uuid(); // Generates an ID if it doesn't exist
+      items[result.id] = result; // Adds or updates the transaction
 
-      this.transactionsData.set(items); // Atualiza o signal com o novo objeto
+      this.transactionsData.set(items); // Updates the signal with the new object
 
       observer.next(result);
       observer.complete();
@@ -61,14 +60,13 @@ export class TransactionService {
 
   deleteTransaction(id: string) {
     return new Observable<void>(observer => {
-      const items = { ...this.transactionsData() }; // Cria uma cópia do estado atual
-      delete items[id]; // Remove a transação pelo ID
+      const items = { ...this.transactionsData() }; // Creates a copy of the current state
+      delete items[id]; // Removes the transaction by ID
 
-      this.transactionsData.set(items); // Atualiza o signal com o novo objeto
+      this.transactionsData.set(items); // Updates the signal with the new object
 
       observer.next();
       observer.complete();
     });
   }
-  
 }
