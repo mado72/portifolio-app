@@ -25,10 +25,10 @@ export class QuoteService {
       acc[code] = {
         lastUpdate: new Date(asset.lastUpdate),
         quote: {
-          amount: asset.price,
-          currency: Currency[asset.currency as keyof typeof Currency]
+          ...asset.quote,
+          currency: Currency[asset.quote.currency as keyof typeof Currency]
         },
-        initialQuote: asset.price
+        initialQuote: asset.quote.amount
       }
       return acc;
     }, {} as AssetQuoteRecord)
@@ -82,22 +82,22 @@ export class QuoteService {
     if (!asset)
       throw `${getMarketPlaceCode({ marketPlace, code })} not found`;
 
-    const fromCurrency: Currency = Currency[asset.currency as keyof typeof Currency];
+    const fromCurrency: Currency = Currency[asset.quote.currency as keyof typeof Currency];
 
     return this.getExchangeQuote(fromCurrency, toCurrency).pipe(
       map(exchange => {
         if (!exchange)
           throw `Exchange rate from ${fromCurrency} to ${toCurrency} not found`;
 
-        asset.price = this.quotes()[getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code })].quote.amount;
+        asset.quote.amount = this.quotes()[getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code })].quote.amount;
 
         return {
           original: {
-            amount: asset.price,
+            amount: asset.quote.amount,
             currency: fromCurrency
           },
           value: {
-            amount: asset.price * exchange.factor,
+            amount: asset.quote.amount * exchange.factor,
             currency: toCurrency
           },
           exchange

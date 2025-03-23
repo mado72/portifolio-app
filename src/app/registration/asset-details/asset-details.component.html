@@ -31,6 +31,14 @@
                         }
                     </mat-select>
                 </mat-form-field>
+                <mat-form-field formGroupName="quote">
+                    <mat-label>Moeda</mat-label>
+                    <mat-select formControlName="currency">
+                        @for (item of currencies; track $index) {
+                            <mat-option [value]="item">{{ item }}</mat-option>
+                        }
+                    </mat-select>
+                </mat-form-field>
                 <mat-checkbox formControlName="controlByQty">Controlado por quantidade</mat-checkbox>
                 <mat-checkbox formControlName="manualQuote">Cotação Manual</mat-checkbox>
             </div>

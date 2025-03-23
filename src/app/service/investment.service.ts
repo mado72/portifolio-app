@@ -5,7 +5,7 @@ import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Income, IncomeEnum, fnTrend, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, Income, IncomeEnum, TrendType } from '../model/investment.model';
 import { AssetPositionRecord, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 
@@ -33,6 +33,8 @@ export class InvestmentService {
       const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
+
+      const aux = {...data}
 
       acc[code] = {
         ...data,
@@ -158,19 +160,23 @@ export class InvestmentService {
     })
   }
 
-  addAsset(data: AssetFormModel) {
+  addAsset(data: Asset) {
     const asset = {
       ...data,
-      price: Math.random() * 200 + 10,
+      quote: {
+        ...data.quote,
+        amount: Math.random() * 200
+      },
       initialQuote: 0,
       manualQuote: data.manualQuote,
       lastUpdate: formatISO(new Date()),
       trend: "unchanged"
-    }
+    };
+    delete (asset as any).quote;
     this.assertsDataSignal().push(asset);
   }
 
-  updateAsset(code: string, data: AssetFormModel) {
+  updateAsset(code: string, data: Asset) {
     const quotes = this.quoteService.quotes();
     const codeChanged = code != getMarketPlaceCode(data);
     if (codeChanged) {
@@ -180,13 +186,16 @@ export class InvestmentService {
       this.quoteService.quotes.set(quotes);
     }
 
+    const aux = {
+      ...data,
+      lastUpdate: formatISO(new Date())
+    };
+
     this.assertsDataSignal.update(assertMap => {
       const idx = assertMap.findIndex(item => getMarketPlaceCode(item) === code);
       let asset = assertMap[idx];
       asset = {
-        ...asset, ...data,
-        price: Math.random() * 200 + 10,
-        lastUpdate: formatISO(new Date())
+        ...asset, ...aux
       };
       assertMap[idx] = asset;
       return assertMap;

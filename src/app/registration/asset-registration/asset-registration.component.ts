@@ -1,6 +1,6 @@
-import { Component, inject } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { InvestmentAssetsTableComponent } from "../../investment/investment-assets-table/investment-assets-table.component";
-import { Asset, AssetFormModel } from '../../model/investment.model';
+import { Asset } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { AssetDetailsComponent } from "../asset-details/asset-details.component";
 import { getMarketPlaceCode } from '../../service/quote.service';
@@ -17,19 +17,25 @@ export class AssetRegistrationComponent {
 
   datasource = this.investimentService.getAssetsDatasourceComputed();
 
-  assetSelected : AssetFormModel | undefined = undefined;
+  assetSelected : Asset | undefined = undefined;
+
+  constructor() {
+    effect(()=>{
+      console.log(this.datasource());
+    })
+  }
 
   selectAsset(asset: Asset) {
-    this.assetSelected = {...asset, currency: asset.quote.currency};
+    this.assetSelected = asset;
   }
 
   canceled() {
     this.assetSelected = undefined;
   }
 
-  saved(inputData: AssetFormModel | undefined) {
+  saved(inputData?: Asset) {
     if (!!inputData) {
-      const code = getMarketPlaceCode(this.assetSelected as AssetFormModel);
+      const code = getMarketPlaceCode(this.assetSelected as Asset);
       const asset = this.investimentService.assertsSignal()[code];
   
       if (asset) {
