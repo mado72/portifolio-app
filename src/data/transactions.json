@@ -1,0 +1,48 @@
+{
+    "data": [
+        {
+            "id": "tx-1a2b3c",
+            "ticket": "BVMF:PETR4",
+            "date": "2024-03-15T00:00:00.000Z",
+            "accountId": "CC-123456",
+            "quantity": 100,
+            "quote": 25.50,
+            "value": {
+                "currency": "BRL",
+                "amount": 2550.00
+            },
+            "type": "BUY",
+            "status": "COMPLETED",
+            "brokerage": 19.99
+        },
+        {
+            "id": "tx-4d5e6f",
+            "ticket": "BVMF:VALE3",
+            "date": "2024-03-16T00:00:00.000Z",
+            "accountId": "CC-123456",
+            "quantity": 50,
+            "quote": 68.90,
+            "value": {
+                "currency": "BRL",
+                "amount": 3445.00
+            },
+            "type": "SELL",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "tx-7g8h9i",
+            "ticket": "NASDAQ:REFB",
+            "date": "2024-03-17T00:00:00.000Z",
+            "accountId": "CC-123456",
+            "quantity": 200,
+            "quote": 30.25,
+            "value": {
+                "currency": "USD",
+                "amount": 6050.00
+            },
+            "type": "BUY",
+            "status": "PENDING",
+            "brokerage": 25.50
+        }
+    ]
+}

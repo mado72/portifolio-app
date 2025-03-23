@@ -12,6 +12,10 @@ export const investmentRoutes: Routes = [
     {
         path: 'earnings',
         loadComponent: () => import('./investment-earnings-month/investment-earnings-month.component').then(mod => mod.InvestmentEarningsMonthComponent)
+    },
+    {
+        path: 'transactions',
+        loadComponent: () => import('../transaction/transaction-table/transaction-table.component').then(mod => mod.TransactionTableComponent)
     }
 
 ]
