@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { EarningEnum, EarningsDesc } from '../../model/investment.model';
+import { IncomeEnum, IncomeDesc } from '../../model/investment.model';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 
 const PTBR_FORMATS = {
@@ -24,7 +24,7 @@ const PTBR_FORMATS = {
 
 export type EarningsEntryDialogType = {
   "title": string;
-  "type": EarningEnum;
+  "type": IncomeEnum;
   "disabled"?: boolean;
   "entry": {
     id?: number;
@@ -64,10 +64,10 @@ export class EarningsEntryDialogComponent implements OnInit {
     id: [NaN],
     date: [new Date(), []],
     amount: [0, []],
-    type: [EarningEnum.DIVIDENDS, []]
+    type: [IncomeEnum.DIVIDENDS, []]
   });
 
-  readonly typeOptions = Object.values(EarningEnum);
+  readonly typeOptions = Object.values(IncomeEnum);
 
   ngOnInit() {
     this.entryForm.patchValue(this.data.entry);
@@ -79,8 +79,8 @@ export class EarningsEntryDialogComponent implements OnInit {
     this.data.title = this.data.title || 'Earning entry'
   }
 
-  earningDesc(earningEnum: EarningEnum) {
-    return EarningsDesc[earningEnum];
+  earningDesc(earningEnum: IncomeEnum) {
+    return IncomeDesc[earningEnum];
   }
 
   selectText($event: FocusEvent) {

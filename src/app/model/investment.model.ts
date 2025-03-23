@@ -74,24 +74,81 @@ export function marketPlaceOf(marketPlace: string) {
     return MarketPlaceEnum[marketPlace as keyof typeof MarketPlaceEnum];
 }
 
-export enum EarningEnum {
+export enum IncomeEnum {
     DIVIDENDS = 'DIVIDENDS',
     RENT_RETURN = 'RENT_RETURN',
     IOE_RETURN = 'IOE_RETURN', // Intereset on Equity
 }
 
-export type EarningsEnumType = `${EarningEnum}`;
+export type IncomeEnumType = `${IncomeEnum}`;
 
-export const EarningsDesc : Record<EarningsEnumType, string> = {
+export const IncomeDesc : Record<IncomeEnumType, string> = {
     "DIVIDENDS": 'Dividendos',
     "RENT_RETURN": 'Aluguel',
     "IOE_RETURN": 'JCP',
 }
 
-export type Earning = {
+export type Income = {
     id: number;
     date: Date;
     ticket: string;
     amount: number;
-    type: EarningEnum
+    type: IncomeEnum
+}
+
+export enum TransactionEnum {
+    BUY = 'BUY',
+    SELL = 'SELL',
+    DIVIDENDS = 'DIVIDENDS',
+    RENT_RETURN = 'RENT_RETURN',
+    IOE_RETURN = 'IOE_RETURN',
+    TRANSFER_IN = 'TRANSFER_IN',
+    TRANSFER_OUT = 'TRANSFER_OUT',
+    SUBSCRIPTION = 'SUBSCRIPTION',
+    REDEMPTION = 'REDEMPTION',
+    OTHER = 'OTHER',
+}
+
+type TransactionEnumType = `${TransactionEnum}`;
+
+export const TransactionEnumDesc : Record<TransactionEnumType, string> = {
+    "BUY": 'Compra',
+    "SELL": 'Venda',
+    "DIVIDENDS": 'Dividendos',
+    "RENT_RETURN": 'Aluguel',
+    "IOE_RETURN": 'JCP',
+    "TRANSFER_IN": 'Transf. Entrada',
+    "TRANSFER_OUT": 'Transf. Saída',
+    "SUBSCRIPTION": 'Subscrição',
+    "REDEMPTION": 'Resgate',
+    "OTHER": 'Outros',
+}
+
+export enum TransactionStatus {
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED',
+    CANCELLED = 'CANCELLED',
+    REVERSED = 'REVERSED'
+}
+
+type TransactionStatusType = `${TransactionStatus}`;
+
+export const TransactionStatusDesc : Record<TransactionStatusType, string> = {
+    "PENDING": 'Pendente',
+    "COMPLETED": 'Confirmada',
+    "CANCELLED": 'Cancelada',
+    "REVERSED": 'Estornada'
+}
+
+export type TransactionType = {
+    id: string;
+    ticket: string;
+    date: Date;
+    accountId: string;
+    quantity: number;
+    quote: number;
+    value: CurrencyAmount;
+    type: TransactionEnumType;
+    status: TransactionStatus;
+    brokerage?: number; // corretagem
 }

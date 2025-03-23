@@ -5,7 +5,7 @@ import portfoliosSource from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
 import { Currency } from '../model/domain.model';
-import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Earning, EarningEnum, fnTrend, TrendType } from '../model/investment.model';
+import { Asset, AssetAllocationRecord, AssetEnum, AssetFormModel, Income, IncomeEnum, fnTrend, TrendType } from '../model/investment.model';
 import { AssetPositionRecord, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 
@@ -24,7 +24,7 @@ export class InvestmentService {
     ...item,
     id: ++InvestmentService.earningsId,
     date: setDayOfYear(new Date(), Math.random() * 365),
-  } as Earning));
+  } as Income));
 
   assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
@@ -223,8 +223,8 @@ export class InvestmentService {
     return of(this.earningsData.filter(item => item.ticket === getMarketPlaceCode({ marketPlace, code })));
   }
 
-  addEarning(ticket: string, data: { date: Date; type: EarningEnum, amount: number; }) {
-    return new Observable<Earning>((observer) => {
+  addEarning(ticket: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
+    return new Observable<Income>((observer) => {
       const reg = {
         ...data,
         ticket,
@@ -236,7 +236,7 @@ export class InvestmentService {
     })
   }
 
-  updateEarning(id: number, data: { date: Date; type: EarningEnum, amount: number; }) {
+  updateEarning(id: number, data: { date: Date; type: IncomeEnum, amount: number; }) {
     return new Observable<void>((observer) => {
       this.earningsData = this.earningsData.map(item => item.id === id ? { ...item, ...data } : item);
       observer.next();

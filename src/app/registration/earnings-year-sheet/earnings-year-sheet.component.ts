@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { endOfYear, format, getMonth, setMonth, startOfYear } from 'date-fns';
 import { firstValueFrom, forkJoin, map, of } from 'rxjs';
-import { AssetEnum, Earning, EarningEnum, EarningsEnumType } from '../../model/investment.model';
+import { AssetEnum, Income, IncomeEnum, IncomeEnumType } from '../../model/investment.model';
 import { PortfolioAssetsSummary } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
@@ -29,7 +29,7 @@ const YEAR_FORMATS = {
 type EarningEntry = {
   id?: number;
   date?: Date;
-  type?: EarningEnum;
+  type?: IncomeEnum;
   amount: number;
 };
 
@@ -42,7 +42,7 @@ type SheetRow = {
   entries: EarningEntry[];
 }
 
-const EARNING_ACRONYM: Record<EarningsEnumType, string> = {
+const EARNING_ACRONYM: Record<IncomeEnumType, string> = {
   "DIVIDENDS": 'DY',
   "RENT_RETURN": 'AL',
   "IOE_RETURN": 'JC',
@@ -120,7 +120,7 @@ export class EarningsYearSheetComponent implements OnInit {
     });
   }
 
-  private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
+  private prepareSheetRows(earnings: { date: Date; id: number; ticket: string; amount: number; type: IncomeEnum; }[]) {
     let data: SheetRow[] = [];
     this.data.set([]);
 
@@ -144,13 +144,13 @@ export class EarningsYearSheetComponent implements OnInit {
     return data;
   }
 
-  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
+  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticket: string; amount: number; type: IncomeEnum; }[]) {
     const assets = portfolios.find(item => item.id === portfolioReference)?.assets || [];
     earnings = earnings.filter(earning => assets.includes(earning.ticket));
     return earnings;
   }
 
-  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticket: string; amount: number; type: EarningEnum; }[]) {
+  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticket: string; amount: number; type: IncomeEnum; }[]) {
     const assets = Object.entries(this.investmentService.assertsSignal())
       .filter(([_, asset]) => asset.type === typeReference)
       .map(([ticket, _]) => ticket);
@@ -161,7 +161,7 @@ export class EarningsYearSheetComponent implements OnInit {
     return parseFloat(this.data().reduce((acc, row) => acc += row.entries[vlMonth].amount, 0).toFixed(2));
   }
 
-  earningToRow(earning: Earning) {
+  earningToRow(earning: Income) {
     return {
       ticket: earning.ticket,
       description: this.asset[earning.ticket].name,
@@ -171,7 +171,7 @@ export class EarningsYearSheetComponent implements OnInit {
     } as SheetRow;
   }
 
-  setEarningValue(earning: Earning, row: SheetRow) {
+  setEarningValue(earning: Income, row: SheetRow) {
     const month = getMonth(earning.date);
     const data = {
       id: earning.id,
@@ -240,23 +240,23 @@ export class EarningsYearSheetComponent implements OnInit {
   private saveEarning(element: SheetRow, entry: EarningEntry) {
     let [marketPlace, code] = element.ticket.split(':');
     this.investmentService.findEarningsOfAsset({ marketPlace, code }).subscribe(earnings => {
-      const earning: Earning | undefined = earnings.find(item => item.id === entry.id);
+      const earning: Income | undefined = earnings.find(item => item.id === entry.id);
 
       if (!!earning) {
         if (!entry.amount) {
           this.investmentService.deleteEarning(earning.id).subscribe();
         }
         else {
-          const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Earning>;
+          const entryData = { ...earning, ...entry, ticket: element.ticket } as Required<Income>;
           this.investmentService.updateEarning(earning.id, { ...entryData, date: entry.date as Date }).subscribe();
         }
       }
       else {
         const earningTypeFound = Object.entries(EARNING_ACRONYM)
-          .map(([key, value]) => ({ key: key as EarningEnum, value }))
+          .map(([key, value]) => ({ key: key as IncomeEnum, value }))
           .find(item => item.value === element.acronymEarn);
           
-        const entryData = { type: earningTypeFound?.key, ...entry, ticket: element.ticket } as Required<Earning>;
+        const entryData = { type: earningTypeFound?.key, ...entry, ticket: element.ticket } as Required<Income>;
         if (entry.amount) {
           this.investmentService.addEarning(element.ticket, entryData).subscribe(() => {
             // this.setEarningValue(earning, element);

@@ -73,7 +73,25 @@ export enum StatementEnum {
     WITHDRAWAL = 'WITHDRAWAL',
     EXPENSE = 'EXPENSE',
     TRANSFER_OUT = 'TRANSFER_OUT',
-    OTHER = 'OTHER'
+    BUY = 'BUY',
+    SELL = 'SELL',
+    SUBSCRIPTION = 'SUBSCRIPTION',
+    REDEMPTION = 'REDEMPTION',
+    OTHER = 'OTHER',
+}
+
+export const StatementDesc = {
+    DEPOSIT : "Depósito",
+    INCOME : "Renda",
+    TRANSFER_IN : "Transf. Entrada",
+    WITHDRAWAL : "Retirada",
+    EXPENSE : "Despesa",
+    TRANSFER_OUT : "Transf. Saída",
+    BUY : "Compra",
+    SELL : "Venda",
+    SUBSCRIPTION : "Subscrição",
+    REDEMPTION : "Resgate",
+    OTHER : "Outros",
 }
 
 export function isStatementExpense(item: StatementEnum) {

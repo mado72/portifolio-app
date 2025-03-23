@@ -6,7 +6,7 @@ import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { endOfMonth, startOfMonth } from 'date-fns';
-import { Earning } from '../../model/investment.model';
+import { Income } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { InvestmentEarningsTableComponent } from '../investment-earnings-table/investment-earnings-table.component';
@@ -51,7 +51,7 @@ export class InvestmentEarningsMonthComponent implements OnInit {
   
   date = new FormControl(new Date());
 
-  earnings: Earning[] = [];
+  earnings: Income[] = [];
 
   ngOnInit(): void {
     this.doFilter();

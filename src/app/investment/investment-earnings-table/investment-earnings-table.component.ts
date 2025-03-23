@@ -2,7 +2,7 @@ import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { map } from 'rxjs';
-import { Earning, EarningsDesc, EarningEnum } from '../../model/investment.model';
+import { Income, IncomeDesc, IncomeEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
@@ -24,16 +24,16 @@ export class InvestmentEarningsTableComponent {
 
   @Input() selectable = false;
 
-  selected : Earning | undefined = undefined;
+  selected : Income | undefined = undefined;
 
-  @Output() itemSelected = new EventEmitter<Earning>();
+  @Output() itemSelected = new EventEmitter<Income>();
 
-  private _dataSource: Earning[] = [];
+  private _dataSource: Income[] = [];
   @Input()
-  public get dataSource(): Earning[] {
+  public get dataSource(): Income[] {
     return this._dataSource;
   }
-  public set dataSource(earnings: Earning[]) {
+  public set dataSource(earnings: Income[]) {
     this._dataSource = earnings.map(earning => {
         const asserts = this.investmentService.assertsSignal();
         return {
@@ -44,15 +44,15 @@ export class InvestmentEarningsTableComponent {
       });
   }
 
-  earningsEnum = EarningEnum;
+  earningsEnum = IncomeEnum;
 
   readonly displayedColumns = ["id", "ticket", "description", "type", "date", "amount"];
 
-  getEarningEnumDisplayName(type: EarningEnum) {
-    return EarningsDesc[type];
+  getEarningEnumDisplayName(type: IncomeEnum) {
+    return IncomeDesc[type];
   }
 
-  rowClicked(row: Earning) {
+  rowClicked(row: Income) {
     this.selected = row;
     this.itemSelected.emit(row);
   }
