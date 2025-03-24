@@ -1,21 +1,18 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, effect, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { map } from 'rxjs';
 import { Currency } from '../../model/domain.model';
-import { Asset, TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
+import { TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
+import { InvestmentService } from '../../service/investment.service';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionDialogComponent, TransactionDialogType } from '../transaction-dialog/transaction-dialog.component';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
-import { isAfter, isBefore } from 'date-fns';
-import { InvestmentService } from '../../service/investment.service';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { getMarketPlaceCode } from '../../service/quote.service';
 
 @Component({
   selector: 'app-transaction-table',
@@ -110,12 +107,25 @@ export class TransactionTableComponent {
       data
     })
 
-    dialogRef.afterClosed().subscribe((result: TransactionType) => {
+    dialogRef.afterClosed().subscribe((result: TransactionDialogType) => {
       if (result) {
         this.transactionService.saveTransaction({
           ...data.transaction, ...result
         }).subscribe(_ => {
-          this.changeDetectorRef.detectChanges(); // Refresh table data
+          let [marketPlace, code] = result.transaction.ticker.split(':')
+          const portfolioUpdates = result.portfolios.map(item=> ({
+            id: item.portfolio.id,
+            marketPlace,
+            code,
+            quantity: item.quantity,
+            quote: result.transaction.quote,
+            transaction: result.transaction
+          }));
+
+          this.investmentService.updatePortfolioAssets({ portfolioUpdates }).subscribe(_ => {
+            this.changeDetectorRef.detectChanges(); // Refresh table data
+          });
+          
         });
       }
     });

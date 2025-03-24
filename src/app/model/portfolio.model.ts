@@ -1,13 +1,8 @@
 import { computed, Signal, signal } from "@angular/core";
 import { Currency } from "./domain.model";
-import { Asset, AssetAllocation, AssetQuote, AssetQuoteRecord } from "./investment.model";
+import { AssetAllocation, AssetQuoteRecord } from "./investment.model";
 
-export type AssetPosition = AssetAllocation & {
-    averageBuy: number;
-    quantity: number;
-};
-
-export type AssetPositionRecord = Record<string, AssetPosition>;
+export type AssetPositionRecord = Record<string, AssetAllocation>;
 
 export type AssetValueRecord = Record<string, {
     marketValue: number;
