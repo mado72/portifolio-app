@@ -148,7 +148,7 @@
                     <mat-table [dataSource]="data.portfolios || []">
                         <ng-container matColumnDef="name">
                             <mat-header-cell *matHeaderCellDef>Portfólio</mat-header-cell>
-                            <mat-cell *matCellDef="let row; let i = index">{{row.portfolio.name}}</mat-cell>
+                            <mat-cell *matCellDef="let row; let i = index">{{row.name}}</mat-cell>
                             <mat-footer-cell *matFooterCellDef>Não alocado</mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="quantity">
@@ -193,7 +193,7 @@
             }
             @case ("Portfolio") {
                 <button type="button" mat-button (click)="gotoPage('Asset')">Voltar</button>
-                <button type="submit" mat-stroked-button mat-dialog-close color="primary" [disabled]="transactionForm.invalid">Salvar</button>
+                <button type="submit" mat-stroked-button [mat-dialog-close]="formValue" color="primary" [disabled]="transactionForm.invalid">Salvar</button>
             }
         }
         <button type="button" mat-button [mat-dialog-close]="undefined">Cancelar</button>

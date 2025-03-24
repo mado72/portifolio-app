@@ -79,7 +79,7 @@ export class TransactionTableComponent {
           type: TransactionEnum.BUY,
           status: TransactionStatus.COMPLETED
         },
-        portfolios
+        portfolios: portfolios.map(item => ({id: item.portfolio.id, name: item.portfolio.name, quantity: item.quantity}))
       })
     });
   }
@@ -97,7 +97,7 @@ export class TransactionTableComponent {
         newTransaction: false,
         title: 'Editar Transação',
         transaction,
-        portfolios
+        portfolios: portfolios.map(item => ({id: item.portfolio.id, name: item.portfolio.name, quantity: item.quantity}))
       })
     });
   }
@@ -112,14 +112,12 @@ export class TransactionTableComponent {
         this.transactionService.saveTransaction({
           ...data.transaction, ...result
         }).subscribe(_ => {
-          let [marketPlace, code] = result.transaction.ticker.split(':')
           const portfolioUpdates = result.portfolios.map(item=> ({
-            id: item.portfolio.id,
-            marketPlace,
-            code,
-            quantity: item.quantity,
+            ...item,
+            ticker: result.transaction.ticker,
             quote: result.transaction.quote,
-            transaction: result.transaction
+            transaction: result.transaction,
+            date: new Date()
           }));
 
           this.investmentService.updatePortfolioAssets({ portfolioUpdates }).subscribe(_ => {
@@ -130,6 +128,5 @@ export class TransactionTableComponent {
       }
     });
   }
-
 
 }

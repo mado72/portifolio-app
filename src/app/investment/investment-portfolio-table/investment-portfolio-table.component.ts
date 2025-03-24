@@ -2,12 +2,13 @@ import { DecimalPipe, PercentPipe } from '@angular/common';
 import { Component, computed, EventEmitter, inject, Input, OnInit, Output, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { AssetPosition, AssetValueRecord, Portfolio } from '../../model/portfolio.model';
+import { AssetValueRecord, Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { AssetCodePipe } from '../../utils/asset-code.pipe';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { AssetAllocation } from '../../model/investment.model';
 
 @Component({
   selector: 'app-investment-portfolio-table',
@@ -33,7 +34,7 @@ export class InvestmentPortfolioTableComponent implements OnInit{
 
   @Input() portfolioId = '';
 
-  @Output() rowSelected = new EventEmitter<AssetPosition & AssetValueRecord>();
+  @Output() rowSelected = new EventEmitter<AssetAllocation & AssetValueRecord>();
 
   portfolio = signal<Portfolio | undefined>(undefined);
 
@@ -59,14 +60,17 @@ export class InvestmentPortfolioTableComponent implements OnInit{
     });
   }
 
-  get total() {
-    return {
-      ...this.portfolio()?.assets()['total'],
-      position: this.positions()['total']
+  total = computed(() => {
+    if (this.portfolio()) {
+      return {
+       ...this.portfolio()?.assets()['total'],
+        position: this.positions()['total']
+      }
     }
-  }
+    return undefined;
+  })
 
-  selectRow(row: AssetPosition & AssetValueRecord) {
+  selectRow(row: AssetAllocation & AssetValueRecord) {
     this.rowSelected.emit(row);
   }
     

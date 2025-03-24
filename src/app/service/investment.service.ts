@@ -1,13 +1,32 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { formatISO, getYear, setDayOfYear, setYear } from 'date-fns';
-import { delay, forkJoin, map, Observable, of } from 'rxjs';
-import portfoliosSource from '../../data/assets-portfolio.json';
+import { delay, forkJoin, map, Observable, of, tap } from 'rxjs';
+import portfoliosSourceData from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
 import { Currency } from '../model/domain.model';
 import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, Income, IncomeEnum, TrendType } from '../model/investment.model';
 import { AssetPositionRecord, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { v4 as uuid } from 'uuid';
+
+type PortfolioSourceDataType = {
+  [key: string]: {
+    id: string;
+    name: string;
+    currency: Currency;
+    assets: {
+      marketPlace: string;
+      code: string;
+      quantity: number;
+      marketValue: number;
+      percPlanned: number;
+      performance?: number;
+      percAllocation?: number;
+    }[];
+  }
+};
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +53,7 @@ export class InvestmentService {
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
 
-      const aux = {...data}
+      const aux = { ...data }
 
       acc[code] = {
         ...data,
@@ -48,35 +67,24 @@ export class InvestmentService {
     }, {} as Record<string, Asset & { trend: TrendType }>)
   })
 
-  constructor() { }
+  private portfolioSource = signal<PortfolioSourceDataType>({});
 
-  private getPortfolios() {
-    return of(portfoliosSource.data as {
-      [key: string]: {
-        id: string;
-        name: string;
-        currency: Currency;
-        assets: {
-          code: string;
-          quantity: number;
-          marketPlace: string;
-          marketValue: number;
-          performance: number;
-          percAllocation: number;
-          percPlanned: number;
-        }[];
-      }
-    });
+  private portfolioObservable = toObservable(this.portfolioSource);
+
+  constructor() { 
+    this.portfolioSource.set(portfoliosSourceData.data as PortfolioSourceDataType);
+    this.portfolioObservable.subscribe(data=>{
+      console.log(`PortfolioObservable called`, data)
+    })
   }
-
 
   // FIXME: Replace this with queries
   getAllDataMock() {
+    const portfolioData = this.portfolioSource();
     return forkJoin({
-      portfolioData: this.getPortfolios(),
       exchanges: this.quoteService.getAllExchanges()
     }).pipe(
-      map(({ portfolioData, exchanges }) => {
+      map(({ exchanges }) => {
         const assetsRec = this.assertsSignal();
         const fnMap = (from: Currency, to: Currency) => `${from}-${to}`;
 
@@ -125,14 +133,14 @@ export class InvestmentService {
 
   getPortfolioSummary(): Observable<{ id: string, name: string, currency: Currency }[]> {
     // FIXME: Replace this with code to query the portfolio data
-    return this.getPortfolios().pipe(
+    return this.portfolioObservable.pipe(
       map((portfolios) => Object.keys(portfolios).map(item => ({ id: item, name: item, currency: Currency.BRL })))
     );
   }
 
   getPortfolioAssetsSummary(): Observable<PortfolioAssetsSummary[]> {
     // FIXME: Replace this with code to query the portfolio data
-    return this.getPortfolios().pipe(
+    return this.portfolioObservable.pipe(
       map((portfolios) => Object.entries(portfolios).map(([k, v]) =>
       ({
         ...v,
@@ -159,8 +167,65 @@ export class InvestmentService {
   getPorfoliosByAsset(asset: Asset): Observable<Portfolio[]> {
     const ticker = getMarketPlaceCode(asset);
     return this.getAllDataMock().pipe(
-      map(portfolios => portfolios.filter(p => !! p.assets()[ticker]))
+      map(portfolios => portfolios.filter(p => !!p.assets()[ticker]))
     );
+  }
+
+  updatePortfolioAssets({ portfolioUpdates }: { portfolioUpdates: { id: string; quantity: number; quote: number, ticker: string, date: Date, name?: string }[]; }) {
+
+    return this.portfolioObservable.pipe(
+      tap(portfolios => {
+        const allAssets = this.assertsSignal();
+
+        portfolioUpdates.forEach(updateData => {
+
+          let portfolio = portfolios[updateData.id];
+          const key = updateData.ticker;
+          const asset = allAssets[key];
+
+          if (!portfolio) {
+            // create a new portfolio
+            portfolio = {
+              id: uuid(),
+              name: updateData.name as string,
+              currency: asset?.quote.currency || Currency.BRL,
+              assets: []
+            }
+            portfolios[updateData.id] = portfolio;
+          }
+
+          const portAsset = portfolio.assets.find(asset => getMarketPlaceCode(asset) === key);
+          if (portAsset) { // it had already exist in portfolio
+
+            // remove the asset from portfolio
+            portfolio.assets = portfolio.assets.filter(item => portAsset === item);
+
+            // add the asset back to portfolio with updated quantity
+            if (updateData.quantity > 0) {
+              portfolio.assets = portfolio.assets.filter(item => portAsset === item)
+              portfolio.assets.push({
+                ...portAsset,
+                quantity: updateData.quantity,
+                marketValue: updateData.quantity * updateData.quote,
+              })
+            }
+          }
+          else if (updateData.quantity > 0){
+            const [marketPlace, code] = key.split(':');
+            portfolio.assets.push({
+              marketPlace,
+              code,
+              quantity: updateData.quantity,
+              marketValue: updateData.quantity * updateData.quote,
+              percPlanned: 0
+            });
+          }
+        });
+
+        // Update the portfolio data
+        this.portfolioSource.set(portfolios);
+
+      }));
   }
 
   getAssetsDatasourceComputed() {
@@ -214,7 +279,7 @@ export class InvestmentService {
   }
 
   deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {
-    return this.getPortfolios().pipe(
+    return this.portfolioObservable.pipe(
       map(portfolios => {
         const assetFound = Object.values(portfolios)
           .flatMap(item => item.assets)

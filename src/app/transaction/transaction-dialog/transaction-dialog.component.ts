@@ -26,10 +26,8 @@ export type TransactionDialogType = {
   newTransaction: boolean,
   transaction: TransactionType,
   portfolios: { 
-    portfolio: {
-      id: string,
-      name: string
-    }, 
+    id: string,
+    name: string,
     quantity: number }[]
 };
 
@@ -85,8 +83,8 @@ export class TransactionDialogComponent implements OnInit {
     brokerage: this.fb.control(this.data.transaction.brokerage, []),
     portfolios: this.fb.array(this.data.portfolios.map(portfolio=>{
       return this.fb.group({
-        id: this.fb.control(portfolio.portfolio.id, []),
-        portfolio: this.fb.control(portfolio.portfolio.name, [Validators.required]),
+        id: this.fb.control(portfolio.id, []),
+        name: this.fb.control(portfolio.name, [Validators.required]),
         quantity: this.fb.control(portfolio.quantity, [Validators.required, Validators.min(0)])
       })
     }), [])
@@ -164,9 +162,14 @@ export class TransactionDialogComponent implements OnInit {
     return this.transactionForm.get('portfolios') as FormArray<FormGroup>;
   }
 
-  submitForm() {
-    this.dialogRef.close(this.transactionForm.value);
+  get formValue() {
+    return {...this.data, ...this.transactionForm.value};
   }
+
+  submitForm() {
+    this.dialogRef.close(this.formValue);
+  }
+
 
   quantityQuoteUpdated() {
     this.amount.setValue(Math.trunc(100 * this.quantity.value * this.quote.value) / 100 || undefined)
