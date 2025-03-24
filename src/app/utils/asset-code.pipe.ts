@@ -8,7 +8,7 @@ import { getMarketPlaceCode } from '../service/quote.service';
 })
 export class AssetCodePipe implements PipeTransform {
 
-  transform(value: Asset): string {
+  transform(value: {marketPlace: string, code: string}): string {
     return getMarketPlaceCode({ marketPlace: value.marketPlace, code: value.code });
   }
 
