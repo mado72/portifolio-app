@@ -85,7 +85,7 @@
                 {
                     "code": "BND1",
                     "quantity": 50,
-                    "marketPlace": "Euronext",
+                    "marketPlace": "IEX",
                     "marketValue": 50000,
                     "performance": 2.5,
                     "percAllocation": 15,
@@ -94,7 +94,7 @@
                 {
                     "code": "BND3",
                     "quantity": 90,
-                    "marketPlace": "Euronext",
+                    "marketPlace": "IEX",
                     "marketValue": 85500,
                     "performance": 3.3,
                     "percAllocation": 18,
@@ -110,7 +110,7 @@
                 {
                     "code": "BTC",
                     "quantity": 1.5,
-                    "marketPlace": "Binance",
+                    "marketPlace": "CRYPTO",
                     "marketValue": 67500,
                     "performance": 10.2,
                     "percAllocation": 20,
@@ -119,7 +119,7 @@
                 {
                     "code": "LTC",
                     "quantity": 5,
-                    "marketPlace": "Binance",
+                    "marketPlace": "CRYPTO",
                     "marketValue": 900,
                     "performance": 6.8,
                     "percAllocation": 10,
@@ -142,8 +142,8 @@
                     "percPlanned": 18
                 },
                 {
-                    "code": "VALE3",
-                    "quantity": 22,
+                    "code": "PETR3",
+                    "quantity": 32,
                     "marketPlace": "BVMF",
                     "marketValue": 1278.52,
                     "performance": 4.9,

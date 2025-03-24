@@ -2,145 +2,182 @@
 <form [formGroup]="transactionForm" (submit)="submitForm()">
     <mat-dialog-content>
         <div class="d-flex flex-column">
-            <mat-form-field>
-                <mat-label>ticker</mat-label>
-                @if (!assets()) {
-                    <input matInput type="text" formControlName="ticker" required>
-                }
-                @else {
-                    <mat-select formControlName="ticker" required>
-                        <mat-select-trigger>
-                            {{ticker.value}} - {{ assetSelected?.name }}
-                        </mat-select-trigger>
-                        @for (asset of assets() | keyvalue; track asset.key) {
-                        <mat-option [value]="asset.key">{{ asset.key }}<br><em class="display-small small">{{asset.value.name}}</em></mat-option>
-                        }
-                    </mat-select>
-                }
-                @if (ticker.invalid && ticker.touched) {
-                <mat-error>
-                    Campo obrigatório
-                </mat-error>
-                }
-            </mat-form-field>
-
-            <mat-form-field>
-                <input matInput [matDatepicker]="dp" placeholder="DD/MM/YYYY" formControlName="date">
-                <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-                <mat-datepicker #dp></mat-datepicker>
-                @if (date.invalid && date.touched) {
-                <mat-error>
-                    Campo obrigatório
-                </mat-error>
-                }
-            </mat-form-field>
-
-            <mat-form-field>
-                <mat-label>Quantidade</mat-label>
-                <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="quantity"
-                    (input)="quantityQuoteUpdated()" (focus)="selectAll($event)">
-                @if (quantity.invalid && quantity.touched) {
-                <mat-error>
-                    Campo obrigatório
-                </mat-error>
-                }
-            </mat-form-field>
-
-            <div class="d-flex">
-                <ng-container formGroupName="value">
-                    <mat-form-field>
-                        <mat-label>Moeda</mat-label>
-                        <mat-select formControlName="currency" required>
-                            @for (currency of currencies; track $index) {
-                            <mat-option [value]="currency">{{ currency }}</mat-option>
+            @switch (page) {
+            @case("Asset") {
+                <mat-form-field>
+                    <mat-label>ticker</mat-label>
+                    @if (!assets()) {
+                        <input matInput type="text" formControlName="ticker" required>
+                    }
+                    @else {
+                        <mat-select formControlName="ticker" required>
+                            <mat-select-trigger>
+                                {{ticker.value}} - {{ assetSelected?.name }}
+                            </mat-select-trigger>
+                            @for (asset of assets() | keyvalue; track asset.key) {
+                            <mat-option [value]="asset.key">{{ asset.key }}<br><em class="display-small small">{{asset.value.name}}</em></mat-option>
                             }
                         </mat-select>
-                        @if (currency.invalid && currency.touched) {
+                    }
+                    @if (ticker.invalid && ticker.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+    
+                <mat-form-field>
+                    <input matInput [matDatepicker]="dp" placeholder="DD/MM/YYYY" formControlName="date">
+                    <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+                    <mat-datepicker #dp></mat-datepicker>
+                    @if (date.invalid && date.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+    
+                <mat-form-field>
+                    <mat-label>Quantidade</mat-label>
+                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="quantity"
+                        (input)="quantityQuoteUpdated()" (focus)="selectAll($event)">
+                    @if (quantity.invalid && quantity.touched) {
+                    <mat-error>
+                        Campo obrigatório
+                    </mat-error>
+                    }
+                </mat-form-field>
+    
+                <div class="d-flex">
+                    <ng-container formGroupName="value">
+                        <mat-form-field>
+                            <mat-label>Moeda</mat-label>
+                            <mat-select formControlName="currency" required>
+                                @for (currency of currencies; track $index) {
+                                <mat-option [value]="currency">{{ currency }}</mat-option>
+                                }
+                            </mat-select>
+                            @if (currency.invalid && currency.touched) {
+                            <mat-error>
+                                Campo obrigatório
+                            </mat-error>
+                            }
+                        </mat-form-field>
+                    </ng-container>
+    
+                    <mat-form-field class="ms-2">
+                        <mat-label>Cotação</mat-label>
+                        <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="quote"
+                            (input)="quantityQuoteUpdated()" (focus)="selectAll($event)">
+                        @if (quote.invalid && quote.touched) {
+                        <mat-error>
+                            Campo obrigatório
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+    
+                <ng-container formGroupName="value">
+                    <mat-form-field>
+                        <mat-label>Valor</mat-label>
+                        <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="amount" required
+                            (input)="amountUpdated()" (focus)="selectAll($event)">
+                        @if (amount.invalid && amount.touched) {
                         <mat-error>
                             Campo obrigatório
                         </mat-error>
                         }
                     </mat-form-field>
                 </ng-container>
-
-                <mat-form-field class="ms-2">
-                    <mat-label>Cotação</mat-label>
-                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="quote"
-                        (input)="quantityQuoteUpdated()" (focus)="selectAll($event)">
-                    @if (quote.invalid && quote.touched) {
-                    <mat-error>
-                        Campo obrigatório
-                    </mat-error>
-                    }
-                </mat-form-field>
-            </div>
-
-            <ng-container formGroupName="value">
-                <mat-form-field>
-                    <mat-label>Valor</mat-label>
-                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="amount" required
-                        (input)="amountUpdated()" (focus)="selectAll($event)">
-                    @if (amount.invalid && amount.touched) {
-                    <mat-error>
-                        Campo obrigatório
-                    </mat-error>
-                    }
-                </mat-form-field>
-            </ng-container>
-
-            <div class="d-flex">
-                <mat-form-field>
-                    <mat-label>Tipo</mat-label>
-                    <mat-select formControlName="type" placeholder="Tipo da transação" required>
-                        @for (type of transactionTypes; track $index) {
-                        <mat-option [value]="type">{{ type | transactionType }} </mat-option>
+    
+                <div class="d-flex">
+                    <mat-form-field>
+                        <mat-label>Tipo</mat-label>
+                        <mat-select formControlName="type" placeholder="Tipo da transação" required>
+                            @for (type of transactionTypes; track $index) {
+                            <mat-option [value]="type">{{ type | transactionType }} </mat-option>
+                            }
+                        </mat-select>
+                        @if (type.invalid && type.touched) {
+                        <mat-error>
+                            Campo obrigatório
+                        </mat-error>
                         }
-                    </mat-select>
-                    @if (type.invalid && type.touched) {
-                    <mat-error>
-                        Campo obrigatório
-                    </mat-error>
-                    }
-                </mat-form-field>
-
-                <mat-form-field class="ms-2">
-                    <mat-label>Tipo</mat-label>
-                    <mat-select formControlName="status" placeholder="Status da transação" required>
-                        @for (status of transactionStatuses; track $index) {
-                        <mat-option [value]="status">{{ status | transactionStatus }} </mat-option>
+                    </mat-form-field>
+    
+                    <mat-form-field class="ms-2">
+                        <mat-label>Tipo</mat-label>
+                        <mat-select formControlName="status" placeholder="Status da transação" required>
+                            @for (status of transactionStatuses; track $index) {
+                            <mat-option [value]="status">{{ status | transactionStatus }} </mat-option>
+                            }
+                        </mat-select>
+                        @if (type.invalid && type.touched) {
+                        <mat-error>
+                            Campo obrigatório
+                        </mat-error>
                         }
-                    </mat-select>
-                    @if (type.invalid && type.touched) {
-                    <mat-error>
-                        Campo obrigatório
-                    </mat-error>
-                    }
-                </mat-form-field>
-            </div>
+                    </mat-form-field>
+                </div>
+    
+                <div class="d-flex">
+                    <mat-form-field>
+                        <mat-label>Conta</mat-label>
+                        <input type="text" matInput formControlName="accountId" required>
+                        @if (accountId.invalid && accountId.touched) {
+                        <mat-error>
+                            Campo obrigatório
+                        </mat-error>
+                        }
+                    </mat-form-field>
+    
+                    <mat-form-field class="ms-2">
+                        <mat-label>Comissão</mat-label>
+                        <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="brokerage"
+                            (focus)="selectAll($event)">
+                        @if (brokerage.invalid && brokerage.touched) {
+                        <mat-error>
+                            Campo obrigatório
+                        </mat-error>
+                        }
+                    </mat-form-field>
+                </div>
+            } <!-- case -->
+            @case("Portfolio") {
+                <ng-container formArrayName="portfolios">
+                    <mat-table [dataSource]="data.portfolios || []">
+                        <ng-container matColumnDef="name">
+                            <mat-header-cell *matHeaderCellDef>Portfólio</mat-header-cell>
+                            <mat-cell *matCellDef="let row; let i = index">{{row.portfolio.name}}</mat-cell>
+                            <mat-footer-cell *matFooterCellDef>Não alocado</mat-footer-cell>
+                        </ng-container>
+                        <ng-container matColumnDef="quantity">
+                            <mat-header-cell *matHeaderCellDef>Alocação</mat-header-cell>
+                            <mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+                                <mat-form-field>
+                                    <input matInput type="number" step="0.01" class="text-end" formControlName="quantity">
+                                    @if (portfolios.at(i).get("quantity")?.invalid) {
+                                    <mat-error>
+                                        Valor inválido
+                                    </mat-error>
+                                    }
+                                </mat-form-field>
+                            </mat-cell>
+                            <mat-footer-cell *matFooterCellDef>
+                                <div class="w-100 text-end" [class.text-danger]="undistributed < 0">
 
-            <div class="d-flex">
-                <mat-form-field>
-                    <mat-label>Conta</mat-label>
-                    <input type="text" matInput formControlName="accountId" required>
-                    @if (accountId.invalid && accountId.touched) {
-                    <mat-error>
-                        Campo obrigatório
-                    </mat-error>
-                    }
-                </mat-form-field>
-
-                <mat-form-field class="ms-2">
-                    <mat-label>Comissão</mat-label>
-                    <input matInput type="number" step="0.01" min="0" class="text-end" formControlName="brokerage"
-                        (focus)="selectAll($event)">
-                    @if (brokerage.invalid && brokerage.touched) {
-                    <mat-error>
-                        Campo obrigatório
-                    </mat-error>
-                    }
-                </mat-form-field>
-            </div>
-
+                                    {{undistributed | number:'1.0-2'}}
+                                </div>
+                            </mat-footer-cell>
+                        </ng-container>
+    
+                        <mat-header-row *matHeaderRowDef="['name','quantity']"></mat-header-row>
+                        <mat-row *matRowDef="let row; columns: ['name','quantity'];"></mat-row>
+                        <mat-footer-row *matFooterRowDef="['name','quantity']" class="table-total"></mat-footer-row>
+                    </mat-table>
+                </ng-container>
+            } <!-- case -->
+            }
         </div>
 
         <!-- <code>
@@ -150,7 +187,15 @@
     </mat-dialog-content>
 
     <mat-dialog-actions>
-        <button type="submit" mat-stroked-button mat-dialog-close color="primary">Salvar</button>
+        @switch (page) {
+            @case ("Asset") {
+                <button type="button" mat-button (click)="gotoPage('Portfolio')" [disabled]="transactionForm.invalid">Próximo</button>
+            }
+            @case ("Portfolio") {
+                <button type="button" mat-button (click)="gotoPage('Asset')">Voltar</button>
+                <button type="submit" mat-stroked-button mat-dialog-close color="primary" [disabled]="transactionForm.invalid">Salvar</button>
+            }
+        }
         <button type="button" mat-button [mat-dialog-close]="undefined">Cancelar</button>
     </mat-dialog-actions>
 

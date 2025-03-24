@@ -2,7 +2,7 @@
     "data": [
         {
             "id": "tx-1a2b3c",
-            "ticker": "BVMF:PETR4",
+            "ticker": "BVMF:PETR3",
             "date": "2024-03-15T00:00:00.000Z",
             "accountId": "CC-123456",
             "quantity": 100,

@@ -5,13 +5,17 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
+import { Asset, TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionDialogComponent, TransactionDialogType } from '../transaction-dialog/transaction-dialog.component';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
 import { isAfter, isBefore } from 'date-fns';
+import { InvestmentService } from '../../service/investment.service';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { getMarketPlaceCode } from '../../service/quote.service';
 
 @Component({
   selector: 'app-transaction-table',
@@ -31,38 +35,56 @@ import { isAfter, isBefore } from 'date-fns';
 })
 export class TransactionTableComponent {
 
-  private transactionService = inject(TransactionService); // Assuming this is a service that provides transaction data
+  private transactionService = inject(TransactionService);
+
+  private investmentService = inject(InvestmentService);
 
   private dialog = inject(MatDialog);
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
-  readonly displayedColumns = ["ticker", "date", "type", "quote", "value", "status", "account", "brokerage", "actions"];
+  readonly displayedColumns = ["ticker", "date", "type", "quantity", "quote", "value", "status", "account", "brokerage", "actions"];
 
   dataSource = computed(() => {
     return this.transactionService.transactionSignal();
   });
+
 
   getAccount(accountId: string) {
     // Simulate fetching account details
     return `Account ${accountId}`;
   }
 
+  getPortfolios(ticker?: string) {
+    return this.investmentService.getPortfolioAssetsSummary().pipe(
+      map(summaries=>{
+        return summaries.map(summary => (
+          {
+            portfolio: {...summary},
+            quantity: summary.assets.filter(item=>item.ticker === ticker).reduce((acc, vl) => acc + (vl?.quantity || 0), 0)
+          }));
+      })
+    )
+  }
+
   addTransaction() {
-    this.openDialog({
-      newTransaction: true,
-      title: 'Adicionar Transação',
-      transaction: {
-        ticker: '',
-        date: new Date(),
-        accountId: '',
-        quantity: 1,
-        quote: 1,
-        value: { amount: 0, currency: Currency.BRL },
-        type: TransactionEnum.BUY,
-        status: TransactionStatus.COMPLETED
-      }
-    })
+    this.getPortfolios().subscribe(portfolios => {
+      this.openDialog({
+        newTransaction: true,
+        title: 'Adicionar Transação',
+        transaction: {
+          ticker: '',
+          date: new Date(),
+          accountId: '',
+          quantity: 1,
+          quote: 1,
+          value: { amount: 0, currency: Currency.BRL },
+          type: TransactionEnum.BUY,
+          status: TransactionStatus.COMPLETED
+        },
+        portfolios
+      })
+    });
   }
 
   deleteTransaction(event: MouseEvent, transaction: TransactionType) {
@@ -73,11 +95,14 @@ export class TransactionTableComponent {
   }
 
   editTransaction(transaction: TransactionType) {
-    this.openDialog({
-      newTransaction: false,
-      title: 'Editar Transação',
-      transaction,
-    })
+    this.getPortfolios(transaction.ticker).subscribe(portfolios => {
+      this.openDialog({
+        newTransaction: false,
+        title: 'Editar Transação',
+        transaction,
+        portfolios
+      })
+    });
   }
 
   openDialog(data: TransactionDialogType) {

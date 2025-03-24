@@ -1,6 +1,6 @@
-import { KeyValuePipe } from '@angular/common';
+import { DecimalPipe, JsonPipe, KeyValuePipe } from '@angular/common';
 import { Component, computed, inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -14,11 +14,23 @@ import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
+import { Portfolio } from '../../model/portfolio.model';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { MatTableModule } from '@angular/material/table';
+
+type Pages = "Asset" | "Portfolio";
 
 export type TransactionDialogType = {
   title: string,
   newTransaction: boolean,
-  transaction: TransactionType
+  transaction: TransactionType,
+  portfolios: { 
+    portfolio: {
+      id: string,
+      name: string
+    }, 
+    quantity: number }[]
 };
 
 @Component({
@@ -27,14 +39,17 @@ export type TransactionDialogType = {
   imports: [
     ReactiveFormsModule,
     KeyValuePipe,
+    DecimalPipe,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
     MatDatepickerModule,
     MatDialogModule,
+    MatTableModule,
     TransactionTypePipe,
-    TransactionStatusPipe
+    TransactionStatusPipe,
+    JsonPipe
   ],
   providers: [
     provideNativeDateAdapter()
@@ -50,29 +65,37 @@ export class TransactionDialogComponent implements OnInit {
   
   private investmentService = inject(InvestmentService);  
   
-  private fb = inject(FormBuilder);  
+  private fb = inject(FormBuilder);
+
+  page : Pages = "Asset";
 
   readonly transactionForm = this.fb.group({
     id: this.fb.control(this.data.transaction.id),
-    ticker: this.fb.control(this.data.transaction.ticker),
-    date: this.fb.control(this.data.transaction.date, []),
+    ticker: this.fb.control(this.data.transaction.ticker, [Validators.required]),
+    date: this.fb.control(this.data.transaction.date, [Validators.required]),
     accountId: this.fb.control(this.data.transaction.accountId, []),
-    quantity: this.fb.control(this.data.transaction.quantity, []),
-    quote: this.fb.control(this.data.transaction.quote, []),
+    quantity: this.fb.control(this.data.transaction.quantity, [Validators.required, Validators.min(0)]),
+    quote: this.fb.control(this.data.transaction.quote, [Validators.required, Validators.min(0.01)]),
     value: this.fb.group({
-      amount: this.fb.control(this.data.transaction.value.amount, []),
-      currency: this.fb.control(this.data.transaction.value.currency, [])
+      amount: this.fb.control(this.data.transaction.value.amount, [Validators.required, Validators.min(0.01)]),
+      currency: this.fb.control(this.data.transaction.value.currency, [Validators.required])
     }),
-    type: this.fb.control(this.data.transaction.type, []),
-    status: this.fb.control(this.data.transaction.status, []),
-    brokerage: this.fb.control(this.data.transaction.brokerage, [])
+    type: this.fb.control(this.data.transaction.type, [Validators.required]),
+    status: this.fb.control(this.data.transaction.status, [Validators.required]),
+    brokerage: this.fb.control(this.data.transaction.brokerage, []),
+    portfolios: this.fb.array(this.data.portfolios.map(portfolio=>{
+      return this.fb.group({
+        id: this.fb.control(portfolio.portfolio.id, []),
+        portfolio: this.fb.control(portfolio.portfolio.name, [Validators.required]),
+        quantity: this.fb.control(portfolio.quantity, [Validators.required, Validators.min(0)])
+      })
+    }), [])
   });
 
   readonly transactionTypes = Object.values(TransactionEnum);
   readonly transactionStatuses = Object.values(TransactionStatus);
   readonly currencies = Object.values(Currency);
 
-  
   assets = computed(() => {
     if (!this.data.transaction.ticker) {
       return Object.values(this.investmentService.assertsSignal()).reduce((acc, asset)=>{
@@ -137,6 +160,10 @@ export class TransactionDialogComponent implements OnInit {
     return undefined ;
   }
 
+  get portfolios() {
+    return this.transactionForm.get('portfolios') as FormArray<FormGroup>;
+  }
+
   submitForm() {
     this.dialogRef.close(this.transactionForm.value);
   }
@@ -151,6 +178,17 @@ export class TransactionDialogComponent implements OnInit {
 
   selectAll($event: FocusEvent) {
     ($event.target as HTMLInputElement).select();
+  }
+
+  gotoPage(page: Pages) {
+    this.page = page;
+  }
+
+  get undistributed() {
+    return this.portfolios.value.reduce((acc, portfolio)=>{
+      acc -= portfolio.quantity;
+      return acc;
+    }, this.quantity.value);
   }
 
 }
