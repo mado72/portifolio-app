@@ -11,20 +11,22 @@ import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { v4 as uuid } from 'uuid';
 
+type PortfolioSourceAssetsDataType = {
+  marketPlace: string;
+  code: string;
+  quantity: number;
+  marketValue: number;
+  percPlanned: number;
+  performance?: number;
+  percAllocation?: number;
+};
+
 type PortfolioSourceDataType = {
   [key: string]: {
     id: string;
     name: string;
     currency: Currency;
-    assets: {
-      marketPlace: string;
-      code: string;
-      quantity: number;
-      marketValue: number;
-      percPlanned: number;
-      performance?: number;
-      percAllocation?: number;
-    }[];
+    assets: PortfolioSourceAssetsDataType[];
   }
 };
 
@@ -191,7 +193,7 @@ export class InvestmentService {
               currency: asset?.quote.currency || Currency.BRL,
               assets: []
             }
-            portfolios[updateData.id] = portfolio;
+            portfolios[portfolio.id] = portfolio;
           }
 
           const portAsset = portfolio.assets.find(asset => getMarketPlaceCode(asset) === key);

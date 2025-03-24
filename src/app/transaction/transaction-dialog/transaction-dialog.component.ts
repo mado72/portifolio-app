@@ -1,23 +1,21 @@
-import { DecimalPipe, JsonPipe, KeyValuePipe } from '@angular/common';
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
+import { ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
 import { Asset, TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
-import { Portfolio } from '../../model/portfolio.model';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { MatTableModule } from '@angular/material/table';
 
 type Pages = "Asset" | "Portfolio";
 
@@ -45,9 +43,9 @@ export type TransactionDialogType = {
     MatDatepickerModule,
     MatDialogModule,
     MatTableModule,
+    MatIconModule,
     TransactionTypePipe,
-    TransactionStatusPipe,
-    JsonPipe
+    TransactionStatusPipe
   ],
   providers: [
     provideNativeDateAdapter()
@@ -58,6 +56,8 @@ export type TransactionDialogType = {
 export class TransactionDialogComponent implements OnInit {
 
   private dialogRef = inject(MatDialogRef<TransactionDialogComponent>);
+
+  private changeDetectorRefs = inject(ChangeDetectorRef);
   
   readonly data = inject<TransactionDialogType>(MAT_DIALOG_DATA);
   
@@ -103,6 +103,8 @@ export class TransactionDialogComponent implements OnInit {
     }
     return undefined;
   })
+
+  portfolioList = signal(this.portfolios.value)
 
   ngOnInit(): void {
     if (!this.data.newTransaction) {
@@ -194,4 +196,14 @@ export class TransactionDialogComponent implements OnInit {
     }, this.quantity.value);
   }
 
+  addPortfolio() {
+    this.portfolios.push(this.fb.group({
+      id: '',
+      name: '',
+      quantity: 0
+    }));
+    this.portfolioList.set(this.portfolios.value);
+    // this.changeDetectorRefs.detectChanges();
+  }
+    
 }

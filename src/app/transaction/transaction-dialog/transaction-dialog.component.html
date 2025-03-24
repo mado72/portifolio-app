@@ -145,16 +145,28 @@
             } <!-- case -->
             @case("Portfolio") {
                 <ng-container formArrayName="portfolios">
-                    <mat-table [dataSource]="data.portfolios || []">
+                    <mat-table [dataSource]="portfolioList() || []" id="mat-table-porfolios">
                         <ng-container matColumnDef="name">
-                            <mat-header-cell *matHeaderCellDef>Portfólio</mat-header-cell>
-                            <mat-cell *matCellDef="let row; let i = index">{{row.name}}</mat-cell>
+                            <mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
+                                <mat-form-field>
+                                    <mat-label>Carteira</mat-label>
+                                    <input matInput type="text" formControlName="name" required placeholder="Nova carteira" [readonly]="!!row.id">
+                                    @if (!row.id) {
+                                        <mat-icon matSuffix>mode_edit</mat-icon>
+                                    }
+                                    @if (portfolios.at(i).get("name")?.invalid) {
+                                    <mat-error>
+                                        Campo obrigatório
+                                    </mat-error>
+                                    }
+                                </mat-form-field>
+                            </mat-cell>
                             <mat-footer-cell *matFooterCellDef>Não alocado</mat-footer-cell>
                         </ng-container>
                         <ng-container matColumnDef="quantity">
-                            <mat-header-cell *matHeaderCellDef>Alocação</mat-header-cell>
                             <mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
                                 <mat-form-field>
+                                    <mat-label>Valor alocado</mat-label>
                                     <input matInput type="number" step="0.01" class="text-end" formControlName="quantity">
                                     @if (portfolios.at(i).get("quantity")?.invalid) {
                                     <mat-error>
@@ -171,11 +183,13 @@
                             </mat-footer-cell>
                         </ng-container>
     
-                        <mat-header-row *matHeaderRowDef="['name','quantity']"></mat-header-row>
-                        <mat-row *matRowDef="let row; columns: ['name','quantity'];"></mat-row>
+                        <mat-row *matRowDef="let row; let last = last; columns: ['name','quantity'];" [class.mat-last-row]="last"></mat-row>
                         <mat-footer-row *matFooterRowDef="['name','quantity']" class="table-total"></mat-footer-row>
                     </mat-table>
                 </ng-container>
+                <button mat-icon-button type="button" id="add-button" (click)="addPortfolio()">
+                    <mat-icon color="primary">add_circle</mat-icon>
+                </button>
             } <!-- case -->
             }
         </div>
