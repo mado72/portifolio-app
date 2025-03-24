@@ -17,8 +17,7 @@
                 </mat-panel-title>
             </mat-expansion-panel-header>
             <app-investment-portfolio-table [portfolioId]="portfolio.id || ''" 
-                [editMode]="editMode"
-                (rowSelected)="rowSelected($event)"></app-investment-portfolio-table>
+                [editMode]="editMode"></app-investment-portfolio-table>
         </mat-expansion-panel>
     }
 </mat-accordion>
