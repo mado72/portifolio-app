@@ -1,11 +1,20 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { Exchange, Currency, CurrencyAmount } from '../model/domain.model';
-import { map, Observable, of } from 'rxjs';
+import { Exchange, Currency, CurrencyAmount, CurrencyType } from '../model/domain.model';
+import { filter, map, Observable, of } from 'rxjs';
 import assetSource from '../../data/assets.json';
 import { AssetQuoteRecord, QuoteExchangeInfo } from '../model/investment.model';
 
 export const getMarketPlaceCode = ({ marketPlace, code }: { marketPlace: string; code: string; }): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
+}
+
+export type ExchangeReq = {
+  from: CurrencyType,
+  to: CurrencyType
+}
+
+export type ExchangeType = ExchangeReq & {
+  factor?: number
 }
 
 @Injectable({
@@ -66,44 +75,46 @@ export class QuoteService {
       { date: new Date(), from: Currency.BRL, to: Currency.USD, factor: 1/5.76 },
       { date: new Date(), from: Currency.USD, to: Currency.BRL, factor: 5.76 },
       { date: new Date(), from: Currency.BRL, to: Currency.UTC, factor: 1/5.90 },
-      { date: new Date(), from: Currency.UTC, to: Currency.BRL, factor: 5.90 }
+      { date: new Date(), from: Currency.UTC, to: Currency.BRL, factor: 5.90 },
+      { date: new Date(), from: Currency.EUR, to: Currency.BRL, factor: 6.21 }
     ];
     return of(cotacoes);
+  }
+
+  getAllExchangesMap() {
+    return this.getAllExchanges().pipe(
+      map(cotacoes => cotacoes.reduce((acc, item) => {
+          acc[item.from] = acc[item.from] || {};
+          acc[item.from][item.to] = item.factor;
+          acc[item.from][item.from] = 1;
+          acc[item.to] = acc[item.to] || {};
+          acc[item.to][item.to] = 1;
+          return acc;
+        }, {} as Record<CurrencyType, Record<CurrencyType, number>>))
+      );
+    }
+    
+    getExchanges(req: { currency: Currency }[], to?: Currency) {
+      const currenciesReq = req.map(c => c.currency);
+      return this.getAllExchanges().pipe(
+        map(exchanges=> exchanges.filter(ex=>currenciesReq.includes(ex.from))), // FIXME Consultar todas as combinações para conjunto de "from"
+        map(exchanges=> exchanges
+          .filter(ex=> to === undefined || ex.to === to)
+          .reduce((acc, item)=>{
+            acc[item.from] = acc[item.from] || {};
+            acc[item.from][item.to] = item.factor;
+            acc[item.from][item.from] = 1;
+            acc[item.to] = acc[item.to] || {};
+            acc[item.to][item.to] = 1;
+          return acc;
+        }, {} as Record<CurrencyType, Record<CurrencyType, number>>))
+    )
   }
 
   getExchangeQuote(de: Currency, para: Currency) {
     return this.getAllExchanges().pipe(
       map(cotacoes => cotacoes.find(c => c.from === de && c.to === para))
     );
-  }
-
-  getExchangeFactor(code: string, marketPlace: string, toCurrency: Currency): Observable<QuoteExchangeInfo> {
-    const asset = assetSource.data.find(a => a.code === code && a.marketPlace === marketPlace);
-    if (!asset)
-      throw `${getMarketPlaceCode({ marketPlace, code })} not found`;
-
-    const fromCurrency: Currency = Currency[asset.quote.currency as keyof typeof Currency];
-
-    return this.getExchangeQuote(fromCurrency, toCurrency).pipe(
-      map(exchange => {
-        if (!exchange)
-          throw `Exchange rate from ${fromCurrency} to ${toCurrency} not found`;
-
-        asset.quote.amount = this.quotes()[getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code })].quote.amount;
-
-        return {
-          original: {
-            amount: asset.quote.amount,
-            currency: fromCurrency
-          },
-          value: {
-            amount: asset.quote.amount * exchange.factor,
-            currency: toCurrency
-          },
-          exchange
-        };
-      })
-    )
   }
 
 }
