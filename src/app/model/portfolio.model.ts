@@ -52,7 +52,7 @@ export class Portfolio {
         return calc;
     })
 
-    constructor(id: string, name: string, currency: Currency, quotes: Signal<AssetQuoteRecord>) {
+    constructor({ id, name, currency, quotes }: { id: string; name: string; currency: Currency; quotes: Signal<AssetQuoteRecord>; }) {
         this.id = id;
         this.name = name;
         this.currency = currency;

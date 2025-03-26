@@ -1,4 +1,8 @@
-<h3 mat-dialog-title>{{data.title}}</h3>
+<div mat-dialog-title class="title">
+    <h4>{{data.asset | assetCode }}</h4>
+    <h6>{{data.portfolio}} - {{data.asset.name}}</h6>
+</div>
+
 <form [formGroup]="allocationForm" (submit)="submitForm()">
     <mat-dialog-content>
         <div class="d-flex flex-column">
@@ -16,10 +20,10 @@
                     </mat-error>
                 }
             </mat-form-field>
-            <div class="d-flex">
-                <button type="button" mat-button (click)="addQuantity(10)">+ 10</button>
-                <button type="button" mat-button (click)="addQuantity(100)">+ 100</button>
+            <div class="d-flex" class="btn-add-container">
                 <button type="button" mat-button (click)="addQuantity(1000)">+ 1000</button>
+                <button type="button" mat-button (click)="addQuantity(100)">+ 100</button>
+                <button type="button" mat-button (click)="addQuantity(10)">+ 10</button>
             </div>
             <mat-form-field>
                 <mat-label>Percentagem Planejada</mat-label>

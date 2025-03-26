@@ -1,0 +1,14 @@
+.title {
+    h4, h5, h6 {
+        margin: 0;
+    }
+    h6 {
+        font-weight: normal;
+        color: var(--mdc-dialog-supporting-text-color)
+    }
+}
+
+.btn-add-container {
+    position: relative;
+    margin-top: -20px;
+}

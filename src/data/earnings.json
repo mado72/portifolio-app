@@ -16,7 +16,7 @@
         },
         {
             "id": 3,
-            "ticker": "Euronext:BND1",
+            "ticker": "IEX:BND1",
             "date": "2022-01-01",
             "type": "DIVIDENDS",
             "amount": 0.50
@@ -30,7 +30,7 @@
         },
         {
             "id": 5,
-            "ticker": "Binance:BTC",
+            "ticker": "CRYPTO:LTC",
             "date": "2022-01-01",
             "type": "DIVIDENDS",
             "amount": 0.00
@@ -51,7 +51,7 @@
         },
         {
             "id": 8,
-            "ticker": "Euronext:BND3",
+            "ticker": "IEX:BND3",
             "date": "2022-01-01",
             "type": "DIVIDENDS",
             "amount": 0.60
@@ -65,7 +65,7 @@
         },
         {
             "id": 10,
-            "ticker": "Binance:LTC",
+            "ticker": "CRYPTO:LTC",
             "date": "2022-01-01",
             "type": "RENT_RETURN",
             "amount": 0.00

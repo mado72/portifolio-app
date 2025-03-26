@@ -22,6 +22,13 @@ export const registrationRoutes: Routes = [
         data: {
             editMode: true
         }
+    },
+    {
+        path: 'portfolio/:portfolioId',
+        loadComponent: () => import('../investment/investment-portfolio-table/investment-portfolio-table.component').then(mod => mod.InvestmentPortfolioTableComponent),
+        data: {
+            editMode: true
+        }
     }
 
 ]

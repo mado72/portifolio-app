@@ -2,10 +2,9 @@ import { AfterViewInit, Component, inject, Input, OnInit, viewChild } from '@ang
 import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { AssetValueRecord, Portfolio } from '../../model/portfolio.model';
+import { Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
-import { Asset, AssetAllocation } from '../../model/investment.model';
 
 @Component({
   selector: 'app-investment-portfolio-container',
@@ -42,10 +41,6 @@ export class InvestmentPortfolioContainerComponent implements OnInit, AfterViewI
   }
   expandAll() {
     this.accordion().openAll();
-  }
-
-  rowSelected(row: AssetAllocation&AssetValueRecord) {
-    console.log(row)
   }
     
 }

@@ -1,15 +1,15 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { formatISO, getYear, setDayOfYear, setYear } from 'date-fns';
-import { delay, forkJoin, map, Observable, of, tap } from 'rxjs';
+import { concatAll, delay, map, Observable, of, tap } from 'rxjs';
+import { v4 as uuid } from 'uuid';
 import portfoliosSourceData from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
-import { Currency } from '../model/domain.model';
+import { Currency, CurrencyType } from '../model/domain.model';
 import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, Income, IncomeEnum, TrendType } from '../model/investment.model';
 import { AssetPositionRecord, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { v4 as uuid } from 'uuid';
 
 type PortfolioSourceAssetsDataType = {
   marketPlace: string;
@@ -82,55 +82,71 @@ export class InvestmentService {
 
   // FIXME: Replace this with queries
   getAllDataMock() {
-    const portfolioData = this.portfolioSource();
-    return forkJoin({
-      exchanges: this.quoteService.getAllExchanges()
-    }).pipe(
-      map(({ exchanges }) => {
+    const portfolioArray = Object.values(this.portfolioSource());
+    return this.fillAssetQuotesInPortfolios(portfolioArray)
+  }
+
+
+  protected fillAssetQuotesInPortfolios(portfolioArray: { id: string; name: string; currency: Currency; assets: PortfolioSourceAssetsDataType[]; }[]) {
+    return this.quoteService.getAllExchangesMap().pipe(
+      map(exchanges => {
         const assetsRec = this.assertsSignal();
-        const fnMap = (from: Currency, to: Currency) => `${from}-${to}`;
 
-        const exchangeMap = new Map(exchanges.map(exchange => ([fnMap(exchange.from, exchange.to), exchange.factor])));
+        return portfolioArray.map(portfolioItem => {
 
-        return Object.values(portfolioData).map(portfolioItem => {
-          const assets = portfolioItem.assets
-            .map(allocation => {
-              const asset = assetsRec[getMarketPlaceCode({ marketPlace: allocation.marketPlace, code: allocation.code })];
-              if (!asset) {
-                return undefined;
-              }
-              const factor = exchangeMap.get(fnMap(asset.quote.currency, portfolioItem.currency))
-              const marketValue = (factor ? factor : 1) * asset.quote.amount * allocation.quantity;
-              return ({
-                ...allocation,
-                ...asset,
-                marketValue,
-                initialValue: marketValue,
-                averageBuy: asset.quote.amount // FIXME: It should be gotten from datasource.
-              })
-            })
-            .filter(item => !!item)
-            .reduce((acc, item) => {
-              acc[getMarketPlaceCode({ marketPlace: item.marketPlace, code: item.code })] = item;
-              return acc;
-            }, {} as AssetAllocationRecord)
-
-          const portfolio = new Portfolio(portfolioItem.id, portfolioItem.name, portfolioItem.currency, this.quoteService.quotes);
-          const positions = Object.entries(assets)
-            .reduce((acc, [key, value]) => {
-              acc[key] = {
-                ...value,
-                averageBuy: value.averageBuy || value.quote.amount,
-                quantity: value.quantity
-              };
-              return acc;
-            }, {} as AssetPositionRecord);
-
-          portfolio.assets.set(positions);
-          return portfolio
+          return this.buildPorfolioAssets(portfolioItem, assetsRec, exchanges);
         });
       })
-    )
+    );
+  }
+
+  private buildPorfolioAssets(
+      portfolioItem: { id: string; name: string; currency: Currency; assets: PortfolioSourceAssetsDataType[]; }, 
+      assetsRec: Record<string, Asset>, 
+      exchanges: Record<CurrencyType, Record<CurrencyType, number>>) {
+
+    const allocations = portfolioItem.assets
+      .map(allocation => {
+         // Fetch asset data from the assets record by marketPlace code
+        const asset = assetsRec[getMarketPlaceCode(allocation)];
+        if (!asset) {
+          return undefined;
+        }
+        const from = asset.quote.currency;
+        const to = portfolioItem.currency;
+        // Calculate market value using the exchange rate between asset's currency and portfolio's currency.
+        const factor = exchanges[from][to] || NaN;
+        const marketValue = factor * asset.quote.amount * allocation.quantity;
+
+        // Calculate performance based on the asset's market value and the asset's initial value.
+        return ({
+          ...allocation,
+          ...asset,
+          marketValue,
+          initialValue: marketValue,// FIXME: It should be gotten from datasource.
+          averageBuy: asset.quote.amount, 
+          performance: 0 // FIXME: It should calculate based on initial value
+        });
+      })
+      .filter(item => !!item)
+      .reduce((acc, item) => {
+        acc[getMarketPlaceCode({ marketPlace: item.marketPlace, code: item.code })] = item;
+        return acc;
+      }, {} as AssetAllocationRecord);
+
+    const portfolio = new Portfolio({ id: portfolioItem.id, name: portfolioItem.name, currency: portfolioItem.currency, quotes: this.quoteService.quotes });
+    const positions = Object.entries(allocations)
+      .reduce((acc, [key, value]) => {
+        acc[key] = {
+          ...value,
+          averageBuy: value.averageBuy || value.quote.amount,
+          quantity: value.quantity
+        };
+        return acc;
+      }, {} as AssetPositionRecord);
+
+    portfolio.assets.set(positions);
+    return portfolio;
   }
 
   getPortfolioSummary(): Observable<{ id: string, name: string, currency: Currency }[]> {
@@ -151,7 +167,7 @@ export class InvestmentService {
           quantity: asset.quantity
         }))
       }))
-      ));
+    ));
   }
 
   getPortfolio(id: string): Observable<Portfolio | undefined> {
@@ -162,7 +178,7 @@ export class InvestmentService {
 
   getPortfolioAllocations(portfolio: Portfolio): Observable<AssetAllocationRecord> {
     return this.getAllDataMock().pipe(
-      map(portfolios => portfolios.find(p => p.id === portfolio.id)?.assets || {})
+      map(portfolios => portfolios.find(p => p.id === portfolio.id)?.assets() || {})
     );
   }
 
@@ -228,6 +244,24 @@ export class InvestmentService {
         this.portfolioSource.set(portfolios);
 
       }));
+  }
+
+  updatePortfolioAllocation(portfolioId: string, {ticket, quantity, percent} : {ticket: string, quantity: number, percent: number}) {
+    return this.portfolioObservable.pipe(
+      map(portfoliosSource => {
+        const portfolioSource = portfoliosSource[portfolioId];
+        if (portfolioSource) {
+          const assetSource = portfolioSource.assets.find(a => getMarketPlaceCode(a) === ticket);
+          if (assetSource) {
+            assetSource.quantity = quantity;
+            assetSource.percPlanned = percent;
+          }
+        }
+        this.portfolioSource.set(portfoliosSource);
+        return this.getAllDataMock()
+      }),
+      concatAll()
+    )
   }
 
   getAssetsDatasourceComputed() {

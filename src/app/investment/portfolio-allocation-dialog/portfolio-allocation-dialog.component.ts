@@ -4,9 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { Asset } from '../../model/investment.model';
+import { AssetCodePipe } from '../../utils/asset-code.pipe';
 
 export type PorfolioAllocationDataType = {
-  title: string,
+  portfolio: string,
+  asset: Asset,
   quantity: number,
   percent: number
 }
@@ -18,7 +21,8 @@ export type PorfolioAllocationDataType = {
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDialogModule
+    MatDialogModule,
+    AssetCodePipe
   ],
   templateUrl: './portfolio-allocation-dialog.component.html',
   styleUrl: './portfolio-allocation-dialog.component.scss'
