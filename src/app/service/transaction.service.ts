@@ -1,14 +1,10 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { parseISO } from 'date-fns';
-import { Observable } from 'rxjs';
-import { v4 as uuid } from 'uuid';
-import transactionsSource from '../../data/transactions.json';
-import { Currency } from '../model/domain.model';
-import { TransactionEnum, TransactionStatus } from '../model/investment.model';
+import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { PortfolioChangeType, PortfolioService } from './portfolio-service';
-import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
+import { TransactionEnum } from '../model/investment.model';
 import { TransactionType } from '../model/source.model';
+import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
+import { PortfolioChangeType, PortfolioService } from './portfolio-service';
+import { SourceService } from './source.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,65 +13,27 @@ export class TransactionService {
 
   private portfolioService = inject(PortfolioService);
 
+  private sourceService = inject(SourceService);
+
   private dialog = inject(MatDialog);
 
-  transactionsData = signal({} as Record<string, TransactionType>);
-
   transactionSignal = computed(() => {
-    const data = this.transactionsData();
-    const values = Object.values(data).slice();
-    return values;
+    return Object.values(this.sourceService.transactionSource());
   })
 
-  constructor() {
-    const data = (transactionsSource.data.slice().map(item => ({
-      ...item,
-      date: parseISO(item.date),
-      type: TransactionEnum[item.type as keyof typeof TransactionEnum],
-      status: TransactionStatus[item.status as keyof typeof TransactionStatus],
-      value: {
-        ...item.value,
-        currency: Currency[item.value.currency as keyof typeof Currency]
-      }
-    } as TransactionType))
-      .reduce((acc, item) => {
-        acc[item.id as string] = item;
-        return acc;
-      }, {} as Record<string, TransactionType>));
-    this.transactionsData.set(data);
-  }
-
-  getTransactionsDatasourceComputed() {
-    return computed(() => {
-      const data = this.transactionsData();
-      const transactions = Object.values(data);
-      return transactions;
-    })
-  }
+  constructor() {}
 
   saveTransaction(result: TransactionType) {
-    return new Observable<TransactionType>(observer => {
-      const items = { ...this.transactionsData() }; // Creates a copy of the current state
-      result.id = result.id || uuid(); // Generates an ID if it doesn't exist
-      items[result.id] = result; // Adds or updates the transaction
-
-      this.transactionsData.set(items); // Updates the signal with the new object
-
-      observer.next(result);
-      observer.complete();
-    });
+    if (!! result.id) {
+      this.sourceService.updateTransaction([result]);
+    }
+    else {
+      this.sourceService.addTransaction(result);
+    }
   }
 
   deleteTransaction(id: string) {
-    return new Observable<void>(observer => {
-      const items = { ...this.transactionsData() }; // Creates a copy of the current state
-      delete items[id]; // Removes the transaction by ID
-
-      this.transactionsData.set(items); // Updates the signal with the new object
-
-      observer.next();
-      observer.complete();
-    });
+    this.sourceService.deleteTransaction(id);
   }
 
 
@@ -88,42 +46,40 @@ export class TransactionService {
       if (result) {
         this.saveTransaction({
           ...data.transaction, ...result.transaction
-        }).subscribe(_ => {
+        });
+        // Get portfolios allocations for the current transaction's ticker
+        const portfolios = this.portfolioService.getAllPortfolios();
 
-          // Get portfolios allocations for the current transaction's ticker
-          const portfolios = this.portfolioService.getAllPortfolios();
+        // Update portfolio allocations if necessary
+        const allocations = result.portfolios.reduce((alloc, item) => {
 
-          // Update portfolio allocations if necessary
-          const allocations = result.portfolios.reduce((alloc, item) => {
+          // Get the portfolio referenced by the current transaction's portfolio id
+          const portfolio = portfolios.find(portfolio => portfolio.id === item.id);
+          if (!portfolio) return alloc;
 
-            // Get the portfolio referenced by the current transaction's portfolio id
-            const portfolio = portfolios.find(portfolio => portfolio.id === item.id);
-            if (!portfolio) return alloc;
+          // Check if portfolio already has an allocation for the current transaction's ticker
+          const previousQuantity = portfolio.allocations[result.transaction.ticker]?.quantity || 0;
+          
+          // Avoid unnecessary allocation adjustment if quantity doesn't change
+          if ((previousQuantity >= item.quantity && result.transaction.type === TransactionEnum.BUY)
+            || (previousQuantity <= item.quantity && result.transaction.type === TransactionEnum.SELL)
+          ) return alloc;
 
-            // Check if portfolio already has an allocation for the current transaction's ticker
-            const previousQuantity = portfolio.allocations[result.transaction.ticker]?.quantity || 0;
-            
-            // Avoid unnecessary allocation adjustment if quantity doesn't change
-            if ((previousQuantity >= item.quantity && result.transaction.type === TransactionEnum.BUY)
-              || (previousQuantity <= item.quantity && result.transaction.type === TransactionEnum.SELL)
-            ) return alloc;
+          // Adjust portfolio allocations
+          alloc[item.id] = {
+            ...(alloc[item.id] || item),
+            allocations: [...(alloc[item.id]?.allocations || []), {
+              ticker: result.transaction.ticker,
+              percPlanned: 0,
+              quantity: item.quantity * (result.transaction.type === TransactionEnum.BUY? 1 : -1)
+            }]
+          };
 
-            // Adjust portfolio allocations
-            alloc[item.id] = {
-              ...(alloc[item.id] || item),
-              allocations: [...(alloc[item.id]?.allocations || []), {
-                ticker: result.transaction.ticker,
-                percPlanned: 0,
-                quantity: item.quantity * (result.transaction.type === TransactionEnum.BUY? 1 : -1)
-              }]
-            };
+          return alloc;
+        }, {} as Record<string, PortfolioChangeType & {id: string}>);
 
-            return alloc;
-          }, {} as Record<string, PortfolioChangeType & {id: string}>);
-
-          Object.entries(allocations).forEach(([portfolioId, changes])=> {
-            this.portfolioService.updatePortfolio(portfolioId, changes);
-          })
+        Object.entries(allocations).forEach(([portfolioId, changes])=> {
+          this.portfolioService.updatePortfolio(portfolioId, changes);
         });
       }
     });

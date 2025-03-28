@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Asset } from '../model/investment.model';
 import { getMarketPlaceCode } from '../service/quote.service';
 
 @Pipe({

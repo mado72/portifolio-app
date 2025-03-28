@@ -70,7 +70,7 @@ export class BalanceService {
       return {
         ...item,
         exchange: {
-          amount: item.balance.amount * quoteFactor,
+          price: item.balance.price * quoteFactor,
           currency
         },
       } as AccountBalanceExchange;
@@ -97,7 +97,7 @@ export class BalanceService {
   getBalancesSummarized(currency: Currency, excludeAccTypes: AccountTypeEnum[] = []) {
     return this.getBalancesByCurrencyExchange(currency)
       .filter(acc => !excludeAccTypes.includes(acc.type))
-      .map(item => item.exchange.amount)
+      .map(item => item.exchange.price)
       .reduce((acc, vl) => acc += vl, 0)
   }
 
@@ -129,12 +129,12 @@ export class BalanceService {
    */
   getAllocationSummary(currency: Currency): AccountBalanceSummary {
     const allocations = this.getAllocations(Object.values(this.sourceService.classConsolidationSource()), currency);
-    const total = allocations.map(item => item.exchange.amount).reduce((acc, vl) => acc += vl, 0);
+    const total = allocations.map(item => item.exchange.price).reduce((acc, vl) => acc += vl, 0);
 
     const items: AccountBalanceSummaryItem[] = allocations.map(item => {
       return {
         ...item,
-        percentageActual: item.exchange.amount / total
+        percentageActual: item.exchange.price / total
       }
     });
 
@@ -190,7 +190,7 @@ export class BalanceService {
           const item = {
             start: period[0],
             end: period[1],
-            amount: group.reduce((acc, item) => acc - item.value.amount, 0)
+            amount: group.reduce((acc, item) => acc - item.value.price, 0)
           }
           accSt.push(item);
           return accSt;
@@ -200,7 +200,7 @@ export class BalanceService {
       summaryPeriod.splice((i * 2) + 1, 0, {
         start: depositStatements[i].day,
         end: depositStatements[i].day,
-        amount: depositStatements[i].value.amount
+        amount: depositStatements[i].value.price
       });
     }
     return summaryPeriod;
@@ -225,7 +225,7 @@ export class BalanceService {
       return {
         ...item,
         exchange: {
-          amount: item.financial.amount * quoteFactor,
+          price: item.financial.price * quoteFactor,
           currency
         },
         percentageActual: 0 // This should be calculated using total allocated amount
@@ -245,7 +245,7 @@ export class BalanceService {
         type: StatementEnum[item.type as keyof typeof StatementEnum],
         movement: item.movement,
         value: {
-          amount: item.value.amount * quoteFactor,
+          price: item.value.price * quoteFactor,
           currency
         },
         day: item.date,

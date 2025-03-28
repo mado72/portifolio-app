@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { faDownLong, faUpDown, faUpLong } from '@fortawesome/free-solid-svg-icons'
-import { TrendType } from '../../model/investment.model';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { TrendType } from '../../model/source.model';
 
 @Component({
   selector: 'app-trend',

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AssetDesc, AssetEnum } from '../model/investment.model';
+import { AssetDesc, AssetEnum } from '../model/source.model';
 
 @Pipe({
   name: 'assetType',

@@ -95,7 +95,7 @@ export class PortfolioService {
 
           const deltaQty = quantity - updatedAllocations[ticker].quantity;
           const currentTotalInvestment = updatedAllocations[ticker].quantity * updatedAllocations[ticker].averagePrice;
-          const purchaseTotalInvestment = deltaQty * tickerQuote.quote.amount;
+          const purchaseTotalInvestment = deltaQty * tickerQuote.quote.price;
           const newTotalInvestment = currentTotalInvestment + purchaseTotalInvestment;
 
           const newAveragePrice = newTotalInvestment / quantity;
@@ -115,9 +115,9 @@ export class PortfolioService {
             marketPlace,
             code,
             quote: asset.quote,
-            initialValue: asset.quote.amount * quantity,
-            marketValue: asset.quote.amount * quantity,
-            averagePrice: asset.quote.amount,
+            initialValue: asset.quote.price * quantity,
+            marketValue: asset.quote.price * quantity,
+            averagePrice: asset.quote.price,
             profit: 0,
             performance: 0,
             percAllocation: 0,

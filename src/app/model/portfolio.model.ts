@@ -1,13 +1,12 @@
 import { Currency } from "./domain.model";
-import { AssetQuoteRecord } from "./investment.model";
-import { PortfolioAllocationRecord, PortfolioAllocationSourceDataType, PortfolioAllocationType } from "./source.model";
+import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocationSourceDataType, PortfolioAllocationType } from "./source.model";
 
 const INITIAL_TOTAL: Required<PortfolioAllocationType> = {
     ticker: 'total',
     marketPlace: '',
     code: 'total',
     quantity: NaN,
-    quote: { amount: NaN, currency: Currency.BRL },
+    quote: { price: NaN, currency: Currency.BRL },
     averagePrice: NaN,
     initialValue: 0,
     marketValue: 0,
@@ -20,8 +19,8 @@ const INITIAL_TOTAL: Required<PortfolioAllocationType> = {
 export function calcPosition(quotes: AssetQuoteRecord, allocations: PortfolioAllocationRecord) {
     const calc = Object.entries(allocations).reduce((acc, [key, allocation]) => {
         if (! quotes[key]) return acc;
-        const quoteAmount = quotes[key].quote.amount;
-        const marketValue = quoteAmount * allocation.quantity;
+        const quotePrice = quotes[key].quote.price;
+        const marketValue = quotePrice * allocation.quantity;
         const averagePrice = Math.trunc(100 * allocation.initialValue / allocation.quantity) / 100;
 
         acc[key] = {
@@ -30,7 +29,7 @@ export function calcPosition(quotes: AssetQuoteRecord, allocations: PortfolioAll
             averagePrice,
             quote: quotes[key].quote,
             percAllocation: 0,
-            profit: allocation.quantity * (quoteAmount - averagePrice),
+            profit: allocation.quantity * (quotePrice - averagePrice),
             performance: (marketValue - allocation.initialValue) / allocation.initialValue
         };
 

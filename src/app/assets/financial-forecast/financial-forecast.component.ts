@@ -30,7 +30,7 @@ export class FinancialForecastComponent implements OnInit {
     ...item,
     value: {
       ...item.value,
-      amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : item.value.amount
+      amount: item.value.price = isStatementExpense(item.type) ? - item.value.price : item.value.price
     }
   })));
 

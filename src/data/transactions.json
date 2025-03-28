@@ -9,7 +9,7 @@
             "quote": 25.50,
             "value": {
                 "currency": "BRL",
-                "amount": 2550.00
+                "price": 2550.00
             },
             "type": "BUY",
             "status": "COMPLETED",
@@ -24,7 +24,7 @@
             "quote": 68.90,
             "value": {
                 "currency": "BRL",
-                "amount": 3445.00
+                "price": 3445.00
             },
             "type": "SELL",
             "status": "COMPLETED"
@@ -38,7 +38,7 @@
             "quote": 30.25,
             "value": {
                 "currency": "USD",
-                "amount": 6050.00
+                "price": 6050.00
             },
             "type": "BUY",
             "status": "PENDING",

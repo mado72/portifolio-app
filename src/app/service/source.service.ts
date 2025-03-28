@@ -9,8 +9,8 @@ import portfolioSource from '../../data/portfolio.json';
 import statementSource from '../../data/statement-forecast.json';
 import transactionsSource from '../../data/transactions.json';
 import { AccountTypeEnum, Currency, CurrencyType, StatementEnum } from '../model/domain.model';
-import { AssetEnum, TransactionEnum, TransactionStatus } from '../model/investment.model';
-import { AssetSourceDataType, AssetType, BalanceSourceDataType, BalanceType, ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType, PortfolioAllocationType, PortfolioRecord, PortfolioSourceDataType, PortfolioType, StatementSourceDataType, StatementType, TransactionSourceDataType, TransactionType } from '../model/source.model';
+import { TransactionEnum, TransactionStatus } from '../model/investment.model';
+import { AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType, ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType, PortfolioAllocationType, PortfolioRecord, PortfolioSourceDataType, PortfolioType, StatementSourceDataType, StatementType, TransactionSourceDataType, TransactionType } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
 @Injectable({
@@ -30,25 +30,28 @@ export class SourceService {
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data))
   };
 
-  readonly assertSource = computed(() => Object.entries(this.dataSource.asset()).reduce((acc, [key, item]) => {
+  readonly assertSource = computed(() => Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
     const quote = {
-      amount: item.quote.amount, currency: Currency[item.quote.currency as CurrencyType]
+      price: item.quote.price, currency: Currency[item.quote.currency as CurrencyType]
     }
-    acc[key] = { 
+    acc[ticker] = { 
       ...item, 
+      ticker,
       lastUpdate: parseISO(item.lastUpdate),
-      quote, 
-      type: AssetEnum[item.type as keyof typeof AssetEnum] 
+      initialPrice: quote.price,
+      quote,
+      type: AssetEnum[item.type as keyof typeof AssetEnum],
+      trend: 'unchanged'
     };
     return acc;
-  }, {} as Record<string, AssetType>));
+  }, {} as Record<string, AssetQuoteType>));
 
   readonly balanceSource = computed(() => Object.entries(this.dataSource.balance()).reduce((acc, [key, item]) => {
     acc[key] = {
       ...item,
       type: AccountTypeEnum[item.type as keyof typeof AccountTypeEnum],
       balance: {
-        amount: item.balance,
+        price: item.balance,
         currency: Currency[item.currency as CurrencyType]
       }
     };
@@ -59,7 +62,7 @@ export class SourceService {
     acc[key] = {
       ...item,
       financial: {
-        amount: item.financial,
+        price: item.financial,
         currency: Currency[item.currency as CurrencyType]
       }
     }
@@ -79,7 +82,7 @@ export class SourceService {
       ...item,
       date: parseISO(item.date),
       value: {
-        amount: item.value.amount,
+        price: item.value.price,
         currency: Currency[item.value.currency as CurrencyType]
       },
       type: TransactionEnum[item.type as keyof typeof TransactionEnum],
@@ -93,7 +96,7 @@ export class SourceService {
       ...item,
       type: StatementEnum[item.type as keyof typeof StatementEnum],
       value: {
-        amount: item.amount,
+        price: item.amount,
         currency: Currency[item.currency as CurrencyType]
       }
     }
@@ -106,15 +109,15 @@ export class SourceService {
       currency: Currency[item.currency as keyof typeof Currency],
       allocations: item.allocations.reduce((allocAcc, alloc) => {
         const ticker = getMarketPlaceCode(alloc);
-        const initialValue = alloc.initialValue || alloc.marketValue;
-        const averagePrice = alloc.averagePrice || alloc.marketValue / alloc.quantity;
+        const initialValue = (alloc.initialValue || alloc.marketValue);
+        const averagePrice = initialValue / alloc.quantity;
         allocAcc[ticker] = {
           ...alloc, 
           ticker,
           initialValue,
           averagePrice,
           quote: {
-            amount: NaN,
+            price: NaN,
             currency: Currency[alloc.quote?.currency as CurrencyType] || Currency.USD
           },
           profit: alloc.profit || alloc.marketValue - initialValue,
@@ -244,7 +247,7 @@ export class SourceService {
     }, {} as Record<string, PortfolioSourceDataType>)
   }
 
-  addAsset(asset: AssetType) {
+  addAsset(asset: AssetQuoteType) {
     this.dataSource.asset.update(asserts => {
       return {
         ...asserts,
@@ -256,7 +259,7 @@ export class SourceService {
     })
   }
 
-  updateAsset(changes: AssetType[]) {
+  updateAsset(changes: AssetQuoteType[]) {
     this.dataSource.asset.update(asserts => {
       return {
         ...asserts,
@@ -281,7 +284,7 @@ export class SourceService {
       ...this.balanceToRecord([{
         ...item,
         id: uuid(),
-        balance: item.balance.amount,
+        balance: item.balance.price,
         currency: item.balance.currency
       }])
     }))
@@ -292,7 +295,7 @@ export class SourceService {
       ...balances,
       ...this.balanceToRecord(changes.map(item => ({
         ...item,
-        balance: item.balance.amount,
+        balance: item.balance.price,
         currency: item.balance.currency
       })))
     }))
@@ -311,7 +314,7 @@ export class SourceService {
         ...classConsolidations,
         ...this.classConsolidationToRecord([{
           ...item,
-          financial: item.financial.amount,
+          financial: item.financial.price,
           currency: item.financial.currency
         }])
       };
@@ -324,7 +327,7 @@ export class SourceService {
         ...classConsolidations,
         ...this.classConsolidationToRecord(changes.map(item=>({
           ...item,
-          financial: item.financial.amount,
+          financial: item.financial.price,
           currency: item.financial.currency
         })))
       };
@@ -403,7 +406,7 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord([{
         ...item,
-        amount: item.value.amount,
+        amount: item.value.price,
         currency: item.value.currency
       }])
     }));
@@ -414,7 +417,7 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord(changes.map(item => ({
         ...item,
-        amount: item.value.amount,
+        amount: item.value.price,
         currency: item.value.currency
       })))
     }));

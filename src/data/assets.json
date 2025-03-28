@@ -5,7 +5,7 @@
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "amount": 50.5,
+                "price": 50.5,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -17,7 +17,7 @@
             "marketPlace": "NASDAQ",
             "controlByQty": true,
             "quote": {
-                "amount": 20.75,
+                "price": 20.75,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -29,7 +29,7 @@
             "marketPlace": "IEX",
             "controlByQty": false,
             "quote": {
-                "amount": 1000,
+                "price": 1000,
                 "currency": "EUR"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -41,7 +41,7 @@
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "amount": 75.3,
+                "price": 75.3,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -53,7 +53,7 @@
             "marketPlace": "CRYPTO",
             "controlByQty": true,
             "quote": {
-                "amount": 45000,
+                "price": 45000,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -65,7 +65,7 @@
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "amount": 35.4,
+                "price": 35.4,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -77,7 +77,7 @@
             "marketPlace": "NASDAQ",
             "controlByQty": true,
             "quote": {
-                "amount": 60.2,
+                "price": 60.2,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -89,7 +89,7 @@
             "marketPlace": "IEX",
             "controlByQty": false,
             "quote": {
-                "amount": 950,
+                "price": 950,
                 "currency": "EUR"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -101,7 +101,7 @@
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "amount": 90.7,
+                "price": 90.7,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -113,7 +113,7 @@
             "marketPlace": "CRYPTO",
             "controlByQty": true,
             "quote": {
-                "amount": 180,
+                "price": 180,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -125,7 +125,7 @@
             "marketPlace": "NASDAQ",
             "controlByQty": true,
             "quote": {
-                "amount": 110.3,
+                "price": 110.3,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -137,7 +137,7 @@
             "marketPlace": "BVMF",
             "controlByQty": true,
             "quote": {
-                "amount": 58.11,
+                "price": 55.55,
                 "currency": "BRL"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
@@ -149,7 +149,7 @@
             "marketPlace": "BVMF",
             "controlByQty": true,
             "quote": {
-                "amount": 31.12,
+                "price": 33.33,
                 "currency": "BRL"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",

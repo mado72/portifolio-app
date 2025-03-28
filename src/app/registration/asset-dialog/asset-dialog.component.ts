@@ -7,14 +7,15 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { Currency, CurrencyAmount } from '../../model/domain.model';
-import { Asset, AssetEnum, MarketPlaceEnum } from '../../model/investment.model';
+import { Currency, CurrencyPrice } from '../../model/domain.model';
+import { MarketPlaceEnum } from '../../model/investment.model';
+import { AssetEnum, AssetQuoteType } from '../../model/source.model';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
 
 export type AssetDialogType = {
   title: string,
   newAsset: boolean,
-  asset: Asset | null
+  asset: AssetQuoteType | null
 }
 
 @Component({
@@ -36,7 +37,6 @@ export type AssetDialogType = {
 })
 export class AssetDialogComponent {
 
-  // asset = model<Asset>();
   readonly data = inject<AssetDialogType>(MAT_DIALOG_DATA);
 
   readonly dialogRef = inject(MatDialogRef<AssetDialogComponent>);
@@ -55,7 +55,7 @@ export class AssetDialogComponent {
     code: [this.data.asset?.code, [Validators.required]],
     type: [this.data.asset?.type, [Validators.required]],
     quote: this.fb.group({
-      amount: [this.data.asset?.quote.amount, []],
+      amount: [this.data.asset?.quote.price, []],
       currency: [this.data.asset?.quote.currency, [Validators.required]],
     }),
     controlByQty: [this.data.asset?.controlByQty, []],
@@ -68,7 +68,7 @@ export class AssetDialogComponent {
       marketPlace: this.formAsset.value.marketPlace,
       code: this.formAsset.value.code,
       type: this.formAsset.value.type as AssetEnum,
-      quote: this.formAsset.value.quote as CurrencyAmount,
+      quote: this.formAsset.value.quote as CurrencyPrice,
       controlByQty: this.formAsset.value.controlByQty as boolean,
       manualQuote: this.formAsset.value.manualQuote as boolean
     };

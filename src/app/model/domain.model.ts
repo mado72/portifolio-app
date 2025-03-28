@@ -32,8 +32,8 @@ export function toCurrencyCode(currency: Currency): CurrencyCode {
     return CurrencyCode[currency as keyof typeof CurrencyCode];
 }
 
-export type CurrencyAmount = {
-    amount: number;
+export type CurrencyPrice = {
+    price: number;
     currency: Currency;
 }
 
@@ -45,13 +45,13 @@ export type Exchange = {
 }
 
 export type AccountBalanceExchange = BalanceType & {
-    exchange: CurrencyAmount
+    exchange: CurrencyPrice
 }
 
 export type AccountBalanceSummaryItem = {
     class: string;
-    financial: CurrencyAmount;
-    exchange: CurrencyAmount;
+    financial: CurrencyPrice;
+    exchange: CurrencyPrice;
     percentagePlanned: number;
     percentageActual: number;
 }
@@ -97,7 +97,7 @@ export type Account = {
     id: string;
     name: string;
     type: AccountTypeEnum;
-    balance: CurrencyAmount;
+    balance: CurrencyPrice;
 }
 
 export type StatementEnumKeys = `${StatementEnum}`;
@@ -106,7 +106,7 @@ type Statement$ = {
     id: number;
     type: StatementEnum;
     movement: string;
-    value: CurrencyAmount;
+    value: CurrencyPrice;
 }
 
 export type StatementItem = Statement$ & {

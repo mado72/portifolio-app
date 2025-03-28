@@ -1,5 +1,5 @@
-import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyType, StatementEnum } from "./domain.model";
-import { AssetEnum, TransactionEnum, TransactionStatus } from "./investment.model";
+import { AccountTypeEnum, Currency, CurrencyPrice, StatementEnum } from "./domain.model";
+import { TransactionEnum, TransactionStatus, } from "./investment.model";
 
 export type EntityDataSource = {
     id: string;
@@ -20,21 +20,55 @@ export type AssetSourceDataType = {
   marketPlace: string;
   controlByQty: boolean;
   quote: {
-      amount: number;
+      price: number;
       currency: string;
   };
   lastUpdate: string;
   type: string;
   name: string;
+  manualQuote?: boolean;
 };
 
-export type AssetType = Omit<AssetSourceDataType, "quote" | "type" | "lastUpdate"> & {
-    lastUpdate: Date;
-    quote: CurrencyAmount;
-    type: AssetEnum
+export type TrendType = 'up' | 'down' | 'unchanged';
+
+export const fnTrend = (quotation: {initialPrice: number, quote: CurrencyPrice}): TrendType => {
+    if (!quotation.quote.price) return 'unchanged';
+    const up =  quotation.quote.price > quotation.initialPrice;
+    const down = quotation.quote.price < quotation.initialPrice;
+    return up? 'up' : down? 'down' : 'unchanged';
+};
+
+
+export enum AssetEnum {
+    STOCK = "STOCK",
+    BOND = "BOND",
+    ETF = "ETF",
+    CRYPTO = "CRYPTO",
+    REAL_ESTATE = "REAL_ESTATE",
+    CURRENCY = "CURRENCY",
+    OTHER = "OTHER"
 }
 
-export type AssetRecord = Record<string, AssetType>;
+export const AssetDesc : Record<`${AssetEnum}`, string> = {
+    STOCK: 'Ação',
+    BOND: 'Fundo',
+    ETF: 'ETF',
+    CRYPTO: 'Crypto',
+    REAL_ESTATE: 'FI',
+    CURRENCY: 'Moeda',
+    OTHER: 'Outro'
+}
+
+export type AssetQuoteType = Omit<AssetSourceDataType, "quote" | "type" | "lastUpdate"> & {
+    ticker: string;
+    initialPrice: number;
+    lastUpdate: Date;
+    quote: CurrencyPrice;
+    type: AssetEnum;
+    trend: TrendType
+}
+
+export type AssetQuoteRecord = Record<string, AssetQuoteType>;
 
 export type BalanceSourceDataType = {
     id: string;
@@ -45,7 +79,7 @@ export type BalanceSourceDataType = {
 };
 
 export type BalanceType = Omit<BalanceSourceDataType, "balance" | "currency" | "type"> & {
-    balance: CurrencyAmount;
+    balance: CurrencyPrice;
     type: AccountTypeEnum;
 }
 
@@ -59,7 +93,7 @@ export type ClassConsolidationSourceDataType = {
 }
 
 export type ClassConsolidationType = Omit<ClassConsolidationSourceDataType, "financial" | "currency"> & {
-    financial: CurrencyAmount;
+    financial: CurrencyPrice;
 }
 
 export type ClassConsolidationRecord = Record<string, ClassConsolidationType>;
@@ -87,7 +121,7 @@ export type TransactionSourceDataType = {
     quote: number;
     value: {
         currency: string;
-        amount: number;
+        price: number;
     };
     type: string;
     status: string;
@@ -96,7 +130,7 @@ export type TransactionSourceDataType = {
 
 export type TransactionType = Omit<TransactionSourceDataType, "date" | "value" | "type" | "status"> & {
     date: Date;
-    value: CurrencyAmount;
+    value: CurrencyPrice;
     type: TransactionEnum;
     status: TransactionStatus;
 }
@@ -115,7 +149,7 @@ export type StatementSourceDataType = {
 
 export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency"> & {
     type: StatementEnum;
-    value: CurrencyAmount;
+    value: CurrencyPrice;
 }
 
 export type StatementRecord = Record<string, StatementType>;
@@ -128,7 +162,7 @@ export type PortfolioAllocationSourceDataType = {
     initialValue: number;
     marketValue: number;
     averagePrice?: number;
-    quote?: CurrencyAmount;
+    quote?: CurrencyPrice;
     profit?: number;
     percAllocation?: number;
     performance?: number;

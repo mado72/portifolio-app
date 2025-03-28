@@ -1,11 +1,11 @@
 import { Component, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { InvestmentAssetsTableComponent } from "../../investment/investment-assets-table/investment-assets-table.component";
-import { Asset, AssetEnum } from '../../model/investment.model';
+import { AssetEnum, AssetQuoteType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { AssetDialogComponent } from '../asset-dialog/asset-dialog.component';
-import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-asset-registration',
@@ -26,7 +26,7 @@ export class AssetRegistrationComponent {
 
   constructor() { }
 
-  selectAsset(asset: Asset) {
+  selectAsset(asset: AssetQuoteType) {
     const ticker = getMarketPlaceCode(asset);
     const dialogRef = this.dialog.open(AssetDialogComponent, {
       data: {
@@ -36,15 +36,15 @@ export class AssetRegistrationComponent {
       }
     });
 
-    dialogRef.afterClosed().subscribe((result: Asset) => {
+    dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
       if (result) {
         this.saveAsset(result);
       }
     });
   }
 
-  saveAsset(inputData: Asset) {
-    const code = getMarketPlaceCode(inputData as Asset);
+  saveAsset(inputData: AssetQuoteType) {
+    const code = getMarketPlaceCode(inputData as AssetQuoteType);
     const asset = this.investimentService.assertsSignal()[code];
 
     if (asset) {
@@ -76,7 +76,7 @@ export class AssetRegistrationComponent {
       }
     });
 
-    dialogRef.afterClosed().subscribe((result: Asset) => {
+    dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
       if (result) {
         this.saveAsset(result);
       }

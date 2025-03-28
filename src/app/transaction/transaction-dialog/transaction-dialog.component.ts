@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { Asset, TransactionEnum, TransactionStatus } from '../../model/investment.model';
+import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
@@ -19,7 +19,7 @@ import { TransactionTypePipe } from '../transaction-type.pipe';
 import { PortfolioService } from '../../service/portfolio-service';
 import { combineLatest, startWith } from 'rxjs';
 import { divide } from '../../model/functions.model';
-import { PortfolioType, TransactionType } from '../../model/source.model';
+import { AssetQuoteType, PortfolioType, TransactionType } from '../../model/source.model';
 
 type Pages = "Asset" | "Portfolio";
 
@@ -85,7 +85,7 @@ export class TransactionDialogComponent implements OnInit {
       quantity: this.fb.control(this.data.transaction.quantity, [Validators.required, Validators.min(0)]),
       quote: this.fb.control(this.data.transaction.quote, [Validators.required, Validators.min(0.01)]),
       value: this.fb.group({
-        amount: this.fb.control(this.data.transaction.value.amount, [Validators.required, Validators.min(0.01)]),
+        amount: this.fb.control(this.data.transaction.value.price, [Validators.required, Validators.min(0.01)]),
         currency: this.fb.control(this.data.transaction.value.currency, [Validators.required])
       }),
       type: this.fb.control(this.data.transaction.type, [Validators.required]),
@@ -104,7 +104,7 @@ export class TransactionDialogComponent implements OnInit {
       return Object.values(this.investmentService.assertsSignal()).reduce((acc, asset)=>{
         acc[getMarketPlaceCode(asset)] = asset;
         return acc;
-      }, {} as {[key: string]:Asset});
+      }, {} as {[key: string]:AssetQuoteType});
     }
     return undefined;
   })
@@ -119,7 +119,7 @@ export class TransactionDialogComponent implements OnInit {
       this.ticker.disable();
       const quoteTicker = quotes[ticker];
       if (quoteTicker) {
-        this.quote.setValue(quoteTicker.quote.amount);
+        this.quote.setValue(quoteTicker.quote.price);
         this.currency.setValue(quoteTicker.quote.currency);
       }
     }
@@ -127,7 +127,7 @@ export class TransactionDialogComponent implements OnInit {
       this.ticker.valueChanges.subscribe(ticker=>{
         const quoteTicker = quotes[ticker];
         if (quoteTicker) {
-          this.quote.setValue(quoteTicker.quote.amount);
+          this.quote.setValue(quoteTicker.quote.price);
           this.currency.setValue(quoteTicker.quote.currency);
         }
       })

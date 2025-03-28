@@ -1,8 +1,8 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { getYear, setYear } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-import { Asset, AssetEnum, fnTrend, Income, IncomeEnum } from '../model/investment.model';
-import { IncomeType } from '../model/source.model';
+import { Income, IncomeEnum } from '../model/investment.model';
+import { AssetEnum, AssetQuoteRecord, AssetQuoteType, fnTrend, IncomeType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 import { Currency } from '../model/domain.model';
@@ -24,19 +24,19 @@ export class InvestmentService {
     const quotes = this.quoteService.quotes() || {};
 
     return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
-      const initialQuote = acc[ticker]?.initialQuote || quotes[ticker]?.quote.amount || NaN;
+      const initialPrice = acc[ticker]?.initialPrice || quotes[ticker]?.quote.price || NaN;
       const trend = quotes[ticker] ? fnTrend(quotes[ticker]) : 'unchanged';
 
       acc[ticker] = {
         ...asset,
         type: AssetEnum[asset.type as keyof typeof AssetEnum],
         lastUpdate: quotes[ticker]?.lastUpdate || new Date(),
-        quote: quotes[ticker]?.quote || { amount: NaN, currency: Currency.BRL },
-        initialQuote,
+        quote: quotes[ticker]?.quote || { price: NaN, currency: Currency.BRL },
+        initialPrice,
         trend
       };
       return acc;
-    }, {} as Record<string, Asset>)
+    }, {} as AssetQuoteRecord)
   })
 
   readonly portfolios = computed(() => {
@@ -50,11 +50,11 @@ export class InvestmentService {
     })
   }
 
-  addAsset(data: Asset) {
+  addAsset(data: AssetQuoteType) {
     this.sourceService.addAsset(data);
   }
 
-  updateAsset(ticker: string, data: Asset) {
+  updateAsset(ticker: string, data: AssetQuoteType) {
     // const quotes = this.quoteService.quotes() || {};
     // const codeChanged = ticker != getMarketPlaceCode(data);
     // if (codeChanged) {
@@ -64,7 +64,7 @@ export class InvestmentService {
     //   this.quoteService.quotes.set(quotes);
     // }
     
-    this.sourceService.updateAssert([data]);
+    this.sourceService.updateAsset([data]);
   }
 
   deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {

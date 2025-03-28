@@ -5,9 +5,10 @@ import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { AssetEnum, IncomeEnum } from '../../model/investment.model';
+import { IncomeEnum } from '../../model/investment.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
+import { AssetEnum } from '../../model/source.model';
 
 export type EarningsFilterType = { portfolioReference: string | null; dateReference: Date, typeReference: AssetEnum | null };
 

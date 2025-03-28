@@ -60,7 +60,7 @@ export class TransactionTableComponent {
         accountId: '',
         quantity: 0,
         quote: NaN,
-        value: { amount: 0, currency: Currency.BRL },
+        value: { price: 0, currency: Currency.BRL },
         type: TransactionEnum.BUY,
         status: TransactionStatus.COMPLETED
       },
@@ -70,9 +70,8 @@ export class TransactionTableComponent {
 
   deleteTransaction(event: MouseEvent, transaction: TransactionType) {
     event.stopPropagation();
-    this.transactionService.deleteTransaction(transaction.id as string).subscribe(_=>{
-      this.changeDetectorRef.detectChanges(); // Refresh table data
-    });
+    this.transactionService.deleteTransaction(transaction.id as string);
+    this.changeDetectorRef.detectChanges(); // Refresh table data
   }
 
   editTransaction(transaction: TransactionType) {

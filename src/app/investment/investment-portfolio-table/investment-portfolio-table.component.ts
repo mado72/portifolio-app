@@ -3,8 +3,7 @@ import { Component, computed, inject, Input, OnInit, Signal, signal } from '@ang
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { TrendType } from '../../model/investment.model';
-import { PortfolioAllocationType } from '../../model/source.model';
+import { PortfolioAllocationType, TrendType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
