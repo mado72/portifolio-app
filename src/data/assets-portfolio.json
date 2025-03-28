@@ -1,10 +1,10 @@
 {
-    "data": {
-        "Portfolio1": {
+    "data": [
+        {
             "id": "Portfolio1",
             "name": "Portfolio 1",
             "currency": "BRL",
-            "assets": [
+            "allocations": [
                 {
                     "code": "STKA",
                     "quantity": 100,
@@ -43,11 +43,11 @@
                 }
             ]
         },
-        "Portfolio2": {
+        {
             "id": "Portfolio2",
             "name": "Portfolio 2",
             "currency": "BRL",
-            "assets": [
+            "allocations": [
                 {
                     "code": "STKB",
                     "quantity": 200,
@@ -77,11 +77,11 @@
                 }
             ]
         },
-        "Portfolio3": {
+        {
             "id": "Portfolio3",
             "name": "Portfolio 3",
             "currency": "BRL",
-            "assets": [
+            "allocations": [
                 {
                     "code": "BND1",
                     "quantity": 50,
@@ -102,11 +102,11 @@
                 }
             ]
         },
-        "Portfolio4": {
+        {
             "id": "Portfolio4",
             "name": "Portfolio 4",
             "currency": "BRL",
-            "assets": [
+            "allocations": [
                 {
                     "code": "BTC",
                     "quantity": 1.5,
@@ -127,11 +127,11 @@
                 }
             ]
         },
-        "Portfolio5": {
+        {
             "id": "Portfolio5",
             "name": "Portfolio 5",
             "currency": "BRL",
-            "assets": [
+            "allocations": [
                 {
                     "code": "VALE3",
                     "quantity": 22,
@@ -152,5 +152,5 @@
                 }
             ]
         }
-    }
+    ]
 }

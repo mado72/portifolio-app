@@ -1,34 +1,14 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
 import { formatISO, getYear, setDayOfYear, setYear } from 'date-fns';
 import { concatAll, delay, map, Observable, of, tap } from 'rxjs';
 import { v4 as uuid } from 'uuid';
-import portfoliosSourceData from '../../data/assets-portfolio.json';
 import assetSource from '../../data/assets.json';
 import earningsSource from '../../data/earnings.json';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, Income, IncomeEnum, TrendType } from '../model/investment.model';
-import { AssetPositionRecord, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
+import { AllocationDataType, AllocationQuotedDataType, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
+import { PortfolioService } from './portfolio-service';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
-
-type PortfolioSourceAssetsDataType = {
-  marketPlace: string;
-  code: string;
-  quantity: number;
-  marketValue: number;
-  percPlanned: number;
-  performance?: number;
-  percAllocation?: number;
-};
-
-type PortfolioSourceDataType = {
-  [key: string]: {
-    id: string;
-    name: string;
-    currency: Currency;
-    assets: PortfolioSourceAssetsDataType[];
-  }
-};
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +16,8 @@ type PortfolioSourceDataType = {
 export class InvestmentService {
 
   private quoteService = inject(QuoteService);
+
+  private portfolioService = inject(PortfolioService);
 
   private static earningsId = 0;
 
@@ -47,15 +29,13 @@ export class InvestmentService {
     date: setDayOfYear(new Date(), Math.random() * 365),
   } as Income));
 
-  assertsSignal = computed(() => {
+  readonly assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
 
     return this.assertsDataSignal().reduce((acc, data) => {
       const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
       const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
       const trend = fnTrend(quotes[code]);
-
-      const aux = { ...data }
 
       acc[code] = {
         ...data,
@@ -69,25 +49,11 @@ export class InvestmentService {
     }, {} as Record<string, Asset & { trend: TrendType }>)
   })
 
-  private portfolioSource = signal<PortfolioSourceDataType>({});
+  readonly portfolios = computed(() => {
 
-  private portfolioObservable = toObservable(this.portfolioSource);
+  });
 
-  constructor() { 
-    this.portfolioSource.set(portfoliosSourceData.data as PortfolioSourceDataType);
-    this.portfolioObservable.subscribe(data=>{
-      console.log(`PortfolioObservable called`, data)
-    })
-  }
-
-  // FIXME: Replace this with queries
-  getAllDataMock() {
-    const portfolioArray = Object.values(this.portfolioSource());
-    return this.fillAssetQuotesInPortfolios(portfolioArray)
-  }
-
-
-  protected fillAssetQuotesInPortfolios(portfolioArray: { id: string; name: string; currency: Currency; assets: PortfolioSourceAssetsDataType[]; }[]) {
+  protected fillAssetQuotesInPortfolios(portfolioArray: { id: string; name: string; currency: Currency; assets: AllocationQuotedDataType[]; }[]) {
     return this.quoteService.getAllExchangesMap().pipe(
       map(exchanges => {
         const assetsRec = this.assertsSignal();
@@ -101,51 +67,16 @@ export class InvestmentService {
   }
 
   private buildPorfolioAssets(
-      portfolioItem: { id: string; name: string; currency: Currency; assets: PortfolioSourceAssetsDataType[]; }, 
-      assetsRec: Record<string, Asset>, 
+      portfolioItem: { id: string; name: string; currency: Currency; assets: AllocationDataType[]; }, 
+      assetsRec: AllocationDataType[], 
       exchanges: Record<CurrencyType, Record<CurrencyType, number>>) {
 
-    const allocations = portfolioItem.assets
-      .map(allocation => {
-         // Fetch asset data from the assets record by marketPlace code
-        const asset = assetsRec[getMarketPlaceCode(allocation)];
-        if (!asset) {
-          return undefined;
-        }
-        const from = asset.quote.currency;
-        const to = portfolioItem.currency;
-        // Calculate market value using the exchange rate between asset's currency and portfolio's currency.
-        const factor = exchanges[from][to] || NaN;
-        const marketValue = factor * asset.quote.amount * allocation.quantity;
-
-        // Calculate performance based on the asset's market value and the asset's initial value.
-        return ({
-          ...allocation,
-          ...asset,
-          marketValue,
-          initialValue: marketValue,// FIXME: It should be gotten from datasource.
-          averageBuy: asset.quote.amount, 
-          performance: 0 // FIXME: It should calculate based on initial value
-        });
-      })
-      .filter(item => !!item)
-      .reduce((acc, item) => {
-        acc[getMarketPlaceCode({ marketPlace: item.marketPlace, code: item.code })] = item;
-        return acc;
-      }, {} as AssetAllocationRecord);
-
-    const portfolio = new Portfolio({ id: portfolioItem.id, name: portfolioItem.name, currency: portfolioItem.currency, quotes: this.quoteService.quotes });
-    const positions = Object.entries(allocations)
-      .reduce((acc, [key, value]) => {
-        acc[key] = {
-          ...value,
-          averageBuy: value.averageBuy || value.quote.amount,
-          quantity: value.quantity
-        };
-        return acc;
-      }, {} as AssetPositionRecord);
-
-    portfolio.assets.set(positions);
+    const portfolio = new Portfolio({
+      ...portfolioItem,
+      exchanges,
+      quotes: this.quoteService.quotes,
+      assets: assetsRec,
+    });
     return portfolio;
   }
 

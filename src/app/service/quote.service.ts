@@ -22,28 +22,40 @@ export type ExchangeType = ExchangeReq & {
 })
 export class QuoteService {
 
-  readonly quotes = signal<AssetQuoteRecord>({});
+  readonly quotes = signal<AssetQuoteRecord>(assetSource.data.reduce((acc, asset)=>{
+    const code = getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code });
+    acc[code] = {
+      lastUpdate: new Date(asset.lastUpdate),
+      quote: {
+        ...asset.quote,
+        currency: Currency[asset.quote.currency as keyof typeof Currency]
+      },
+      initialQuote: asset.quote.amount
+    }
+    return acc;
+  }, {} as AssetQuoteRecord));
+
+  readonly exchanges = signal<Record<CurrencyType, Record<CurrencyType, number>>>(
+    [
+      { date: new Date(), from: Currency.BRL, to: Currency.USD, factor: 1/5.76 },
+      { date: new Date(), from: Currency.USD, to: Currency.BRL, factor: 5.76 },
+      { date: new Date(), from: Currency.BRL, to: Currency.UTC, factor: 1/5.90 },
+      { date: new Date(), from: Currency.UTC, to: Currency.BRL, factor: 5.90 },
+      { date: new Date(), from: Currency.EUR, to: Currency.BRL, factor: 6.21 }
+    ].reduce((acc, item) => {
+      acc[item.from] = acc[item.from] || {};
+      acc[item.from][item.to] = item.factor;
+      acc[item.from][item.from] = 1;
+      acc[item.to] = acc[item.to] || {};
+      acc[item.to][item.to] = 1;
+      return acc;
+    }, {} as Record<CurrencyType, Record<CurrencyType, number>>));
 
   readonly lastUpdate = signal<{code: string, before: number, after: number}>({code: '', before: 0, after: 0});
 
   timerId: any;
 
   constructor() {
-    const records = assetSource.data.reduce((acc, asset)=>{
-      const code = getMarketPlaceCode({ marketPlace: asset.marketPlace, code: asset.code });
-      acc[code] = {
-        lastUpdate: new Date(asset.lastUpdate),
-        quote: {
-          ...asset.quote,
-          currency: Currency[asset.quote.currency as keyof typeof Currency]
-        },
-        initialQuote: asset.quote.amount
-      }
-      return acc;
-    }, {} as AssetQuoteRecord)
-
-    this.quotes.set(records);
-
     this.timerId = setInterval(() => {
       const aux: AssetQuoteRecord = {...this.quotes()};
       const assetsCode = Object.keys(this.quotes());
@@ -69,52 +81,8 @@ export class QuoteService {
     clearInterval(this.timerId);
   }
 
-  getAllExchanges(): Observable<Exchange[]> {
-    // Simulação de chamada à API de cotação
-    const cotacoes: Exchange[] = [
-      { date: new Date(), from: Currency.BRL, to: Currency.USD, factor: 1/5.76 },
-      { date: new Date(), from: Currency.USD, to: Currency.BRL, factor: 5.76 },
-      { date: new Date(), from: Currency.BRL, to: Currency.UTC, factor: 1/5.90 },
-      { date: new Date(), from: Currency.UTC, to: Currency.BRL, factor: 5.90 },
-      { date: new Date(), from: Currency.EUR, to: Currency.BRL, factor: 6.21 }
-    ];
-    return of(cotacoes);
-  }
-
-  getAllExchangesMap() {
-    return this.getAllExchanges().pipe(
-      map(cotacoes => cotacoes.reduce((acc, item) => {
-          acc[item.from] = acc[item.from] || {};
-          acc[item.from][item.to] = item.factor;
-          acc[item.from][item.from] = 1;
-          acc[item.to] = acc[item.to] || {};
-          acc[item.to][item.to] = 1;
-          return acc;
-        }, {} as Record<CurrencyType, Record<CurrencyType, number>>))
-      );
-    }
-    
-    getExchanges(req: { currency: Currency }[], to?: Currency) {
-      const currenciesReq = req.map(c => c.currency);
-      return this.getAllExchanges().pipe(
-        map(exchanges=> exchanges.filter(ex=>currenciesReq.includes(ex.from))), // FIXME Consultar todas as combinações para conjunto de "from"
-        map(exchanges=> exchanges
-          .filter(ex=> to === undefined || ex.to === to)
-          .reduce((acc, item)=>{
-            acc[item.from] = acc[item.from] || {};
-            acc[item.from][item.to] = item.factor;
-            acc[item.from][item.from] = 1;
-            acc[item.to] = acc[item.to] || {};
-            acc[item.to][item.to] = 1;
-          return acc;
-        }, {} as Record<CurrencyType, Record<CurrencyType, number>>))
-    )
-  }
-
   getExchangeQuote(de: Currency, para: Currency) {
-    return this.getAllExchanges().pipe(
-      map(cotacoes => cotacoes.find(c => c.from === de && c.to === para))
-    );
+    return this.exchanges()[de][para];
   }
 
 }
