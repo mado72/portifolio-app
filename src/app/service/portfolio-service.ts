@@ -112,6 +112,7 @@ export class PortfolioService {
       if (changes.name && changes.name !== portfolio.name) portfolio.name = changes.name;
       if (changes.currency && changes.currency !== portfolio.currency) portfolio.currency = Currency[changes.currency];
 
+      // FIXME: Adicionar venda e recálculo do valor dividido.
       if (changes.allocations) {
         // Update allocations
         portfolio.allocations.update((allocations)=>{
@@ -141,7 +142,7 @@ export class PortfolioService {
               updatedAllocations[ticker] = {
                 marketPlace,
                 code,
-                initialValue: asset.quote.amount,
+                initialValue: asset.quote.amount * quantity,
                 marketValue: asset.quote.amount * quantity,
                 averagePrice: asset.quote.amount,
                 percPlanned,

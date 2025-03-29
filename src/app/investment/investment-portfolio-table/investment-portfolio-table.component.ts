@@ -52,8 +52,7 @@ export class InvestmentPortfolioTableComponent implements OnInit {
 
   datasource = computed(()=>Object.entries(this.source())
       .filter(([ticker, _])=> ticker != 'total')
-      .map(([ticker, entry])=>{
-        console.log(`Datasource ${ticker}`, entry)
+      .map(([_, entry])=>{
         return entry;
       })
   );

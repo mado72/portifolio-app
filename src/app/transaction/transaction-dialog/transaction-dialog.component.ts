@@ -129,8 +129,8 @@ export class TransactionDialogComponent implements OnInit {
       })
     }
 
-    const summaries = ticker ? this.getPortfoliosAssetsSummary(ticker)
-      : this.portfolioService.getAllPortfolios().map(portfolio=>({...portfolio, quantity: 0}));
+    const summaries = !ticker ? this.portfolioService.getAllPortfolios().map(portfolio=>({...portfolio, quantity: 0}))
+      : this.getPortfoliosAssetsSummary(ticker).map(item=> ({...item.portfolio, quantity: item.quantity}));
 
     summaries.forEach(portfolio=> {
       this.addPortfolio(portfolio);
@@ -217,7 +217,14 @@ export class TransactionDialogComponent implements OnInit {
   }
 
   get formValue() {
-    return {...this.data, ...this.transactionForm.value};
+    const formValue = {
+      ...this.data,
+      ...this.transactionForm.value, 
+      transaction: {
+        ...this.transactionForm.value.transaction, 
+        ticker: this.ticker.value
+      }};
+    return formValue;
   }
 
   submitForm() {
