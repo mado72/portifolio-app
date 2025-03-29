@@ -9,7 +9,7 @@ export type AllocationDataType = {
     quantity: number,
     percPlanned: number,
     initialValue: number
-    averageBuy: number,
+    averagePrice: number,
     marketValue: number,
 }
 
@@ -36,6 +36,21 @@ export type PortfolioQuotedDataType = PortfolioDataType & {
     allocations: AllocationQuotedDataTypeRecord;
 }
 
+const INITIAL_TOTAL: AllocationQuotedDataType = {
+    marketPlace: '',
+    code: 'total',
+    quantity: NaN,
+    quote: { amount: NaN, currency: Currency.BRL },
+    averagePrice: NaN,
+    initialValue: 0,
+    marketValue: 0,
+    percPlanned: 0,
+    percAllocation: 0,
+    profit: 0,
+    performance: 0,
+    trend: 'unchanged'
+};
+
 export class Portfolio {
     id: string;
     name: string;
@@ -45,60 +60,20 @@ export class Portfolio {
 
     position = computed<AllocationQuotedDataTypeRecord>(() => {
         const quotes = this.quotes();
-
-        const calc = Object.entries(this.allocations()).reduce((acc, [key, asset]) => {
-            const quoteAmount = quotes[key].quote.amount;
-            const marketValue = quoteAmount * asset.quantity;
-            const averageBuy = marketValue / quoteAmount;
-            const trend = fnTrend(quotes[key]);
-            acc[key] = {
-                ...asset,
-                averageBuy,
-                quote: quotes[key].quote,
-                initialValue: marketValue, // FIXME this should be return from the datasource
-                marketValue: marketValue,
-                percAllocation: 0,
-                profit: asset.quantity * (quoteAmount - averageBuy),
-                performance: (marketValue - averageBuy) / quoteAmount * asset.quantity,
-                trend
-            };
-            acc['total'].marketValue += acc[key].marketValue;
-            acc['total'].percPlanned += acc[key].percPlanned;
-            acc['total'].percAllocation += acc[key].percAllocation;
-            acc['total'].profit += acc[key].profit;
-            acc['total'].performance = acc['total'].profit / acc['total'].marketValue;
-            return acc;
-        }, {
-            total: {
-                marketPlace: '',
-                code: 'total',
-                quantity: NaN,
-                quote: { amount: NaN, currency: Currency.BRL },
-                averageBuy: NaN,
-                initialValue: 0,
-                marketValue: 0,
-                percPlanned: 0,
-                percAllocation: 0,
-                profit: 0,
-                performance: 0,
-                trend: 'unchanged'
-            }
-        } as AllocationQuotedDataTypeRecord)
-        Object.entries(calc).filter(([key, _]) => key !== 'total').forEach(([_, item]) => {
-            item.percAllocation = item.marketValue / calc['total'].marketValue;
-            calc['total'].percAllocation += item.percAllocation;
-        });
+        const calc = this.calcPosition(quotes, this.allocations());
         return calc;
     })
 
     constructor(
-            { id, name, currency, allocations: assets, exchanges, quotes }: 
-            { id: string; 
-                name: string; 
-                currency: Currency; 
+        { id, name, currency, allocations: assets, exchanges, quotes }:
+            {
+                id: string;
+                name: string;
+                currency: Currency;
                 allocations: AllocationDataType[],
                 exchanges: Record<CurrencyType, Record<CurrencyType, number>>,
-                quotes: Signal<AssetQuoteRecord>; }) {
+                quotes: Signal<AssetQuoteRecord>;
+            }) {
 
         this.id = id;
         this.name = name;
@@ -106,11 +81,57 @@ export class Portfolio {
         this.quotes = quotes;
         this.allocations.set(assets.reduce((acc, asset) => {
             const ticker = getMarketPlaceCode(asset);
-            acc[ticker] = asset;
+            acc[ticker] = { ...asset };
             return acc;
         }, {} as AllocationDataTypeRecord));
     }
 
+    calcPosition(quotes: AssetQuoteRecord, allocations: AllocationDataTypeRecord) {
+        const calc = Object.entries(allocations).reduce((acc, [key, allocation]) => {
+            const quoteAmount = quotes[key].quote.amount;
+            const marketValue = quoteAmount * allocation.quantity;
+            const averagePrice = Math.trunc(100 * allocation.initialValue / allocation.quantity) / 100;
+            const trend = fnTrend(quotes[key]);
+            acc[key] = this.createAllocation(allocation, averagePrice, quotes, key, marketValue, quoteAmount, trend);
+
+            const total = acc['total'];
+
+            total.marketValue += acc[key].marketValue;
+            total.percPlanned += acc[key].percPlanned;
+            total.percAllocation += acc[key].percAllocation;
+            total.profit += acc[key].profit;
+            total.performance = total.profit / total.marketValue;
+
+            return acc;
+        }, {
+            total: { ...INITIAL_TOTAL }
+        } as AllocationQuotedDataTypeRecord);
+
+        Object.entries(calc).filter(([key, _]) => key !== 'total').forEach(([_, item]) => {
+            item.percAllocation = item.marketValue / calc['total'].marketValue;
+            calc['total'].percAllocation += item.percAllocation;
+        });
+
+        return calc;
+    }
+
+
+    private createAllocation(allocation: AllocationDataType, averagePrice: number, 
+        quotes: AssetQuoteRecord, key: string, marketValue: number, 
+        quoteAmount: number, trend: TrendType): AllocationQuotedDataType {
+
+        return {
+            ...allocation,
+            averagePrice,
+            quote: quotes[key].quote,
+            initialValue: allocation.initialValue, // FIXME this should be return from the datasource
+            marketValue: marketValue,
+            percAllocation: 0,
+            profit: allocation.quantity * (quoteAmount - averagePrice),
+            performance: (marketValue - allocation.initialValue) / allocation.initialValue,
+            trend
+        };
+    }
 }
 
 export type PortfolioAssetsSummary = {

@@ -6,6 +6,7 @@ import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { AllocationDataType, Portfolio, PortfolioDataType, PortfolioQuotedDataType } from '../model/portfolio.model';
 import assetSource from '../../data/assets.json';
 import { Asset, AssetEnum, fnTrend, TrendType } from '../model/investment.model';
+import { divide } from '../model/functions.model';
 
 export type PortfolioChangeType = {
   name?: string;
@@ -50,7 +51,7 @@ export class PortfolioService {
       allocations: portfolioEntry.allocations.map(entry => ({
         ...entry,
         initialValue: entry.marketValue,
-        averageBuy: 100 * Math.trunc(0.01 * entry.marketValue / entry.quantity)
+        averagePrice: divide(entry.marketValue, entry.quantity)
       })),
       quotes: this.quoteService.quotes,
       exchanges: this.quoteService.exchanges()
@@ -127,7 +128,7 @@ export class PortfolioService {
                 code,
                 initialValue: asset.quote.amount,
                 marketValue: asset.quote.amount * quantity,
-                averageBuy: asset.quote.amount,
+                averagePrice: asset.quote.amount,
                 percPlanned,
                 quantity,
               };

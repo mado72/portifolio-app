@@ -35,7 +35,7 @@ export type Asset = {
 export type AssetAllocation = Asset & {
     quantity: number;
     percPlanned: number;
-    averageBuy: number;
+    averagePrice: number;
 }
 
 export type AssetAllocationRecord = Record<string,AssetAllocation>;
