@@ -210,17 +210,12 @@
         } <!-- switch -->
         </div>
 
-        <!-- <code>
-    <pre>{{transactionForm.value | json}}</pre>
-    <pre>{{data | json}}</pre>
-</code> -->
     </mat-dialog-content>
 
     <mat-dialog-actions>
         @switch (page) {
             @case ("Asset") {
-                <!-- <button type="button" mat-button (click)="gotoPage('Portfolio')" [disabled]="transactionForm.invalid">Próximo</button> -->
-                <button type="button" mat-button (click)="gotoPage('Portfolio')">Próximo</button>
+                <button type="button" mat-button (click)="gotoPage('Portfolio')" [disabled]="transactionForm.invalid">Próximo</button>
             }
             @case ("Portfolio") {
                 <button type="button" mat-button (click)="gotoPage('Asset')">Voltar</button>
