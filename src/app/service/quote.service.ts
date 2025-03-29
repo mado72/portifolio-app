@@ -1,8 +1,7 @@
-import { computed, Injectable, signal } from '@angular/core';
-import { Exchange, Currency, CurrencyAmount, CurrencyType } from '../model/domain.model';
-import { filter, map, Observable, of } from 'rxjs';
+import { effect, Injectable, signal } from '@angular/core';
 import assetSource from '../../data/assets.json';
-import { AssetQuoteRecord, QuoteExchangeInfo } from '../model/investment.model';
+import { Currency, CurrencyType } from '../model/domain.model';
+import { AssetQuoteRecord } from '../model/investment.model';
 
 export const getMarketPlaceCode = ({ marketPlace, code }: { marketPlace: string; code: string; }): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
@@ -56,25 +55,34 @@ export class QuoteService {
   timerId: any;
 
   constructor() {
+    effect(()=>{
+      console.log(this.lastUpdate());
+    })
+
+    this.forceChangeQuoteMock();
+    
     this.timerId = setInterval(() => {
-      const aux: AssetQuoteRecord = {...this.quotes()};
-      const assetsCode = Object.keys(this.quotes());
-
-      for (let i = 0; i < 10; i++) {
-        const idx = Math.trunc(Math.random() * assetsCode.length);
-  
-        const code = assetsCode[idx];
-  
-        const before = aux[code].quote.amount;
-        aux[code].quote.amount *= .01 * (105 - 10 * Math.random());
-        aux[code].lastUpdate = new Date();
-        const after = aux[code].quote.amount;
-        this.lastUpdate.set({code, before, after});
-      }
-      // console.debug({code, before, after});
-
-      this.quotes.set(aux);
+      this.forceChangeQuoteMock();
     }, 30000);
+  }
+
+  private forceChangeQuoteMock() {
+    const aux: AssetQuoteRecord = { ...this.quotes() };
+    const assetsCode = Object.keys(this.quotes());
+
+    for (let i = 0; i < 10; i++) {
+      const idx = Math.trunc(Math.random() * assetsCode.length);
+
+      const code = assetsCode[idx];
+
+      const before = aux[code].quote.amount;
+      aux[code].quote.amount *= (105 - 10 * Math.random()) / 100;
+      aux[code].lastUpdate = new Date();
+      const after = aux[code].quote.amount;
+      this.lastUpdate.set({ code, before, after });
+    }
+    // console.debug({code, before, after});
+    this.quotes.set(aux);
   }
 
   destroy() {
