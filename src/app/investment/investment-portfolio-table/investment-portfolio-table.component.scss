@@ -1,4 +1,4 @@
-.mat-column-quantity, .mat-column-percPlanned, .mat-column-percAllocation {
+.mat-column-quantity, .mat-column-percPlanned, .mat-column-percAllocation, .mat-column-averagePrice {
     text-align: right !important;
     width: 6% !important;
 }
@@ -23,7 +23,7 @@
     word-break: break-all;
 }
 .mat-column-quote {
-    width: 15% !important;
+    width: 12% !important;
     text-align: end !important;
 }
 .mat-column-profit {
@@ -32,7 +32,7 @@
 }
 .mat-column-marketValue
 {
-    width: 15% !important;
+    width: 12% !important;
     word-break: break-all;
     text-align: end !important;
 }

@@ -53,17 +53,7 @@ export class TransactionTableComponent {
     return `Account ${accountId}`;
   }
 
-  getPortfoliosAssetsSummary(ticker?: string) {
-    return this.portfolioService.getAllPortfolios().map(portfolio=>({
-      portfolio: {...portfolio},
-      quantity: Object.values(portfolio.allocations())
-        .filter(item=>!ticker || ticker === getMarketPlaceCode(item))
-        .reduce((acc, vl) => acc + (vl?.quantity || 0), 0)
-    }))
-  }
-
   addTransaction() {
-    const summaries = this.getPortfoliosAssetsSummary();
     this.openDialog({
       newTransaction: true,
       title: 'Adicionar Transação',
@@ -71,13 +61,13 @@ export class TransactionTableComponent {
         ticker: '',
         date: new Date(),
         accountId: '',
-        quantity: 1,
-        quote: 1,
+        quantity: 0,
+        quote: NaN,
         value: { amount: 0, currency: Currency.BRL },
         type: TransactionEnum.BUY,
         status: TransactionStatus.COMPLETED
       },
-      portfolios: summaries.map(item => ({id: item.portfolio.id, name: item.portfolio.name, quantity: item.quantity}))
+      portfolios: []
     })
   }
 
@@ -89,12 +79,11 @@ export class TransactionTableComponent {
   }
 
   editTransaction(transaction: TransactionType) {
-    const summaries = this.getPortfoliosAssetsSummary();
     this.openDialog({
       newTransaction: false,
       title: 'Editar Transação',
       transaction,
-      portfolios: summaries.map(item => ({id: item.portfolio.id, name: item.portfolio.name, quantity: item.quantity}))
+      portfolios: []
     })
   }
 
@@ -108,15 +97,35 @@ export class TransactionTableComponent {
         this.transactionService.saveTransaction({
           ...data.transaction, ...result
         }).subscribe(_ => {
+
+          // Get portfolios allocations for the current transaction's ticker
+          const portfolios = this.portfolioService.getAllPortfolios();
+
+          // Update portfolio allocations if necessary
           const allocations = result.portfolios.reduce((alloc, item) => {
+
+            // Get the portfolio referenced by the current transaction's portfolio id
+            const portfolio = portfolios.find(portfolio => portfolio.id === item.id);
+            if (!portfolio) return alloc;
+
+            // Check if portfolio already has an allocation for the current transaction's ticker
+            const previousQuantity = portfolio.allocations()[result.transaction.ticker]?.quantity || 0;
+            
+            // Avoid unnecessary allocation adjustment if quantity doesn't change
+            if ((previousQuantity >= item.quantity && result.transaction.type === TransactionEnum.BUY)
+              || (previousQuantity <= item.quantity && result.transaction.type === TransactionEnum.SELL)
+            ) return alloc;
+
+            // Adjust portfolio allocations
             alloc[item.id] = {
               ...(alloc[item.id] || item),
-              allocations: [...(alloc[item.id].allocations || []), {
+              allocations: [...(alloc[item.id]?.allocations || []), {
                 ticker: result.transaction.ticker,
                 percPlanned: 0,
                 quantity: item.quantity * (result.transaction.type === TransactionEnum.BUY? 1 : -1)
               }]
             };
+
             return alloc;
           }, {} as Record<string, PortfolioChangeType & {id: string}>);
 

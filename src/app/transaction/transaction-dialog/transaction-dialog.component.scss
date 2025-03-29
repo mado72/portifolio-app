@@ -5,8 +5,11 @@ mat-row.mat-last-row mat-cell.mat-mdc-cell {
     border-bottom: 1px solid var(--mat-table-row-item-outline-color, var(--mat-app-outline, rgba(0, 0, 0, 0.12)))
 }
 
+.add-quantity {
+    margin-top: -20px;
+}
 
-button#add-button {
+button#add-portifolio-button {
     position: relative;
     top: -73px;
     left: calc(50% - 20px);
