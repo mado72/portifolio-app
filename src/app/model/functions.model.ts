@@ -41,3 +41,18 @@ export function groupBy<K, V>(list: V[], keyGetter: (v: V) => K): Map<K, V[]>{
 export function toRecord<T extends Record<string, any>, K extends keyof T>(array: T[], keyGetter: (v: T) => K): Record<T[K], T> {
     return array.reduce((acc, item) => ({ ...acc, [item[keyGetter(item)]]: item }), {} as Record<T[K], T>)
 }
+
+/**
+ * @description
+ * Divides two numbers and rounds the result to a specified precision.
+ *
+ * @param dividend - The number to be divided.
+ * @param divisor - The number by which to divide the dividend.
+ * @param precision - The number of decimal places to round the result to. Default is 2.
+ *
+ * @returns The result of dividing the dividend by the divisor, rounded to the specified precision.
+ */
+export function divide(dividend: number, divisor: number, precision: number = 2) {
+    const factor = 10 ^ precision;
+    return Math.trunc((dividend * factor) / divisor) / factor;
+}
