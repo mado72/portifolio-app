@@ -1,12 +1,11 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { v4 as uuid } from 'uuid';
 import portfoliosSourceData from '../../data/assets-portfolio.json';
-import { Currency, CurrencyType } from '../model/domain.model';
-import { getMarketPlaceCode, QuoteService } from './quote.service';
-import { AllocationDataType, Portfolio, PortfolioDataType, PortfolioQuotedDataType } from '../model/portfolio.model';
 import assetSource from '../../data/assets.json';
-import { Asset, AssetEnum, fnTrend, TrendType } from '../model/investment.model';
+import { Currency, CurrencyType } from '../model/domain.model';
 import { divide } from '../model/functions.model';
+import { Portfolio, PortfolioDataType } from '../model/portfolio.model';
+import { getMarketPlaceCode, QuoteService } from './quote.service';
 
 export type PortfolioChangeType = {
   name?: string;
@@ -76,6 +75,10 @@ export class PortfolioService {
 
   getPortfolioByAsset({marketPlace, code}: {marketPlace: string, code: string}) {
     const ticker = getMarketPlaceCode({marketPlace, code});
+    return this.getPortfoliosByTicker(ticker);
+  }
+
+  getPortfoliosByTicker(ticker: string) {
     return Object.values(this.portfolios())
       .filter(portfolio => Object.keys(portfolio.allocations).includes(ticker));
   }
@@ -106,8 +109,8 @@ export class PortfolioService {
     this.portfolios.update((portfolios)=>{
       const portfolio = portfolios[portfolioId];
 
-      if (changes.name) portfolio.name = changes.name;
-      if (changes.currency) portfolio.currency = Currency[changes.currency];
+      if (changes.name && changes.name !== portfolio.name) portfolio.name = changes.name;
+      if (changes.currency && changes.currency !== portfolio.currency) portfolio.currency = Currency[changes.currency];
 
       if (changes.allocations) {
         // Update allocations
@@ -116,7 +119,19 @@ export class PortfolioService {
           changes.allocations?.forEach(({ticker, percPlanned, quantity}) => {
             const [marketPlace, code] = ticker.split(':');
             if (updatedAllocations[ticker]) {
-              updatedAllocations[ticker] = {...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity};
+              const tickerQuote = this.quoteService.quotes()[ticker];
+
+              const deltaQty = quantity - updatedAllocations[ticker].quantity;
+              const currentTotalInvestment = updatedAllocations[ticker].quantity * updatedAllocations[ticker].averagePrice;
+              const purchaseTotalInvestment = deltaQty * tickerQuote.quote.amount;
+              const newTotalInvestment = currentTotalInvestment + purchaseTotalInvestment;
+
+              const newAveragePrice = newTotalInvestment / quantity;
+
+              const newValue = { ...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity, 
+                initialValue: newTotalInvestment,
+                averagePrice: newAveragePrice };
+              updatedAllocations[ticker] = newValue;
             }
             else {
               const asset = this.assertsDataSignal()?.find(asset => asset.code === code && asset.marketPlace === marketPlace);
