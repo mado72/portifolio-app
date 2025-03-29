@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +12,8 @@ import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { EarningsEntryDialogComponent } from '../earnings-entry-dialog/earnings-entry-dialog.component';
 import { EarningsFilterComponent, EarningsFilterType } from '../earnings-filter/earnings-filter.component';
+import { PortfolioService } from '../../service/portfolio-service';
+import { getMarketPlaceCode } from '../../service/quote.service';
 
 
 const YEAR_FORMATS = {
@@ -68,6 +70,8 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private investmentService = inject(InvestmentService);
 
+  private portfolioService = inject(PortfolioService);
+
   private changeDetectorRef = inject(ChangeDetectorRef);
 
   private dialog = inject(MatDialog);
@@ -84,40 +88,41 @@ export class EarningsYearSheetComponent implements OnInit {
 
   readonly displayedColumns = ['ticker', 'acronym', 'vl0', 'vl1', 'vl2', 'vl3', 'vl4', 'vl5', 'vl6', 'vl7', 'vl8', 'vl9', 'vl10', 'vl11'];
 
-  filter: EarningsFilterType = { dateReference: new Date(), typeReference: null, portfolioReference: null };
+  filter = signal<EarningsFilterType>({ dateReference: new Date(), typeReference: null, portfolioReference: null });
+
+  portfoliosAssets = computed(() => 
+    Object.values(this.portfolioService.portfolios())
+      .filter(portfolio => ! this.filter().portfolioReference || portfolio.id === this.filter().portfolioReference)
+      .flatMap(portfolio => Object.values(portfolio.position())));
 
   ngOnInit(): void {
-    this.doFilter(this.filter);
+    this.doFilter();
   }
 
-  async getPortfoliosSummary() {
-    const items = await firstValueFrom(this.investmentService.getPortfolioAssetsSummary());
-    return items;
+  filterChanged(filterEvent: EarningsFilterType) {
+    this.filter.set(filterEvent);
+    this.doFilter();
   }
 
-  doFilter(filter?: EarningsFilterType) {
-    filter = this.filter = filter || this.filter;
-    const joinSetup = {
-      earnings: this.investmentService.findIncomesBetween(startOfYear(filter.dateReference), endOfYear(filter.dateReference)),
-      portfolios: !!filter.portfolioReference ?
-        this.investmentService.getPortfolioAssetsSummary() : of([] as PortfolioAssetsSummary[])
-    };
+  doFilter() {
+    const filter = this.filter();
+    
+    this.investmentService.findIncomesBetween(startOfYear(filter.dateReference), endOfYear(filter.dateReference)).subscribe(earnings => {
 
-    forkJoin(joinSetup).subscribe(({ earnings, portfolios }) => {
       if (!!filter.typeReference) {
-        earnings = this.filterByTypeReference(filter.typeReference, earnings);
+        earnings = this.filterByTypeReference(earnings);
       }
-
+  
       if (!!filter.portfolioReference) {
-        earnings = this.filterByPortfolioAssets(filter.portfolioReference, portfolios, earnings);
+        earnings = this.filterByPortfolioAssets(earnings);
       }
 
-      // earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id);
       let data: SheetRow[] = this.prepareSheetRows(earnings);
-
+  
       this.data.set(data);
       this.changeDetectorRef.detectChanges();
     });
+
   }
 
   private prepareSheetRows(earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
@@ -144,17 +149,15 @@ export class EarningsYearSheetComponent implements OnInit {
     return data;
   }
 
-  private filterByPortfolioAssets(portfolioReference: string, portfolios: PortfolioAssetsSummary[], earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
-    const assets = (portfolios.filter(item => item.id === portfolioReference))
-        .flatMap(item=> item?.assets || [])
-        .map(item=> item.ticker);
-    earnings = earnings.filter(earning => assets.includes(earning.ticker));
+  private filterByPortfolioAssets(earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
+    const portfolioAssets = this.portfoliosAssets().map(asset=>getMarketPlaceCode(asset));
+    earnings = earnings.filter(earning => portfolioAssets.includes(earning.ticker));
     return earnings;
   }
 
-  private filterByTypeReference(typeReference: AssetEnum, earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
+  private filterByTypeReference(earnings: { date: Date; id: number; ticker: string; amount: number; type: IncomeEnum; }[]) {
     const assets = Object.entries(this.investmentService.assertsSignal())
-      .filter(([_, asset]) => asset.type === typeReference)
+      .filter(([_, asset]) => asset.type === this.filter().typeReference)
       .map(([ticker, _]) => ticker);
     return earnings.filter(earning => assets.includes(earning.ticker));
   }
@@ -226,7 +229,7 @@ export class EarningsYearSheetComponent implements OnInit {
     });
 
     this.processDialogResults(dialogRef, newRow).subscribe(_=>{
-      this.doFilter(this.filter);
+      this.doFilter();
     });
   }
 
@@ -262,7 +265,7 @@ export class EarningsYearSheetComponent implements OnInit {
         if (entry.amount) {
           this.investmentService.addIncome(element.ticker, entryData).subscribe(() => {
             // this.setEarningValue(earning, element);
-            this.doFilter(this.filter);
+            this.doFilter();
           });
         }
       }

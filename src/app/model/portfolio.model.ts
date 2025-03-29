@@ -1,11 +1,7 @@
 import { computed, Signal, signal } from "@angular/core";
 import { Currency, CurrencyAmount, CurrencyType } from "./domain.model";
-import { AssetAllocation, AssetQuoteRecord } from "./investment.model";
+import { AssetAllocation, AssetQuoteRecord, fnTrend, TrendType } from "./investment.model";
 import { getMarketPlaceCode } from "../service/quote.service";
-
-// export type AssetPositionRecord = Record<string, AssetAllocation>;
-
-export type AssetValueRecord = Record<string, AllocationQuotedDataType>;
 
 export type AllocationDataType = {
     marketPlace: string,
@@ -23,7 +19,8 @@ export type AllocationQuotedDataType = AllocationDataType & {
     quote: CurrencyAmount,
     profit: number;
     percAllocation: number,
-    performance: number
+    performance: number,
+    trend: TrendType,
 }
 
 export type AllocationQuotedDataTypeRecord = Record<string, AllocationQuotedDataType>;
@@ -36,7 +33,7 @@ export type PortfolioDataType = {
 }
 
 export type PortfolioQuotedDataType = PortfolioDataType & {
-    allocations: AssetValueRecord;
+    allocations: AllocationQuotedDataTypeRecord;
 }
 
 export class Portfolio {
@@ -44,14 +41,16 @@ export class Portfolio {
     name: string;
     currency: Currency;
     quotes: Signal<AssetQuoteRecord>;
-    assets = signal<AllocationDataTypeRecord>({});
+    allocations = signal<AllocationDataTypeRecord>({});
 
-    position = computed<AssetValueRecord>(() => {
+    position = computed<AllocationQuotedDataTypeRecord>(() => {
         const quotes = this.quotes();
-        const calc = Object.entries(this.assets()).reduce((acc, [key, asset]) => {
+
+        const calc = Object.entries(this.allocations()).reduce((acc, [key, asset]) => {
             const quoteAmount = quotes[key].quote.amount;
             const marketValue = quoteAmount * asset.quantity;
             const averageBuy = marketValue / quoteAmount;
+            const trend = fnTrend(quotes[key]);
             acc[key] = {
                 ...asset,
                 averageBuy,
@@ -60,7 +59,8 @@ export class Portfolio {
                 marketValue: marketValue,
                 percAllocation: 0,
                 profit: asset.quantity * (quoteAmount - averageBuy),
-                performance: (marketValue - averageBuy) / quoteAmount * asset.quantity
+                performance: (marketValue - averageBuy) / quoteAmount * asset.quantity,
+                trend
             };
             acc['total'].marketValue += acc[key].marketValue;
             acc['total'].percPlanned += acc[key].percPlanned;
@@ -80,9 +80,10 @@ export class Portfolio {
                 percPlanned: 0,
                 percAllocation: 0,
                 profit: 0,
-                performance: 0
+                performance: 0,
+                trend: 'unchanged'
             }
-        } as AssetValueRecord)
+        } as AllocationQuotedDataTypeRecord)
         Object.entries(calc).filter(([key, _]) => key !== 'total').forEach(([_, item]) => {
             item.percAllocation = item.marketValue / calc['total'].marketValue;
             calc['total'].percAllocation += item.percAllocation;
@@ -91,11 +92,11 @@ export class Portfolio {
     })
 
     constructor(
-            { id, name, currency, assets, exchanges, quotes }: 
+            { id, name, currency, allocations: assets, exchanges, quotes }: 
             { id: string; 
                 name: string; 
                 currency: Currency; 
-                assets: AllocationDataType[],
+                allocations: AllocationDataType[],
                 exchanges: Record<CurrencyType, Record<CurrencyType, number>>,
                 quotes: Signal<AssetQuoteRecord>; }) {
 
@@ -103,7 +104,7 @@ export class Portfolio {
         this.name = name;
         this.currency = currency;
         this.quotes = quotes;
-        this.assets.set(assets.reduce((acc, asset) => {
+        this.allocations.set(assets.reduce((acc, asset) => {
             const ticker = getMarketPlaceCode(asset);
             acc[ticker] = asset;
             return acc;

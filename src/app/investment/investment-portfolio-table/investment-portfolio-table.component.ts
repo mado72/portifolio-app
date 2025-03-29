@@ -1,18 +1,18 @@
 import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, Input, OnInit, Signal, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { AssetAllocation } from '../../model/investment.model';
-import { AssetValueRecord, Portfolio } from '../../model/portfolio.model';
+import { Asset, TrendType } from '../../model/investment.model';
+import { AllocationQuotedDataType, Portfolio } from '../../model/portfolio.model';
 import { InvestmentService } from '../../service/investment.service';
-import { getMarketPlaceCode } from '../../service/quote.service';
+import { PortfolioService } from '../../service/portfolio-service';
 import { AssetCodePipe } from '../../utils/asset-code.pipe';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
 
-type DatasourceType = ReturnType<InvestmentPortfolioTableComponent["buildDatasource"]>;
+type DatasourceRowType = AllocationQuotedDataType & {ticker: string, name: string, trend: TrendType};
 
 @Component({
   selector: 'app-investment-portfolio-table',
@@ -33,6 +33,8 @@ export class InvestmentPortfolioTableComponent implements OnInit {
 
   private investmentService = inject(InvestmentService);
 
+  private portfolioService = inject(PortfolioService);
+
   private dialog = inject(MatDialog);
 
   readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
@@ -43,88 +45,65 @@ export class InvestmentPortfolioTableComponent implements OnInit {
 
   @Input() currency = Currency.BRL;
 
-  datasource = signal<DatasourceType>([]);
+  source!: Signal<Record<string,DatasourceRowType>>;
 
-  private portfolioName = '';
+  datasource = computed(()=>Object.entries(this.source())
+      .filter(([ticker, _])=> ticker != 'total')
+      .map(([_, entry])=>entry)
+  );
 
-  buildDatasource(portfolio: Portfolio | undefined) {
-    if (!portfolio || !portfolio.assets())
-      return [];
+  total = computed(() => this.source()['total']);
 
-    const assets = portfolio.assets();
-    const positions = portfolio.position();
-
-    const result = Object.values(assets).map(asset => ({
-      ...asset,
-      position: positions[getMarketPlaceCode(asset)]
-    }));
-
-    console.log(`Datasource built successfully`, result)
-
-    return result;
-  }
-
+  portfolioName = signal('');
 
   ngOnInit(): void {
-    this.investmentService.getPortfolio(this.portfolioId).subscribe(portfolio => {
-      const ds = this.buildDatasource(portfolio);
-      this.portfolioName = portfolio?.name || '';
-      this.datasource.set(ds);
+    this.source = computed(()=> {
+      const portfolio = this.portfolioService.portfolios()[this.portfolioId];
+      const assets = this.investmentService.assertsSignal();
+      return this.computeSource(portfolio, assets);
     });
+
+    const portfolio = this.portfolioService.portfolios()[this.portfolioId];
+    this.portfolioName.set(portfolio.name);
   }
 
-  total = computed(() => {
-    if (this.datasource()) {
-      return this.datasource().find(item => item.name === 'total');
-    }
-    return undefined;
-  })
+  protected computeSource = (portfolio: Portfolio, assets: Record<string, Asset & { trend: TrendType;}>): Record<string,DatasourceRowType> => {
+    return Object.entries(portfolio.position())
+      .reduce((rec, [ticker, row])=>{
+        rec[ticker] = {
+          ...row,
+          ticker,
+          name: assets[ticker]?.name || ticker,
+          trend: assets[ticker]?.trend || 'unchanged'
+        };
+        return rec;
+      }, {} as Record<string, DatasourceRowType>);
+  };
 
-  selectRow(row: AssetAllocation & AssetValueRecord) {
-    const ticket = new AssetCodePipe().transform(row);
+  selectRow(row: DatasourceRowType) {
+    const ticker = new AssetCodePipe().transform(row);
+    const asset = this.investmentService.assertsSignal()[row.ticker];
+
     const data: PorfolioAllocationDataType = {
-      asset: row,
-      portfolio: this.portfolioName,
+      ticker: row.ticker,
+      asset,
+      portfolio: this.portfolioName(),
       quantity: row.quantity,
       percent: row.percPlanned
     }
     const dialogRef = this.dialog.open(PortfolioAllocationDialogComponent, { data });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: PorfolioAllocationDataType) => {
       if (result) {
-        this.investmentService.updatePortfolioAllocation(this.portfolioId, { ticket, ...result }).pipe(
-
-        )
-
-        this.investmentService.getPortfolio(this.portfolioId).subscribe(portfolio => {
-          const ref = { ...portfolio };
-
-          if (!ref) return;
-          if (!ref.assets) return;
-
-          const assets = ref.assets();
-          
-          
-          this.investmentService.updatePortfolioAllocation(this.portfolioId, { ticket, ...result }).subscribe(portfolios => {
-
-            // const allocation = { ...assets[ticket] };
-            // allocation.quantity = result.quantity;
-            // allocation.percPlanned = result.percent;
-            // assets[ticket] = allocation;
-  
-            // const portfolio = new Portfolio(ref as Portfolio);
-            // portfolio.assets.set(assets);
-            // portfolio.name += '*';
-
-            // this.portfolioName = portfolio.name;
-
-            const ds = this.buildDatasource(portfolios.find(item => item.id === ref.id));
-            this.datasource.set(ds);
-          });
-        });
-
+        const changes = {
+          allocations: [{
+            ticker: result.ticker,
+            quantity: result.quantity,
+            percPlanned: result.percent,
+          }]
+        }
+        this.portfolioService.updatePortfolio(this.portfolioId, changes)
       }
-
     });
   }
 

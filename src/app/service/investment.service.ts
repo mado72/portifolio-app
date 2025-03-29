@@ -53,148 +53,6 @@ export class InvestmentService {
 
   });
 
-  protected fillAssetQuotesInPortfolios(portfolioArray: { id: string; name: string; currency: Currency; assets: AllocationQuotedDataType[]; }[]) {
-    return this.quoteService.getAllExchangesMap().pipe(
-      map(exchanges => {
-        const assetsRec = this.assertsSignal();
-
-        return portfolioArray.map(portfolioItem => {
-
-          return this.buildPorfolioAssets(portfolioItem, assetsRec, exchanges);
-        });
-      })
-    );
-  }
-
-  private buildPorfolioAssets(
-      portfolioItem: { id: string; name: string; currency: Currency; assets: AllocationDataType[]; }, 
-      assetsRec: AllocationDataType[], 
-      exchanges: Record<CurrencyType, Record<CurrencyType, number>>) {
-
-    const portfolio = new Portfolio({
-      ...portfolioItem,
-      exchanges,
-      quotes: this.quoteService.quotes,
-      assets: assetsRec,
-    });
-    return portfolio;
-  }
-
-  getPortfolioSummary(): Observable<{ id: string, name: string, currency: Currency }[]> {
-    // FIXME: Replace this with code to query the portfolio data
-    return this.portfolioObservable.pipe(
-      map((portfolios) => Object.keys(portfolios).map(item => ({ id: item, name: item, currency: Currency.BRL })))
-    );
-  }
-
-  getPortfolioAssetsSummary(): Observable<PortfolioAssetsSummary[]> {
-    // FIXME: Replace this with code to query the portfolio data
-    return this.portfolioObservable.pipe(
-      map((portfolios) => Object.entries(portfolios).map(([k, v]) =>
-      ({
-        ...v,
-        assets: v.assets.map(asset => ({
-          ticker: getMarketPlaceCode(asset),
-          quantity: asset.quantity
-        }))
-      }))
-    ));
-  }
-
-  getPortfolio(id: string): Observable<Portfolio | undefined> {
-    return this.getAllDataMock().pipe(
-      map(portfolios => portfolios.find(p => p.id === id))
-    );
-  }
-
-  getPortfolioAllocations(portfolio: Portfolio): Observable<AssetAllocationRecord> {
-    return this.getAllDataMock().pipe(
-      map(portfolios => portfolios.find(p => p.id === portfolio.id)?.assets() || {})
-    );
-  }
-
-  getPorfoliosByAsset(asset: Asset): Observable<Portfolio[]> {
-    const ticker = getMarketPlaceCode(asset);
-    return this.getAllDataMock().pipe(
-      map(portfolios => portfolios.filter(p => !!p.assets()[ticker]))
-    );
-  }
-
-  updatePortfolioAssets({ portfolioUpdates }: { portfolioUpdates: { id: string; quantity: number; quote: number, ticker: string, date: Date, name?: string }[]; }) {
-
-    return this.portfolioObservable.pipe(
-      tap(portfolios => {
-        const allAssets = this.assertsSignal();
-
-        portfolioUpdates.forEach(updateData => {
-
-          let portfolio = portfolios[updateData.id];
-          const key = updateData.ticker;
-          const asset = allAssets[key];
-
-          if (!portfolio) {
-            // create a new portfolio
-            portfolio = {
-              id: uuid(),
-              name: updateData.name as string,
-              currency: asset?.quote.currency || Currency.BRL,
-              assets: []
-            }
-            portfolios[portfolio.id] = portfolio;
-          }
-
-          const portAsset = portfolio.assets.find(asset => getMarketPlaceCode(asset) === key);
-          if (portAsset) { // it had already exist in portfolio
-
-            // remove the asset from portfolio
-            portfolio.assets = portfolio.assets.filter(item => portAsset === item);
-
-            // add the asset back to portfolio with updated quantity
-            if (updateData.quantity > 0) {
-              portfolio.assets = portfolio.assets.filter(item => portAsset === item)
-              portfolio.assets.push({
-                ...portAsset,
-                quantity: updateData.quantity,
-                marketValue: updateData.quantity * updateData.quote,
-              })
-            }
-          }
-          else if (updateData.quantity > 0){
-            const [marketPlace, code] = key.split(':');
-            portfolio.assets.push({
-              marketPlace,
-              code,
-              quantity: updateData.quantity,
-              marketValue: updateData.quantity * updateData.quote,
-              percPlanned: 0
-            });
-          }
-        });
-
-        // Update the portfolio data
-        this.portfolioSource.set(portfolios);
-
-      }));
-  }
-
-  updatePortfolioAllocation(portfolioId: string, {ticket, quantity, percent} : {ticket: string, quantity: number, percent: number}) {
-    return this.portfolioObservable.pipe(
-      map(portfoliosSource => {
-        const portfolioSource = portfoliosSource[portfolioId];
-        if (portfolioSource) {
-          const assetSource = portfolioSource.assets.find(a => getMarketPlaceCode(a) === ticket);
-          if (assetSource) {
-            assetSource.quantity = quantity;
-            assetSource.percPlanned = percent;
-          }
-        }
-        this.portfolioSource.set(portfoliosSource);
-        return this.getAllDataMock()
-      }),
-      concatAll()
-    )
-  }
-
   getAssetsDatasourceComputed() {
     return computed(() => {
       const asserts = Object.values(this.assertsSignal());
@@ -246,16 +104,26 @@ export class InvestmentService {
   }
 
   deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {
-    return this.portfolioObservable.pipe(
-      map(portfolios => {
-        const assetFound = Object.values(portfolios)
-          .flatMap(item => item.assets)
-          .find(item => item.code === code && item.marketPlace === marketPlace);
-        if (assetFound) {
-          throw new Error('Asset is in use.');
-        }
-        this.assertsDataSignal.update(data => data.filter(item => getMarketPlaceCode(item) !== getMarketPlaceCode({ marketPlace, code })));
-      })
+    return of().pipe(
+      tap(() => {
+
+        this.portfolioService.portfolios.update(portfolios => {
+          Object.values(portfolios).forEach(portfolio=>{
+            portfolio.allocations.update(allocations => {
+              delete allocations[getMarketPlaceCode({ marketPlace, code })];
+              return allocations;
+            });
+          });
+          return portfolios;
+        });
+
+        this.quoteService.quotes.update(quotes=> {
+          delete quotes[getMarketPlaceCode({ marketPlace, code })];
+          return quotes;
+        });
+
+      }),
+      delay(250)
     )
   }
 

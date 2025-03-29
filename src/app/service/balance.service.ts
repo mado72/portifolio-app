@@ -50,33 +50,44 @@ export class BalanceService {
   }
 
   /**
-   * Retrieves the balance quotation for each account position in the specified currency.
-   * The balance quotation is calculated by multiplying the account balance with the exchange rate factor.
+   * Retrieves account balances and calculates their quotation in the specified currency.
    *
    * @param currency - The target currency for the balance quotation calculation.
    *
-   * @returns An Observable emitting an array of AccountBalanceQuote objects.
-   * Each AccountBalanceQuote object contains the account position details and the calculated balance quotation.
+   * @returns An Observable emitting an array of AccountBalanceExchange objects.
+   * Each AccountBalanceExchange object represents an account with its balance, currency, type,
+   * and the calculated exchange amount in the specified currency.
+   *
+   * @example
+   * ```typescript
+   * const currency = Currency.USD;
+   * const balancesByCurrency = balanceService.getBalancesByCurrencyExchange(currency);
+   * balancesByCurrency.subscribe(balances => {
+   *   console.log(balances);
+   *   // Output: [
+   *   //   { account: 'Account 1', balance: { amount: 1000, currency: Currency.EUR }, type: AccountTypeEnum.CHECKING, exchange: { amount: 1100, currency: Currency.USD } },
+   *   //   { account: 'Account 2', balance: { amount: 2000, currency: Currency.GBP }, type: AccountTypeEnum.SAVINGS, exchange: { amount: 2200, currency: Currency.USD } },
+   *   // ]
+   * });
+   * ```
    */
   getBalancesByCurrencyExchange(currency: Currency) {
-    return forkJoin({
-      acc: this.getAllBalances(),
-      quotes: this.quoteService.getAllExchanges()
-    }).pipe(
+    return this.getAllBalances().pipe(
       map(balances => {
-        return balances.acc.map(acc => {
-          const quote = balances.quotes.find(c => c.from === acc.balance.currency && c.to === currency);
+        return balances.map(acc => {
+          const quoteFactor = this.quoteService.getExchangeQuote(acc.balance.currency, currency);
           return {
             ...acc,
             exchange: {
-              amount: acc.balance.amount * (quote?.factor || 1),
+              amount: acc.balance.amount * quoteFactor,
               currency
             },
           } as AccountBalanceExchange;
         });
       })
-    )
+    );
   }
+
 
   /**
    * Retrieves the total balance amount for all account positions, excluding the specified account types,
@@ -117,31 +128,48 @@ export class BalanceService {
    * @param currency - The target currency for the value calculation.
    *
    * @returns An Observable emitting an AccountBalanceSummary object.
+   * The AccountBalanceSummary object contains an array of AccountBalanceSummaryItem objects,
+   * representing each allocation. Each AccountBalanceSummaryItem object includes the allocation class,
+   * financial amount, value in the specified currency, planned percentage, and calculated percentageActual.
+   * Additionally, the AccountBalanceSummary object includes a total property representing the total value
+   * of all allocations in the specified currency.
+   *
+   * @example
+   * ```typescript
+   * const currency = Currency.USD;
+   * const allocationSummary = balanceService.getAllocationSummary(currency);
+   * allocationSummary.subscribe(summary => {
+   *   console.log(summary);
+   *   // Output:
+   *   // {
+   *   //   items: [
+   *   //     { class: 'Allocation 1', financial: { amount: 1000, currency: Currency.EUR }, exchange: { amount: 1100, currency: Currency.USD }, percentagePlanned: 0.5, percentageActual: 0.45454545454545453 },
+   *   //     { class: 'Allocation 2', financial: { amount: 2000, currency: Currency.GBP }, exchange: { amount: 2200, currency: Currency.USD }, percentagePlanned: 0.5, percentageActual: 0.9090909090909091 },
+   *   //   ],
+   *   //   total: 3300
+   *   // }
+   * });
+   * ```
    */
   getAllocationSummary(currency: Currency): Observable<AccountBalanceSummary> {
-    return forkJoin({
-      allocations: of(this.allocationsData),
-      exchanges: this.quoteService.getAllExchanges()
-    })
-      .pipe(
-        map(data => {
-          const allocations = this.getAllocations(data, currency)
-          const total = allocations.map(item => item.exchange.amount).reduce((acc, vl) => acc += vl, 0);
+    return of(this.getAllocations({allocations: this.allocationsData}, currency)).pipe(
+      map(allocations=> {
+        const total = allocations.map(item => item.exchange.amount).reduce((acc, vl) => acc += vl, 0);
 
-          const items: AccountBalanceSummaryItem[] = allocations.map(item => {
-            return {
-              ...item,
-              percentageActual: item.exchange.amount / total
-            }
-          });
-
+        const items: AccountBalanceSummaryItem[] = allocations.map(item => {
           return {
-            items,
-            total
-          };
-        })
-      );
+            ...item,
+            percentageActual: item.exchange.amount / total
+          }
+        });
+
+        return {
+          items,
+          total
+        };
+    }));
   }
+
 
   
   /**
@@ -221,10 +249,10 @@ export class BalanceService {
    *
    * @returns An array of AccountBalanceSummaryItem objects.
    */
-  protected getAllocations(data: { allocations: { class: string; financial: number; currency: string; percentagePlanned: number; }[]; exchanges: Exchange[]; }, currency: Currency) {
+  protected getAllocations(data: { allocations: { class: string; financial: number; currency: string; percentagePlanned: number; }[] }, currency: Currency) {
     return data.allocations.map(item => {
       const itemCurrency = currencyOf(item.currency);
-      const quote = data.exchanges.find(c => c.from === itemCurrency && c.to === currency);
+      const quoteFactor = this.quoteService.getExchangeQuote(itemCurrency, currency);
       return {
         class: item.class,
         financial: {
@@ -232,7 +260,7 @@ export class BalanceService {
           currency: itemCurrency
         },
         exchange: {
-          amount: item.financial * (quote?.factor || 1),
+          amount: item.financial * quoteFactor,
           currency
         },
         percentagePlanned: item.percentagePlanned,
@@ -244,27 +272,21 @@ export class BalanceService {
   
   // FIXME: This method should be refactored to include database query.
   getRecurringStatements(currency: Currency): Observable<ForecastDayItem[]> {
-    return forkJoin({
-      statements: of(this.statementForecastData),
-      exchanges: this.quoteService.getAllExchanges()
-    }).pipe(
-      map(data=> {
-        const statements = data.statements.map(item=> {
-          const quote = data.exchanges.find(c => c.from === currencyOf(item.currency) && c.to === currency);
-          return {
-            id: item.id,
-            type: StatementEnum[item.type as keyof typeof StatementEnum],
-            movement: item.movement,
-            value: {
-              amount: item.amount * (quote?.factor || 1),
-              currency
-            },
-            day: item.date,
-            done: item.date <= getDate(new Date()) // TODO should be defined by database query
-          }
-        });
-        return statements;
-      })
+    return of(this.statementForecastData).pipe(
+      map(statements => statements.map(item=> {
+        const quoteFactor = this.quoteService.getExchangeQuote(currencyOf(item.currency), currency)
+        return {
+          id: item.id,
+          type: StatementEnum[item.type as keyof typeof StatementEnum],
+          movement: item.movement,
+          value: {
+            amount: item.amount * quoteFactor,
+            currency
+          },
+          day: item.date,
+          done: item.date <= getDate(new Date()) // TODO: should be defined by database query
+        }
+      }))
     );
   }
 

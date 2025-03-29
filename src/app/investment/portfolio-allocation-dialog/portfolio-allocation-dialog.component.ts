@@ -9,6 +9,7 @@ import { AssetCodePipe } from '../../utils/asset-code.pipe';
 
 export type PorfolioAllocationDataType = {
   portfolio: string,
+  ticker: string,
   asset: Asset,
   quantity: number,
   percent: number
@@ -49,11 +50,18 @@ export class PortfolioAllocationDialogComponent {
   }
 
   submitForm() {
-    this.dialogRef.close(this.allocationForm.value);
+    this.dialogRef.close(this.formData);
   }
 
   addQuantity(value: number) {
     this.quantity.setValue(this.quantity.value + value);
+  }
+
+  get formData() {
+    return {
+      ...this.data,
+      ...this.allocationForm.value
+    }
   }
 
 }

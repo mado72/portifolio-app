@@ -1,16 +1,32 @@
-import { Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { v4 as uuid } from 'uuid';
 import portfoliosSourceData from '../../data/assets-portfolio.json';
 import { Currency, CurrencyType } from '../model/domain.model';
-import { getMarketPlaceCode } from './quote.service';
-import { AllocationDataType, PortfolioDataType } from '../model/portfolio.model';
+import { getMarketPlaceCode, QuoteService } from './quote.service';
+import { AllocationDataType, Portfolio, PortfolioDataType, PortfolioQuotedDataType } from '../model/portfolio.model';
+import assetSource from '../../data/assets.json';
+import { Asset, AssetEnum, fnTrend, TrendType } from '../model/investment.model';
+
+export type PortfolioChangeType = {
+  name?: string;
+  currency?: Currency;
+  allocations?: {
+    ticker: string;
+    percPlanned: number;
+    quantity: number;
+  }[];
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class PortfolioService {
 
-  readonly portfolios = signal<Record<string, PortfolioDataType>>({});
+  private quoteService = inject(QuoteService);
+
+  private assertsDataSignal = signal(assetSource.data.slice());
+
+  readonly portfolios = signal<Record<string, Portfolio>>({});
 
   constructor() {
     this.initialize();
@@ -20,22 +36,25 @@ export class PortfolioService {
     return Object.values(portfoliosSourceData.data).reduce((portfoliosRec, portfolioEntry) => {
       portfoliosRec[portfolioEntry.id] = this.loadPortfolioDataEntry(portfolioEntry);
       return portfoliosRec;
-    }, {} as Record<string, PortfolioDataType>)
+    }, {} as Record<string, Portfolio>)
   }
 
-  private loadPortfolioDataEntry(portfolioEntry: { id: string; name: string; currency: string; allocations: { code: string; quantity: number; marketPlace: string; marketValue: number; performance: number; percAllocation: number; percPlanned: number; }[]; }): PortfolioDataType {
-    return {
-      ...portfolioEntry,
+  private loadPortfolioDataEntry(
+      portfolioEntry: { id: string; name: string; currency: string; 
+        allocations: { code: string; quantity: number; marketPlace: string; marketValue: number; performance: number; percAllocation: number; percPlanned: number; }[]; }): Portfolio {
+
+    return new Portfolio({
+      id: portfolioEntry.id,
+      name: portfolioEntry.name,
       currency: Currency[portfolioEntry.currency as CurrencyType],
-      allocations: portfolioEntry.allocations.reduce((assets, item) => {
-        assets[getMarketPlaceCode(item)] = {
-          ... item,
-          initialValue: item.marketValue,
-          averageBuy: 100 * Math.trunc(0.01 * item.marketValue / item.quantity)
-        };
-        return assets;
-      }, {} as Record<string, AllocationDataType>)
-    };
+      allocations: portfolioEntry.allocations.map(entry => ({
+        ...entry,
+        initialValue: entry.marketValue,
+        averageBuy: 100 * Math.trunc(0.01 * entry.marketValue / entry.quantity)
+      })),
+      quotes: this.quoteService.quotes,
+      exchanges: this.quoteService.exchanges()
+    });
   }
 
   initialize() {
@@ -47,7 +66,7 @@ export class PortfolioService {
   }
 
   getAllPortfolios() {
-    return this.portfolios();
+    return Object.values(this.portfolios());
   }
 
   getPortfolioAllocations(portfolio: PortfolioDataType) {
@@ -61,12 +80,14 @@ export class PortfolioService {
   }
 
   addPortfolio(name: string, currency: CurrencyType) {
-    const newPortfolio: PortfolioDataType = {
+    const newPortfolio = new Portfolio({
       id: uuid(),
       name,
       currency: Currency[currency],
-      allocations: {}
-    };
+      allocations: [],
+      exchanges: this.quoteService.exchanges(),
+      quotes: this.quoteService.quotes
+    });
     this.portfolios.update((portfolios) => ({
       ... portfolios,
       [newPortfolio.id]: newPortfolio
@@ -80,11 +101,44 @@ export class PortfolioService {
     });
   }
 
-  updatePortfolio(portfolioId: string, changes: Partial<PortfolioDataType>) {
-    this.portfolios.update((portfolios) => ({
-     ...portfolios,
-      [portfolioId]: {...portfolios[portfolioId],...changes }
-    }));
+  updatePortfolio(portfolioId: string, changes: PortfolioChangeType) {
+    this.portfolios.update((portfolios)=>{
+      const portfolio = portfolios[portfolioId];
+
+      if (changes.name) portfolio.name = changes.name;
+      if (changes.currency) portfolio.currency = Currency[changes.currency];
+
+      if (changes.allocations) {
+        // Update allocations
+        portfolio.allocations.update((allocations)=>{
+          const updatedAllocations = {...allocations};
+          changes.allocations?.forEach(({ticker, percPlanned, quantity}) => {
+            const [marketPlace, code] = ticker.split(':');
+            if (updatedAllocations[ticker]) {
+              updatedAllocations[ticker] = {...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity};
+            }
+            else {
+              const asset = this.assertsDataSignal()?.find(asset => asset.code === code && asset.marketPlace === marketPlace);
+              if (!asset) {
+                throw new Error(`Asset not found: ${marketPlace}:${code}`);
+              }
+              updatedAllocations[ticker] = {
+                marketPlace,
+                code,
+                initialValue: asset.quote.amount,
+                marketValue: asset.quote.amount * quantity,
+                averageBuy: asset.quote.amount,
+                percPlanned,
+                quantity,
+              };
+            }
+          });
+          return updatedAllocations;
+        })
+      }
+
+      return portfolios;
+    })
   }
   
 }

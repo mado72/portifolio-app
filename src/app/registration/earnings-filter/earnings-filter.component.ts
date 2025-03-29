@@ -1,14 +1,13 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { AssetTypePipe } from '../../utils/asset-type.pipe';
-import { FormsModule } from '@angular/forms';
 import { AssetEnum, IncomeEnum } from '../../model/investment.model';
-import { InvestmentService } from '../../service/investment.service';
-import { getYear } from 'date-fns';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { PortfolioService } from '../../service/portfolio-service';
+import { AssetTypePipe } from '../../utils/asset-type.pipe';
 
 export type EarningsFilterType = { portfolioReference: string | null; dateReference: Date, typeReference: AssetEnum | null };
 
@@ -28,7 +27,7 @@ export type EarningsFilterType = { portfolioReference: string | null; dateRefere
 })
 export class EarningsFilterComponent {
 
-  private investmentService = inject(InvestmentService);
+  private portfolioService = inject(PortfolioService);
 
   filter: EarningsFilterType = {
     portfolioReference: null,
@@ -44,7 +43,7 @@ export class EarningsFilterComponent {
 
   readonly DIVIDENDS = IncomeEnum.DIVIDENDS;
 
-  porfolios = toSignal(this.investmentService.getPortfolioSummary());
+  porfolios = computed(() => Object.values(this.portfolioService.portfolios()));
 
   choosenYear(d: Date, picker: MatDatepicker<any>): void {
     this.filter.dateReference = d;
