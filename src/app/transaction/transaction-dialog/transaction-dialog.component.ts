@@ -111,6 +111,7 @@ export class TransactionDialogComponent implements OnInit {
   ngOnInit(): void {
     const ticker = this.data.newTransaction? undefined : this.data.transaction.ticker;
     if (!!ticker) {
+      // FIXME: Não está preenchendo corretamente o formulário. Quando dividir a alocação, deve gerar várias transações. Adicionar o portfolio de destino.
       this.ticker.disable();
       const quoteTicker = this.quoteService.quotes()[ticker];
       if (quoteTicker) {
