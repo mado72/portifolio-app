@@ -55,10 +55,6 @@ export class QuoteService {
   timerId: any;
 
   constructor() {
-    effect(()=>{
-      console.log(this.lastUpdate());
-    })
-
     this.forceChangeQuoteMock();
     
     this.timerId = setInterval(() => {

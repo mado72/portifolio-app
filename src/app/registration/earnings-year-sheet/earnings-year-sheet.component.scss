@@ -1,19 +1,9 @@
 .number {
-    text-align: right;
+    text-align: right !important;
+    padding-right: 1rem !important;
 
     .mat-mdc-form-field-infix {
         padding: 0 !important;
-    }
-
-    input[type="number"] {
-        text-align: right;
-        height: auto;
-        border: 0;
-        padding: 8px 4px;
-    }
-
-    input[value="0.00"] {
-        background-color: yellow;
     }
 }
 
@@ -32,27 +22,12 @@
     font-weight: bold;
 }
 
-.mat-column-ticker {
-    width: 18%;
-}
-
-
-.mat-column-acronym {
-    width: 4%;
-}
-
-.vlMonth {
-    max-width: 6.5%;
-    margin: 0;
-    padding: 0;
-}
 
 .mat-mdc-row,
 .mat-mdc-footer-row {
     height: 42px !important;
 
     .mat-column-acronym {
-        width: 4%;
         border-left: 1px solid #ddd;
         text-align: center !important;
         vertical-align: middle;
@@ -66,10 +41,62 @@
     }
 }
 
-.mat-column-vl0, .mat-column-vl1, .mat-column-vl2, .mat-column-vl3, .mat-column-vl4,
-    .mat-column-vl5, .mat-column-vl6, .mat-column-vl7, .mat-column-vl8,
-    .mat-column-vl9, .mat-column-vl10, .mat-column-vl11 {
+.mat-column-vl0,
+.mat-column-vl1,
+.mat-column-vl2,
+.mat-column-vl3,
+.mat-column-vl4,
+.mat-column-vl5,
+.mat-column-vl6,
+.mat-column-vl7,
+.mat-column-vl8,
+.mat-column-vl9,
+.mat-column-vl10,
+.mat-column-vl11 {
     &:hover {
         background-color: #f1f1f1;
     }
+}
+
+.mat-mdc-table {
+    table-layout: fixed;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Configuração geral para células dos meses */
+th.vlMonth,
+td.vlMonth {
+    width: 6%;
+    /* Ajuste este valor conforme necessidade */
+    min-width: 65px;
+    /* Largura mínima para evitar quebra */
+    max-width: 90px;
+    /* Largura máxima para consistência */
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Configurações específicas para colunas individuais usando seletores de atributo */
+[class*="cdk-column-vl"] {
+    width: 6%;
+    min-width: 65px;
+}
+
+/* Ajustes para colunas não-mensais */
+.mat-column-ticker {
+    width: 18%;
+    min-width: 150px;
+}
+
+.mat-column-acronym {
+    width: 7%;
+    min-width: 45px;
+}
+
+/* Mantém o cabeçalho alinhado com as células */
+th[mat-header-cell] {
+    vertical-align: middle;
 }
