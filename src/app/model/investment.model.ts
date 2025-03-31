@@ -28,6 +28,7 @@ export type Asset = {
     controlByQty: boolean;
     marketPlace: string;
     quote: CurrencyAmount;
+    trend: TrendType;
     initialQuote?: number;
     manualQuote?: boolean;
 }
@@ -96,7 +97,7 @@ export const IncomeDesc : Record<IncomeEnumType, string> = {
 }
 
 export type Income = {
-    id: number;
+    id: string;
     date: Date;
     ticker: string;
     amount: number;
@@ -147,15 +148,15 @@ export const TransactionStatusDesc : Record<TransactionStatusType, string> = {
     "REVERSED": 'Estornada'
 }
 
-export type TransactionType = {
-    id?: string;
-    ticker: string;
-    date: Date;
-    accountId: string;
-    quantity: number;
-    quote: number;
-    value: CurrencyAmount;
-    type: TransactionEnumType;
-    status: TransactionStatus;
-    brokerage?: number; // corretagem
-}
+// export type TransactionType = {
+//     id?: string;
+//     ticker: string;
+//     date: Date;
+//     accountId: string;
+//     quantity: number;
+//     quote: number;
+//     value: CurrencyAmount;
+//     type: TransactionEnumType;
+//     status: TransactionStatus;
+//     brokerage?: number; // corretagem
+// }

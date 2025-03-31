@@ -59,8 +59,7 @@ export class InvestmentEarningsMonthComponent implements OnInit {
 
   doFilter() {
     const date = this.date.value as Date;
-    this.investmentService.findIncomesBetween(startOfMonth(date), endOfMonth(date))
-      .subscribe(earnings => this.earnings = earnings.sort((a, b) => 1000 * (a.date.getTime() - b.date.getTime()) + a.id - b.id));
+    this.earnings = this.investmentService.findIncomesBetween(startOfMonth(date), endOfMonth(date));
   }
 
   setMonthAndYear($date: Date, datePicker: MatDatepicker<any>) {

@@ -39,12 +39,11 @@ export class BalancesComponent implements OnInit {
   }
 
   reloadBalances() {
-    this.balanceService.getBalancesByCurrencyExchange(this.currency).subscribe(balances=>{
-      this.balances.set(balances);
-      this.actives = balances.slice();
-      this.totalBalance.set(this.summarize(this.actives));
-      this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
-    })
+    const balances = this.balanceService.getBalancesByCurrencyExchange(this.currency);
+    this.balances.set(balances);
+    this.actives = balances.slice();
+    this.totalBalance.set(this.summarize(this.actives));
+    this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
   }
 
   summarize(balances: AccountBalanceExchange[]) {
@@ -86,10 +85,10 @@ export class BalancesComponent implements OnInit {
       if (result) {
         let account = this.balances().find(item => item.id === result.id);
         if (!account) {
-          this.balanceService.addAccount(result).subscribe();
+          this.balanceService.addAccount(result);
         }
         else {
-          this.balanceService.updateAccount(account.id, result).subscribe();
+          this.balanceService.updateAccount(account.id, result);
         }
         this.reloadBalances();
       }

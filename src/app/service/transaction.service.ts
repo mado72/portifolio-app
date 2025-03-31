@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { v4 as uuid } from 'uuid';
 import transactionsSource from '../../data/transactions.json';
 import { Currency } from '../model/domain.model';
-import { TransactionEnum, TransactionStatus, TransactionType } from '../model/investment.model';
+import { TransactionEnum, TransactionStatus } from '../model/investment.model';
 import { MatDialog } from '@angular/material/dialog';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
+import { TransactionType } from '../model/source.model';
 
 @Injectable({
   providedIn: 'root'
@@ -100,7 +101,7 @@ export class TransactionService {
             if (!portfolio) return alloc;
 
             // Check if portfolio already has an allocation for the current transaction's ticker
-            const previousQuantity = portfolio.allocations()[result.transaction.ticker]?.quantity || 0;
+            const previousQuantity = portfolio.allocations[result.transaction.ticker]?.quantity || 0;
             
             // Avoid unnecessary allocation adjustment if quantity doesn't change
             if ((previousQuantity >= item.quantity && result.transaction.type === TransactionEnum.BUY)

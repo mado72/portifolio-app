@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { Asset, TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
+import { Asset, TransactionEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
@@ -19,8 +19,11 @@ import { TransactionTypePipe } from '../transaction-type.pipe';
 import { PortfolioService } from '../../service/portfolio-service';
 import { combineLatest, startWith } from 'rxjs';
 import { divide } from '../../model/functions.model';
+import { PortfolioType, TransactionType } from '../../model/source.model';
 
 type Pages = "Asset" | "Portfolio";
+
+type PortfolioQuantityType = PortfolioType & { quantity: number};
 
 export type TransactionDialogType = {
   title: string,
@@ -129,8 +132,8 @@ export class TransactionDialogComponent implements OnInit {
       })
     }
 
-    const summaries = !ticker ? this.portfolioService.getAllPortfolios().map(portfolio=>({...portfolio, quantity: 0}))
-      : this.getPortfoliosAssetsSummary(ticker).map(item=> ({...item.portfolio, quantity: item.quantity}));
+    const summaries = !ticker ? this.portfolioService.getAllPortfolios().map(portfolio=>({...portfolio, quantity: 0} as PortfolioQuantityType))
+      : this.getPortfoliosAssetsSummary(ticker).map(item=> ({...item.portfolio, quantity: item.quantity} as PortfolioQuantityType));
 
     summaries.forEach(portfolio=> {
       this.addPortfolio(portfolio);
@@ -154,7 +157,7 @@ export class TransactionDialogComponent implements OnInit {
   getPortfoliosAssetsSummary(ticker?: string) {
     return this.portfolioService.getAllPortfolios().map(portfolio=>({
       portfolio: {...portfolio},
-      quantity: Object.values(portfolio.allocations())
+      quantity: Object.values(portfolio.allocations)
         .filter(item=>ticker && ticker === getMarketPlaceCode(item))
         .reduce((acc, vl) => acc + (vl?.quantity || 0), 0)
     }))

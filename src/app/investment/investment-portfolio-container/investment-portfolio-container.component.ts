@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, inject, Input, OnInit, viewChild } from '@angular/core';
+import { AfterViewInit, Component, inject, Input, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { Portfolio } from '../../model/portfolio.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
 
@@ -18,18 +17,14 @@ import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table
   templateUrl: './investment-portfolio-container.component.html',
   styleUrl: './investment-portfolio-container.component.scss'
 })
-export class InvestmentPortfolioContainerComponent implements OnInit, AfterViewInit {
+export class InvestmentPortfolioContainerComponent implements AfterViewInit {
 
   accordion = viewChild.required(MatAccordion);
   private portfolioService = inject(PortfolioService);
 
-  portfolios: Partial<Portfolio>[] = [];
+  portfolios = this.portfolioService.getAllPortfolios();
 
   @Input() editMode = false;
-
-  ngOnInit(): void {
-    this.portfolios = this.portfolioService.getAllPortfolios();
-  }
 
   ngAfterViewInit(): void {
   }

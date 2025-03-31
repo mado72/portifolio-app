@@ -1,3 +1,5 @@
+import { BalanceType } from "./source.model";
+
 export enum Currency {
     BRL = 'BRL',
     USD = 'USD',
@@ -42,14 +44,7 @@ export type Exchange = {
     factor: number;
 }
 
-export type AccountPosition = {
-    id: string;
-    account: string;
-    type: AccountTypeEnum;
-    balance: CurrencyAmount;
-}
-
-export type AccountBalanceExchange = AccountPosition & {
+export type AccountBalanceExchange = BalanceType & {
     exchange: CurrencyAmount
 }
 
@@ -105,7 +100,7 @@ export type Account = {
     balance: CurrencyAmount;
 }
 
-export type StatementType = `${StatementEnum}`;
+export type StatementEnumKeys = `${StatementEnum}`;
 
 type Statement$ = {
     id: number;

@@ -1,52 +1,41 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
-import { formatISO, getYear, setDayOfYear, setYear } from 'date-fns';
-import { concatAll, delay, map, Observable, of, tap } from 'rxjs';
+import { computed, inject, Injectable } from '@angular/core';
+import { getYear, setYear } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-import assetSource from '../../data/assets.json';
-import earningsSource from '../../data/earnings.json';
-import { Currency, CurrencyType } from '../model/domain.model';
-import { Asset, AssetAllocationRecord, AssetEnum, fnTrend, Income, IncomeEnum, TrendType } from '../model/investment.model';
-import { AllocationDataType, AllocationQuotedDataType, Portfolio, PortfolioAssetsSummary } from '../model/portfolio.model';
-import { PortfolioService } from './portfolio-service';
+import { Asset, AssetEnum, fnTrend, Income, IncomeEnum } from '../model/investment.model';
+import { IncomeType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
+import { SourceService } from './source.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class InvestmentService {
 
+  private sourceService = inject(SourceService);
+
   private quoteService = inject(QuoteService);
 
-  private portfolioService = inject(PortfolioService);
-
-  private static earningsId = 0;
-
-  private assertsDataSignal = signal(assetSource.data.slice());
-
-  private earningsData = earningsSource.data.map(item => ({
-    ...item,
-    id: ++InvestmentService.earningsId,
-    date: setDayOfYear(new Date(), Math.random() * 365),
-  } as Income));
-
+  private earningsData = computed(() => Object.entries(this.sourceService.incomeSource()).reduce((acc, [key, item]) => {
+    return {...acc, [key]: {...item } };
+  }, {} as Record<number, Income>))
+  
   readonly assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes();
 
-    return this.assertsDataSignal().reduce((acc, data) => {
-      const code = getMarketPlaceCode({ marketPlace: data.marketPlace, code: data.code });
-      const initialQuote = acc[code]?.initialQuote || quotes[code].quote.amount;
-      const trend = fnTrend(quotes[code]);
+    return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
+      const initialQuote = acc[ticker]?.initialQuote || quotes[ticker].quote.amount;
+      const trend = fnTrend(quotes[ticker]);
 
-      acc[code] = {
-        ...data,
-        type: AssetEnum[data.type as keyof typeof AssetEnum],
-        lastUpdate: quotes[code].lastUpdate,
-        quote: quotes[code].quote,
+      acc[ticker] = {
+        ...asset,
+        type: AssetEnum[asset.type as keyof typeof AssetEnum],
+        lastUpdate: quotes[ticker].lastUpdate,
+        quote: quotes[ticker].quote,
         initialQuote,
         trend
       };
       return acc;
-    }, {} as Record<string, Asset & { trend: TrendType }>)
+    }, {} as Record<string, Asset>)
   })
 
   readonly portfolios = computed(() => {
@@ -61,110 +50,75 @@ export class InvestmentService {
   }
 
   addAsset(data: Asset) {
-    const asset = {
-      ...data,
-      quote: {
-        ...data.quote,
-        amount: Math.random() * 200
-      },
-      initialQuote: 0,
-      manualQuote: data.manualQuote,
-      lastUpdate: formatISO(new Date()),
-      trend: "unchanged"
-    };
-    delete (asset as any).quote;
-    this.assertsDataSignal().push(asset);
+    this.sourceService.addAssert(data);
   }
 
-  updateAsset(code: string, data: Asset) {
+  updateAsset(ticker: string, data: Asset) {
     const quotes = this.quoteService.quotes();
-    const codeChanged = code != getMarketPlaceCode(data);
+    const codeChanged = ticker != getMarketPlaceCode(data);
     if (codeChanged) {
       const newCode = getMarketPlaceCode(data);
-      quotes[newCode] = quotes[code];
-      delete quotes[code];
+      quotes[newCode] = quotes[ticker];
+      delete quotes[ticker];
       this.quoteService.quotes.set(quotes);
     }
-
-    const aux = {
-      ...data,
-      lastUpdate: formatISO(new Date())
-    };
-
-    this.assertsDataSignal.update(assertMap => {
-      const idx = assertMap.findIndex(item => getMarketPlaceCode(item) === code);
-      let asset = assertMap[idx];
-      asset = {
-        ...asset, ...aux
-      };
-      assertMap[idx] = asset;
-      return assertMap;
-    })
-
+    
+    this.sourceService.updateAssert([data]);
   }
 
   deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {
-    return of().pipe(
-      tap(() => {
+    const ticker = getMarketPlaceCode({marketPlace, code});
+    const portfoliosChanges = Object.values(this.sourceService.portfolioSource())
+      .filter(portfolio => 
+        Object.keys(portfolio.allocations).includes(ticker))
+      .map(portfolio => {
+        delete portfolio.allocations[ticker];
+        return portfolio;
+      });
+    this.sourceService.updatePortfolio(portfoliosChanges);
 
-        this.portfolioService.portfolios.update(portfolios => {
-          Object.values(portfolios).forEach(portfolio=>{
-            portfolio.allocations.update(allocations => {
-              delete allocations[getMarketPlaceCode({ marketPlace, code })];
-              return allocations;
-            });
-          });
-          return portfolios;
-        });
+    this.quoteService.quotes.update(quotes=> {
+      delete quotes[getMarketPlaceCode({ marketPlace, code })];
+      return quotes;
+    });
 
-        this.quoteService.quotes.update(quotes=> {
-          delete quotes[getMarketPlaceCode({ marketPlace, code })];
-          return quotes;
-        });
-
-      }),
-      delay(250)
-    )
+    this.sourceService.deleteAssert(ticker);
   }
 
   findIncomesBetween(from: Date, to: Date) {
-    return of(this.earningsData).pipe(
-      map(earnings => earnings.map(item => ({ ...item, date: setYear(item.date, getYear(from)) }))),
-      delay(250)
-    );
+    return Object.values(this.earningsData())
+      .map(item => ({ ...item, date: setYear(item.date, getYear(from)) }));
   }
 
   findIncomesOfAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
-    return of(this.earningsData.filter(item => item.ticker === getMarketPlaceCode({ marketPlace, code })));
+    const ticker = getMarketPlaceCode({ marketPlace, code });
+    return Object.values(this.earningsData())
+      .filter(item => item.ticker === ticker);
   }
 
   addIncome(ticker: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
-    return new Observable<Income>((observer) => {
-      const reg = {
-        ...data,
-        ticker,
-        id: ++InvestmentService.earningsId
-      }
-      this.earningsData.push(reg);
-      observer.next(reg);
-      observer.complete();
-    })
+    const reg = {
+      ...data,
+      ticker,
+      id: uuid()
+    } as IncomeType;
+    this.sourceService.addIncome(reg);
+
+    return reg;    
   }
 
-  updateIncome(id: number, data: { date: Date; type: IncomeEnum, amount: number; }) {
-    return new Observable<void>((observer) => {
-      this.earningsData = this.earningsData.map(item => item.id === id ? { ...item, ...data } : item);
-      observer.next();
-      observer.complete();
-    });
+  updateIncome(id: string, data: { date: Date; type: IncomeEnum, amount: number; }) {
+    const income = this.sourceService.incomeSource()[id];
+    const ticker = income.ticker;
+    this.sourceService.updateIncome([{
+      ...data,
+      id,
+      ticker
+    }]);
   }
 
-  deleteIncome(id: number) {
-    return new Observable<void>((observer) => {
-      this.earningsData = this.earningsData.filter(item => item.id !== id);
-      observer.next();
-      observer.complete();
-    });
+  deleteIncome(id: string) {
+    this.sourceService.deleteIncome(id);
   }
 
 }

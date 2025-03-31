@@ -3,17 +3,17 @@ import { Component, computed, inject, Input, OnInit, Signal, signal } from '@ang
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { Asset, TransactionEnum, TrendType } from '../../model/investment.model';
-import { AllocationQuotedDataType, Portfolio } from '../../model/portfolio.model';
+import { TrendType } from '../../model/investment.model';
+import { PortfolioAllocationType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
+import { QuoteService } from '../../service/quote.service';
 import { AssetCodePipe } from '../../utils/asset-code.pipe';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
-import { TransactionService } from '../../service/transaction.service';
 
-type DatasourceRowType = AllocationQuotedDataType & {ticker: string, name: string, trend: TrendType};
+type DatasourceRowType = PortfolioAllocationType & {ticker: string, name: string, trend: TrendType};
 
 @Component({
   selector: 'app-investment-portfolio-table',
@@ -32,11 +32,11 @@ type DatasourceRowType = AllocationQuotedDataType & {ticker: string, name: strin
 })
 export class InvestmentPortfolioTableComponent implements OnInit {
 
+  private quoteService = inject(QuoteService);
+
   private investmentService = inject(InvestmentService);
 
   private portfolioService = inject(PortfolioService);
-
-  private transactionService = inject(TransactionService);
 
   private dialog = inject(MatDialog);
 
@@ -63,27 +63,22 @@ export class InvestmentPortfolioTableComponent implements OnInit {
 
   ngOnInit(): void {
     this.source = computed(()=> {
-      const portfolio = this.portfolioService.portfolios()[this.portfolioId];
       const assets = this.investmentService.assertsSignal();
-      return this.computeSource(portfolio, assets);
+
+      return Object.entries(this.portfolioService.portfolios()[this.portfolioId].allocations)
+        .reduce((rec, [ticker, row])=>{
+          rec[ticker] = {
+            ...row,
+            name: assets[ticker]?.name || ticker,
+            trend: assets[ticker]?.trend || 'unchanged'
+          };
+          return rec;
+        }, {} as Record<string, DatasourceRowType>);
     });
 
     const portfolio = this.portfolioService.portfolios()[this.portfolioId];
     this.portfolioName.set(portfolio.name);
   }
-
-  protected computeSource = (portfolio: Portfolio, assets: Record<string, Asset & { trend: TrendType;}>): Record<string,DatasourceRowType> => {
-    return Object.entries(portfolio.position())
-      .reduce((rec, [ticker, row])=>{
-        rec[ticker] = {
-          ...row,
-          ticker,
-          name: assets[ticker]?.name || ticker,
-          trend: assets[ticker]?.trend || 'unchanged'
-        };
-        return rec;
-      }, {} as Record<string, DatasourceRowType>);
-  };
 
   selectRow(row: DatasourceRowType) {
     const asset = this.investmentService.assertsSignal()[row.ticker];

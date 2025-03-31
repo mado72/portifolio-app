@@ -26,32 +26,26 @@ export class FinancialForecastComponent implements OnInit {
 
   onCheckboxChange = new EventEmitter<boolean>();
 
-  data = toSignal(this.balanceService.getCurrentMonthForecast(Currency.BRL).pipe(
-    map(items=>{
-      return items.map(item=>({
-        ...item,
-        value: {
-          ...item.value,
-          amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : item.value.amount
-        }
-      }))
-    })
-  ));
+  datasource = computed (() => this.balanceService.getCurrentMonthForecast(Currency.BRL).map(item => ({
+    ...item,
+    value: {
+      ...item.value,
+      amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : item.value.amount
+    }
+  })));
 
-  datasource = computed(()=>this.data() || [])
-
-  total = computed(()=>this.datasource().reduce((acc,item)=>acc += item.value.amount, 0))
+  total = computed(() => this.datasource().reduce((acc, item) => acc += item.value.amount, 0))
 
   // Signal to update computed value for notDone property
   forceUpdateSig = signal<boolean>(false);
 
-  notDone = computed(()=>this.datasource()
-      .filter((item) => !item.done || (this.forceUpdateSig() && false)));
+  notDone = computed(() => this.datasource()
+    .filter((item) => !item.done || (this.forceUpdateSig() && false)));
 
-  forecast = computed(()=>this.notDone().reduce((acc,item)=>acc += item.value.amount, 0))
+  forecast = computed(() => this.notDone().reduce((acc, item) => acc += item.value.amount, 0))
 
   displayedColumns = ["movement", "due", "amount", "done"];
-  
+
   ngOnInit(): void {
   }
 

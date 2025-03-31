@@ -5,11 +5,13 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { TransactionEnum, TransactionStatus, TransactionType } from '../../model/investment.model';
+import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
+import { TransactionType } from '../../model/source.model';
+
 
 @Component({
   selector: 'app-transaction-table',
@@ -52,6 +54,7 @@ export class TransactionTableComponent {
       newTransaction: true,
       title: 'Adicionar Transação',
       transaction: {
+        id: '',
         ticker: '',
         date: new Date(),
         accountId: '',

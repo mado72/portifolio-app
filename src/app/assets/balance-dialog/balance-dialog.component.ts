@@ -1,16 +1,17 @@
 import { Component, inject, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { AccountPosition, AccountTypeEnum, Currency } from '../../model/domain.model';
+import { AccountTypeEnum, Currency } from '../../model/domain.model';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { AccountTypePipe } from '../../utils/account-type.pipe';
+import { BalanceType } from '../../model/source.model';
 
 export type BalanceDialogType = {
   title: string,
-  account : AccountPosition
+  account : BalanceType
 }
 
 @Component({

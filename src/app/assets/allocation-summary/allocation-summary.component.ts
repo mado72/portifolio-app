@@ -1,6 +1,5 @@
 import { PercentPipe } from '@angular/common';
-import { Component, computed, inject, Input, OnInit } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, Input, OnInit, signal } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faExchange } from '@fortawesome/free-solid-svg-icons';
@@ -28,7 +27,7 @@ export class AllocationSummaryComponent implements OnInit {
 
   @Input() currency = Currency.BRL;
 
-  summarySignal = toSignal(this.balanceService.getAllocationSummary(this.currency));
+  summarySignal = signal(this.balanceService.getAllocationSummary(this.currency));
 
   datasource = computed(()=>this.summarySignal()?.items || []);
 
