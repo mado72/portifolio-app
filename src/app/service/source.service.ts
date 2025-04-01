@@ -250,7 +250,7 @@ export class SourceService {
         ...asserts,
         ...this.assertSourceToRecord([{
           ...asset,
-          lastUpdate: formatISO(asset.lastUpdate)
+          lastUpdate: formatISO(new Date())
         }])
       };
     })

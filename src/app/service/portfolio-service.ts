@@ -27,7 +27,7 @@ export class PortfolioService {
   readonly portfolios = computed(()=> Object.entries(this.sourceService.portfolioSource()).reduce((acc, [key, source]) => {
     acc[key] = {
       ...source,
-      allocations: calcPosition(this.quoteService.quotes(), source.allocations)
+      allocations: calcPosition(this.quoteService.quotes() || {}, source.allocations)
     }
     return acc;
   }, {} as PortfolioRecord))
@@ -82,11 +82,16 @@ export class PortfolioService {
     if (changes.allocations) {
       // Update allocations
       const updatedAllocations = portfolio.allocations;
+      const quotes = this.quoteService.quotes() || {};
 
       changes.allocations?.forEach(({ticker, percPlanned, quantity}) => {
         const [marketPlace, code] = ticker.split(':');
         if (updatedAllocations[ticker]) {
-          const tickerQuote = this.quoteService.quotes()[ticker];
+          const tickerQuote = quotes[ticker];
+
+          if (!tickerQuote) {
+            throw new Error(`Quote not found: ${ticker}`);
+          }
 
           const deltaQty = quantity - updatedAllocations[ticker].quantity;
           const currentTotalInvestment = updatedAllocations[ticker].quantity * updatedAllocations[ticker].averagePrice;

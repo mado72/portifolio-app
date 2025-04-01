@@ -73,7 +73,7 @@ export enum MarketPlaceEnum {
     COIN = 'COIN',
     IEX = 'IEX',
     FOREX = 'FOREX',
-    BRTD = 'TD', // Tesouro Direto
+    BRTD = 'BRTD', // Tesouro Direto
     OTHER = 'OTHER',
 }
 

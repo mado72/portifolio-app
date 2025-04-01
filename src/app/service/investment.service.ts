@@ -21,7 +21,7 @@ export class InvestmentService {
   }, {} as Record<number, Income>))
   
   readonly assertsSignal = computed(() => {
-    const quotes = this.quoteService.quotes();
+    const quotes = this.quoteService.quotes() || {};
 
     return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
       const initialQuote = acc[ticker]?.initialQuote || quotes[ticker]?.quote.amount || NaN;
@@ -55,14 +55,14 @@ export class InvestmentService {
   }
 
   updateAsset(ticker: string, data: Asset) {
-    const quotes = this.quoteService.quotes();
-    const codeChanged = ticker != getMarketPlaceCode(data);
-    if (codeChanged) {
-      const newCode = getMarketPlaceCode(data);
-      quotes[newCode] = quotes[ticker];
-      delete quotes[ticker];
-      this.quoteService.quotes.set(quotes);
-    }
+    // const quotes = this.quoteService.quotes() || {};
+    // const codeChanged = ticker != getMarketPlaceCode(data);
+    // if (codeChanged) {
+    //   const newCode = getMarketPlaceCode(data);
+    //   quotes[newCode] = quotes[ticker];
+    //   delete quotes[ticker];
+    //   this.quoteService.quotes.set(quotes);
+    // }
     
     this.sourceService.updateAssert([data]);
   }
@@ -78,10 +78,10 @@ export class InvestmentService {
       });
     this.sourceService.updatePortfolio(portfoliosChanges);
 
-    this.quoteService.quotes.update(quotes=> {
-      delete quotes[getMarketPlaceCode({ marketPlace, code })];
-      return quotes;
-    });
+    // this.quoteService.quotes.update(quotes=> {
+    //   delete quotes[getMarketPlaceCode({ marketPlace, code })];
+    //   return quotes;
+    // });
 
     this.sourceService.deleteAssert(ticker);
   }
