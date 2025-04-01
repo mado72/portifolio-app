@@ -53,6 +53,7 @@ export type AssetQuote = {
 export type AssetQuoteRecord = Record<string,AssetQuote>;
 
 export const fnTrend = (quote: AssetQuote): TrendType => {
+    if (!quote.quote.amount) return 'unchanged';
     const up =  quote.quote.amount > quote.initialQuote;
     const down = quote.quote.amount < quote.initialQuote;
     return up? 'up' : down? 'down' : 'unchanged';

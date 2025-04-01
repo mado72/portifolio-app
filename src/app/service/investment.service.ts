@@ -5,6 +5,7 @@ import { Asset, AssetEnum, fnTrend, Income, IncomeEnum } from '../model/investme
 import { IncomeType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
+import { Currency } from '../model/domain.model';
 
 @Injectable({
   providedIn: 'root'
@@ -23,14 +24,14 @@ export class InvestmentService {
     const quotes = this.quoteService.quotes();
 
     return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
-      const initialQuote = acc[ticker]?.initialQuote || quotes[ticker].quote.amount;
-      const trend = fnTrend(quotes[ticker]);
+      const initialQuote = acc[ticker]?.initialQuote || quotes[ticker]?.quote.amount || NaN;
+      const trend = quotes[ticker] ? fnTrend(quotes[ticker]) : 'unchanged';
 
       acc[ticker] = {
         ...asset,
         type: AssetEnum[asset.type as keyof typeof AssetEnum],
-        lastUpdate: quotes[ticker].lastUpdate,
-        quote: quotes[ticker].quote,
+        lastUpdate: quotes[ticker]?.lastUpdate || new Date(),
+        quote: quotes[ticker]?.quote || { amount: NaN, currency: Currency.BRL },
         initialQuote,
         trend
       };
