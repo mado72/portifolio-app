@@ -65,7 +65,7 @@ export class InvestmentPortfolioTableComponent implements OnInit {
     this.source = computed(()=> {
       const assets = this.investmentService.assertsSignal();
 
-      return Object.entries(this.portfolioService.portfolios()[this.portfolioId].allocations)
+      return Object.entries(this.portfolioService.portfolios()[this.portfolioId]?.allocations || [])
         .reduce((rec, [ticker, row])=>{
           rec[ticker] = {
             ...row,

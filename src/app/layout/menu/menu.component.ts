@@ -1,11 +1,15 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DownloadDataDirective } from '../../../data/util/download-data.directive';
+import { UploadDataDirective } from '../../util/upload-data.directive';
 
 @Component({
   selector: 'app-menu',
   standalone: true,
   imports: [
-    RouterLink
+    RouterLink,
+    DownloadDataDirective,
+    UploadDataDirective
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'

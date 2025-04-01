@@ -9,7 +9,7 @@
     </div>
 }
 <mat-accordion multi>
-    @for (portfolio of portfolios; track portfolio.id) {
+    @for (portfolio of portfolios(); track portfolio.id) {
         <mat-expansion-panel class="remove-mat-expansion-panel-padding" expanded="true">
             <mat-expansion-panel-header>
                 <mat-panel-title>

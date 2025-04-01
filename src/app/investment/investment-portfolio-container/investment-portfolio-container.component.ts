@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, Input, viewChild } from '@angular/core';
+import { AfterViewInit, Component, computed, inject, Input, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatAccordion, MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -22,7 +22,9 @@ export class InvestmentPortfolioContainerComponent implements AfterViewInit {
   accordion = viewChild.required(MatAccordion);
   private portfolioService = inject(PortfolioService);
 
-  portfolios = this.portfolioService.getAllPortfolios();
+  portfolios = computed(() => {
+    return this.portfolioService.getAllPortfolios();
+  })
 
   @Input() editMode = false;
 
