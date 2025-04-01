@@ -4,6 +4,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { routes } from './app.routes';
 import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { provideHttpClient } from '@angular/common/http';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,5 +13,9 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(),
     { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
+    {
+      provide: MAT_DIALOG_DEFAULT_OPTIONS,
+      useValue: { autoFocus: 'dialog', restoreFocus: true }
+    }
   ]
 };
