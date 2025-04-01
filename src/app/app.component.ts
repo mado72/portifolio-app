@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./layout/header/header.component";
+import { RemoteQuotesService } from './service/remote-quotes.service';
 
 @Component({
   selector: 'app-root',
@@ -14,4 +15,8 @@ import { HeaderComponent } from "./layout/header/header.component";
 })
 export class AppComponent {
   title = 'portifolio-app';
+
+  constructor() {
+    inject(RemoteQuotesService);
+  }
 }
