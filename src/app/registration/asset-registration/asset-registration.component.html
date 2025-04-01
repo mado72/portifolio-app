@@ -1,4 +1,7 @@
 <h3>Cadastro de Ativos</h3>
+<div class="d-flex">
+    <button mat-button (click)="newAsset()">Novo Ativo</button>
+</div>
 <app-investment-assets-table 
     [datasource]="datasource()"
     [enableSelection]="true" 

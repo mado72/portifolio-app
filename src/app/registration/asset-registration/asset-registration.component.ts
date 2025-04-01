@@ -1,15 +1,19 @@
-import { Component, effect, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InvestmentAssetsTableComponent } from "../../investment/investment-assets-table/investment-assets-table.component";
-import { Asset } from '../../model/investment.model';
+import { Asset, AssetEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { AssetDialogComponent } from '../asset-dialog/asset-dialog.component';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-asset-registration',
   standalone: true,
-  imports: [InvestmentAssetsTableComponent],
+  imports: [
+    InvestmentAssetsTableComponent,
+    MatButtonModule
+  ],
   templateUrl: './asset-registration.component.html',
   styleUrl: './asset-registration.component.scss'
 })
@@ -20,16 +24,13 @@ export class AssetRegistrationComponent {
 
   private dialog = inject(MatDialog);
 
-  constructor() {
-    effect(()=>{
-      console.log(`Datasource changed:`, this.datasource());
-    })
-  }
+  constructor() { }
 
   selectAsset(asset: Asset) {
+    const ticker = getMarketPlaceCode(asset);
     const dialogRef = this.dialog.open(AssetDialogComponent, {
       data: {
-        title: `Editando Ativo`,
+        title: `Editando Ativo ${ticker}`,
         asset,
         newAsset: false
       }
@@ -52,6 +53,34 @@ export class AssetRegistrationComponent {
     else {
       this.investimentService.addAsset(inputData);
     }
+  }
+
+  newAsset() {
+    const dialogRef = this.dialog.open(AssetDialogComponent, {
+      data: {
+        title: 'Novo Ativo',
+        asset: {
+          name: '',
+          code: '',
+          type: AssetEnum.STOCK,
+          lastUpdate: new Date(),
+          controlByQty: true,
+          marketPlace: '',
+          quote: {
+            currency: 'BRL',
+            amount: 0
+          },
+          trend: "unchanged"
+        },
+        newAsset: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: Asset) => {
+      if (result) {
+        this.saveAsset(result);
+      }
+    });
   }
 
 }

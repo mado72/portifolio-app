@@ -9,6 +9,9 @@ export const assetRoutes: Routes = [
     {
         path: 'balances',
         loadComponent: () => import('./balances/balances.component').then(mod => mod.BalancesComponent),
+        data: {
+            editEnable: true
+        }
     },
     {
         path: 'allocations',
