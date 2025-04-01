@@ -244,7 +244,7 @@ export class SourceService {
     }, {} as Record<string, PortfolioSourceDataType>)
   }
 
-  addAssert(asset: AssetType) {
+  addAsset(asset: AssetType) {
     this.dataSource.asset.update(asserts => {
       return {
         ...asserts,
@@ -256,7 +256,7 @@ export class SourceService {
     })
   }
 
-  updateAssert(changes: AssetType[]) {
+  updateAsset(changes: AssetType[]) {
     this.dataSource.asset.update(asserts => {
       return {
         ...asserts,
@@ -268,7 +268,7 @@ export class SourceService {
     })
   }
 
-  deleteAssert(ticker: string) {
+  deleteAsset(ticker: string) {
     this.dataSource.asset.update(asserts => {
       delete asserts[ticker];
       return { ...asserts };

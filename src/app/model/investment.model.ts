@@ -44,6 +44,7 @@ export type AssetAllocationRecord = Record<string,AssetAllocation>;
 export type TrendType = 'up' | 'down' | 'unchanged';
 
 export type AssetQuote = {
+    ticker: string;
     lastUpdate: Date;
     quote: CurrencyAmount;
     initialQuote: number;

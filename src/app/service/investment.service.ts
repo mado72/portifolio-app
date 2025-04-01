@@ -51,7 +51,7 @@ export class InvestmentService {
   }
 
   addAsset(data: Asset) {
-    this.sourceService.addAssert(data);
+    this.sourceService.addAsset(data);
   }
 
   updateAsset(ticker: string, data: Asset) {
@@ -83,7 +83,7 @@ export class InvestmentService {
     //   return quotes;
     // });
 
-    this.sourceService.deleteAssert(ticker);
+    this.sourceService.deleteAsset(ticker);
   }
 
   findIncomesBetween(from: Date, to: Date) {

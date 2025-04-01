@@ -69,6 +69,7 @@ export class QuoteService {
       map(quotes => Object.entries(quotes).reduce((acc, [ticker, quote]) => {
         const trend: TrendType = quote.open === quote.price? 'unchanged' : quote.open < quote.price? 'up' : 'down';
         acc[ticker] = {
+          ticker,
          ...assets[ticker],
           lastUpdate: new Date(),
           quote: {
