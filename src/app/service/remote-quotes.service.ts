@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, InjectionToken, Injector, Provider, signal } from '@angular/core';
 import { differenceInMinutes } from 'date-fns';
-import { firstValueFrom, forkJoin, map, timer, zipAll } from 'rxjs';
+import { forkJoin, map, timer, zipAll } from 'rxjs';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote } from '../model/remote-quote.model';
 import { AssetQuoteType } from '../model/source.model';
@@ -37,15 +37,19 @@ export class RemoteQuotesService {
 
   private sourceService = inject(SourceService);
 
-  assetsQuoted = signal<Record<string, AssetQuoteType>>({});
+  protected latestQuote = signal<Record<string, AssetQuoteType>>({});
 
-  assetsPendding = computed(() => {
+  assetsQuoted = computed(() => {
     const assets = this.sourceService.assertSource();
-    const quotes = this.assetsQuoted();
-    // TODO: Acrescentar lógica de atividade da cotação.
-    return Object.entries(assets).filter(([ticker, _]) => !quotes[ticker] || differenceInMinutes(new Date(), quotes[ticker].lastUpdate) > 15)
+    const quotes = this.latestQuote();
+    const lastUpdate = this.lastUpdate();
+    return Object.entries(assets)
       .reduce((acc, [ticker, asset]) => {
-        acc[ticker] = asset;
+        acc[ticker] = {
+          ...asset,
+          ...quotes[ticker] || null,
+          lastUpdate
+        };
         return acc;
       }, {} as { [ticker: string]: AssetQuoteType })
   })
@@ -59,28 +63,50 @@ export class RemoteQuotesService {
 
   timerId = timer(30 * 60 * 1000).pipe(
     map(() => {
-
-      const assets = this.sourceService.assertSource();
-      this.assetsQuoted.set(assets);
-      return this.prepareRequestsToUpdateQuotes(assets);
+      const now = new Date();
+      if (differenceInMinutes(now, this.lastUpdate()) > 15) {
+        return Object.entries(this.assetsQuoted()).reduce((acc, [ticker, asset]) => {
+          if (differenceInMinutes(now, asset.lastUpdate) > 15) {
+            acc[ticker] = asset;
+          }
+          return acc;
+        }, {} as Record<string, AssetQuoteType>)
+      }
+      return null;
     })
   ).subscribe(assets => {
-    this.sourceService.updateAsset(Object.values(assets));
+    if (!! assets && Object.keys(assets).length) {
+      this.updateQuotes(assets);
+    }
   });
 
   constructor() {
     effect(async () => {
-      const pending = this.assetsPendding();
-      const quotes = Object.values(await firstValueFrom(this.prepareRequestsToUpdateQuotes(pending)));
-      const assets = quotes.map(quote => {
-        return {
-         ...pending[quote.ticker],
-          quote
-        } as AssetQuoteType
-      });
-      this.sourceService.updateAsset(assets);
-    }, {
-      allowSignalWrites: true
+      this.updateQuotes(this.sourceService.assertSource());
+    })
+  }
+
+  updateQuotes(assets: Record<string, AssetQuoteType>) {
+    if (!Object.keys(assets).length) return;
+
+    this.prepareRequestsToUpdateQuotes(assets).subscribe(quotes=>{
+      
+      const updated = Object.entries(quotes).reduce((acc, [ticker, quote]) => {
+        const asset = assets[ticker];
+        acc[ticker] = {
+          ...assets[ticker],
+          quote: {
+            price: quote.price,
+            currency: asset.quote.currency
+          },
+          trend: quote.price === quote.open ? 'unchanged' : quote.price > quote.open ? 'up' : 'down'
+        }
+        return acc;
+      }, {} as Record<string, AssetQuoteType>);
+
+      this.lastUpdate.set(new Date());
+      this.latestQuote.set(updated);
+
     })
   }
 
