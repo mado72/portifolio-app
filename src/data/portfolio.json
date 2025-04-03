@@ -6,7 +6,7 @@
             "currency": "BRL",
             "allocations": [
                 {
-                    "code": "STKA",
+                    "code": "WMB",
                     "quantity": 100,
                     "marketPlace": "NYSE",
                     "initialValue": 5050,
@@ -26,8 +26,8 @@
                     "percPlanned": 14
                 },
                 {
-                    "code": "STKC",
-                    "quantity": 150,
+                    "code": "PFE",
+                    "quantity": 200,
                     "marketPlace": "NYSE",
                     "initialValue": 5310,
                     "marketValue": 5310,

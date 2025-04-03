@@ -20,8 +20,8 @@ export class RemoteQuotesService {
   
   private serviceMap = new Map<MarketPlaceEnum, IRemoteQuote>([
     [MarketPlaceEnum.BVMF, this.yahooRemoteQuotesService],
-    [MarketPlaceEnum.NASDAQ, this.mockRemoteQuotesService],
-    [MarketPlaceEnum.NYSE, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.NASDAQ, this.yahooRemoteQuotesService],
+    [MarketPlaceEnum.NYSE, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.CRYPTO, this.mockRemoteQuotesService],
     [MarketPlaceEnum.COIN, this.mockRemoteQuotesService],
     [MarketPlaceEnum.BRTD, this.yahooRemoteQuotesService]
@@ -98,7 +98,7 @@ export class RemoteQuotesService {
 
       this.lastUpdate.set(new Date());
       this.latestQuote.set(updated);
-
+      this.sourceService.updateAsset(Object.values(updated));
     })
   }
 

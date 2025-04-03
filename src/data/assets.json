@@ -1,28 +1,28 @@
 {
     "data": [
         {
-            "code": "STKA",
+            "code": "WMB",
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "price": 50.5,
+                "price":  61.61,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
             "type": "STOCK",
-            "name": "Stock A"
+            "name": "Williams Companies Inc"
         },
         {
-            "code": "STKB",
+            "code": "MSFT",
             "marketPlace": "NASDAQ",
             "controlByQty": true,
             "quote": {
-                "price": 20.75,
+                "price": 382.14,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
             "type": "STOCK",
-            "name": "Stock B"
+            "name": "Microsoft Corp"
         },
         {
             "code": "BND1",
@@ -37,16 +37,16 @@
             "name": "Bond A"
         },
         {
-            "code": "ETFA",
+            "code": "PFE",
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "price": 75.3,
+                "price": 22.22,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
-            "type": "ETF",
-            "name": "ETF A"
+            "type": "STOCK",
+            "name": "Pfizer"
         },
         {
             "code": "BTC",
@@ -61,16 +61,16 @@
             "name": "Crypto A"
         },
         {
-            "code": "STKC",
+            "code": "PLD",
             "marketPlace": "NYSE",
             "controlByQty": true,
             "quote": {
-                "price": 35.4,
+                "price": 123.45,
                 "currency": "USD"
             },
             "lastUpdate": "2025-03-10T12:00:00Z",
             "type": "STOCK",
-            "name": "Stock C"
+            "name": "Prologic"
         },
         {
             "code": "STKF",
