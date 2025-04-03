@@ -34,6 +34,7 @@ export class MockRemoteQuotesService implements IRemoteQuote {
     if (!quoteCached) {
       quote = {
         ticker,
+        name: ticker,
         symbol: ticker,
         currency: asset.quote.currency,
         open: asset.quote.price,

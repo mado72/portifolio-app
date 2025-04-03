@@ -274,6 +274,7 @@ export class SourceService {
   deleteAsset(ticker: string) {
     this.dataSource.asset.update(asserts => {
       delete asserts[ticker];
+      
       return { ...asserts };
     })
   }

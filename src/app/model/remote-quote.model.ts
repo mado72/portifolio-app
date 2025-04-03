@@ -3,6 +3,7 @@ import { Currency } from "./domain.model";
 
 export type QuoteResponse = {
   ticker: string,
+  name: string,
   symbol: string,
   currency: Currency,
   open: number,

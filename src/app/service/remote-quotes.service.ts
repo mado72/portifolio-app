@@ -8,6 +8,7 @@ import { ImmutableRemoteQuotesService } from './immutable-remote-quotes.service'
 import { MockRemoteQuotesService } from './mock-remote-quotes.service';
 import { SourceService } from './source.service';
 import { YahooRemoteQuotesService } from './yahoo-remote-quotes.service';
+import { getMarketPlaceCode } from './quote.service';
 
 @Injectable({
   providedIn: 'root'
@@ -53,10 +54,11 @@ export class RemoteQuotesService {
     return this.prepareRequestsToUpdateQuotes(assets);
   });
 
-  timerId = timer(30 * 60 * 1000).pipe(
+  timerId = timer(2 * 60 * 1000).pipe(
     map(() => {
       const now = new Date();
-      if (differenceInMinutes(now, this.lastUpdate()) > 15) {
+      const diffLastUpdate = differenceInMinutes(now, this.lastUpdate());
+      if (diffLastUpdate > 15) {
         return Object.entries(this.assetsQuoted()).reduce((acc, [ticker, asset]) => {
           if (differenceInMinutes(now, asset.lastUpdate) > 15) {
             acc[ticker] = asset;
@@ -73,8 +75,13 @@ export class RemoteQuotesService {
   });
 
   constructor() {
-    effect(async () => {
-      this.updateQuotes(this.sourceService.assertSource());
+    this.updateQuotes(this.sourceService.assertSource());
+    effect(() => {
+      const diffLastUpdate = differenceInMinutes(new Date(), this.lastUpdate());
+      console.debug(`diffLastUpdate: ${diffLastUpdate}`)
+      if (diffLastUpdate > 15) {
+        this.updateQuotes(this.sourceService.assertSource());
+      }
     })
   }
 
@@ -116,6 +123,42 @@ export class RemoteQuotesService {
     return serviceToken;
   }
 
+  /**
+   * Retrieves a remote quote for a given marketplace and code.
+   *
+   * @param marketPlace - The marketplace identifier, which can be a `MarketPlaceEnum` value or a string.
+   *                      If a string is provided, it will be converted to the corresponding `MarketPlaceEnum` value.
+   * @param code - The code of the asset or item for which the quote is being retrieved.
+   * @returns An observable that emits the price of the specified asset or item.
+   *
+   * @remarks
+   * - The method determines the appropriate remote quotes service based on the marketplace.
+   * - It constructs a ticker using the provided marketplace and code, then fetches the price for that ticker.
+   * - The response is mapped to extract the price for the specific ticker.
+   */
+  getRemoteQuote(marketPlace: MarketPlaceEnum | string, code: string) {
+    if (typeof marketPlace === 'string') {
+      marketPlace = MarketPlaceEnum[marketPlace as keyof typeof MarketPlaceEnum];
+    }
+    const service = this.getRemoteQuotesService(marketPlace as MarketPlaceEnum);
+    const ticker = getMarketPlaceCode({ marketPlace, code });
+    return service.price([ticker]).pipe(
+      map(response => response[ticker])
+    );
+  }
+
+  /**
+   * Prepares and executes requests to update quotes for a given set of assets.
+   *
+   * @param assets - A record where the keys are asset tickers (formatted as "marketplace:ticker")
+   *                 and the values are of type `AssetQuoteType`.
+   * @returns An observable that emits a single object containing the aggregated results of the
+   *          price updates for all tickers, where each key is a ticker and the value is its updated quote.
+   *
+   * The method groups the tickers by their marketplace, retrieves the appropriate remote quote service
+   * for each marketplace, and requests price updates for the tickers in that marketplace. The results
+   * are then combined into a single object.
+   */
   prepareRequestsToUpdateQuotes(assets: Record<string, AssetQuoteType>) {
     const marketPlaceRec = Object.keys(assets).reduce((acc, ticker) => {
       const marketPlaceCode = ticker.split(':')[0];

@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { InvestmentAssetsTableComponent } from "../../investment/investment-assets-table/investment-assets-table.component";
 import { AssetEnum, AssetQuoteType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
-import { getMarketPlaceCode } from '../../service/quote.service';
+import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { AssetDialogComponent } from '../asset-dialog/asset-dialog.component';
 
 @Component({
@@ -19,6 +19,8 @@ import { AssetDialogComponent } from '../asset-dialog/asset-dialog.component';
 })
 export class AssetRegistrationComponent {
   private investimentService = inject(InvestmentService);
+
+  private quoteService = inject(QuoteService);
 
   datasource = this.investimentService.getAssetsDatasourceComputed();
 
@@ -79,6 +81,7 @@ export class AssetRegistrationComponent {
     dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
       if (result) {
         this.saveAsset(result);
+        this.quoteService.updateQuoteAsset(result);
       }
     });
   }

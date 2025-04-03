@@ -112,6 +112,7 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
   responseToQuoteResponse(ticker: string, response: YahooQuoteResponse): QuoteResponse {
     return {
       ticker,
+      name: [response.shortName, response.longName].filter(v=>!!v).join(' - '),
       symbol: response.symbol,
       currency: response.currency,
       open: response.regularMarketOpen,
