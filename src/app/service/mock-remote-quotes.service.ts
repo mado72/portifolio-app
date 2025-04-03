@@ -1,18 +1,20 @@
 import { inject, Injectable } from '@angular/core';
-import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 import { forkJoin, map, Observable, of } from 'rxjs';
+import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 import { SourceService } from './source.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'any',
+  
 })
 export class MockRemoteQuotesService implements IRemoteQuote {
 
-  private sourceService = inject(SourceService);
-
   private cacheQuotes: { [ticker: string]: QuoteResponse } = {};
 
-  constructor() { }
+  constructor(private sourceService: SourceService) { 
+    if (!sourceService) 
+      throw new Error("SourceService is not available");
+  }
 
   price(tickers: string[]): Observable<Record<string, QuoteResponse>> {
     const requests = tickers.map(ticker => this.fetchQuote(ticker));

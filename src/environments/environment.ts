@@ -2,7 +2,7 @@ import { startOfDay } from "date-fns";
 
 export const environment = {
     production: false,
-    apiBaseUrl: 'http://localhost:8080',  // Replace with your actual API URL
+    apiBaseUrl: 'http://localhost:8080/api/v1',  // Replace with your actual API URL
     twelvedata: {
         apiKey: 'bc1913e1b25343da8d342285061c581d'
     },

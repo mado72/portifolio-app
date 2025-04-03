@@ -1,4 +1,4 @@
-import { computed, effect, inject, Injectable, InjectionToken, Injector, Provider, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { differenceInMinutes } from 'date-fns';
 import { forkJoin, map, timer, zipAll } from 'rxjs';
 import { MarketPlaceEnum } from '../model/investment.model';
@@ -9,31 +9,23 @@ import { MockRemoteQuotesService } from './mock-remote-quotes.service';
 import { SourceService } from './source.service';
 import { YahooRemoteQuotesService } from './yahoo-remote-quotes.service';
 
-const YAHOO_REMOTEQUOTESERVICE = new InjectionToken<IRemoteQuote>('YahooRemoteQuotesService');
-const MOCK_REMOTEQUOTESERVICE = new InjectionToken<IRemoteQuote>('MockRemoteQuotesService');
-const IMMUTABLE_REMOTEQUOTESERVICE = new InjectionToken<IRemoteQuote>('ImmutableRemoteQuotesService');
-
-const REMOTEQUOTES_PROVIDERS: Provider[] = [
-  { provide: YAHOO_REMOTEQUOTESERVICE, useClass: YahooRemoteQuotesService },
-  { provide: MOCK_REMOTEQUOTESERVICE, useClass: MockRemoteQuotesService },
-  { provide: IMMUTABLE_REMOTEQUOTESERVICE, useClass: ImmutableRemoteQuotesService },
-]
-
-const SERVICE_MAP = new Map<MarketPlaceEnum, InjectionToken<IRemoteQuote>>([
-  [MarketPlaceEnum.BVMF, YAHOO_REMOTEQUOTESERVICE],
-  [MarketPlaceEnum.NASDAQ, MOCK_REMOTEQUOTESERVICE],
-  [MarketPlaceEnum.NYSE, MOCK_REMOTEQUOTESERVICE],
-  [MarketPlaceEnum.CRYPTO, MOCK_REMOTEQUOTESERVICE],
-  [MarketPlaceEnum.COIN, MOCK_REMOTEQUOTESERVICE],
-  [MarketPlaceEnum.BRTD, YAHOO_REMOTEQUOTESERVICE],
-])
-
 @Injectable({
   providedIn: 'root'
 })
 export class RemoteQuotesService {
 
-  private injector = Injector.create({ providers: REMOTEQUOTES_PROVIDERS })
+  private mockRemoteQuotesService = inject(MockRemoteQuotesService);
+  private yahooRemoteQuotesService = inject(YahooRemoteQuotesService);
+  private immutableRemoteQuotesService = inject(ImmutableRemoteQuotesService);
+  
+  private serviceMap = new Map<MarketPlaceEnum, IRemoteQuote>([
+    [MarketPlaceEnum.BVMF, this.yahooRemoteQuotesService],
+    [MarketPlaceEnum.NASDAQ, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.NYSE, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.CRYPTO, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.COIN, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.BRTD, this.yahooRemoteQuotesService]
+  ]);
 
   private sourceService = inject(SourceService);
 
@@ -115,13 +107,13 @@ export class RemoteQuotesService {
   }
 
   getRemoteQuotesService(marketPlace: MarketPlaceEnum) {
-    const serviceToken = SERVICE_MAP.get(marketPlace);
+    const serviceToken = this.serviceMap.get(marketPlace);
 
     if (!serviceToken) {
-      return this.injector.get(IMMUTABLE_REMOTEQUOTESERVICE);
+      return this.immutableRemoteQuotesService;
     }
 
-    return this.injector.get(serviceToken);
+    return serviceToken;
   }
 
   prepareRequestsToUpdateQuotes(assets: Record<string, AssetQuoteType>) {
