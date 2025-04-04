@@ -27,11 +27,11 @@ export class PortfolioService {
   readonly portfolios = computed(()=> Object.entries(this.sourceService.portfolioSource()).reduce((acc, [key, source]) => {
     acc[key] = {
       ...source,
-      allocations: calcPosition(this.quoteService.quotes() || {}, source.allocations)
+      ...calcPosition(this.quoteService.quotes() || {}, source.allocations)
     }
     return acc;
   }, {} as PortfolioRecord))
-  
+
   constructor() {}
 
   getPortfolioById(id: string) {
@@ -62,7 +62,15 @@ export class PortfolioService {
       name,
       currency: Currency[currency],
       percPlanned: 0,
-      allocations: {}
+      allocations: {},
+      total: {
+        initialValue: 0,
+        marketValue: 0,
+        percPlanned: 0,
+        percAllocation: 0,
+        profit: 0,
+        performance: 0
+      }
     })
   }
 

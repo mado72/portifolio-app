@@ -1,13 +1,7 @@
 import { Currency } from "./domain.model";
-import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocationSourceDataType, PortfolioAllocationType } from "./source.model";
+import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocationSourceDataType, PortfolioAllocationType, SummarizedDataType } from "./source.model";
 
-const INITIAL_TOTAL: Required<PortfolioAllocationType> = {
-    ticker: 'total',
-    marketPlace: '',
-    code: 'total',
-    quantity: NaN,
-    quote: { price: NaN, currency: Currency.BRL },
-    averagePrice: NaN,
+const INITIAL_TOTAL: Required<SummarizedDataType> = {
     initialValue: 0,
     marketValue: 0,
     percPlanned: 0,
@@ -23,7 +17,7 @@ export function calcPosition(quotes: AssetQuoteRecord, allocations: PortfolioAll
         const marketValue = quotePrice * allocation.quantity;
         const averagePrice = Math.trunc(100 * allocation.initialValue / allocation.quantity) / 100;
 
-        acc[key] = {
+        acc.allocations[key] = {
             ...allocation,
             marketValue,
             averagePrice,
@@ -33,22 +27,22 @@ export function calcPosition(quotes: AssetQuoteRecord, allocations: PortfolioAll
             performance: (marketValue - allocation.initialValue) / allocation.initialValue
         };
 
-        const total = acc['total'];
-
-        total.marketValue += acc[key].marketValue;
-        total.percPlanned += acc[key].percPlanned;
-        total.percAllocation += acc[key].percAllocation || 0;
-        total.profit += acc[key].profit || 0;
-        total.performance = total.profit / total.marketValue;
+        acc.total.initialValue += acc.allocations[key].initialValue;
+        acc.total.marketValue += acc.allocations[key].marketValue;
+        acc.total.percPlanned += acc.allocations[key].percPlanned;
+        acc.total.percAllocation += acc.allocations[key].percAllocation || 0;
+        acc.total.profit += acc.allocations[key].profit || 0;
+        acc.total.performance = acc.total.profit / acc.total.marketValue;
 
         return acc;
     }, {
-        total: { ...INITIAL_TOTAL }
-    } as Record<string, Required<PortfolioAllocationType>>);
+        total: { ...INITIAL_TOTAL },
+        allocations: {} as Record<string, Required<PortfolioAllocationType>>
+    } );
 
-    Object.entries(calc).filter(([key, _]) => key !== 'total').forEach(([_, item]) => {
-        item.percAllocation = item.marketValue / calc['total'].marketValue;
-        (calc['total'] as Required<PortfolioAllocationSourceDataType>).percAllocation += item.percAllocation;
+    Object.values(calc.allocations).forEach(item => {
+        item.percAllocation = item.marketValue as number / calc.total.marketValue;
+        calc.total.percAllocation += item.percAllocation;
     });
 
     return calc;

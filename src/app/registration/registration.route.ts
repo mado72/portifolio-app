@@ -24,11 +24,14 @@ export const registrationRoutes: Routes = [
         }
     },
     {
+        path: 'portfolios/edit',
+        loadComponent: () => import('../portfolio/portfolio-register-table/portfolio-register-table.component').then(mod => mod.PortfolioRegisterTableComponent),
+    },
+    {
         path: 'portfolio/:portfolioId',
         loadComponent: () => import('../portfolio/investment-portfolio-table/investment-portfolio-table.component').then(mod => mod.InvestmentPortfolioTableComponent),
         data: {
             editMode: true
         }
     }
-
 ]

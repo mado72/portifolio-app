@@ -104,9 +104,18 @@ export class SourceService {
   }, {} as Record<string, StatementType>));
 
   readonly portfolioSource = computed<PortfolioRecord>(() => Object.entries(this.dataSource.portfolio()).reduce((acc, [key, item]) => {
-    acc[key] = {
+    acc[key] = 
+    {
       ...item,
       currency: Currency[item.currency as keyof typeof Currency],
+      total: {
+        initialValue: NaN,
+        marketValue: NaN,
+        percPlanned: NaN,
+        percAllocation: NaN,
+        profit: NaN,
+        performance: NaN
+      },
       allocations: item.allocations.reduce((allocAcc, alloc) => {
         const ticker = getMarketPlaceCode(alloc);
         const initialValue = (alloc.initialValue || alloc.marketValue);

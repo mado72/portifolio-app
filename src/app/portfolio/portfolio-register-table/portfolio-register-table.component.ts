@@ -22,12 +22,5 @@ export class PortfolioRegisterTableComponent {
 
   portfolios = computed(() => {
     return this.portfolioService.getAllPortfolios();
-    // Object.entries(this.portfolioService.portfolios()).reduce((acc, [id, portfolio])=>{
-    //   Object.entries(portfolio.allocations).reduce((accAlloc, [ticker, alloc])=>{
-    //     alloc.
-    //     return accAlloc;
-    //   }, {} as any)
-    //   return acc;
-    // }, {} as any)
   })
 }

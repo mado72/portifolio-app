@@ -154,18 +154,21 @@ export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "c
 
 export type StatementRecord = Record<string, StatementType>;
 
-export type PortfolioAllocationSourceDataType = {
+export type SummarizedDataType = {
+    initialValue: number,
+    marketValue: number,
+    percPlanned: number,
+    percAllocation?: number,
+    profit?: number,
+    performance?: number
+}
+
+export type PortfolioAllocationSourceDataType = SummarizedDataType & {
     marketPlace: string;
     code: string;
     quantity: number;
-    percPlanned: number;
-    initialValue: number;
-    marketValue: number;
     averagePrice?: number;
     quote?: CurrencyPrice;
-    profit?: number;
-    percAllocation?: number;
-    performance?: number;
 }
 
 export type PortfolioSourceDataType = {
@@ -176,8 +179,7 @@ export type PortfolioSourceDataType = {
     allocations: PortfolioAllocationSourceDataType[];
 }
 
-export type PortfolioAllocationType = Required<PortfolioAllocationSourceDataType> & {
-    averagePrice: number;
+export type PortfolioAllocationType = Required<PortfolioAllocationSourceDataType> & Required<SummarizedDataType> & {
     ticker: string;
 }
 
@@ -185,7 +187,8 @@ export type PortfolioAllocationRecord = Record<string, PortfolioAllocationType>;
 
 export type PortfolioType = Omit<PortfolioSourceDataType, "allocations" | "currency"> & {
     currency: Currency;
-    allocations: PortfolioAllocationRecord
+    allocations: PortfolioAllocationRecord;
+    total: Required<SummarizedDataType>;
 };
 
 export type PortfolioRecord = Record<string, PortfolioType>;
