@@ -1,15 +1,25 @@
+import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { SourceService } from '../../service/source.service';
+import { PortfolioAllocationType, PortfolioType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
-import { JsonPipe } from '@angular/common';
 
+type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"> & {
+  allocations: PortfolioAllocationType[];
+  percAllocation: number;
+}
 @Component({
   selector: 'app-portfolio-register-table',
   standalone: true,
   imports: [
     MatTableModule,
-    JsonPipe
+    MatButtonModule,
+    MatIconModule,
+    JsonPipe,
+    PercentPipe,
+    DecimalPipe
   ],
   templateUrl: './portfolio-register-table.component.html',
   styleUrl: './portfolio-register-table.component.scss'
@@ -18,9 +28,15 @@ export class PortfolioRegisterTableComponent {
 
   private portfolioService = inject(PortfolioService);
 
-  readonly displayColumns = ['name', 'currency', 'percPlanned', 'percAllocation', 'profit', 'performance'];
+  readonly displayedColumns = ['name', 'percPlanned', 'percAllocation', 'marketValue', 'profit', 'performance'];
 
-  portfolios = computed(() => {
-    return this.portfolioService.getAllPortfolios();
-  })
+  // displayedColumns = ['id', 'name', 'actions'];
+  detailDisplayedColumns = ['id', 'description'];
+
+  total = computed(() => this.portfolioService.total())
+
+  portfolios = computed(() => this.portfolioService.portfolioAllocation());
+
+  expandedElement: DatasourceMasterType | null = null;
+
 }

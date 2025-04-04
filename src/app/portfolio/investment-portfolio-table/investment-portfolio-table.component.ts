@@ -1,5 +1,5 @@
 import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject, Input, OnInit, Signal, signal } from '@angular/core';
+import { Component, computed, inject, input, Input, OnInit, Signal, signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
@@ -41,42 +41,25 @@ export class InvestmentPortfolioTableComponent implements OnInit {
 
   readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'averagePrice', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
 
-  @Input() editMode = false;
+  editMode = input<boolean>(false);
 
-  @Input() portfolioId = '';
+  portfolioId = input<string>('', {alias: 'portfolioId'});
 
-  @Input() currency = Currency.BRL;
+  currency = input<Currency>(Currency.BRL);
 
   source!: Signal<Record<string,DatasourceRowType>>;
 
-  datasource = computed(()=>Object.entries(this.source())
-      .filter(([ticker, _])=> ticker != 'total')
-      .map(([_, entry])=>{
-        return entry;
-      })
-  );
+  datasource = computed(() => {
+    return Object.values(this.portfolioService.portfolios()[this.portfolioId()]?.allocations || {});
+  });
 
-  total = computed(() => this.source()['total']);
+  total = computed(() => this.portfolioService.portfolios()[this.portfolioId()]?.total || {});
 
-  portfolioName = signal('');
+  portfolioName = computed(() => {
+    return this.portfolioService.portfolios()[this.portfolioId()]?.name || '';
+  });
 
   ngOnInit(): void {
-    this.source = computed(()=> {
-      const assets = this.investmentService.assertsSignal();
-
-      return Object.entries(this.portfolioService.portfolios()[this.portfolioId]?.allocations || [])
-        .reduce((rec, [ticker, row])=>{
-          rec[ticker] = {
-            ...row,
-            name: assets[ticker]?.name || ticker,
-            trend: assets[ticker]?.trend || 'unchanged'
-          };
-          return rec;
-        }, {} as Record<string, DatasourceRowType>);
-    });
-
-    const portfolio = this.portfolioService.portfolios()[this.portfolioId];
-    this.portfolioName.set(portfolio.name);
   }
 
   selectRow(row: DatasourceRowType) {
@@ -103,7 +86,7 @@ export class InvestmentPortfolioTableComponent implements OnInit {
             }]
           }
 
-          this.portfolioService.updatePortfolio(this.portfolioId, changes)
+          this.portfolioService.updatePortfolio(this.portfolioId(), changes)
         }
       }
     });

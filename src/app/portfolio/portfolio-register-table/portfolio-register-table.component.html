@@ -1,3 +1,75 @@
-<code>
+<mat-table [dataSource]="portfolios()" class="mat-elevation-z8 primary">
+    <ng-container matColumnDef="name">
+        <mat-header-cell *matHeaderCellDef> Carteira </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> {{ portfolio.name }} </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+            <em>Total</em>
+        </mat-footer-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="currency">
+        <mat-header-cell *matHeaderCellDef> Moeda </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> {{ portfolio.currency }} </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="percPlanned">
+        <mat-header-cell *matHeaderCellDef> Planejado </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> 
+            <span>{{ portfolio.percPlanned | number:'1.2-2' }}% </span>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>{{total().percPlanned | number:'1.2-2'}}%</mat-footer-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="percAllocation">
+        <mat-header-cell *matHeaderCellDef> Alocação </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> {{ portfolio.percAllocation | percent:'1.2-2' }} </mat-cell>
+        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="marketValue">
+        <mat-header-cell *matHeaderCellDef> Valor de Mercado </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> 
+            <span>{{ portfolio.currency }}</span>
+            <span>{{ portfolio.total.marketValue | number:'1.2-2' }}</span>
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+            <span>BRL</span>
+            {{total().marketValue | number:'1.2-2'}}
+        </mat-footer-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="profit">
+        <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> 
+            <span>{{ portfolio.currency }}</span>
+            {{ portfolio.total.profit | number:'1.2-2' }} 
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+            <span>BRL</span>
+            {{total().profit | number:'1.2-2'}}
+        </mat-footer-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="performance">
+        <mat-header-cell *matHeaderCellDef> Resultado (%) </mat-header-cell>
+        <mat-cell *matCellDef="let portfolio"> 
+            <span></span>
+            {{ portfolio.total.performance | percent:'1.2-2' }} 
+        </mat-cell>
+        <mat-footer-cell *matFooterCellDef>
+            <span></span>
+            {{total().performance | percent:'1.2-2'}}
+        </mat-footer-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+    <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
+</mat-table>
+
+<!-- <code>
     <pre>{{ portfolios() | json}}</pre>
-</code>
+    <pre>total: {{ total() | json}}</pre>
+    <pre>percAllocation: {{ percAllocation() | json}}</pre>
+</code> -->
