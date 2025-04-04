@@ -46,6 +46,22 @@ export type Income = {
     type: IncomeEnum
 }
 
+export type AllocationType = {
+    percPlanned: number;
+    marketValue: number;
+}
+
+export type AllocationCalc = AllocationType & {
+    percAllocation: number;
+    profit: number;
+    performance: number;
+}
+
+export type AllocationSet = {
+    allocations: AllocationCalc[];
+    total: AllocationCalc;
+}
+
 export enum TransactionEnum {
     BUY = 'BUY',
     SELL = 'SELL',

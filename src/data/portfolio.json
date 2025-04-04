@@ -4,6 +4,7 @@
             "id": "Portfolio1",
             "name": "Portfolio 1",
             "currency": "BRL",
+            "percPlanned": 15,
             "allocations": [
                 {
                     "code": "WMB",
@@ -51,6 +52,7 @@
             "id": "Portfolio2",
             "name": "Portfolio 2",
             "currency": "BRL",
+            "percPlanned": 15,
             "allocations": [
                 {
                     "code": "STKB",
@@ -88,6 +90,7 @@
             "id": "Portfolio3",
             "name": "Portfolio 3",
             "currency": "BRL",
+            "percPlanned": 15,
             "allocations": [
                 {
                     "code": "BND1",
@@ -115,6 +118,7 @@
             "id": "Portfolio4",
             "name": "Portfolio 4",
             "currency": "BRL",
+            "percPlanned": 15,
             "allocations": [
                 {
                     "code": "BTC",
@@ -142,6 +146,7 @@
             "id": "Portfolio5",
             "name": "Portfolio 5",
             "currency": "BRL",
+            "percPlanned": 15,
             "allocations": [
                 {
                     "code": "VALE3",

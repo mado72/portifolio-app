@@ -18,14 +18,14 @@ export const registrationRoutes: Routes = [
     },
     {
         path: 'portfolios',
-        loadComponent: () => import('../investment/investment-portfolio-container/investment-portfolio-container.component').then(mod => mod.InvestmentPortfolioContainerComponent),
+        loadComponent: () => import('../portfolio/investment-portfolio-container/investment-portfolio-container.component').then(mod => mod.InvestmentPortfolioContainerComponent),
         data: {
             editMode: true
         }
     },
     {
         path: 'portfolio/:portfolioId',
-        loadComponent: () => import('../investment/investment-portfolio-table/investment-portfolio-table.component').then(mod => mod.InvestmentPortfolioTableComponent),
+        loadComponent: () => import('../portfolio/investment-portfolio-table/investment-portfolio-table.component').then(mod => mod.InvestmentPortfolioTableComponent),
         data: {
             editMode: true
         }

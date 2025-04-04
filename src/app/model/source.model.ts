@@ -172,6 +172,7 @@ export type PortfolioSourceDataType = {
     id: string;
     name: string;
     currency: string;
+    percPlanned: number;
     allocations: PortfolioAllocationSourceDataType[];
 }
 

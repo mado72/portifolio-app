@@ -61,6 +61,7 @@ export class PortfolioService {
       id: '',
       name,
       currency: Currency[currency],
+      percPlanned: 0,
       allocations: {}
     })
   }
