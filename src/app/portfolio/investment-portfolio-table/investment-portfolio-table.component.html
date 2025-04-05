@@ -1,6 +1,6 @@
 @if (datasource() && total() ) {
 
-  <table mat-table [dataSource]="datasource()" matSort [class.mat-table-selectable]="editMode()">
+  <table mat-table [dataSource]="datasource()" matSort [class.mat-table-selectable]="editMode()" class="w-100">
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Nome </th>
       <td mat-cell *matCellDef="let row"> {{row.name}} </td>

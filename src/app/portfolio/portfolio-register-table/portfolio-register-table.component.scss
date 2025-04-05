@@ -6,60 +6,155 @@ $width-profit: 20%;
 $width-performance: 20%;
 $padding-right-perc: 5%;
 
-// Estilos para as células da tabela
-mat-cell,
-mat-footer-cell {
-  display: flex;
-  justify-content: space-between;
+#table-master {
+
+  &.table {
+    width: 100% !important;
+    border-collapse: collapse;
+    border-radius: 4px;
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    
+    thead, tfoot {
+      th, td {
+        background-color: #e5e5e5 !important;
+        font-weight: 500;
+      }
+    }
+
+    tr.row-master {
+      min-height: 48px;
+      height: 48px;
+    }
+  
+    tr {
+      align-items: center;
+      box-sizing: border-box;
+      display: flex;
+      line-height: 20px;
+      white-space-collapse: collapse;
+      border-bottom: 1px solid rgb(116, 119, 127);
+  
+      td,
+      th {
+        align-self: stretch;
+        align-items: center;
+        padding: 8px;
+        vertical-align: middle;
+        display: flex;
+        flex-basis: 0%;
+        flex-grow: 1;
+        flex-shrink: 1;
+        justify-content: space-between;
+        min-height: 48px;
+        padding: 0 16px;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        overflow-wrap: break-word;
+        line-height: 20px;
+        text-overflow: ellipsis;
+        text-wrap-mode: wrap;
+        white-space-collapse: collapse
+      }
+      
+    }
+
+    tfoot tr:last-of-type {
+      border-bottom: 0;
+    }
+    
+  }
+  
+  .column-percPlanned,
+  .column-percAllocation {
+    padding-right: $padding-right-perc !important;
+  }
+  
+  .column-marketValue,
+  .column-profit,
+  .column-allocation,
+  .column-performance,
+  .column-percPlanned,
+  .column-percAllocation {
+    text-align: right;
+  }
+  
+  .column-name {
+    text-align: left;
+    width: $width-name;
+  }
+  
+  .column-percPlanned {
+    width: $width-perc;
+    padding-right: $padding-right-perc;
+  }
+  
+  .column-percAllocation {
+    width: $width-perc;
+    padding-right: $padding-right-perc;
+  }
+  
+  .column-currency {
+    width: $width-currency;
+  }
+  
+  .column-marketValue {
+    width: $width-profit;
+  }
+  
+  .column-profit {
+    width: $width-profit;
+  }
+  
+  .column-performance {
+    width: $width-performance;
+  }
+  
+  .column-name {
+    fa-icon {
+      padding-right: 4px;
+      color: #f44336;
+    }
+  }
+ 
+  tr.row-expansible {
+    height: auto !important;
+    border-top: 1px solid #e5e5e5 !important;
+    background-color: #eee !important;
+  }
+
+  tr.row-collapsed {
+    visibility: collapse;
+    opacity: 0;
+    height: 0px !important;
+    max-height: 0px !important;
+  }
+
+  tr.row-expanded {
+    visibility: visible;
+    opacity: 1;
+  }
 }
 
-mat-footer-cell {
-    font-weight: bold;
-    background-color: #f5f5f5;
+#table-details {
+  width: 100%!important;
+  border-collapse: collapse;
+  border-radius: 4px;
+  font-family: Roboto, sans-serif;
+  font-size: 14px;
+  
+  thead, tfoot {
+    th, td {
+      background-color: #e5e5e5!important;
+      font-weight: 500;
+    }
+  }
 }
 
-// Estilos para as colunas numéricas
-.mat-column-percPlanned,
-.mat-column-percAllocation,
-.mat-column-marketValue,
-.mat-column-profit,
-.mat-column-performance {
-  text-align: right;
-}
-
-// Estilos para as colunas com larguras definidas
-.mat-column-name {
-  width: $width-name;
-}
-
-.mat-column-percPlanned {
-  width: $width-perc;
-  padding-right: $padding-right-perc;
-}
-
-.mat-column-percAllocation {
-  width: $width-perc;
-  padding-right: $padding-right-perc;
-}
-
-.mat-column-currency {
-  width: $width-currency;
-}
-
-.mat-column-marketValue {
-  width: $width-profit;
-}
-
-.mat-column-profit {
-  width: $width-profit;
-}
-
-.mat-column-performance {
-  width: $width-performance;
-}
-
-// Estilo geral para a tabela
-.mat-elevation-z8 {
-  width: 100%; // A tabela ocupa 100% da largura do contêiner
-//   padding: 20px 0;
+.button-toggle {
+  background-color: transparent;
+  border: none;
+  width: 12px !important;
+  height: 12px!important;
+  margin: 0 8px 0 0;
 }

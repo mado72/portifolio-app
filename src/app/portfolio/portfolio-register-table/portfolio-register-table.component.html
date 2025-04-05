@@ -1,75 +1,83 @@
-<mat-table [dataSource]="portfolios()" class="mat-elevation-z8 primary">
-    <ng-container matColumnDef="name">
-        <mat-header-cell *matHeaderCellDef> Carteira </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> {{ portfolio.name }} </mat-cell>
-        <mat-footer-cell *matFooterCellDef>
-            <em>Total</em>
-        </mat-footer-cell>
-    </ng-container>
+<table class="table table-stick mat-elevation-z8 table-responsive" id="table-master">
 
-    <ng-container matColumnDef="currency">
-        <mat-header-cell *matHeaderCellDef> Moeda </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> {{ portfolio.currency }} </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-    </ng-container>
+    <thead>
+        <tr>
+            <th>Carteira</th>
+            <th>Planejado (%)</th>
+            <th>Alocação (%)</th>
+            <th>Valor de Mercado</th>
+            <th>Resultado</th>
+            <th>Resultado (%)</th>
+        </tr>
+    </thead>
 
-    <ng-container matColumnDef="percPlanned">
-        <mat-header-cell *matHeaderCellDef> Planejado </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> 
-            <span>{{ portfolio.percPlanned | number:'1.2-2' }}% </span>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>{{total().percPlanned | number:'1.2-2'}}%</mat-footer-cell>
-    </ng-container>
+    <tbody class="table-group-divider">
+        @for(portfolio of portfolios(); track portfolio.id) {
+        <tr class="row-master">
+            <td class="column-name">
+                <div>
+                    <button class="button-toggle" type="button" aria-label="Toggle portfolio details" [attr.aria-expanded]="isExpanded(portfolio) ? 'true' : 'false'" (click)="toggleExpanded(portfolio)">
+                        <fa-icon [icon]="isExpanded(portfolio) ? iconOpen : iconClose"></fa-icon>
+                    </button>
+                    <span>{{ portfolio.name }}</span>
+                </div>
+            </td>
+            <td class="column-percPlanned">
+                <span></span>
+                {{ portfolio.percPlanned | number:'1.2-2' }}%
+            </td>
+            <td class="column-percAllocation" >
+                <span></span>
+                {{ portfolio.total.percAllocation | percent:'1.2-2' }}
+            </td>
+            <td class="column-marketValue">
+                <span>{{ portfolio.currency }}</span>
+                <span>{{ portfolio.total.marketValue | number:'1.2-2' }}</span>
+            </td>
+            <td class="column-profit">
+                <span>{{ portfolio.currency }}</span>
+                {{ portfolio.total.profit | number:'1.2-2' }}
+            </td>
+            <td class="column-performance">
+                <span></span>
+                {{ portfolio.total.performance | percent:'1.2-2' }}
+            </td>
+        </tr>
+        <tr class="row-expansible" [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [style.overflow]="isExpanded(portfolio) ? 'auto' : 'hidden'">
+            <td colspan="7" class="px-4 py-2 mb-4 w-100 d-flex flex-column align-items-start">
+                <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
+                <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3"></app-investment-portfolio-table>
+            </td>
+        </tr>
+        } 
+    </tbody>
 
-    <ng-container matColumnDef="percAllocation">
-        <mat-header-cell *matHeaderCellDef> Alocação </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> {{ portfolio.percAllocation | percent:'1.2-2' }} </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
-    </ng-container>
+    <tfoot>
+        <tr>
+            <th>
+                <em>Total</em>
+            </th>
+            <td class="column-percPlanned">
+                <span></span>
+                {{ total().percPlanned | number:'1.2-2' }}%
+            </td>
+            <td class="column-percAllocation">
+                <span></span>
+                {{ total().percAllocation | percent:'1.2-2' }}
+            </td>
+            <td class="column-marketValue">
+                <span>BRL</span>
+                {{ total().marketValue | number:'1.2-2' }}
+            </td>
+            <td class="column-profit">
+                <span>BRL</span>
+                {{ total().profit | number:'1.2-2' }}
+            </td>
+            <td class="column-performance">
+                <span></span>
+                {{ total().performance | percent:'1.2-2' }}
+            </td>
+        </tr>
+    </tfoot>
 
-    <ng-container matColumnDef="marketValue">
-        <mat-header-cell *matHeaderCellDef> Valor de Mercado </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> 
-            <span>{{ portfolio.currency }}</span>
-            <span>{{ portfolio.total.marketValue | number:'1.2-2' }}</span>
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>
-            <span>BRL</span>
-            {{total().marketValue | number:'1.2-2'}}
-        </mat-footer-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="profit">
-        <mat-header-cell *matHeaderCellDef> Resultado </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> 
-            <span>{{ portfolio.currency }}</span>
-            {{ portfolio.total.profit | number:'1.2-2' }} 
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>
-            <span>BRL</span>
-            {{total().profit | number:'1.2-2'}}
-        </mat-footer-cell>
-    </ng-container>
-
-    <ng-container matColumnDef="performance">
-        <mat-header-cell *matHeaderCellDef> Resultado (%) </mat-header-cell>
-        <mat-cell *matCellDef="let portfolio"> 
-            <span></span>
-            {{ portfolio.total.performance | percent:'1.2-2' }} 
-        </mat-cell>
-        <mat-footer-cell *matFooterCellDef>
-            <span></span>
-            {{total().performance | percent:'1.2-2'}}
-        </mat-footer-cell>
-    </ng-container>
-
-    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-    <mat-footer-row *matFooterRowDef="displayedColumns"></mat-footer-row>
-</mat-table>
-
-<!-- <code>
-    <pre>{{ portfolios() | json}}</pre>
-    <pre>total: {{ total() | json}}</pre>
-    <pre>percAllocation: {{ percAllocation() | json}}</pre>
-</code> -->
+</table>
