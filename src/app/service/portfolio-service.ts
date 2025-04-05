@@ -1,7 +1,7 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { calcPosition } from '../model/portfolio.model';
-import { PortfolioAllocationRecord, PortfolioRecord } from '../model/source.model';
+import { PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 
@@ -57,7 +57,7 @@ export class PortfolioService {
         ...portfolio.total,
         percAllocation: portfolio.total.marketValue / this.total().marketValue
       },
-    })));
+    } as PortfolioAllocationsArrayItemType)));
 
 
   constructor() {}

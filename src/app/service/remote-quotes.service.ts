@@ -1,14 +1,14 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { differenceInMinutes } from 'date-fns';
-import { forkJoin, map, timer, zipAll } from 'rxjs';
+import { forkJoin, interval, map, zipAll } from 'rxjs';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote } from '../model/remote-quote.model';
 import { AssetQuoteType } from '../model/source.model';
 import { ImmutableRemoteQuotesService } from './immutable-remote-quotes.service';
 import { MockRemoteQuotesService } from './mock-remote-quotes.service';
+import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
 import { YahooRemoteQuotesService } from './yahoo-remote-quotes.service';
-import { getMarketPlaceCode } from './quote.service';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +54,7 @@ export class RemoteQuotesService {
     return this.prepareRequestsToUpdateQuotes(assets);
   });
 
-  timerId = timer(2 * 60 * 1000).pipe(
+  timerId = interval(1 * 60 * 1000).pipe(
     map(() => {
       const now = new Date();
       const diffLastUpdate = differenceInMinutes(now, this.lastUpdate());
