@@ -166,6 +166,7 @@ export class PortfolioService {
 
       this.sourceService.updatePortfolio([{
         ...portfolio,
+        ...changes,
         allocations: Object.entries(updatedAllocations).reduce((acc, [ticker, item]) => {
           acc[ticker] = {
             ...item,
