@@ -18,9 +18,9 @@
         </tr>
     </thead>
 
-    <tbody class="table-group-divider">
-        @for(portfolio of portfolios(); track portfolio.id) {
-        <tr class="row-master">
+    <tbody class="table-group-divider" [formGroup]="formSliders">
+        @for(portfolio of portfolios(); track portfolio.id; let index = $index) {
+        <tr class="row-master" [formArrayName]="'sliders'">
             <td class="column-name">
                 <div>
                     <button class="button-toggle" type="button" aria-label="Toggle portfolio details" [attr.aria-expanded]="isExpanded(portfolio) ? 'true' : 'false'" (click)="toggleExpanded(portfolio)">
@@ -31,6 +31,12 @@
             </td>
             <td class="column-percPlanned">
                 <span></span>
+                @if (editable()) {
+                    <mat-slider min="0" max="100" step="0.5" [attr.aria-label]="'Slider for ' + portfolio.name">
+                        <input matSliderThumb [formControlName]="index" #slider 
+                            (valueChange)="updateSlider(index, $event)" />
+                    </mat-slider>
+                }
                 {{ portfolio.percPlanned | number:'1.2-2' }}%
             </td>
             <td class="column-percAllocation" >

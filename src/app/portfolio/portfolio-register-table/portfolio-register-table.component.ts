@@ -1,11 +1,13 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faChevronDown, faChevronRight, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
@@ -21,10 +23,12 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
     MatTableModule,
     MatButtonModule,
     MatIconModule,
+    MatIconModule,
+    MatSliderModule,
     FaIconComponent,
     PercentPipe,
     DecimalPipe,
-    MatIconModule,
+    ReactiveFormsModule,
     InvestmentPortfolioTableComponent
   ],
   animations: [
@@ -38,7 +42,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
   templateUrl: './portfolio-register-table.component.html',
   styleUrl: './portfolio-register-table.component.scss'
 })
-export class PortfolioRegisterTableComponent {
+export class PortfolioRegisterTableComponent implements OnInit {
   deletePortfolio(_t15: PortfolioAllocationsArrayItemType) {
     throw new Error('Method not implemented.');
   }
@@ -50,6 +54,8 @@ export class PortfolioRegisterTableComponent {
   }
   
   private portfolioService = inject(PortfolioService);
+
+  private fb = inject(FormBuilder);
   
   readonly iconClose = faChevronRight;
   readonly iconOpen = faChevronDown;
@@ -66,6 +72,43 @@ export class PortfolioRegisterTableComponent {
   expandedElement: DatasourceMasterType | null = null;
 
   editable = input<boolean>(false)
+
+  s = [];
+  value = 0;
+
+  formSliders = this.fb.group({
+    sliders : this.fb.array([]),
+  });
+
+  sliders = signal<{portfolio: PortfolioAllocationsArrayItemType, percPlanned: number}[]>([]);
+
+  get slidersControl() {
+    return this.formSliders.get('sliders') as FormArray<FormControl<number | null>>;
+  }
+
+  constructor() {
+    this.portfolios().map(portfolio=>portfolio.percPlanned).forEach(perc=>{
+      this.slidersControl.push(this.fb.control(perc as number));
+    })
+    effect(() => {
+      this.slidersControl.clear();
+      this.portfolios().map(portfolio=>portfolio.percPlanned).forEach(perc=>{
+        this.slidersControl.push(this.fb.control(perc as number));
+      })
+    })
+  }
+
+  ngOnInit(): void {
+
+  }
+
+  updateSlider(index: number, value: number): void {
+    const portfolio = this.portfolios()[index];
+    if (portfolio.percPlanned !== value) {
+      portfolio.percPlanned = value;
+      this.portfolioService.updatePortfolio(portfolio.id, {...portfolio});
+    }
+  }
   
   trackBy(_: number, item: PortfolioAllocationsArrayItemType) {
     return item.id;
