@@ -192,3 +192,7 @@ export type PortfolioType = Omit<PortfolioSourceDataType, "allocations" | "curre
 };
 
 export type PortfolioRecord = Record<string, PortfolioType>;
+
+export type PortfolioAllocationsArrayItemType = Omit<PortfolioType, "allocations"> & {
+    allocations: PortfolioAllocationType[];
+}

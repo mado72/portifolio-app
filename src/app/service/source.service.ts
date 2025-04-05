@@ -103,41 +103,46 @@ export class SourceService {
     return acc;
   }, {} as Record<string, StatementType>));
 
-  readonly portfolioSource = computed<PortfolioRecord>(() => Object.entries(this.dataSource.portfolio()).reduce((acc, [key, item]) => {
-    acc[key] = 
-    {
-      ...item,
-      currency: Currency[item.currency as keyof typeof Currency],
-      total: {
-        initialValue: NaN,
-        marketValue: NaN,
-        percPlanned: NaN,
-        percAllocation: NaN,
-        profit: NaN,
-        performance: NaN
-      },
-      allocations: item.allocations.reduce((allocAcc, alloc) => {
-        const ticker = getMarketPlaceCode(alloc);
-        const initialValue = (alloc.initialValue || alloc.marketValue);
-        const averagePrice = initialValue / alloc.quantity;
-        allocAcc[ticker] = {
-          ...alloc, 
-          ticker,
-          initialValue,
-          averagePrice,
-          quote: {
-            price: NaN,
-            currency: Currency[alloc.quote?.currency as CurrencyType] || Currency.USD
-          },
-          profit: alloc.profit || alloc.marketValue - initialValue,
-          performance: alloc.performance || (alloc.marketValue - initialValue) / initialValue,
-          percAllocation: alloc.percAllocation || 0
-        };
-        return allocAcc;
-      }, {} as Record<string, PortfolioAllocationType>)
-    };
-    return acc;
-  }, {} as Record<string, PortfolioType>));
+  readonly portfolioSource = computed<PortfolioRecord>(() => {
+    const asset = this.dataSource.asset();
+    const entries = Object.entries(this.dataSource.portfolio()).reduce((acc, [key, item]) => {
+      acc[key] = 
+      {
+        ...item,
+        currency: Currency[item.currency as keyof typeof Currency],
+        total: {
+          initialValue: NaN,
+          marketValue: NaN,
+          percPlanned: NaN,
+          percAllocation: NaN,
+          profit: NaN,
+          performance: NaN
+        },
+        allocations: item.allocations.reduce((allocAcc, alloc) => {
+          const ticker = getMarketPlaceCode(alloc);
+          const initialValue = (alloc.initialValue || alloc.marketValue);
+          const averagePrice = initialValue / alloc.quantity;
+          allocAcc[ticker] = {
+            ...asset[ticker],
+            ...alloc, 
+            ticker,
+            initialValue,
+            averagePrice,
+            quote: {
+              price: NaN,
+              currency: Currency[alloc.quote?.currency as CurrencyType] || Currency.USD
+            },
+            profit: alloc.profit || alloc.marketValue - initialValue,
+            performance: alloc.performance || (alloc.marketValue - initialValue) / initialValue,
+            percAllocation: alloc.percAllocation || 0
+          };
+          return allocAcc;
+        }, {} as Record<string, PortfolioAllocationType>)
+      };
+      return acc;
+    }, {} as Record<string, PortfolioType>);
+    return entries;
+  });
 
   constructor() { }
 
