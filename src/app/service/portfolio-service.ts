@@ -1,9 +1,11 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { calcPosition } from '../model/portfolio.model';
-import { PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord } from '../model/source.model';
+import { PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
+import { MatDialog } from '@angular/material/dialog';
+import { PortfolioRegisterDialogComponent } from '../portfolio/portfolio-register-dialog/portfolio-register-dialog.component';
 
 export type PortfolioChangeType = {
   name?: string;
@@ -21,6 +23,8 @@ export type PortfolioChangeType = {
 export class PortfolioService {
 
   private sourceService = inject(SourceService);
+
+  private dialog = inject(MatDialog);
 
   private quoteService = inject(QuoteService);
 
@@ -84,12 +88,12 @@ export class PortfolioService {
       .filter(portfolio => Object.keys(portfolio.allocations).includes(ticker));
   }
 
-  addPortfolio(name: string, currency: CurrencyType) {
+  addPortfolio({ name, currency, percPlanned }: { name: string; currency: CurrencyType; percPlanned: number; }) {
     this.sourceService.addPortfolio({
       id: '',
       name,
+      percPlanned,
       currency: Currency[currency],
-      percPlanned: 0,
       allocations: {},
       total: {
         initialValue: 0,
@@ -177,6 +181,29 @@ export class PortfolioService {
         }, {} as PortfolioAllocationRecord),
       }]);
     }
+  }
+
+  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number} }) {
+    let portfolio: PortfolioType;
+    if (typeof portfolioInfo === 'string') {
+      portfolio = this.getPortfolioById(portfolioInfo as string);
+    }
+    else {
+      portfolio = {
+        ...portfolioInfo,
+        allocations: {},
+        total: {}
+      } as PortfolioType;
+    }
+
+    const dialogRef = this.dialog.open(PortfolioRegisterDialogComponent, {
+      data: {
+        title,
+        portfolio
+      },
+      width: '500px',
+    });
+    return dialogRef;
   }
   
 }
