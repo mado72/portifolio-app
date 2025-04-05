@@ -17,13 +17,6 @@ export const registrationRoutes: Routes = [
         }
     },
     {
-        path: 'portfolios',
-        loadComponent: () => import('../portfolio/investment-portfolio-container/investment-portfolio-container.component').then(mod => mod.InvestmentPortfolioContainerComponent),
-        data: {
-            editMode: true
-        }
-    },
-    {
         path: 'portfolios/edit',
         loadComponent: () => import('../portfolio/portfolio-register-table/portfolio-register-table.component').then(mod => mod.PortfolioRegisterTableComponent),
     },
