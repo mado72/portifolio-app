@@ -115,7 +115,7 @@ export class PortfolioRegisterTableComponent {
   }
 
   addPortfolio() {
-    const dialogRef = this.portfolioService.openPortfolioDialog({
+    this.portfolioService.openPortfolioDialog({
       title: 'Adicionar carteira',
       portfolioInfo: {
         name: '',
@@ -123,31 +123,12 @@ export class PortfolioRegisterTableComponent {
         percPlanned: 0,
       }
     });
-
-    dialogRef.afterClosed().subscribe((result: PortfolioType) => {
-      if (result) {
-        this.portfolioService.addPortfolio({ ...result });
-      }
-    });
   }
   
   editPortfolio(portfolioId: string) {
-    const dialogRef = this.portfolioService.openPortfolioDialog({
+    this.portfolioService.openPortfolioDialog({
       title: 'Editar carteira',
       portfolioInfo: portfolioId
-    });
-
-    dialogRef.afterClosed().subscribe((result: PortfolioType) => {
-      if (result) {
-        this.portfolioService.updatePortfolio(portfolioId, { 
-          ...result, 
-          allocations: result.allocations && Object.values(result.allocations).map(allocation => ({
-            ticker: allocation.ticker,
-            percPlanned: allocation.percPlanned,
-            quantity: allocation.quantity
-          }))
-        });
-      }
     });
   }
 

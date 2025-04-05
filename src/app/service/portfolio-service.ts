@@ -208,6 +208,22 @@ export class PortfolioService {
       },
       width: '500px',
     });
+    dialogRef.afterClosed().subscribe((result: PortfolioType) => {
+      if (result) {
+        if (! portfolio.id) {
+          this.addPortfolio({ ...result });
+        } else {
+          this.updatePortfolio(portfolio.id, { 
+            ...result, 
+            allocations: result.allocations && Object.values(result.allocations).map(allocation => ({
+              ticker: allocation.ticker,
+              percPlanned: allocation.percPlanned,
+              quantity: allocation.quantity
+            }))
+          });
+        }
+      }
+    });
     return dialogRef;
   }
   
