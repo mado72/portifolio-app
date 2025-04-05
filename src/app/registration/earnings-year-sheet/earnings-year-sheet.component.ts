@@ -171,9 +171,9 @@ export class EarningsYearSheetComponent implements OnInit {
 
   earningToRow(earning: Income) {
     return {
-      ticker: earning.ticker,
-      description: this.asset[earning.ticker].name,
-      acronymEarn: EARNING_ACRONYM[earning.type],
+      ticker: earning?.ticker,
+      description: this.asset[earning?.ticker]?.name || '',
+      acronymEarn: EARNING_ACRONYM[earning?.type] || EARNING_ACRONYM[IncomeEnum.DIVIDENDS],
       rowspan: 1,
       entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
     } as SheetRow;

@@ -36,8 +36,7 @@ export class PortfolioService {
     return acc;
   }, {} as PortfolioRecord))
 
-  readonly total = computed(() => ({
-    ...this.getAllPortfolios()
+  readonly total = computed(() => this.getAllPortfolios()
       .map(portfolio=>({
         ...portfolio.total,
         percPlanned: portfolio.percPlanned
@@ -50,8 +49,14 @@ export class PortfolioService {
         acc.percAllocation += portfolio.percAllocation;
         acc.percPlanned += portfolio.percPlanned;
         return acc;
-      })
-  }))
+      }, {
+            initialValue: 0,
+            marketValue: 0,
+            profit: 0,
+            performance: 0,
+            percAllocation: 0,
+            percPlanned: 0
+      }))
 
   readonly portfolioAllocation = computed(() => 
     this.getAllPortfolios().map(portfolio => ({
@@ -71,7 +76,7 @@ export class PortfolioService {
   }
 
   getAllPortfolios() {
-    return Object.values(this.portfolios());
+    return Object.values(this.portfolios()) ;
   }
 
   // getPortfolioAllocations(portfolio: PortfolioDataType) {
