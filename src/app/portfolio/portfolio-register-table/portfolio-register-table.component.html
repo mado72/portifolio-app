@@ -34,8 +34,11 @@
                 @if (editable()) {
                     <mat-slider min="0" max="100" step="0.5" [attr.aria-label]="'Slider for ' + portfolio.name">
                         <input matSliderThumb [formControlName]="index" #slider 
-                            (valueChange)="updateSlider(index, $event)" />
+                            (valueChange)="updateSlider(index, $event)" [value]="slidersControl.at(index).value" />
                     </mat-slider>
+                    <button mat-icon-button type="button" class="tune-button" (click)="fillToHundredPercent(index)">
+                        <mat-icon>tune</mat-icon>
+                    </button>
                 }
                 {{ portfolio.percPlanned | number:'1.2-2' }}%
             </td>
@@ -56,10 +59,10 @@
                 {{ portfolio.total.performance | percent:'1.2-2' }}
             </td>
             <td class="column-actions d-flex justify-content-end">
-                <button mat-icon-button type="button" (click)="editPortfolio(portfolio)" [disabled]="!editable()" class="edit-button small-icon-button" [attr.aria-label]="'Edit portfolio ' + portfolio.name">
+                <button mat-icon-button type="button" (click)="editPortfolio(portfolio.id)" [disabled]="!editable()" class="edit-button small-icon-button" [attr.aria-label]="'Edit portfolio ' + portfolio.name">
                      <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button type="button" (click)="deletePortfolio(portfolio)" [disabled]="!editable()" class="delete-button small-icon-button" [attr.aria-label]="'Delete portfolio ' + portfolio.name">
+                <button mat-icon-button type="button" (click)="deletePortfolio(portfolio.id)" [disabled]="!editable()" class="delete-button small-icon-button" [attr.aria-label]="'Delete portfolio ' + portfolio.name">
                     <mat-icon>delete</mat-icon>
                 </button>
             </td>
@@ -84,7 +87,6 @@
             </td>
             <td class="column-percAllocation">
                 <span></span>
-                {{ total().percAllocation | percent:'1.2-2' }}
             </td>
             <td class="column-marketValue">
                 <span>BRL</span>
@@ -103,4 +105,8 @@
     </tfoot>
 
 </table>
-
+<!-- <code>
+    <pre>
+formSliders: {{formSliders.value | json}}
+    </pre>
+</code> -->

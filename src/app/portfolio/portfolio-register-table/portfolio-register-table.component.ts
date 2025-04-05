@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,6 +8,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { Currency } from '../../model/domain.model';
 import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
@@ -42,16 +43,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
   templateUrl: './portfolio-register-table.component.html',
   styleUrl: './portfolio-register-table.component.scss'
 })
-export class PortfolioRegisterTableComponent implements OnInit {
-  deletePortfolio(_t15: PortfolioAllocationsArrayItemType) {
-    throw new Error('Method not implemented.');
-  }
-  editPortfolio(_t15: PortfolioAllocationsArrayItemType) {
-    throw new Error('Method not implemented.');
-  }
-  addPortfolio() {
-    throw new Error('Method not implemented.');
-  }
+export class PortfolioRegisterTableComponent {
   
   private portfolioService = inject(PortfolioService);
 
@@ -80,8 +72,6 @@ export class PortfolioRegisterTableComponent implements OnInit {
     sliders : this.fb.array([]),
   });
 
-  sliders = signal<{portfolio: PortfolioAllocationsArrayItemType, percPlanned: number}[]>([]);
-
   get slidersControl() {
     return this.formSliders.get('sliders') as FormArray<FormControl<number | null>>;
   }
@@ -96,10 +86,6 @@ export class PortfolioRegisterTableComponent implements OnInit {
         this.slidersControl.push(this.fb.control(perc as number));
       })
     })
-  }
-
-  ngOnInit(): void {
-
   }
 
   updateSlider(index: number, value: number): void {
@@ -127,4 +113,55 @@ export class PortfolioRegisterTableComponent implements OnInit {
       this.expanded.push(portfolio.id);
     }
   }
+
+  addPortfolio() {
+    const dialogRef = this.portfolioService.openPortfolioDialog({
+      title: 'Adicionar carteira',
+      portfolioInfo: {
+        name: '',
+        currency: Currency.BRL,
+        percPlanned: 0,
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: PortfolioType) => {
+      if (result) {
+        this.portfolioService.addPortfolio({ ...result });
+      }
+    });
+  }
+  
+  editPortfolio(portfolioId: string) {
+    const dialogRef = this.portfolioService.openPortfolioDialog({
+      title: 'Editar carteira',
+      portfolioInfo: portfolioId
+    });
+
+    dialogRef.afterClosed().subscribe((result: PortfolioType) => {
+      if (result) {
+        this.portfolioService.updatePortfolio(portfolioId, { 
+          ...result, 
+          allocations: result.allocations && Object.values(result.allocations).map(allocation => ({
+            ticker: allocation.ticker,
+            percPlanned: allocation.percPlanned,
+            quantity: allocation.quantity
+          }))
+        });
+      }
+    });
+  }
+
+  deletePortfolio(portfolioId: string) {
+    this.portfolioService.removePortfolio(portfolioId);
+  }
+
+  fillToHundredPercent(index: number) {
+    const total = this.portfolios().filter((_, idx)=>idx!==index).reduce((acc, p) => acc + p.percPlanned, 0);
+    const portfolio = this.portfolios()[index]
+    if (!portfolio) return;
+    portfolio.percPlanned = 100 - total;
+    this.slidersControl.at(index).setValue(portfolio.percPlanned);
+    this.portfolioService.updatePortfolio(portfolio.id, {...portfolio});
+  }
+
 }
