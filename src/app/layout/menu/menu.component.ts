@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DownloadDataDirective } from '../../../data/util/download-data.directive';
 import { UploadDataDirective } from '../../utils/upload-data.directive';
+import { EmptyDataDirective } from '../../util/empty-data.directive';
 
 @Component({
   selector: 'app-menu',
@@ -9,7 +10,8 @@ import { UploadDataDirective } from '../../utils/upload-data.directive';
   imports: [
     RouterLink,
     DownloadDataDirective,
-    UploadDataDirective
+    UploadDataDirective,
+    EmptyDataDirective
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'

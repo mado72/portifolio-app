@@ -179,6 +179,17 @@ export class SourceService {
     }
   }
 
+  emptyAllData() {
+    this.dataSource.asset.set({});
+    this.dataSource.balance.set({});
+    this.dataSource.classConsolidation.set({});
+    this.dataSource.income.set({});
+    this.dataSource.transaction.set({});
+    this.dataSource.statement.set({});
+    this.dataSource.portfolio.set({});
+    alert('Todos os dados foram excluídos!');
+  }
+
   /**
    * This function downloads the current data source as a JSON file.
    * It converts the data source object to a JSON string, creates a Blob object,
