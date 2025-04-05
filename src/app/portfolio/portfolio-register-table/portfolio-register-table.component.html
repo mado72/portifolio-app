@@ -1,6 +1,7 @@
 @if(editable()) {
 <div class="d-flex mb-3">
     <button mat-button type="button" (click)="addPortfolio()">Adicionar Carteira</button>
+    <button mat-button type="button" (click)="addTransaction()">Adicionar Transação</button>
 </div>
 }
 <table class="table table-stick mat-elevation-z8 table-responsive" id="table-master" [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">

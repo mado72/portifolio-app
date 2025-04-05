@@ -50,22 +50,7 @@ export class TransactionTableComponent {
   }
 
   addTransaction() {
-    this.transactionService.openDialog({
-      newTransaction: true,
-      title: 'Adicionar Transação',
-      transaction: {
-        id: '',
-        ticker: '',
-        date: new Date(),
-        accountId: '',
-        quantity: 0,
-        quote: NaN,
-        value: { price: 0, currency: Currency.BRL },
-        type: TransactionEnum.BUY,
-        status: TransactionStatus.COMPLETED
-      },
-      portfolios: []
-    })
+    this.transactionService.openAddDialog()
   }
 
   deleteTransaction(event: MouseEvent, transaction: TransactionType) {

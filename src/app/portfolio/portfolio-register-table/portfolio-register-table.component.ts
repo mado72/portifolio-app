@@ -11,6 +11,7 @@ import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons
 import { Currency } from '../../model/domain.model';
 import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
+import { TransactionService } from '../../service/transaction.service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"> & {
@@ -46,6 +47,8 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
 export class PortfolioRegisterTableComponent {
   
   private portfolioService = inject(PortfolioService);
+
+  private transactionService = inject(TransactionService);
 
   private fb = inject(FormBuilder);
   
@@ -135,7 +138,10 @@ export class PortfolioRegisterTableComponent {
   deletePortfolio(portfolioId: string) {
     this.portfolioService.removePortfolio(portfolioId);
   }
-
+  addTransaction() {
+    this.transactionService.openAddDialog()
+  }
+    
   fillToHundredPercent(index: number) {
     const total = this.portfolios().filter((_, idx)=>idx!==index).reduce((acc, p) => acc + p.percPlanned, 0);
     const portfolio = this.portfolios()[index]

@@ -10,16 +10,16 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { combineLatest, startWith } from 'rxjs';
 import { Currency } from '../../model/domain.model';
+import { divide } from '../../model/functions.model';
 import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
+import { AssetQuoteType, PortfolioType, TransactionType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
+import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
-import { PortfolioService } from '../../service/portfolio-service';
-import { combineLatest, startWith } from 'rxjs';
-import { divide } from '../../model/functions.model';
-import { AssetQuoteType, PortfolioType, TransactionType } from '../../model/source.model';
 
 type Pages = "Asset" | "Portfolio";
 

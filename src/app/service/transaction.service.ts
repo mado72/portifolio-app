@@ -1,10 +1,11 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TransactionEnum } from '../model/investment.model';
+import { TransactionEnum, TransactionStatus } from '../model/investment.model';
 import { TransactionType } from '../model/source.model';
 import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
+import { Currency } from '../model/domain.model';
 
 @Injectable({
   providedIn: 'root'
@@ -83,5 +84,24 @@ export class TransactionService {
         });
       }
     });
+  }
+
+  openAddDialog() {
+    this.openDialog({
+          newTransaction: true,
+          title: 'Adicionar Transação',
+          transaction: {
+            id: '',
+            ticker: '',
+            date: new Date(),
+            accountId: '',
+            quantity: 0,
+            quote: NaN,
+            value: { price: 0, currency: Currency.BRL },
+            type: TransactionEnum.BUY,
+            status: TransactionStatus.COMPLETED
+          },
+          portfolios: []
+        });
   }
 }
