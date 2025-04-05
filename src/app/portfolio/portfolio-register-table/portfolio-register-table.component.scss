@@ -2,8 +2,9 @@
 $width-name: 25%;
 $width-perc: 15%;
 $width-currency: 5%;
-$width-profit: 20%;
+$width-profit: 15%;
 $width-performance: 20%;
+$width-actions: 50px;
 $padding-right-perc: 5%;
 
 #table-master {
@@ -70,6 +71,7 @@ $padding-right-perc: 5%;
     padding-right: $padding-right-perc !important;
   }
   
+  .column-actions,
   .column-marketValue,
   .column-profit,
   .column-allocation,
@@ -77,6 +79,17 @@ $padding-right-perc: 5%;
   .column-percPlanned,
   .column-percAllocation {
     text-align: right;
+  }
+
+  &.table-readonly {
+    .column-actions {
+      display:none !important;
+    }
+  }
+
+  .column-actions {
+    min-width: $width-actions;
+    max-width: $width-actions;
   }
   
   .column-name {
@@ -157,4 +170,12 @@ $padding-right-perc: 5%;
   width: 12px !important;
   height: 12px!important;
   margin: 0 8px 0 0;
+}
+
+.edit-button {
+  color: var(--bs-primary);
+}
+
+.delete-button {
+  color: var(--bs-danger);
 }

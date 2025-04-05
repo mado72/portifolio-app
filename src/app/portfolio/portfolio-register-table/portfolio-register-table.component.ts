@@ -1,11 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
-import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faChevronDown, faChevronRight, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
@@ -24,6 +24,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
     FaIconComponent,
     PercentPipe,
     DecimalPipe,
+    MatIconModule,
     InvestmentPortfolioTableComponent
   ],
   animations: [
@@ -38,13 +39,21 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
   styleUrl: './portfolio-register-table.component.scss'
 })
 export class PortfolioRegisterTableComponent {
-
+  deletePortfolio(_t15: PortfolioAllocationsArrayItemType) {
+    throw new Error('Method not implemented.');
+  }
+  editPortfolio(_t15: PortfolioAllocationsArrayItemType) {
+    throw new Error('Method not implemented.');
+  }
+  addPortfolio() {
+    throw new Error('Method not implemented.');
+  }
+  
   private portfolioService = inject(PortfolioService);
-
+  
   readonly iconClose = faChevronRight;
-
   readonly iconOpen = faChevronDown;
-
+  
   readonly displayedColumns = ['name', 'percPlanned', 'percAllocation', 'marketValue', 'profit', 'performance'];
 
   // displayedColumns = ['id', 'name', 'actions'];
@@ -55,6 +64,8 @@ export class PortfolioRegisterTableComponent {
   portfolios = computed(() => this.portfolioService.portfolioAllocation());
 
   expandedElement: DatasourceMasterType | null = null;
+
+  editable = input<boolean>(false)
   
   trackBy(_: number, item: PortfolioAllocationsArrayItemType) {
     return item.id;

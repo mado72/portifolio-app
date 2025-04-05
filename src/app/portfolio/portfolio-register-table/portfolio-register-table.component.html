@@ -1,13 +1,20 @@
-<table class="table table-stick mat-elevation-z8 table-responsive" id="table-master">
+@if(editable()) {
+<div class="d-flex mb-3">
+    <button mat-button type="button" (click)="addPortfolio()">Adicionar Carteira</button>
+</div>
+}
+<table class="table table-stick mat-elevation-z8 table-responsive" id="table-master" [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">
+    <caption class="visually-hidden">Tabela de carteiras</caption>
 
     <thead>
         <tr>
-            <th>Carteira</th>
-            <th>Planejado (%)</th>
-            <th>Alocação (%)</th>
-            <th>Valor de Mercado</th>
-            <th>Resultado</th>
-            <th>Resultado (%)</th>
+            <th class="column-name">Carteira</th>
+            <th class="column-percPlanned">Planejado (%)</th>
+            <th class="column-percAllocation">Alocação (%)</th>
+            <th class="column-marketValue">Valor de Mercado</th>
+            <th class="column-profit" >Resultado</th>
+            <th class="column-performance" >Resultado (%)</th>
+            <th class="column-actions"></th>
         </tr>
     </thead>
 
@@ -42,11 +49,19 @@
                 <span></span>
                 {{ portfolio.total.performance | percent:'1.2-2' }}
             </td>
+            <td class="column-actions d-flex justify-content-end">
+                <button mat-icon-button type="button" (click)="editPortfolio(portfolio)" [disabled]="!editable()" class="edit-button small-icon-button" [attr.aria-label]="'Edit portfolio ' + portfolio.name">
+                     <mat-icon inline="true" fontIcon="edit"></mat-icon>
+                </button>
+                <button mat-icon-button type="button" (click)="deletePortfolio(portfolio)" [disabled]="!editable()" class="delete-button small-icon-button" [attr.aria-label]="'Delete portfolio ' + portfolio.name">
+                    <mat-icon inline="true" fontIcon="delete"></mat-icon>
+                </button>
+            </td>
         </tr>
         <tr class="row-expansible" [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [style.overflow]="isExpanded(portfolio) ? 'auto' : 'hidden'">
-            <td colspan="7" class="px-4 py-2 mb-4 w-100 d-flex flex-column align-items-start">
+            <td colspan="8" class="px-4 py-2 mb-4 w-100 d-flex flex-column align-items-start">
                 <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
-                <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3"></app-investment-portfolio-table>
+                <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3" [editMode]="editable()"></app-investment-portfolio-table>
             </td>
         </tr>
         } 
@@ -77,6 +92,7 @@
                 <span></span>
                 {{ total().performance | percent:'1.2-2' }}
             </td>
+            <td class="column-actions"></td>
         </tr>
     </tfoot>
 
