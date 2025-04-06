@@ -1,6 +1,15 @@
+.edit-button {
+    color: var(--bs-primary)
+}
+.delete-button {
+    color: var(--bs-danger)
+}
 .mat-column-trend, .mat-column-controlByQty, .mat-column-manualQuote {
     text-align: center !important;
 }
 .mat-column-lastUpdate {
     text-align: end !important;
+}
+.controlBy-yes {
+    color: var(--bs-success) !important;
 }
