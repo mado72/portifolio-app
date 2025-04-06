@@ -11,7 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { combineLatest, startWith } from 'rxjs';
-import { Currency } from '../../model/domain.model';
+import { AccountTypeEnum, Currency } from '../../model/domain.model';
 import { divide } from '../../model/functions.model';
 import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
 import { AssetQuoteType, PortfolioType, TransactionType } from '../../model/source.model';
@@ -20,6 +20,7 @@ import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
+import { BalanceService } from '../../service/balance.service';
 
 type Pages = "Asset" | "Portfolio";
 
@@ -70,6 +71,8 @@ export class TransactionDialogComponent implements OnInit {
   private quoteService = inject(QuoteService);
 
   private portfolioService = inject(PortfolioService);
+
+  private balanceService = inject(BalanceService);
   
   private fb = inject(FormBuilder);
 
@@ -109,6 +112,11 @@ export class TransactionDialogComponent implements OnInit {
   })
 
   portfolioList = signal(this.portfolios.value)
+
+  accounts = computed(() => 
+    Object.values(this.balanceService.getAllBalances())
+      .filter(balance => balance.type === AccountTypeEnum.INVESTMENT)
+      .map(balance=>[balance.id, balance.account]))
 
   ngOnInit(): void {
     const ticker = this.data.newTransaction? undefined : this.data.transaction.ticker;

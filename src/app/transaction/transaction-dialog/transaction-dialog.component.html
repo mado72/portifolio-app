@@ -57,7 +57,11 @@
             
                         <mat-form-field class="ms-4">
                             <mat-label>Conta</mat-label>
-                            <input type="text" matInput formControlName="accountId" required>
+                            <mat-select formControlName="accountId">
+                                @for (account of accounts(); track $index) {
+                                    <mat-option [value]="account[0]">{{ account[1] }}</mat-option>
+                                }
+                            </mat-select>
                             @if (accountId.invalid && accountId.touched) {
                             <mat-error>
                                 Campo obrigatório
