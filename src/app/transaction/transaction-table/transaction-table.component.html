@@ -58,7 +58,7 @@
     <ng-container matColumnDef="account">
         <mat-header-cell *matHeaderCellDef> Conta </mat-header-cell>
         <mat-cell *matCellDef="let row">
-            {{ getAccount(row.accountId) }}
+            {{ accounts()[row.accountId].accountName }}
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>

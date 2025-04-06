@@ -116,7 +116,7 @@ export class TransactionDialogComponent implements OnInit {
   accounts = computed(() => 
     Object.values(this.balanceService.getAllBalances())
       .filter(balance => balance.type === AccountTypeEnum.INVESTMENT)
-      .map(balance=>[balance.id, balance.account]))
+      .map(balance=>[balance.id, balance.accountName]))
 
   ngOnInit(): void {
     const ticker = this.data.newTransaction? undefined : this.data.transaction.ticker;

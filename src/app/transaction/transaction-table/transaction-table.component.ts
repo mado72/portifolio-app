@@ -4,13 +4,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { Currency } from '../../model/domain.model';
-import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
+import { TransactionType } from '../../model/source.model';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
 import { TransactionTypePipe } from '../transaction-type.pipe';
-import { TransactionType } from '../../model/source.model';
+import { BalanceService } from '../../service/balance.service';
 
 
 @Component({
@@ -33,7 +32,7 @@ export class TransactionTableComponent {
 
   private transactionService = inject(TransactionService);
 
-  private dialog = inject(MatDialog);
+  private balanceService = inject(BalanceService);
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
@@ -43,11 +42,7 @@ export class TransactionTableComponent {
     return this.transactionService.transactionSignal();
   });
 
-
-  getAccount(accountId: string) {
-    // Simulate fetching account details
-    return `Account ${accountId}`;
-  }
+  readonly accounts = computed(() => this.balanceService.getAllBalances())
 
   addTransaction() {
     this.transactionService.openAddDialog()

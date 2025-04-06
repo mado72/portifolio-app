@@ -72,7 +72,7 @@ export type AssetQuoteRecord = Record<string, AssetQuoteType>;
 
 export type BalanceSourceDataType = {
     id: string;
-    account: string;
+    accountName: string;
     balance: number;
     currency: string;
     type: string;

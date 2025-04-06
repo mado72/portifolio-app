@@ -47,7 +47,7 @@ export class BalancesComponent implements OnInit {
       }, {} as Record<string, AccountBalanceExchangeSelectable>))
 
   dataSource = computed(() => [...Object.values(this.balances())
-    .sort((balance1, balance2)=>balance1.account.localeCompare(balance2.account))
+    .sort((balance1, balance2)=>balance1.accountName.localeCompare(balance2.accountName))
   ])
 
   totalBalance = 0;
