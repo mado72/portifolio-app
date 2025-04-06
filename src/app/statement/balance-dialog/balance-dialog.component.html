@@ -27,9 +27,9 @@
             <ng-container formGroupName="balance">
                 <mat-form-field>
                     <mat-label>Saldo</mat-label>
-                    <input type="number" matInput formControlName="amount" required>
-                    @if (amount.invalid && amount.touched) {
-                        @if(amount.getError('required')) {
+                    <input type="number" matInput formControlName="price" required class="text-end">
+                    @if (price.invalid && price.touched) {
+                        @if(price.getError('required')) {
                             <mat-error >
                                 Campo obrigatório
                             </mat-error>

@@ -54,8 +54,9 @@ export class SourceService {
       type: AccountTypeEnum[item.type as keyof typeof AccountTypeEnum],
       balance: {
         price: item.balance,
-        currency: Currency[item.currency as CurrencyType]
-      }
+        currency: Currency[item.currency as CurrencyType],
+      },
+      date: parseISO(item.date)
     };
     return acc;
   }, {} as Record<string, BalanceType>));
@@ -313,7 +314,8 @@ export class SourceService {
         ...item,
         id: uuid(),
         balance: item.balance.price,
-        currency: item.balance.currency
+        currency: item.balance.currency,
+        date: formatISO(new Date())
       }])
     }))
   }
@@ -324,7 +326,8 @@ export class SourceService {
       ...this.balanceToRecord(changes.map(item => ({
         ...item,
         balance: item.balance.price,
-        currency: item.balance.currency
+        currency: item.balance.currency,
+        date: formatISO(new Date())
       })))
     }))
   }

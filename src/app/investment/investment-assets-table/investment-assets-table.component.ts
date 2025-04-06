@@ -1,4 +1,4 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, input, OnInit, TrackByFunction } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -26,8 +26,7 @@ import { TrendComponent } from '../../utils/trend/trend.component';
     CurrencyComponent,
     TrendComponent,
     AssetTypePipe,
-    AssetCodePipe,
-    JsonPipe
+    AssetCodePipe
   ],
   templateUrl: './investment-assets-table.component.html',
   styleUrl: './investment-assets-table.component.scss'

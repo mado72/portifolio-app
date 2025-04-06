@@ -1,19 +1,26 @@
-import { Component, inject, Input, OnInit, signal, WritableSignal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
-import { tap } from 'rxjs';
 import { AccountBalanceExchange, AccountTypeEnum, Currency } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
-import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { MatDialog } from '@angular/material/dialog';
-import { BalanceDialogComponent } from '../balance-dialog/balance-dialog.component';
 import { SourceService } from '../../service/source.service';
+import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { MatIconModule } from '@angular/material/icon';
+
+type AccountBalanceExchangeSelectable = AccountBalanceExchange & {
+  selected: boolean;
+}
 
 @Component({
   selector: 'app-balances',
   standalone: true,
   imports: [
     MatTableModule,
-    CurrencyComponent
+    MatButtonModule,
+    MatIconModule,
+    CurrencyComponent,
+    DatePipe
   ],
   templateUrl: './balances.component.html',
   styleUrl: './balances.component.scss'
@@ -24,29 +31,44 @@ export class BalancesComponent implements OnInit {
 
   private balanceService = inject(BalanceService);
 
-  private dialog = inject(MatDialog);
+  currency = this.sourceService.currencyDefault;
 
-  currency: Currency = this.sourceService.currencyDefault();
+  editable = input<boolean>(false);
 
-  @Input() editEnable = false;
-  
-  totalBalance: WritableSignal<number> = signal(0);
-  totalBalanceChecking: WritableSignal<number> = signal(0);
+  selects = signal<string[]>(
+    this.balanceService.getBalancesByCurrencyExchange(this.currency())
+      .map(item => item.id))
 
-  balances = signal<AccountBalanceExchange[]>([]);
+  balances = computed<Record<string, AccountBalanceExchangeSelectable>>(()=>
+    this.balanceService.getBalancesByCurrencyExchange(this.currency())
+      .reduce((acc, item) => {
+        acc[item.id] = { ...item, selected: this.selects().includes(item.id) };
+        return acc;
+      }, {} as Record<string, AccountBalanceExchangeSelectable>))
 
-  actives: AccountBalanceExchange[] = [];
+  dataSource = computed(() => [...Object.values(this.balances())
+    .sort((balance1, balance2)=>balance1.account.localeCompare(balance2.account))
+  ])
 
-  ngOnInit(): void {
-    this.reloadBalances();
+  totalBalance = 0;
+
+  totalBalanceChecking = 0;
+
+  readonly displayedColumn = ['account', 'balanceQuote', 'balance'];
+
+  constructor() {
+    effect(()=> {
+      this.totalBalance = this.summarize(this.dataSource().filter(item => item.selected))
+
+      this.totalBalanceChecking = this.summarize(this.dataSource()
+        .filter(item => item.selected && item.type === AccountTypeEnum.CHECKING))
+    })
   }
-
-  reloadBalances() {
-    const balances = this.balanceService.getBalancesByCurrencyExchange(this.currency);
-    this.balances.set(balances);
-    this.actives = balances.slice();
-    this.totalBalance.set(this.summarize(this.actives));
-    this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
+  
+  ngOnInit(): void {
+    if (this.editable()) {
+      this.displayedColumn.push('actions');
+    }
   }
 
   summarize(balances: AccountBalanceExchange[]) {
@@ -55,55 +77,32 @@ export class BalancesComponent implements OnInit {
       .reduce((acc, vl) => acc += vl, 0);
   }
 
-  rowClicked(account: AccountBalanceExchange) {
-    if (! this.editEnable) {
-      this.toggleSelect(account);
-    }
-    else {
-      this.editAccount(account);
-    }
+  rowClicked(account: AccountBalanceExchangeSelectable) {
+    this.toggleSelect(account);
   }
 
-  toggleSelect(account: AccountBalanceExchange) {
-    if (this.isNotActivated(account)) {
-      this.actives.push(account);
-    }
-    else {
-      this.actives = this.actives.filter(b => b !== account);
-    }
-    
-    this.totalBalance.set(this.summarize(this.actives));
-    this.totalBalanceChecking.set(this.summarize(this.actives.filter(item => item.type === AccountTypeEnum.CHECKING)));
+  toggleSelect(account: AccountBalanceExchangeSelectable) {
+    this.selects.update(selects=>
+      selects.includes(account.id)
+        ? selects.filter(id => id!== account.id) 
+        : [...selects, account.id]
+    );
   }
 
   editAccount(account: AccountBalanceExchange) {
-    const dialogRef = this.dialog.open(BalanceDialogComponent, {
-      data: {
-        title: 'Editar Conta',
-        account 
-      }
-    });
-
-    dialogRef.afterClosed().subscribe((result: AccountBalanceExchange) => {
-      if (result) {
-        let account = this.balances().find(item => item.id === result.id);
-        if (!account) {
-          this.balanceService.addAccount(result);
-        }
-        else {
-          this.balanceService.updateAccount(account.id, result);
-        }
-        this.reloadBalances();
-      }
-    });
+    this.balanceService.editAccount(account);
   }
 
-  isNotActivated(account: AccountBalanceExchange) {
-    return ! this.actives.includes(account);
+  newAccount() {
+    this.balanceService.newAccount();
+  }
+
+  deleteAccount(account: AccountBalanceExchange) {
+    this.balanceService.deleteAccount(account.id);
   }
 
   isSameCurrency(item: AccountBalanceExchange) {
-    return this.currency === item.balance.currency;
+    return this.currency() === item.balance.currency;
   }
 
 }

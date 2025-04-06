@@ -12,3 +12,13 @@ tr.mat-mdc-footer-row {
     td { border-top: 3px double var(--mat-table-row-item-outline-color); }
     font-weight: bold !important;
 }
+.table-contained {
+    max-width: 640px;
+    width: auto !important;
+}
+.button-edit {
+    color: var(--bs-primary);
+}
+.button-delete {
+    color: var(--bs-danger);
+}

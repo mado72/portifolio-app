@@ -42,8 +42,8 @@ export class BalanceDialogComponent implements OnInit {
     account: this.fb.control('', [Validators.required]),
     type: this.fb.control(AccountTypeEnum.CHECKING, [Validators.required]),
     balance: this.fb.group({
-      currency: this.fb.control('', [Validators.required]),
-      amount: this.fb.control(0, [Validators.required])
+      currency: this.fb.control(this.data.account.balance.currency, [Validators.required]),
+      price: this.fb.control(this.data.account.balance.price, [Validators.required])
     })
   })
 
@@ -66,8 +66,8 @@ export class BalanceDialogComponent implements OnInit {
     return this.entryForm.get('balance.currency') as FormControl;
   }
 
-  get amount() {
-    return this.entryForm.get('balance.amount') as FormControl;
+  get price() {
+    return this.entryForm.get('balance.price') as FormControl;
   }
 
   submitForm() {
@@ -75,7 +75,7 @@ export class BalanceDialogComponent implements OnInit {
   }
 
   add(value: number) {
-    this.amount.setValue(this.amount.value + value);
+    this.price.setValue(this.price.value + value);
   }
     
 }

@@ -1,10 +1,10 @@
 import { inject, Injectable } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { eachMonthOfInterval, getDate, getMonth, setDay } from 'date-fns';
-import { map, Observable, of, tap } from 'rxjs';
-import { v4 as uuid } from 'uuid';
 import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, ForecastDayItem, isStatementExpense, StatementEnum } from '../model/domain.model';
 import { groupBy } from '../model/functions.model';
 import { BalanceType, ClassConsolidationType } from '../model/source.model';
+import { BalanceDialogComponent } from '../statement/balance-dialog/balance-dialog.component';
 import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 
@@ -16,6 +16,8 @@ export class BalanceService {
   private sourceService = inject(SourceService);
 
   private quoteService = inject(QuoteService);
+
+  private dialog = inject(MatDialog);
 
   constructor() { }
 
@@ -287,4 +289,53 @@ export class BalanceService {
     this.sourceService.updateBalance([result]);
   }
 
+  newAccount() {
+    const dialogRef = this.dialog.open(BalanceDialogComponent, {
+      data: {
+        title: 'Nova Conta',
+        account: {
+          type: AccountTypeEnum.CHECKING,
+          balance: {
+            price: 0,
+            currency: this.sourceService.currencyDefault()
+          },
+          date: new Date()
+        }
+      }
+    });
+
+    this.processDialog(dialogRef);
+  }
+
+  editAccount(account: AccountBalanceExchange) {
+    const dialogRef = this.dialog.open(BalanceDialogComponent, {
+      data: {
+        title: 'Editar Conta',
+        account
+      }
+    });
+
+    this.processDialog(dialogRef);
+  }
+
+  protected processDialog(dialogRef: MatDialogRef<BalanceDialogComponent, any>) {
+    dialogRef.afterClosed().subscribe((result: AccountBalanceExchange) => {
+      if (result) {
+        let account = this.sourceService.balanceSource()[result?.id];
+        if (!account) {
+          this.addAccount(result);
+        }
+        else {
+          this.updateAccount(account.id, {
+            ...account,
+            ...result
+          });
+        }
+      }
+    });
+  }
+
+  deleteAccount(id: string) {
+    this.sourceService.deleteBalance(id);
+  }
 }

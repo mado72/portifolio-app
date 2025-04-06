@@ -10,7 +10,7 @@ export const statementRoutes: Routes = [
         path: 'balances',
         loadComponent: () => import('./balances/balances.component').then(mod => mod.BalancesComponent),
         data: {
-            editEnable: true
+            editable: true
         }
     },
     {

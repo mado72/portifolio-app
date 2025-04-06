@@ -1,42 +1,79 @@
-<table mat-table [dataSource]="balances()" class="mat-elevation-z2" [class.mat-table-hover]="!editEnable" [class.mat-table-selectable]="editEnable">
-    <ng-container matColumnDef="account">
-        <td mat-cell *matCellDef="let item"> {{ item.account }}</td>
-        <td mat-footer-cell *matFooterCellDef>
-            Saldo Total
-        </td>
-    </ng-container>
-    <ng-container matColumnDef="balanceQuote">
-        <td mat-cell *matCellDef="let item" class="number"> 
-            <app-currency [value]="item.exchange"></app-currency>
-        </td>
-        <td mat-footer-cell *matFooterCellDef>
-            <app-currency [amount]="totalBalance()"></app-currency>
-        </td>
-    </ng-container>
-    <ng-container matColumnDef="balance">
-        <td mat-cell *matCellDef="let item" class="number"> 
-            @if( ! isSameCurrency(item)) {
-                <app-currency [value]="item.balance"></app-currency>
-            }
-        </td>
-        <td mat-footer-cell *matFooterCellDef></td>
-    </ng-container>
-    <ng-container matColumnDef="accountInv">
-        <td mat-footer-cell *matFooterCellDef>
-            Total C/C
-        </td>
-    </ng-container>
-    <ng-container matColumnDef="balanceWithoutInvest">
-        <td mat-footer-cell *matFooterCellDef>
-            <app-currency [amount]="totalBalanceChecking()"></app-currency>
-        </td>
-    </ng-container>
+@if (editable()) {
+    <div class="page-header">
+        <h3>Contas e Saldos</h3>
+        <button mat-button (click)="newAccount()">Nova Conta</button>
+    </div>
+}
+<div [class.table-contained]="editable()">
+    <table mat-table [dataSource]="dataSource()" class="mat-elevation-z2" [class]="!editable()? 'mat-table-hover' : 'mat-table-selectable'">
+        <ng-container matColumnDef="account">
+            <td mat-header-cell *matHeaderCellDef>Conta</td>
+            <td mat-cell *matCellDef="let item"> {{ item.account }}</td>
+            <td mat-footer-cell *matFooterCellDef>
+                Saldo Total
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="balanceQuote">
+            <td mat-header-cell *matHeaderCellDef>Saldo em {{currency()}}</td>
+            <td mat-cell *matCellDef="let item" class="number"> 
+                <app-currency [value]="item.exchange"></app-currency>
+            </td>
+            <td mat-footer-cell *matFooterCellDef>
+                <app-currency [amount]="totalBalance"></app-currency>
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="balance">
+            <td mat-header-cell *matHeaderCellDef>Saldo na Conta</td>
+            <td mat-cell *matCellDef="let item" class="number"> 
+                @if( ! isSameCurrency(item)) {
+                    <app-currency [value]="item.balance"></app-currency>
+                }
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+        <ng-container matColumnDef="balanceDate">
+            <td mat-header-cell *matHeaderCellDef>Data da Atualização</td>
+            <td mat-cell *matCellDef="let item"> {{ item.date | date: 'dd/MM/yyyy' }}</td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+            <td mat-header-cell *matHeaderCellDef>Ações</td>
+            <td mat-cell *matCellDef="let item" class="text-end">
+                @if (editable()) {
+                    <button mat-icon-button (click)="$event.stopPropagation(); editAccount(item)" class="button-edit">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="$event.stopPropagation(); deleteAccount(item)" class="button-delete">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                }
+            </td>
+            <td mat-footer-cell *matFooterCellDef></td>
+        </ng-container>
     
-    <tr mat-row *matRowDef="let row; columns: ['account', 'balanceQuote', 'balance'];" 
-        [class.inactivated]="isNotActivated(row)"
-        (click)="rowClicked(row)"
-        ></tr>
     
-    <tr mat-footer-row *matFooterRowDef="['account', 'balanceQuote', 'balance']"></tr>
-    <tr mat-footer-row *matFooterRowDef="['accountInv', 'balanceWithoutInvest']"></tr>
-</table>
+        <ng-container matColumnDef="accountInv">
+            <td mat-footer-cell *matFooterCellDef>
+                Total C/C
+            </td>
+        </ng-container>
+        <ng-container matColumnDef="balanceWithoutInvest">
+            <td mat-footer-cell *matFooterCellDef>
+                <app-currency [amount]="totalBalanceChecking"></app-currency>
+            </td>
+        </ng-container>
+        
+        @if (editable()) {
+            <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
+        }
+    
+        <tr mat-row *matRowDef="let row; columns: displayedColumn;" 
+            [class.inactivated]="!row.selected"
+            (click)="rowClicked(row)"
+            ></tr>
+        
+        <tr mat-footer-row *matFooterRowDef="displayedColumn"></tr>
+        <tr mat-footer-row *matFooterRowDef="['accountInv', 'balanceWithoutInvest']"></tr>
+    </table>
+</div>

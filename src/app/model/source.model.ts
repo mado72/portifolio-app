@@ -76,11 +76,13 @@ export type BalanceSourceDataType = {
     balance: number;
     currency: string;
     type: string;
+    date: string;
 };
 
-export type BalanceType = Omit<BalanceSourceDataType, "balance" | "currency" | "type"> & {
+export type BalanceType = Omit<BalanceSourceDataType, "balance" | "currency" | "type" | "date"> & {
     balance: CurrencyPrice;
     type: AccountTypeEnum;
+    date: Date;
 }
 
 export type BalanceRecord = Record<string, BalanceType>;
