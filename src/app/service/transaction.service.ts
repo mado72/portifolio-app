@@ -5,7 +5,6 @@ import { TransactionType } from '../model/source.model';
 import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
-import { Currency } from '../model/domain.model';
 
 @Injectable({
   providedIn: 'root'
@@ -97,7 +96,7 @@ export class TransactionService {
             accountId: '',
             quantity: 0,
             quote: NaN,
-            value: { price: 0, currency: Currency.BRL },
+            value: { price: 0, currency: this.sourceService.currencyDefault() },
             type: TransactionEnum.BUY,
             status: TransactionStatus.COMPLETED
           },

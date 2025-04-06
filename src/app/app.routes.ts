@@ -19,7 +19,7 @@ export const routes: Routes = [
         loadChildren: () => import('./investment/investment.route').then(mod => mod.investmentRoutes),
     },
     {
-        path: 'registration',
-        loadChildren: () => import('./registration/registration.route').then(mod => mod.registrationRoutes)
+        path: 'statement',
+        loadChildren: () => import('./statement/statement.route').then(mod => mod.statementRoutes),
     }
 ];

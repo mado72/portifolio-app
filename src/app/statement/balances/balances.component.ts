@@ -6,6 +6,7 @@ import { BalanceService } from '../../service/balance.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { MatDialog } from '@angular/material/dialog';
 import { BalanceDialogComponent } from '../balance-dialog/balance-dialog.component';
+import { SourceService } from '../../service/source.service';
 
 @Component({
   selector: 'app-balances',
@@ -19,11 +20,13 @@ import { BalanceDialogComponent } from '../balance-dialog/balance-dialog.compone
 })
 export class BalancesComponent implements OnInit {
 
+  private sourceService = inject(SourceService);
+
   private balanceService = inject(BalanceService);
 
   private dialog = inject(MatDialog);
 
-  currency: Currency = Currency.BRL;
+  currency: Currency = this.sourceService.currencyDefault();
 
   @Input() editEnable = false;
   

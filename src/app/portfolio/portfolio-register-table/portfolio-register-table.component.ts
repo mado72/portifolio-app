@@ -13,6 +13,7 @@ import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioTy
 import { PortfolioService } from '../../service/portfolio-service';
 import { TransactionService } from '../../service/transaction.service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { SourceService } from '../../service/source.service';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"> & {
   allocations: PortfolioAllocationType[];
@@ -45,6 +46,8 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
   styleUrl: './portfolio-register-table.component.scss'
 })
 export class PortfolioRegisterTableComponent {
+
+  private sourceService = inject(SourceService);
   
   private portfolioService = inject(PortfolioService);
 
@@ -122,7 +125,7 @@ export class PortfolioRegisterTableComponent {
       title: 'Adicionar carteira',
       portfolioInfo: {
         name: '',
-        currency: Currency.BRL,
+        currency: this.sourceService.currencyDefault(),
         percPlanned: 0,
       }
     });

@@ -31,7 +31,7 @@ export class InvestmentService {
         ...asset,
         type: AssetEnum[asset.type as keyof typeof AssetEnum],
         lastUpdate: quotes[ticker]?.lastUpdate || new Date(),
-        quote: quotes[ticker]?.quote || { price: NaN, currency: Currency.BRL },
+        quote: quotes[ticker]?.quote || { price: NaN, currency: this.sourceService.currencyDefault() },
         initialPrice,
         trend
       };

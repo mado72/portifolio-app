@@ -30,6 +30,8 @@ export class SourceService {
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data))
   };
 
+  readonly currencyDefault = signal<Currency>(Currency.BRL);
+
   readonly assertSource = computed(() => Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
     const quote = {
       price: item.quote.price, currency: Currency[item.quote.currency as CurrencyType]

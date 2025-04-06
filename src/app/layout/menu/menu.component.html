@@ -22,22 +22,25 @@
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" aria-current="page" routerLink="/">Dashboard</a>
+                    <a class="nav-link" aria-current="page" routerLink="/" (click)="closeMenus()">Dashboard</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" (click)="openSubmenu('Asset')" role="button"
-                        [class.show]="submenu['Asset']">
-                        Ativos e Previsões
+                    <a class="nav-link dropdown-toggle" (click)="openSubmenu('Statement')" role="button"
+                        [class.show]="submenu['Statement']">
+                        Contas e Extratos
                     </a>
-                    <ul class="dropdown-menu" [class.show]="submenu['Asset']" (click)="hideSubmenu('Asset')"
+                    <ul class="dropdown-menu" [class.show]="submenu['Statement']" (click)="hideSubmenu('Statement')"
                         role="menu">
-                        <li><a class="dropdown-item" routerLink="/assets/balances">Saldos</a></li>
-                        <li><a class="dropdown-item" routerLink="/assets/allocations">Allocações por classe</a></li>
+                        <li><a class="dropdown-item" routerLink="/statement/balances">Saldos</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" routerLink="/assets/forecast">Controle Mensal</a></li>
-                        <li><a class="dropdown-item" routerLink="/assets/forecast-summary">Previsão resumida</a></li>
+                        <li><a class="dropdown-item" routerLink="/statement/forecast">Controle Mensal</a></li>
+                        <li><a class="dropdown-item" routerLink="/statement/forecast-summary">Previsão resumida</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" routerLink="/assets/allocations">Allocações por classe</a></li>
                     </ul>
                 </li>
                 <li class="nav-item dropdown">
@@ -47,26 +50,13 @@
                     </a>
                     <ul class="dropdown-menu" [class.show]="submenu['Investment']" (click)="hideSubmenu('Investment')"
                         role="menu">
-                        <li><a class="dropdown-item" routerLink="/investment/assets">Ativos</a></li>
-                        <li><a class="dropdown-item" routerLink="/investment/portfolio">Portfólios</a></li>
-                        <li><a class="dropdown-item" routerLink="/investment/earnings">Proventos</a></li>
                         <li><a class="dropdown-item" routerLink="/investment/transactions">Transações</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" (click)="openSubmenu('Registration')" role="button"
-                        [class.show]="submenu['Registration']">
-                        Cadastro
-                    </a>
-                    <ul class="dropdown-menu" [class.show]="submenu['Registration']"
-                        (click)="hideSubmenu('Registration')">
-                        <li><a class="dropdown-item" routerLink="/registration/earnings">Proventos</a></li>
-                        <li><a class="dropdown-item" routerLink="/registration/accounts">Contas e Saldos</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item" routerLink="/forecast">Previsão</a></li>
-                        <li><a class="dropdown-item" routerLink="/forecast-summary">Previsão Resumida</a></li>
+                        <li><a class="dropdown-item" routerLink="/investment/portfolio">Portfólios</a></li>
+                        <li><a class="dropdown-item" routerLink="/investment/assets">Ativos</a></li>
+                        <li><a class="dropdown-item" routerLink="/investment/earnings">Proventos</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">

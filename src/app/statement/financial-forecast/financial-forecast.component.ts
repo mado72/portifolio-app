@@ -1,11 +1,10 @@
 import { Component, computed, EventEmitter, inject, OnInit, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { map } from 'rxjs';
-import { Currency, isStatementExpense } from '../../model/domain.model';
+import { isStatementExpense } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
+import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
 @Component({
@@ -24,15 +23,18 @@ export class FinancialForecastComponent implements OnInit {
 
   private balanceService = inject(BalanceService);
 
+  private sourceService = inject(SourceService);
+
   onCheckboxChange = new EventEmitter<boolean>();
 
-  datasource = computed (() => this.balanceService.getCurrentMonthForecast(Currency.BRL).map(item => ({
-    ...item,
-    value: {
-      ...item.value,
-      amount: item.value.price = isStatementExpense(item.type) ? - item.value.price : item.value.price
-    }
-  })));
+  datasource = computed (() => this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault())
+    .map(item => ({
+      ...item,
+      value: {
+        ...item.value,
+        amount: item.value.price = isStatementExpense(item.type) ? - item.value.price : item.value.price
+      }
+    })));
 
   total = computed(() => this.datasource().reduce((acc, item) => acc += item.value.amount, 0))
 

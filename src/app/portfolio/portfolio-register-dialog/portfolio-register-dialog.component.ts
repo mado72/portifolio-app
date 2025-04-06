@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSliderModule } from '@angular/material/slider';
 import { Currency } from '../../model/domain.model';
 import { PortfolioType } from '../../model/source.model';
+import { SourceService } from '../../service/source.service';
 
 export type DialogDataType = {
   title: string;
@@ -33,6 +34,8 @@ export type DialogDataType = {
 })
 export class PortfolioRegisterDialogComponent {
 
+  readonly sourceService = inject(SourceService);
+
   readonly data = inject<DialogDataType>(MAT_DIALOG_DATA);
 
   readonly dialogRef = inject(MatDialogRef<PortfolioRegisterDialogComponent>);
@@ -42,7 +45,7 @@ export class PortfolioRegisterDialogComponent {
   readonly formPortfolio = this.fb.group({
     name: this.fb.control(this.data.portfolio.name || '', [Validators.required, Validators.minLength(2)]),
     percPlanned: this.fb.control(this.data.portfolio.percPlanned || 0, [Validators.required, Validators.min(0), Validators.max(100)]),
-    currency: this.fb.control(this.data.portfolio.currency || Currency.BRL, [Validators.required]),
+    currency: this.fb.control(this.data.portfolio.currency || this.sourceService.currencyDefault(), [Validators.required]),
   });
 
   readonly currenciesTypes = Object.keys(Currency);

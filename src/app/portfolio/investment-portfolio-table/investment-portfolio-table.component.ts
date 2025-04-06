@@ -11,6 +11,7 @@ import { AssetCodePipe } from '../../utils/asset-code.pipe';
 import { AssetTypePipe } from '../../utils/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
+import { SourceService } from '../../service/source.service';
 
 type DatasourceRowType = PortfolioAllocationType & {ticker: string, name: string, trend: TrendType};
 
@@ -31,7 +32,7 @@ type DatasourceRowType = PortfolioAllocationType & {ticker: string, name: string
 })
 export class InvestmentPortfolioTableComponent implements OnInit {
 
-  private quoteService = inject(QuoteService);
+  private sourceService = inject(SourceService);
 
   private investmentService = inject(InvestmentService);
 
@@ -45,7 +46,7 @@ export class InvestmentPortfolioTableComponent implements OnInit {
 
   portfolioId = input<string>('', {alias: 'portfolioId'});
 
-  currency = input<Currency>(Currency.BRL);
+  currency = input<Currency>(this.sourceService.currencyDefault());
 
   source!: Signal<Record<string,DatasourceRowType>>;
 

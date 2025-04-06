@@ -2,9 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { AssetEnum, AssetQuoteType } from '../model/source.model';
-import { AssetDialogComponent } from '../registration/asset-dialog/asset-dialog.component';
+import { AssetDialogComponent } from '../assets/asset-dialog/asset-dialog.component';
 import { Currency } from '../model/domain.model';
 import { InvestmentService } from './investment.service';
+import { SourceService } from './source.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,6 +13,8 @@ import { InvestmentService } from './investment.service';
 export class AssetService {
 
   private dialog = inject(MatDialog);
+
+  private sourceService = inject(SourceService);
 
   private quoteService = inject(QuoteService);
 
@@ -40,7 +43,7 @@ export class AssetService {
               controlByQty: true,
               marketPlace: '',
               quote: {
-                currency: Currency.BRL,
+                currency: this.sourceService.currencyDefault(),
                 price: 0
               },
               trend: "unchanged"

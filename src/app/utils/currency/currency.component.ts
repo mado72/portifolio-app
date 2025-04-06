@@ -1,6 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { Currency, CurrencyPrice as CurrencyPrice, toCurrencyCode } from '../../model/domain.model';
 import { DecimalPipe } from '@angular/common';
+import { SourceService } from '../../service/source.service';
 
 @Component({
   selector: 'app-currency',
@@ -11,13 +12,15 @@ import { DecimalPipe } from '@angular/common';
 })
 export class CurrencyComponent {
 
+  private sourceService = inject(SourceService);
+
   @Input() value?: CurrencyPrice = {
     price: 0,
-    currency: Currency.BRL
+    currency: this.sourceService.currencyDefault()
   }
 
   get currency(): Currency {
-    return this.value?.currency || Currency.BRL;
+    return this.value?.currency || this.sourceService.currencyDefault();
   }
   @Input()
   set currency(value: Currency) {
@@ -33,7 +36,7 @@ export class CurrencyComponent {
   @Input()
   set amount(value: number) {
     if (!this.value) {
-      this.value = { price: value, currency: Currency.BRL };
+      this.value = { price: value, currency: this.sourceService.currencyDefault() };
     }
     this.value.price = value;
   }
