@@ -3,7 +3,10 @@ import { Routes } from "@angular/router";
 export const investmentRoutes: Routes = [
     {
         path: 'assets',
-        loadComponent: () => import('./investment-assets-portlet/investment-assets-portlet.component').then(mod => mod.InvestmentAssetsPortletComponent),
+        loadComponent: () => import('./investment-assets-table/investment-assets-table.component').then(mod => mod.InvestmentAssetsTableComponent),
+        data: {
+            editable: true
+        }
     },
     {
         path: 'portfolio',
