@@ -51,8 +51,7 @@ export type TransactionDialogType = {
     MatTableModule,
     MatIconModule,
     TransactionTypePipe,
-    TransactionStatusPipe,
-    JsonPipe
+    TransactionStatusPipe
   ],
   providers: [
     provideNativeDateAdapter()

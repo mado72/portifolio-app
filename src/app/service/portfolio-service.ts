@@ -1,7 +1,7 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { calcPosition } from '../model/portfolio.model';
-import { PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType } from '../model/source.model';
+import { AssetQuoteType, PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -28,7 +28,7 @@ export class PortfolioService {
 
   private quoteService = inject(QuoteService);
 
-  readonly portfolios = computed(()=> Object.entries(this.sourceService.portfolioSource()).reduce((acc, [key, source]) => {
+  readonly portfolios = computed(() => Object.entries(this.sourceService.portfolioSource()).reduce((acc, [key, source]) => {
     acc[key] = {
       ...source,
       ...calcPosition(this.quoteService.quotes() || {}, source.allocations)
@@ -37,28 +37,28 @@ export class PortfolioService {
   }, {} as PortfolioRecord))
 
   readonly total = computed(() => this.getAllPortfolios()
-      .map(portfolio=>({
-        ...portfolio.total,
-        percPlanned: portfolio.percPlanned
-      }))
-      .reduce((acc, portfolio) => {
-        acc.initialValue += portfolio.initialValue;
-        acc.marketValue += portfolio.marketValue;
-        acc.profit += portfolio.profit;
-        acc.performance += portfolio.performance;
-        acc.percAllocation += portfolio.percAllocation;
-        acc.percPlanned += portfolio.percPlanned;
-        return acc;
-      }, {
-            initialValue: 0,
-            marketValue: 0,
-            profit: 0,
-            performance: 0,
-            percAllocation: 0,
-            percPlanned: 0
-      }))
+    .map(portfolio => ({
+      ...portfolio.total,
+      percPlanned: portfolio.percPlanned
+    }))
+    .reduce((acc, portfolio) => {
+      acc.initialValue += portfolio.initialValue;
+      acc.marketValue += portfolio.marketValue;
+      acc.profit += portfolio.profit;
+      acc.performance += portfolio.performance;
+      acc.percAllocation += portfolio.percAllocation;
+      acc.percPlanned += portfolio.percPlanned;
+      return acc;
+    }, {
+      initialValue: 0,
+      marketValue: 0,
+      profit: 0,
+      performance: 0,
+      percAllocation: 0,
+      percPlanned: 0
+    }))
 
-  readonly portfolioAllocation = computed(() => 
+  readonly portfolioAllocation = computed(() =>
     this.getAllPortfolios().map(portfolio => ({
       ...portfolio,
       allocations: Object.values(portfolio.allocations),
@@ -69,22 +69,22 @@ export class PortfolioService {
     } as PortfolioAllocationsArrayItemType)));
 
 
-  constructor() {}
+  constructor() { }
 
   getPortfolioById(id: string) {
     return this.portfolios()[id];
   }
 
   getAllPortfolios() {
-    return Object.values(this.portfolios()) ;
+    return Object.values(this.portfolios());
   }
 
   // getPortfolioAllocations(portfolio: PortfolioDataType) {
   //   return Object.values(portfolio.allocations);
   // }
 
-  getPortfolioByAsset({marketPlace, code}: {marketPlace: string, code: string}) {
-    const ticker = getMarketPlaceCode({marketPlace, code});
+  getPortfolioByAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
+    const ticker = getMarketPlaceCode({ marketPlace, code });
     return this.getPortfoliosByTicker(ticker);
   }
 
@@ -130,7 +130,7 @@ export class PortfolioService {
       const updatedAllocations = portfolio.allocations;
       const quotes = this.quoteService.quotes() || {};
 
-      changes.allocations?.forEach(({ticker, percPlanned, quantity}) => {
+      changes.allocations?.forEach(({ ticker, percPlanned, quantity }) => {
         const [marketPlace, code] = ticker.split(':');
         if (updatedAllocations[ticker]) {
           const tickerQuote = quotes[ticker];
@@ -146,9 +146,11 @@ export class PortfolioService {
 
           const newAveragePrice = newTotalInvestment / quantity;
 
-          const newValue = { ...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity, 
+          const newValue = {
+            ...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity,
             initialValue: newTotalInvestment,
-            averagePrice: newAveragePrice };
+            averagePrice: newAveragePrice
+          };
           updatedAllocations[ticker] = newValue;
         }
         else {
@@ -188,7 +190,7 @@ export class PortfolioService {
     }
   }
 
-  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number} }) {
+  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number } }) {
     let portfolio: PortfolioType;
     if (typeof portfolioInfo === 'string') {
       portfolio = this.getPortfolioById(portfolioInfo as string);
@@ -210,11 +212,11 @@ export class PortfolioService {
     });
     dialogRef.afterClosed().subscribe((result: PortfolioType) => {
       if (result) {
-        if (! portfolio.id) {
+        if (!portfolio.id) {
           this.addPortfolio({ ...result });
         } else {
-          this.updatePortfolio(portfolio.id, { 
-            ...result, 
+          this.updatePortfolio(portfolio.id, {
+            ...result,
             allocations: result.allocations && Object.values(result.allocations).map(allocation => ({
               ticker: allocation.ticker,
               percPlanned: allocation.percPlanned,
@@ -226,5 +228,10 @@ export class PortfolioService {
     });
     return dialogRef;
   }
-  
+
+  portfoliosOfAsset(asset: AssetQuoteType): PortfolioType[] {
+    return this.getAllPortfolios()
+      .filter(portfolio => portfolio.allocations[getMarketPlaceCode(asset)]?.quantity > 0)
+  }
+
 }
