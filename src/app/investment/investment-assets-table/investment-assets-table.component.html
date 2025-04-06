@@ -1,11 +1,11 @@
 @if (editable()) {
-    <h3>Cadastro de Ativos</h3>
-    <div class="d-flex">
-        <button mat-button (click)="newAsset()">Novo Ativo</button>
-    </div>
+<h3>Cadastro de Ativos</h3>
+<div class="d-flex">
+    <button mat-button (click)="newAsset()">Novo Ativo</button>
+</div>
 }
 
-<table mat-table [dataSource]="datasource()" class="mat-elevation-z8 primary" [trackBy]="trackByFn">
+<table mat-table [dataSource]="datasource()" class="mat-elevation-z8 primary mat-table-hover" [trackBy]="trackByFn">
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Nome </th>
         <td mat-cell *matCellDef="let row"> {{row.name}} </td>
@@ -44,8 +44,8 @@
         <th mat-header-cell *matHeaderCellDef> Por Quantidade </th>
         <td mat-cell *matCellDef="let row">
             @switch (row.controlByQty) {
-                @case (true) { <span class="controlBy-yes"><fa-icon [icon]="iconTrue"></fa-icon></span> }
-                @case (false) { <span [style.color]="'gray'"><fa-icon [icon]="iconFalse"></fa-icon></span> }
+            @case (true) { <span class="controlBy-yes"><fa-icon [icon]="iconTrue"></fa-icon></span> }
+            @case (false) { <span [style.color]="'gray'"><fa-icon [icon]="iconFalse"></fa-icon></span> }
             }
         </td>
     </ng-container>
@@ -54,10 +54,10 @@
         <th mat-header-cell *matHeaderCellDef> Manual </th>
         <td mat-cell *matCellDef="let row">
             @if (row.manualQuote) {
-                <span><fa-icon [icon]="iconTrue"></fa-icon></span>
+            <span><fa-icon [icon]="iconTrue"></fa-icon></span>
             }
             @else {
-                <span [style.color]="'gray'"><fa-icon [icon]="iconFalse"></fa-icon></span>
+            <span [style.color]="'gray'"><fa-icon [icon]="iconFalse"></fa-icon></span>
             }
         </td>
     </ng-container>
@@ -65,12 +65,13 @@
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Ações </th>
         <td mat-cell *matCellDef="let row; let i = index" class="actions">
-            <button mat-icon-button type="button" (click)="editAsset(row)"
-                class="edit-button small-icon-button" [attr.aria-label]="'Edit asset ' + row.name">
+            <button mat-icon-button type="button" (click)="editAsset(row)" class="edit-button small-icon-button"
+                [attr.aria-label]="'Edit asset ' + row.name">
                 <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button type="button" (click)="deleteAsset(row)" [disabled]="!row.deletable" 
-                class="delete-button small-icon-button" [attr.aria-label]="'Delete asset ' + row.name">
+            <button mat-icon-button type="button" (click)="deleteAsset(row)" [disabled]="!row.deletable"
+                [class.deletable]="row.deletable" class="delete-button small-icon-button"
+                [attr.aria-label]="'Delete asset ' + row.name">
                 <mat-icon>delete</mat-icon>
             </button>
         </td>
@@ -80,6 +81,6 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
-<code>
+<!-- <code>
     <pre>{{datasource() | json}}</pre>
-</code>
+</code> -->

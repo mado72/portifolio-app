@@ -481,6 +481,7 @@ export class SourceService {
       delete portfolios[portfolioId];
       return { ...portfolios };
     })
+    this.dataSource.asset.update(assets=> ({...assets})); // force update
   }
 }
 

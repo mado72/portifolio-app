@@ -49,12 +49,7 @@ export class AssetService {
     
     dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
       if (result) {
-        const ticker = getMarketPlaceCode(result as AssetQuoteType);
-        const asset = {
-          ...this.investimentService.assertsSignal()[ticker],
-          ...result
-        };
-        this.investimentService.addAsset(asset);
+        this.saveAsset(result, true);
       }
     });
   }
@@ -65,14 +60,23 @@ export class AssetService {
 
     dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
       if (result) {
-        const asset = {
-          ...this.quoteService.quotes()[ticker],
-          ...result
-        };
-        this.investimentService.updateAsset(ticker, asset);
+        this.saveAsset(result, false);
       }
     });
   }
+
+  protected saveAsset(asset: AssetQuoteType, newAsset: boolean) {
+    const ticker = getMarketPlaceCode(asset);
+    asset = {
+      ...this.quoteService.quotes()[ticker],
+      ...asset
+    };
+    if (newAsset) {
+      this.investimentService.addAsset(asset);
+    } else {
+      this.investimentService.updateAsset(ticker, asset);
+    }
+}
 
   deleteAsset(ticker: string) {
     const [marketPlace, code] = ticker.split(':')
