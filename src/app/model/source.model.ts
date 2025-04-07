@@ -1,4 +1,4 @@
-import { AccountTypeEnum, Currency, CurrencyPrice, StatementEnum } from "./domain.model";
+import { AccountTypeEnum, Currency, CurrencyPrice, Recurrence, StatementEnum } from "./domain.model";
 import { TransactionEnum, TransactionStatus, } from "./investment.model";
 
 export type EntityDataSource = {
@@ -11,31 +11,32 @@ export type DataSourceType = {
     classConsolidation: ClassConsolidationSourceDataType[],
     earning: IncomeSourceDataType[],
     transaction: InvestmentTransactionSourceDataType[],
+    portfolio: PortfolioSourceDataType[],
     statement: StatementSourceDataType[],
-    portfolio: PortfolioSourceDataType[]    
+    recurrences: RecurrencesSourceDataType[],
 }
 
 export type AssetSourceDataType = {
-  code: string;
-  marketPlace: string;
-  controlByQty: boolean;
-  quote: {
-      price: number;
-      currency: string;
-  };
-  lastUpdate: string;
-  type: string;
-  name: string;
-  manualQuote?: boolean;
+    code: string;
+    marketPlace: string;
+    controlByQty: boolean;
+    quote: {
+        price: number;
+        currency: string;
+    };
+    lastUpdate: string;
+    type: string;
+    name: string;
+    manualQuote?: boolean;
 };
 
 export type TrendType = 'up' | 'down' | 'unchanged';
 
-export const fnTrend = (quotation: {initialPrice: number, quote: CurrencyPrice}): TrendType => {
+export const fnTrend = (quotation: { initialPrice: number, quote: CurrencyPrice }): TrendType => {
     if (!quotation.quote.price) return 'unchanged';
-    const up =  quotation.quote.price > quotation.initialPrice;
+    const up = quotation.quote.price > quotation.initialPrice;
     const down = quotation.quote.price < quotation.initialPrice;
-    return up? 'up' : down? 'down' : 'unchanged';
+    return up ? 'up' : down ? 'down' : 'unchanged';
 };
 
 
@@ -49,7 +50,7 @@ export enum AssetEnum {
     OTHER = "OTHER"
 }
 
-export const AssetDesc : Record<`${AssetEnum}`, string> = {
+export const AssetDesc: Record<`${AssetEnum}`, string> = {
     STOCK: 'Ação',
     BOND: 'Fundo',
     ETF: 'ETF',
@@ -198,3 +199,34 @@ export type PortfolioRecord = Record<string, PortfolioType>;
 export type PortfolioAllocationsArrayItemType = Omit<PortfolioType, "allocations"> & {
     allocations: PortfolioAllocationType[];
 }
+
+export type RecurrencesSourceDataType = {
+    id?: string;
+    type: string;
+    description: string;
+    value: {
+        currency: string;
+        price: number;
+    };
+    originAccountId: string;
+    destAccounId?: string; // optional for transfer transaction
+    category?: string;
+    notes?: string;
+    recurrence: {
+        type: string;
+        startDate: string;
+        endDate?: string; // Optional, for recurrences that do not have an end date
+    };
+}
+
+export type RecurrenceType = Omit<RecurrencesSourceDataType, "recurrence" | "type" | "value"> & {
+    value: CurrencyPrice;
+    type: TransactionEnum;
+    recurrence: {
+        type: Recurrence;
+        startDate: Date;
+        endDate?: Date; // Optional, for recurrences that do not have an end date
+    }
+}
+
+export type RecurrenceSourceDataRecord = Record<string, RecurrenceType>;

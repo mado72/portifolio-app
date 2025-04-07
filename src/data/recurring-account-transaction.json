@@ -1,0 +1,160 @@
+{
+  "data": [
+    {
+      "id": "1",
+      "type": "BUY",
+      "description": "Purchase of stocks",
+      "value": {
+        "price": 1500.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC123",
+      "category": "Investments",
+      "notes": "Long-term investment",
+      "recurrence": {
+        "type": "ONCE",
+        "startDate": "2025-04-01"
+      }
+    },
+    {
+      "id": "2",
+      "type": "SELL",
+      "description": "Sale of bonds",
+      "value": {
+        "price": 2000.00,
+        "currency": "EUR"
+      },
+      "originAccountId": "ACC456",
+      "category": "Investments",
+      "notes": "Profit booking",
+      "recurrence": {
+        "type": "ONCE",
+        "startDate": "2025-04-05"
+      }
+    },
+    {
+      "id": "3",
+      "type": "DIVIDENDS",
+      "description": "Monthly dividends",
+      "value": {
+        "price": 300.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC789",
+      "category": "Income",
+      "recurrence": {
+        "type": "MONTHLY",
+        "startDate": "2025-04-01",
+        "endDate": "2026-04-01"
+      }
+    },
+    {
+      "id": "4",
+      "type": "RENT_RETURN",
+      "description": "Rental income",
+      "value": {
+        "price": 1200.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC101",
+      "category": "Real Estate",
+      "recurrence": {
+        "type": "MONTHLY",
+        "startDate": "2025-04-01"
+      }
+    },
+    {
+      "id": "5",
+      "type": "IOE_RETURN",
+      "description": "Interest on equity",
+      "value": {
+        "price": 500.00,
+        "currency": "BRL"
+      },
+      "originAccountId": "ACC102",
+      "category": "Investments",
+      "recurrence": {
+        "type": "YEARLY",
+        "startDate": "2025-04-01"
+      }
+    },
+    {
+      "id": "6",
+      "type": "TRANSFER_IN",
+      "description": "Transfer from savings",
+      "value": {
+        "price": 1000.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC103",
+      "destAccounId": "ACC104",
+      "category": "Transfers",
+      "recurrence": {
+        "type": "ONCE",
+        "startDate": "2025-04-02"
+      }
+    },
+    {
+      "id": "7",
+      "type": "TRANSFER_OUT",
+      "description": "Transfer to checking",
+      "value": {
+        "price": 750.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC104",
+      "destAccounId": "ACC105",
+      "category": "Transfers",
+      "recurrence": {
+        "type": "ONCE",
+        "startDate": "2025-04-03"
+      }
+    },
+    {
+      "id": "8",
+      "type": "SUBSCRIPTION",
+      "description": "Magazine subscription",
+      "value": {
+        "price": 50.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC106",
+      "category": "Expenses",
+      "recurrence": {
+        "type": "YEARLY",
+        "startDate": "2025-04-01"
+      }
+    },
+    {
+      "id": "9",
+      "type": "REDEMPTION",
+      "description": "Mutual fund redemption",
+      "value": {
+        "price": 2500.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC107",
+      "category": "Investments",
+      "recurrence": {
+        "type": "ONCE",
+        "startDate": "2025-04-04"
+      }
+    },
+    {
+      "id": "10",
+      "type": "OTHER",
+      "description": "Miscellaneous income",
+      "value": {
+        "price": 100.00,
+        "currency": "USD"
+      },
+      "originAccountId": "ACC108",
+      "category": "Miscellaneous",
+      "recurrence": {
+        "type": "DIARY",
+        "startDate": "2025-04-01",
+        "endDate": "2025-04-10"
+      }
+    }
+  ]
+}

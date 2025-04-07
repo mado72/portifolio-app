@@ -1,3 +1,4 @@
+import { TransactionEnum, TransactionStatus } from "./investment.model";
 import { BalanceType } from "./source.model";
 
 export enum Currency {
@@ -130,4 +131,28 @@ export type ForecastDayItem = Statement$ & {
 export type ForecastDateItem = Statement$ & {
     date: Date;
     done?: boolean;
+}
+
+export type Transaction = {
+    id?: string;
+    type: TransactionEnum;
+    description: string;
+    value: CurrencyPrice;
+    originAccountId: string;
+    destAccounId?: string; // optional for transfer transaction
+    category?: string;
+    notes?: string;
+}
+
+export type RecurrenceTransaction = Transaction & {
+    recurrence: {
+        type: Recurrence;
+        startDate: Date;
+        endDate?: Date; // Optional, for recurrences that do not have an end date
+    };
+}
+
+export type BankTransaction = Transaction & {
+    date: Date;    
+    status: TransactionStatus;
 }

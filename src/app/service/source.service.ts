@@ -6,11 +6,18 @@ import balanceSource from '../../data/balance.json';
 import classConsolidationSource from '../../data/class-consolidation.json';
 import incomeSource from '../../data/earnings.json';
 import portfolioSource from '../../data/portfolio.json';
+import recurrenceSource from '../../data/recurring-account-transaction.json';
 import statementSource from '../../data/statement-forecast.json';
 import transactionsSource from '../../data/transactions.json';
-import { AccountTypeEnum, Currency, CurrencyType, StatementEnum } from '../model/domain.model';
+import { AccountTypeEnum, Currency, CurrencyType, Recurrence, StatementEnum } from '../model/domain.model';
 import { TransactionEnum, TransactionStatus } from '../model/investment.model';
-import { AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType, ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType, PortfolioAllocationType, PortfolioRecord, PortfolioSourceDataType, PortfolioType, StatementSourceDataType, StatementType, InvestmentTransactionSourceDataType, InvestmentTransactionType } from '../model/source.model';
+import {
+  AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType,
+  ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType,
+  InvestmentTransactionSourceDataType, InvestmentTransactionType, PortfolioAllocationType,
+  PortfolioRecord, PortfolioSourceDataType, PortfolioType, RecurrencesSourceDataType,
+  RecurrenceType, StatementSourceDataType, StatementType
+} from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
 @Injectable({
@@ -27,7 +34,8 @@ export class SourceService {
     }))),
     transaction: signal<Record<string, InvestmentTransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
     statement: signal<Record<string, StatementSourceDataType>>(this.statementSourceToRecord(statementSource.data)),
-    portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data))
+    portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data)),
+    recurrences: signal<Record<string, RecurrenceType>>(this.recurrenceSourceToRecord(recurrenceSource.data))
   };
 
   readonly currencyDefault = signal<Currency>(Currency.BRL);
@@ -275,6 +283,25 @@ export class SourceService {
     }, {} as Record<string, PortfolioSourceDataType>)
   }
 
+  protected recurrenceSourceToRecord(data: RecurrencesSourceDataType[]) {
+    return data.reduce((acc, item) => {
+      acc[item.id as string] = {
+        ...item,
+        value: {
+          currency: Currency[item.value.currency as keyof typeof Currency],
+          price: item.value.price
+        },
+        type: TransactionEnum[item.type as keyof typeof TransactionEnum],
+        recurrence: {
+          type: Recurrence[item.recurrence.type as keyof typeof Recurrence],
+          startDate: new Date(item.recurrence.startDate),
+          endDate: item.recurrence.endDate? new Date(item.recurrence.endDate) : undefined
+        }
+      };
+      return acc;
+    }, {} as Record<string, RecurrenceType>)
+  }
+
   addAsset(asset: AssetQuoteType) {
     this.dataSource.asset.update(asserts => {
       return {
@@ -485,6 +512,42 @@ export class SourceService {
     this.dataSource.portfolio.update(portfolios => {
       delete portfolios[portfolioId];
       return { ...portfolios };
+    })
+    this.dataSource.asset.update(assets=> ({...assets})); // force update
+  }
+
+  addRecurrence(item: RecurrenceType) {
+    this.dataSource.recurrences.update(recurrences => ({
+      ...recurrences,
+      ...this.recurrenceSourceToRecord([{
+        ...item,
+        recurrence: {
+          ...item.recurrence,
+          startDate: format(item.recurrence.startDate, 'yyyy-MM-dd'),
+          endDate: item.recurrence.endDate? format(item.recurrence.endDate, 'yyyy-MM-dd') : undefined
+        }
+      }])
+    }));
+  }
+
+  updateRecurrence(changes: RecurrenceType[]) {
+    this.dataSource.recurrences.update(recurrences => ({
+      ...recurrences,
+      ...this.recurrenceSourceToRecord(changes.map(item => ({
+        ...item,
+        recurrence: {
+          ...item.recurrence,
+          startDate: format(item.recurrence.startDate, 'yyyy-MM-dd'),
+          endDate: item.recurrence.endDate? format(item.recurrence.endDate, 'yyyy-MM-dd') : undefined
+        }
+      })))
+    }));
+  }
+
+  deleteRecurrence(recurrenceId: string) {
+    this.dataSource.recurrences.update(recurrences => {
+      delete recurrences[recurrenceId];
+      return { ...recurrences };
     })
     this.dataSource.asset.update(assets=> ({...assets})); // force update
   }
