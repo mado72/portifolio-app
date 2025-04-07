@@ -1,10 +1,9 @@
-import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import assetSource from '../../data/assets.json';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { Currency, CurrencyType } from '../model/domain.model';
-import { AssetEnum, AssetQuoteRecord, AssetQuoteType } from '../model/source.model';
-import { SourceService } from './source.service';
 import { MarketPlaceEnum } from '../model/investment.model';
+import { AssetQuoteRecord, AssetQuoteType } from '../model/source.model';
 import { RemoteQuotesService } from './remote-quotes.service';
+import { SourceService } from './source.service';
 
 export const getMarketPlaceCode = ({ marketPlace, code }: { marketPlace: string | MarketPlaceEnum; code: string; }): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
@@ -62,25 +61,11 @@ export class QuoteService {
       return acc;
     }, {} as Record<CurrencyType, Record<CurrencyType, number>>));
 
-  constructor() {
-    effect(() => {
-      const pendding = this.quotePendding();
-      console.debug(`effect pendding`, pendding);
-      // if (pendding && ! this.sourceService.assertSource()[getMarketPlaceCode(pendding)]) {
-      //   this.updateQuote(pendding);
-      // }
-    })
-  }
+  constructor() {}
 
   getExchangeQuote(de: Currency, para: Currency) {
     return this.exchanges()[de][para];
   }
-
-  // protected updateQuote(asset: AssetQuoteType) {
-  //   const ticker = getMarketPlaceCode(asset);
-  //   this.remoteQuotesService.updateQuotes({ [ticker]: asset });
-  //   this.quotePendding.set(undefined);
-  // }
 
   updateQuoteAsset(asset: AssetQuoteType) {
     const ticker = getMarketPlaceCode(asset);

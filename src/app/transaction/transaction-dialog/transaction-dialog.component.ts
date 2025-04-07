@@ -14,7 +14,7 @@ import { combineLatest, startWith } from 'rxjs';
 import { AccountTypeEnum, Currency } from '../../model/domain.model';
 import { divide } from '../../model/functions.model';
 import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
-import { AssetQuoteType, PortfolioType, TransactionType } from '../../model/source.model';
+import { AssetQuoteType, PortfolioType, InvestmentTransactionType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
@@ -29,7 +29,7 @@ type PortfolioQuantityType = PortfolioType & { quantity: number};
 export type TransactionDialogType = {
   title: string,
   newTransaction: boolean,
-  transaction: TransactionType,
+  transaction: InvestmentTransactionType,
   portfolios: {
     id: string,
     name: string,

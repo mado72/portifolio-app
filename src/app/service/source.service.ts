@@ -10,7 +10,7 @@ import statementSource from '../../data/statement-forecast.json';
 import transactionsSource from '../../data/transactions.json';
 import { AccountTypeEnum, Currency, CurrencyType, StatementEnum } from '../model/domain.model';
 import { TransactionEnum, TransactionStatus } from '../model/investment.model';
-import { AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType, ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType, PortfolioAllocationType, PortfolioRecord, PortfolioSourceDataType, PortfolioType, StatementSourceDataType, StatementType, TransactionSourceDataType, TransactionType } from '../model/source.model';
+import { AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType, ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType, PortfolioAllocationType, PortfolioRecord, PortfolioSourceDataType, PortfolioType, StatementSourceDataType, StatementType, InvestmentTransactionSourceDataType, InvestmentTransactionType } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class SourceService {
     income: signal<Record<string, IncomeSourceDataType>>(this.incomeSourceToRecord(incomeSource.data.map(item=> {
       return {...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
     }))),
-    transaction: signal<Record<string, TransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
+    transaction: signal<Record<string, InvestmentTransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
     statement: signal<Record<string, StatementSourceDataType>>(this.statementSourceToRecord(statementSource.data)),
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data))
   };
@@ -92,7 +92,7 @@ export class SourceService {
       status: TransactionStatus[item.status as keyof typeof TransactionStatus]
     }
     return acc;
-  }, {} as Record<string, TransactionType>));
+  }, {} as Record<string, InvestmentTransactionType>));
 
   readonly statementSource = computed(() => Object.entries(this.dataSource.statement()).reduce((acc, [key, item]) => {
     acc[key] = {
@@ -254,11 +254,11 @@ export class SourceService {
     }, {} as Record<string, IncomeSourceDataType>)
   }
 
-  protected transactionSourceToRecord(data: TransactionSourceDataType[]) {
+  protected transactionSourceToRecord(data: InvestmentTransactionSourceDataType[]) {
     return data.reduce((acc, item) => {
       acc[item.id] = item;
       return acc;
-    }, {} as Record<string, TransactionSourceDataType>)
+    }, {} as Record<string, InvestmentTransactionSourceDataType>)
   }
 
   protected statementSourceToRecord(data: StatementSourceDataType[]) {
@@ -403,7 +403,7 @@ export class SourceService {
     })
   }
 
-  addTransaction(item: TransactionType) {
+  addTransaction(item: InvestmentTransactionType) {
     this.dataSource.transaction.update(transactions => {
       return {
         ...transactions,
@@ -415,7 +415,7 @@ export class SourceService {
     })
   }
 
-  updateTransaction(changes: TransactionType[]) {
+  updateTransaction(changes: InvestmentTransactionType[]) {
     this.dataSource.transaction.update(transactions => ({
       ...transactions,
       ...this.transactionSourceToRecord(changes.map(item => ({

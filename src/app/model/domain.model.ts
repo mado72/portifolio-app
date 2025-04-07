@@ -89,6 +89,14 @@ export const StatementDesc = {
     OTHER : "Outros",
 }
 
+export enum Recurrence {
+    ONCE = 'ONCE',
+    DIARY = 'DIARY',
+    WEEKLY = 'WEEKLY',
+    MONTHLY = 'MONTHLY',
+    YEARLY = 'YEARLY'
+}
+
 export function isStatementExpense(item: StatementEnum) {
     return [StatementEnum.EXPENSE, StatementEnum.TRANSFER_OUT, StatementEnum.WITHDRAWAL].includes(item);
 }

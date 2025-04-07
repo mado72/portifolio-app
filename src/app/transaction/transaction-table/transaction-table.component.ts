@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { TransactionType } from '../../model/source.model';
+import { InvestmentTransactionType } from '../../model/source.model';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../transaction-status.pipe';
@@ -48,13 +48,13 @@ export class TransactionTableComponent {
     this.transactionService.openAddDialog()
   }
 
-  deleteTransaction(event: MouseEvent, transaction: TransactionType) {
+  deleteTransaction(event: MouseEvent, transaction: InvestmentTransactionType) {
     event.stopPropagation();
     this.transactionService.deleteTransaction(transaction.id as string);
     this.changeDetectorRef.detectChanges(); // Refresh table data
   }
 
-  editTransaction(transaction: TransactionType) {
+  editTransaction(transaction: InvestmentTransactionType) {
     this.transactionService.openDialog({
       newTransaction: false,
       title: 'Editar Transação',

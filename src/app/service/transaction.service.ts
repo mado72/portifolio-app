@@ -1,7 +1,7 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TransactionEnum, TransactionStatus } from '../model/investment.model';
-import { TransactionType } from '../model/source.model';
+import { InvestmentTransactionType } from '../model/source.model';
 import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
@@ -23,7 +23,7 @@ export class TransactionService {
 
   constructor() {}
 
-  saveTransaction(result: TransactionType) {
+  saveTransaction(result: InvestmentTransactionType) {
     if (!! result.id) {
       this.sourceService.updateTransaction([result]);
     }

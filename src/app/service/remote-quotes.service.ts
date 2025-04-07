@@ -35,7 +35,7 @@ export class RemoteQuotesService {
   assetsQuoted = computed(() => {
     const assets = this.sourceService.assertSource();
     const quotes = this.latestQuote();
-    const lastUpdate = this.lastUpdate();
+    const lastUpdate = this.lastUpdate().value;
     return Object.entries(assets)
       .reduce((acc, [ticker, asset]) => {
         acc[ticker] = {
@@ -47,7 +47,7 @@ export class RemoteQuotesService {
       }, {} as { [ticker: string]: AssetQuoteType })
   })
 
-  readonly lastUpdate = signal<Date>(new Date());
+  readonly lastUpdate = signal<{old?: Date, value: Date}>({value: new Date()});
 
   readonly quotesRequests = computed(() => {
     const assets = this.sourceService.assertSource();
@@ -57,7 +57,7 @@ export class RemoteQuotesService {
   timerId = interval(1 * 60 * 1000).pipe(
     map(() => {
       const now = new Date();
-      const diffLastUpdate = differenceInMinutes(now, this.lastUpdate());
+      const diffLastUpdate = differenceInMinutes(this.lastUpdate().value, this.lastUpdate().old || new Date());
       if (diffLastUpdate > 15) {
         return Object.entries(this.assetsQuoted()).reduce((acc, [ticker, asset]) => {
           if (differenceInMinutes(now, asset.lastUpdate) > 15) {
@@ -77,8 +77,7 @@ export class RemoteQuotesService {
   constructor() {
     this.updateQuotes(this.sourceService.assertSource());
     effect(() => {
-      const diffLastUpdate = differenceInMinutes(new Date(), this.lastUpdate());
-      console.debug(`diffLastUpdate: ${diffLastUpdate}`)
+      const diffLastUpdate = differenceInMinutes(new Date(), this.lastUpdate().value);
       if (diffLastUpdate > 15) {
         this.updateQuotes(this.sourceService.assertSource());
       }
@@ -103,7 +102,9 @@ export class RemoteQuotesService {
         return acc;
       }, {} as Record<string, AssetQuoteType>);
 
-      this.lastUpdate.set(new Date());
+      this.lastUpdate.update(d => {
+        return { old: d.value, value: new Date() };
+      });
       this.latestQuote.set(updated);
       this.sourceService.updateAsset(Object.values(updated));
     })

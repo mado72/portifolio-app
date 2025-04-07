@@ -91,6 +91,7 @@ export const TransactionEnumDesc : Record<TransactionEnumType, string> = {
 }
 
 export enum TransactionStatus {
+    PROGRAMING = 'PROGRAMING',
     PENDING = 'PENDING',
     COMPLETED = 'COMPLETED',
     CANCELLED = 'CANCELLED',
@@ -100,21 +101,9 @@ export enum TransactionStatus {
 type TransactionStatusType = `${TransactionStatus}`;
 
 export const TransactionStatusDesc : Record<TransactionStatusType, string> = {
+    "PROGRAMING": "Programada",
     "PENDING": 'Pendente',
     "COMPLETED": 'Confirmada',
     "CANCELLED": 'Cancelada',
     "REVERSED": 'Estornada'
 }
-
-// export type TransactionType = {
-//     id?: string;
-//     ticker: string;
-//     date: Date;
-//     accountId: string;
-//     quantity: number;
-//     quote: number;
-//     value: CurrencyAmount;
-//     type: TransactionEnumType;
-//     status: TransactionStatus;
-//     brokerage?: number; // corretagem
-// }

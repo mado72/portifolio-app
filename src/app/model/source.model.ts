@@ -10,7 +10,7 @@ export type DataSourceType = {
     balance: BalanceSourceDataType[],
     classConsolidation: ClassConsolidationSourceDataType[],
     earning: IncomeSourceDataType[],
-    transaction: TransactionSourceDataType[],
+    transaction: InvestmentTransactionSourceDataType[],
     statement: StatementSourceDataType[],
     portfolio: PortfolioSourceDataType[]    
 }
@@ -114,7 +114,7 @@ export type IncomeType = Omit<IncomeSourceDataType, "date"> & {
 
 export type IncomeRecord = Record<string, IncomeType>;
 
-export type TransactionSourceDataType = {
+export type InvestmentTransactionSourceDataType = {
     id: string;
     ticker: string;
     date: string;
@@ -130,14 +130,14 @@ export type TransactionSourceDataType = {
     brokerage?: number;
 }
 
-export type TransactionType = Omit<TransactionSourceDataType, "date" | "value" | "type" | "status"> & {
+export type InvestmentTransactionType = Omit<InvestmentTransactionSourceDataType, "date" | "value" | "type" | "status"> & {
     date: Date;
     value: CurrencyPrice;
     type: TransactionEnum;
     status: TransactionStatus;
 }
 
-export type TransactionRecord = Record<string, TransactionType>;
+export type TransactionRecord = Record<string, InvestmentTransactionType>;
 
 export type StatementSourceDataType = {
     id: number;
