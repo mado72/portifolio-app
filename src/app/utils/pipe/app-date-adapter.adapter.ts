@@ -1,6 +1,8 @@
 import { Provider } from "@angular/core";
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from "@angular/material/core";
-import { addDays, addMonths, addYears, endOfMonth, format, formatISO, getYear, isDate, parse, startOfMonth } from "date-fns";
+import { addDays, addMonths, addYears, format, getDate, getDaysInMonth, getMonth, getYear, parse, setDay, setMonth, toDate } from "date-fns";
+import { UTCDate } from '@date-fns/utc';
+import { it as locale } from 'date-fns/locale';
 
 export const DATE_FNS_FORMATS: MatDateFormats = {
     parse: {
@@ -14,87 +16,123 @@ export const DATE_FNS_FORMATS: MatDateFormats = {
     },
 };
 
-export function provideAppDateAdapter (format: MatDateFormats = DATE_FNS_FORMATS): Provider[] {
+export function provideAppDateAdapter(format: MatDateFormats = DATE_FNS_FORMATS): Provider[] {
     return [
-        {provide: DateAdapter, useClass: AppDateAdapter},
-        {provide: MAT_DATE_FORMATS, useValue: format },
+        { provide: DateAdapter, useClass: AppDateAdapter },
+        { provide: MAT_DATE_FORMATS, useValue: format },
     ]
 }
 
-export class AppDateAdapter extends DateAdapter<Date, Date> {
-    getYear(date: Date): number {
+
+function range(start: number, end: number): number[] {
+    let arr: number[] = [];
+    for (let i = start; i <= end; i++) {
+        arr.push(i);
+    }
+    return arr;
+}
+
+export class AppDateAdapter extends DateAdapter<UTCDate, Date> {
+    override getYear(date: UTCDate): number {
         return getYear(date);
     }
-    getMonth(date: Date): number {
-        return date.getMonth();
+    override getMonth(date: UTCDate): number {
+        return getMonth(date);
     }
-    getDate(date: Date): number {
-        return date.getDate();
+    override getDate(date: UTCDate): number {
+        return getDate(date);
     }
-    getDayOfWeek(date: Date): number {
-        return date.getDay();
+    override getDayOfWeek(date: UTCDate): number {
+        return parseInt(format(date, 'i'), 10);
     }
-    getMonthNames(style: 'long' | 'short' | 'narrow'): string[] {
-        switch (style) {
-            case 'long': return ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            case 'short': return ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-            case 'narrow': return ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
-        }
+    override getMonthNames(style: "long" | "short" | "narrow"): string[] {
+        const map = {
+            long: 'LLLL',
+            short: 'LLL',
+            narrow: 'LLLLL'
+        };
+
+        let formatStr = map[style];
+        let date = new Date();
+
+        return range(0, 11).map(month =>
+            format(setMonth(date, month), formatStr, {
+                locale
+            })
+        );
     }
-    getDateNames(): string[] {
-        return new Array(31).fill(0).map((_, i) => (i + 1).toString());
+    override getDateNames(): string[] {
+        return range(1, 31).map(day => String(day));
     }
-    getDayOfWeekNames(style: 'long' | 'short' | 'narrow'): string[] {
-        switch (style) {
-            case 'long': return ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
-            case 'short': return ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
-            case 'narrow': return ['D', 'S', 'T', 'Q', 'Q', 'S', 'S'];
-        }
+    override getDayOfWeekNames(style: "long" | "short" | "narrow"): string[] {
+        const map = {
+            long: 'EEEE',
+            short: 'E..EEE',
+            narrow: 'EEEEE'
+        };
+
+        let formatStr = map[style];
+        let date = new Date();
+
+        return range(0, 6).map(month =>
+            format(setDay(date, month), formatStr, {
+                locale
+            })
+        );
     }
-    getYearName(date: Date): string {
-        return getYear(date).toString();
+    override getYearName(date: UTCDate): string {
+        return format(date, 'yyyy', {
+            locale
+        });
     }
-    getFirstDayOfWeek(): number {
+    override getFirstDayOfWeek(): number {
         return 0;
     }
-    getNumDaysInMonth(date: Date): number {
-        return endOfMonth(date).getDate();
+    override getNumDaysInMonth(date: UTCDate): number {
+        return getDaysInMonth(date);
     }
-    clone(date: Date): Date {
-        return new Date(date.getTime());
+    override clone(date: UTCDate): UTCDate {
+        return toDate(date);
     }
-    createDate(year: number, month: number, date: number): Date {
-        return new Date(year, month, date);
+    override createDate(year: number, month: number, date: number): UTCDate {
+        return new UTCDate(year, month, date);
     }
-    today(): Date {
-        return new Date();
+    override today(): UTCDate {
+        return new UTCDate();
     }
-    parse(value: any, parseFormat: any): Date {
-        return parse(value, parseFormat, startOfMonth(new Date()));
+    override parse(value: any, parseFormat: any): UTCDate | null {
+        console.log(value, parseFormat);
+        if (value === null) {
+            return null;
+        }
+        return new UTCDate(parse(value, parseFormat, new UTCDate(), {
+            locale
+        }));
     }
-    format(date: Date, displayFormat: any): string {
-        return format(date, displayFormat);
+    override format(date: UTCDate, displayFormat: any): string {
+        return format(date, displayFormat, {
+            locale
+        });
     }
-    addCalendarYears(date: Date, years: number): Date {
+    override addCalendarYears(date: UTCDate, years: number): UTCDate {
         return addYears(date, years);
     }
-    addCalendarMonths(date: Date, months: number): Date {
+    override addCalendarMonths(date: UTCDate, months: number): UTCDate {
         return addMonths(date, months);
     }
-    addCalendarDays(date: Date, days: number): Date {
+    override addCalendarDays(date: UTCDate, days: number): UTCDate {
         return addDays(date, days);
     }
-    toIso8601(date: Date): string {
-        return formatISO(date);
+    override toIso8601(date: UTCDate): string {
+        return date.toISOString();
     }
-    isDateInstance(obj: any): boolean {
-        return isDate(obj);
+    override isDateInstance(obj: any): boolean {
+        return obj instanceof Date || obj instanceof UTCDate;
     }
-    isValid(date: Date): boolean {
-        return true;
+    override isValid(date: UTCDate): boolean {
+        return this.isDateInstance(date) && !isNaN(date.getTime());
     }
-    invalid(): Date {
-        return new Date();
+    override invalid(): UTCDate {
+        return new UTCDate(NaN);
     }
-
 }
