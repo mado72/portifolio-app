@@ -3,7 +3,7 @@ import { RecurrenceStatemetType } from '../model/source.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Recurrence, StatementEnum } from '../model/domain.model';
 import { SourceService } from './source.service';
-import { RecurrenceTransactionDialogComponent } from '../transaction/recurrence-transaction-dialog/recurrence-transaction-dialog.component';
+import { RecurrenceTransactionDialogComponent } from '../statement/recurrence-transaction-dialog/recurrence-transaction-dialog.component';
 
 @Injectable({
   providedIn: 'root'

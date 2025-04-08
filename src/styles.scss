@@ -97,3 +97,11 @@ mat-table, table, .mat-table {
 .mat-accordion .remove-mat-expansion-panel-padding .mat-expansion-panel-content .mat-expansion-panel-body {
     padding: 0 !important;
 }
+
+button.edit-button {
+    color: var(--bs-primary)
+}
+
+button.delete-button.deletable {
+    color: var(--bs-danger)
+}

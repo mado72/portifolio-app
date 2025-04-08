@@ -2,7 +2,7 @@ import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { TransactionEnum, TransactionStatus } from '../model/investment.model';
 import { InvestmentTransactionType } from '../model/source.model';
-import { TransactionDialogComponent, TransactionDialogType } from '../transaction/transaction-dialog/transaction-dialog.component';
+import { TransactionDialogComponent, TransactionDialogType } from '../statement/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
 

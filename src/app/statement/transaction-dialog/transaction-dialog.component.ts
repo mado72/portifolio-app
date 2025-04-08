@@ -1,4 +1,4 @@
-import { DecimalPipe, JsonPipe, KeyValuePipe } from '@angular/common';
+import { DecimalPipe, KeyValuePipe } from '@angular/common';
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,13 +14,13 @@ import { combineLatest, startWith } from 'rxjs';
 import { AccountTypeEnum, Currency } from '../../model/domain.model';
 import { divide } from '../../model/functions.model';
 import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
-import { AssetQuoteType, PortfolioType, InvestmentTransactionType } from '../../model/source.model';
+import { AssetQuoteType, InvestmentTransactionType, PortfolioType } from '../../model/source.model';
+import { BalanceService } from '../../service/balance.service';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
-import { TransactionStatusPipe } from '../transaction-status.pipe';
-import { TransactionTypePipe } from '../transaction-type.pipe';
-import { BalanceService } from '../../service/balance.service';
+import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
+import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 
 type Pages = "Asset" | "Portfolio";
 

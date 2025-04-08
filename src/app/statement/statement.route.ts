@@ -14,6 +14,13 @@ export const statementRoutes: Routes = [
         }
     },
     {
+        path: 'recurrence',
+        loadComponent: () => import('./recurrence-transaction-list/recurrence-transaction-list.component').then(mod => mod.RecurrenceTransactionListComponent),
+        data: {
+            editable: true
+        }
+    },
+    {
         path: 'forecast',
         loadComponent: () => import('./financial-forecast/financial-forecast.component').then(mod => mod.FinancialForecastComponent),
     },

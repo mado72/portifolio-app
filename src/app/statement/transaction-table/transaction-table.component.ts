@@ -7,9 +7,9 @@ import { MatTableModule } from '@angular/material/table';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { TransactionStatusPipe } from '../transaction-status.pipe';
-import { TransactionTypePipe } from '../transaction-type.pipe';
+import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 import { BalanceService } from '../../service/balance.service';
+import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 
 
 @Component({

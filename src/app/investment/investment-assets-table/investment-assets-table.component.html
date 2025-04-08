@@ -65,7 +65,7 @@
     <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef> Ações </th>
         <td mat-cell *matCellDef="let row; let i = index" class="actions">
-            <button mat-icon-button type="button" (click)="editAsset(row)" class="edit-button small-icon-button"
+            <button mat-icon-button type="button" (click)="editAsset(row)" class="edit-button deletable small-icon-button"
                 [attr.aria-label]="'Edit asset ' + row.name">
                 <mat-icon>edit</mat-icon>
             </button>

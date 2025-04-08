@@ -1,15 +1,14 @@
-import { Component, computed, inject, signal } from '@angular/core';
-import { SourceService } from '../../service/source.service';
-import { MatTableModule } from '@angular/material/table';
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { TransactionTypePipe } from '../transaction-type.pipe';
-import { RecurrencePipe } from '../../utils/pipe/recurrence.pipe';
-import { RecurrenceStatemetType } from '../../model/source.model';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatTableModule } from '@angular/material/table';
+import { RecurrenceStatemetType } from '../../model/source.model';
+import { SourceService } from '../../service/source.service';
 import { StatementService } from '../../service/statement.service';
+import { RecurrencePipe } from '../../utils/pipe/recurrence.pipe';
 import { StatementTypePipe } from '../../utils/pipe/statement-type.pipe';
 
 @Component({
@@ -23,7 +22,7 @@ import { StatementTypePipe } from '../../utils/pipe/statement-type.pipe';
     MatIconModule,
     DatePipe,
     CurrencyPipe,
-    TransactionTypePipe,
+    StatementTypePipe,
     RecurrencePipe
   ],
   templateUrl: './recurrence-transaction-list.component.html',
@@ -46,7 +45,8 @@ export class RecurrenceTransactionListComponent {
     'originAccountId',
     'category',
     'recurrenceType',
-    'startDate'
+    'startDate',
+    'actions'
   ];
 
   private filters = signal<{ type: string; category: string; recurrenceType: string }>({

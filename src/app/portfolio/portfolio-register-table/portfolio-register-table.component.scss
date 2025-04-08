@@ -172,14 +172,6 @@ $padding-right-perc: 5%;
   margin: 0 8px 0 0;
 }
 
-.edit-button {
-  color: var(--bs-primary);
-}
-
 .tune-button {
   color: var(--mdc-slider-handle-color, var(--mat-app-primary));
-}
-
-.delete-button {
-  color: var(--bs-danger);
 }

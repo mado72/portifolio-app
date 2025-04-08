@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TransactionStatus, TransactionStatusDesc } from '../model/investment.model';
+import { TransactionStatus, TransactionStatusDesc } from '../../model/investment.model';
 
 @Pipe({
   name: 'transactionStatus',
