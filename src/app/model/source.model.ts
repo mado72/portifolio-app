@@ -72,7 +72,7 @@ export type AssetQuoteType = Omit<AssetSourceDataType, "quote" | "type" | "lastU
 export type AssetQuoteRecord = Record<string, AssetQuoteType>;
 
 export type BalanceSourceDataType = {
-    id: string;
+    id?: string;
     accountName: string;
     balance: number;
     currency: string;

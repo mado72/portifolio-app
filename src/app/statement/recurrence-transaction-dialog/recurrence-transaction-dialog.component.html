@@ -1,1 +1,91 @@
-<p>recurrence-transaction-dialog works!</p>
+<h2 mat-dialog-title>Editar Recorrência</h2>
+<mat-dialog-content [formGroup]="form">
+
+    <div class="d-flex justify-content-between">
+        <mat-form-field appearance="fill" class="w-100">
+            <mat-label>Descrição</mat-label>
+            <input matInput formControlName="description" />
+        </mat-form-field>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Moeda</mat-label>
+            <mat-select formControlName="currency">
+                @for(currency of currencies; track $index) {
+                    <mat-option [value]="currency">
+                        {{ currency }}
+                    </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Valor</mat-label>
+            <input matInput type="number" formControlName="amount" />
+        </mat-form-field>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Conta de Origem</mat-label>
+            <mat-select formControlName="originAccountId">
+                @for(account of accounts; track $index) {
+                    <mat-option [value]="account.id">
+                        {{ account.accountName }}
+                    </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Conta de Destino</mat-label>
+            <mat-select formControlName="destAccounId">
+                @for(account of accounts; track $index) {
+                    <mat-option [value]="account.id">
+                        {{ account.accountName }}
+                    </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Categoria</mat-label>
+            <input matInput formControlName="category" />
+        </mat-form-field>
+    
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Tipo de Recorrência</mat-label>
+            <mat-select formControlName="recurrenceType">
+                @for(type of recurrenceTypes; track $index) {
+                    <mat-option [value]="type">
+                        {{ type }}
+                    </mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </div>
+
+    <div class="d-flex justify-content-between">
+        <mat-form-field appearance="fill" class="full-width me-2">
+            <mat-label>Data de Início</mat-label>
+            <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" />
+            <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
+        </mat-form-field>
+    
+        <mat-form-field appearance="fill" class="full-width">
+            <mat-label>Data de Término</mat-label>
+            <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" />
+            <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endDatePicker></mat-datepicker>
+        </mat-form-field>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions class="text-end">
+    <button mat-button (click)="onCancel()">Cancelar</button>
+    <button mat-stroked-button color="primary" (click)="onSave()">Salvar</button>
+</mat-dialog-actions>

@@ -25,11 +25,14 @@ export class StatementService {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (result.id) {
+        if (!recurrence.id) {
           this.sourceService.addRecurrenceStatement(result)
         }
         else {
-          this.sourceService.updateRecurrenceStatement([result]);
+          this.sourceService.updateRecurrenceStatement([{
+            ...result,
+            id: recurrence.id
+          }]);
         }
       }
     })

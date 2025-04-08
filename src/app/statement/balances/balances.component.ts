@@ -37,12 +37,12 @@ export class BalancesComponent implements OnInit {
 
   selects = signal<string[]>(
     this.balanceService.getBalancesByCurrencyExchange(this.currency())
-      .map(item => item.id))
+      .map(item => item.id as string))
 
   balances = computed<Record<string, AccountBalanceExchangeSelectable>>(()=>
     this.balanceService.getBalancesByCurrencyExchange(this.currency())
       .reduce((acc, item) => {
-        acc[item.id] = { ...item, selected: this.selects().includes(item.id) };
+        acc[item.id as string] = { ...item, selected: this.selects().includes(item.id as string) };
         return acc;
       }, {} as Record<string, AccountBalanceExchangeSelectable>))
 
@@ -83,9 +83,9 @@ export class BalancesComponent implements OnInit {
 
   toggleSelect(account: AccountBalanceExchangeSelectable) {
     this.selects.update(selects=>
-      selects.includes(account.id)
-        ? selects.filter(id => id!== account.id) 
-        : [...selects, account.id]
+      selects.includes(account.id as string)
+        ? selects.filter(id => id !== account.id) 
+        : [...selects, account.id as string]
     );
   }
 
@@ -98,7 +98,7 @@ export class BalancesComponent implements OnInit {
   }
 
   deleteAccount(account: AccountBalanceExchange) {
-    this.balanceService.deleteAccount(account.id);
+    this.balanceService.deleteAccount(account.id as string);
   }
 
   isSameCurrency(item: AccountBalanceExchange) {

@@ -10,6 +10,7 @@ import { SourceService } from '../../service/source.service';
 import { StatementService } from '../../service/statement.service';
 import { RecurrencePipe } from '../../utils/pipe/recurrence.pipe';
 import { StatementTypePipe } from '../../utils/pipe/statement-type.pipe';
+import { BalanceService } from '../../service/balance.service';
 
 @Component({
   selector: 'app-recurrence-transaction-list',
@@ -33,6 +34,8 @@ export class RecurrenceTransactionListComponent {
   private sourceService = inject(SourceService);
   
   private statementService = inject(StatementService);
+
+  private balanceService = inject(BalanceService);
 
   // Computa os dados do serviço
   readonly dataSource = computed(() => Object.values(this.sourceService.recurrenceSource()));
@@ -60,6 +63,8 @@ export class RecurrenceTransactionListComponent {
   readonly statementTypePipe = new StatementTypePipe();
 
   readonly activeRow = signal<RecurrenceStatemetType | null>(null);
+
+  readonly accounts = this.balanceService.getAllBalances();
 
   readonly filteredDataSource = computed(() => {
     const { type, category, recurrenceType } = this.filters();

@@ -24,7 +24,7 @@ export class BalanceService {
   /**
    * Retrieves all account balances from the source service.
    *
-   * @returns An Observable emitting an array of AccountBalance objects,
+   * @returns An Observable emitting an array of BalanceType objects,
    * each representing an account balance.
    *
    * @example
@@ -32,16 +32,14 @@ export class BalanceService {
    * const balances = balanceService.getAllBalances();
    * balances.subscribe(balances => {
    *   console.log(balances);
-   *   // Output: [AccountBalance, AccountBalance, ...] (example array of account balances)
+   *   // Output: [BalanceType, BalanceType, ...] (example array of account balances)
    * });
    * ```
    */
   getAllBalances() {
     return this.sourceService.balanceSource();
   }
-
-
-
+  
   /**
    * Retrieves all account balances and calculates the balance quotation in the specified currency.
    *
@@ -57,7 +55,7 @@ export class BalanceService {
    *   console.log(balance);
    *   // Output:
    *   // {
-   *   //   ...AccountBalance,
+   *   //   ...BalanceType,
    *   //   exchange: {
    *   //     amount: 1234.56,
    *   //     currency: Currency.USD
@@ -320,12 +318,12 @@ export class BalanceService {
   protected processDialog(dialogRef: MatDialogRef<BalanceDialogComponent, any>) {
     dialogRef.afterClosed().subscribe((result: AccountBalanceExchange) => {
       if (result) {
-        let account = this.sourceService.balanceSource()[result?.id];
+        let account = this.sourceService.balanceSource()[result?.id as string];
         if (!account) {
           this.addAccount(result);
         }
         else {
-          this.updateAccount(account.id, {
+          this.updateAccount(account.id as string, {
             ...account,
             ...result
           });

@@ -246,7 +246,7 @@ export class SourceService {
 
   protected balanceToRecord(data: BalanceSourceDataType[]) {
     return data.reduce((acc, item) => {
-      acc[item.id] = item;
+      acc[item.id as string] = item;
       return acc;
     }, {} as Record<string, BalanceSourceDataType>)
   }

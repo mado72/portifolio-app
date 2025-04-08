@@ -50,7 +50,7 @@
             <!-- Column: Conta originAccountId -->
             <ng-container matColumnDef="originAccountId">
                 <th mat-header-cell *matHeaderCellDef> Conta de Origem </th>
-                <td mat-cell *matCellDef="let element"> {{ element.originAccountId }} </td>
+                <td mat-cell *matCellDef="let element"> {{ accounts[element.originAccountId] && accounts[element.originAccountId].accountName }} </td>
             </ng-container>
     
             <!-- Column: category -->

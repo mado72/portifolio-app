@@ -1,14 +1,13 @@
 import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatDatepicker, MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { IncomeEnum } from '../../model/investment.model';
+import { AssetEnum } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
-import { AssetEnum } from '../../model/source.model';
 
 export type EarningsFilterType = { portfolioReference: string | null; dateReference: Date, typeReference: AssetEnum | null };
 
