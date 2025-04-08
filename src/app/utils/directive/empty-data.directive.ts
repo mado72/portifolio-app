@@ -1,5 +1,5 @@
 import { Directive, HostListener, inject } from '@angular/core';
-import { SourceService } from '../service/source.service';
+import { SourceService } from '../../service/source.service';
 
 @Directive({
   selector: '[appEmptyData]',

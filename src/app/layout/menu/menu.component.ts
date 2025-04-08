@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DownloadDataDirective } from '../../../data/util/download-data.directive';
-import { UploadDataDirective } from '../../utils/upload-data.directive';
-import { EmptyDataDirective } from '../../utils/empty-data.directive';
+import { DownloadDataDirective } from '../../utils/directive/download-data.directive';
+import { UploadDataDirective } from '../../utils/directive/upload-data.directive';
+import { EmptyDataDirective } from '../../utils/directive/empty-data.directive';
 
 @Component({
   selector: 'app-menu',

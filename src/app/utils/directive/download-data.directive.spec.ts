@@ -1,4 +1,4 @@
-import { DownloadDataDirective } from './download-data.directive';
+import { DownloadDataDirective } from "./download-data.directive";
 
 describe('DownloadDataDirective', () => {
   it('should create an instance', () => {
