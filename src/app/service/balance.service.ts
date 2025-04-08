@@ -192,7 +192,7 @@ export class BalanceService {
           const item = {
             start: period[0],
             end: period[1],
-            amount: group.reduce((acc, item) => acc - item.value.price, 0)
+            amount: group.reduce((acc, item) => acc - item.value.amount, 0)
           }
           accSt.push(item);
           return accSt;
@@ -202,7 +202,7 @@ export class BalanceService {
       summaryPeriod.splice((i * 2) + 1, 0, {
         start: depositStatements[i].day,
         end: depositStatements[i].day,
-        amount: depositStatements[i].value.price
+        amount: depositStatements[i].value.amount
       });
     }
     return summaryPeriod;
@@ -243,11 +243,10 @@ export class BalanceService {
     return statements.map(item => {
       const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency)
       return {
-        id: item.id,
+        ...item,
         type: StatementEnum[item.type as keyof typeof StatementEnum],
-        movement: item.movement,
         value: {
-          price: item.value.price * quoteFactor,
+          amount: item.value.amount * quoteFactor,
           currency
         },
         day: item.date,

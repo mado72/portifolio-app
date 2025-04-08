@@ -32,7 +32,7 @@ export class FinancialForecastComponent implements OnInit {
       ...item,
       value: {
         ...item.value,
-        amount: item.value.price = isStatementExpense(item.type) ? - item.value.price : item.value.price
+        amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : item.value.amount
       }
     })));
 
@@ -46,7 +46,7 @@ export class FinancialForecastComponent implements OnInit {
 
   forecast = computed(() => this.notDone().reduce((acc, item) => acc += item.value.amount, 0))
 
-  displayedColumns = ["movement", "due", "amount", "done"];
+  displayedColumns = ["description", "due", "amount", "done"];
 
   ngOnInit(): void {
   }

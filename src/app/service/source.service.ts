@@ -16,7 +16,7 @@ import {
   ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType,
   InvestmentTransactionSourceDataType, InvestmentTransactionType, PortfolioAllocationType,
   PortfolioRecord, PortfolioSourceDataType, PortfolioType, RecurrencesSourceDataType,
-  RecurrenceType, StatementSourceDataType, StatementType
+  RecurrenceStatemetType, StatementSourceDataType, StatementType
 } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
@@ -35,7 +35,7 @@ export class SourceService {
     transaction: signal<Record<string, InvestmentTransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
     statement: signal<Record<string, StatementSourceDataType>>(this.statementSourceToRecord(statementSource.data)),
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data)),
-    recurrences: signal<Record<string, RecurrenceType>>(this.recurrenceSourceToRecord(recurrenceSource.data))
+    recurrences: signal<Record<string, RecurrenceStatemetType>>(this.recurrenceSourceToRecord(recurrenceSource.data))
   };
 
   readonly currencyDefault = signal<Currency>(Currency.BRL);
@@ -105,9 +105,10 @@ export class SourceService {
   readonly statementSource = computed(() => Object.entries(this.dataSource.statement()).reduce((acc, [key, item]) => {
     acc[key] = {
       ...item,
+      originAccountId: item.account_id,
       type: StatementEnum[item.type as keyof typeof StatementEnum],
       value: {
-        price: item.amount,
+        amount: item.amount,
         currency: Currency[item.currency as CurrencyType]
       }
     }
@@ -154,6 +155,8 @@ export class SourceService {
     }, {} as Record<string, PortfolioType>);
     return entries;
   });
+
+  readonly recurrenceSource = computed(() => this.dataSource.recurrences())
 
   constructor() { }
 
@@ -289,9 +292,9 @@ export class SourceService {
         ...item,
         value: {
           currency: Currency[item.value.currency as keyof typeof Currency],
-          price: item.value.price
+          amount: item.value.amount
         },
-        type: TransactionEnum[item.type as keyof typeof TransactionEnum],
+        type: StatementEnum[item.type as keyof typeof StatementEnum],
         recurrence: {
           type: Recurrence[item.recurrence.type as keyof typeof Recurrence],
           startDate: new Date(item.recurrence.startDate),
@@ -299,7 +302,7 @@ export class SourceService {
         }
       };
       return acc;
-    }, {} as Record<string, RecurrenceType>)
+    }, {} as Record<string, RecurrenceStatemetType>)
   }
 
   addAsset(asset: AssetQuoteType) {
@@ -464,18 +467,20 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord([{
         ...item,
-        amount: item.value.price,
+        account_id: item.originAccountId,
+        amount: item.value.amount,
         currency: item.value.currency
       }])
     }));
   }
-
+  
   updateStatement(changes: StatementType[]) {
     this.dataSource.statement.update(statements => ({
       ...statements,
       ...this.statementSourceToRecord(changes.map(item => ({
         ...item,
-        amount: item.value.price,
+        account_id: item.originAccountId,
+        amount: item.value.amount,
         currency: item.value.currency
       })))
     }));
@@ -516,7 +521,7 @@ export class SourceService {
     this.dataSource.asset.update(assets=> ({...assets})); // force update
   }
 
-  addRecurrence(item: RecurrenceType) {
+  addRecurrenceStatement(item: RecurrenceStatemetType) {
     this.dataSource.recurrences.update(recurrences => ({
       ...recurrences,
       ...this.recurrenceSourceToRecord([{
@@ -530,7 +535,7 @@ export class SourceService {
     }));
   }
 
-  updateRecurrence(changes: RecurrenceType[]) {
+  updateRecurrenceStatement(changes: RecurrenceStatemetType[]) {
     this.dataSource.recurrences.update(recurrences => ({
       ...recurrences,
       ...this.recurrenceSourceToRecord(changes.map(item => ({
@@ -544,7 +549,7 @@ export class SourceService {
     }));
   }
 
-  deleteRecurrence(recurrenceId: string) {
+  deleteRecurrenceStatement(recurrenceId: string) {
     this.dataSource.recurrences.update(recurrences => {
       delete recurrences[recurrenceId];
       return { ...recurrences };

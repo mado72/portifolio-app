@@ -1,11 +1,11 @@
 {
   "data": [
     {
-      "id": "1",
+      "id": "f3b9c8a4-1d2b-4e3a-9c8a-1234567890ab",
       "type": "BUY",
       "description": "Purchase of stocks",
       "value": {
-        "price": 1500.00,
+        "amount": 1500.00,
         "currency": "USD"
       },
       "originAccountId": "ACC123",
@@ -17,11 +17,11 @@
       }
     },
     {
-      "id": "2",
+      "id": "a1b2c3d4-e5f6-7g8h-9i0j-1234567890ab",
       "type": "SELL",
       "description": "Sale of bonds",
       "value": {
-        "price": 2000.00,
+        "amount": 2000.00,
         "currency": "EUR"
       },
       "originAccountId": "ACC456",
@@ -33,57 +33,11 @@
       }
     },
     {
-      "id": "3",
-      "type": "DIVIDENDS",
-      "description": "Monthly dividends",
-      "value": {
-        "price": 300.00,
-        "currency": "USD"
-      },
-      "originAccountId": "ACC789",
-      "category": "Income",
-      "recurrence": {
-        "type": "MONTHLY",
-        "startDate": "2025-04-01",
-        "endDate": "2026-04-01"
-      }
-    },
-    {
-      "id": "4",
-      "type": "RENT_RETURN",
-      "description": "Rental income",
-      "value": {
-        "price": 1200.00,
-        "currency": "USD"
-      },
-      "originAccountId": "ACC101",
-      "category": "Real Estate",
-      "recurrence": {
-        "type": "MONTHLY",
-        "startDate": "2025-04-01"
-      }
-    },
-    {
-      "id": "5",
-      "type": "IOE_RETURN",
-      "description": "Interest on equity",
-      "value": {
-        "price": 500.00,
-        "currency": "BRL"
-      },
-      "originAccountId": "ACC102",
-      "category": "Investments",
-      "recurrence": {
-        "type": "YEARLY",
-        "startDate": "2025-04-01"
-      }
-    },
-    {
-      "id": "6",
+      "id": "123e4567-e89b-12d3-a456-426614174000",
       "type": "TRANSFER_IN",
       "description": "Transfer from savings",
       "value": {
-        "price": 1000.00,
+        "amount": 1000.00,
         "currency": "USD"
       },
       "originAccountId": "ACC103",
@@ -95,11 +49,11 @@
       }
     },
     {
-      "id": "7",
+      "id": "987f6543-21ab-43cd-85ef-1234567890ab",
       "type": "TRANSFER_OUT",
       "description": "Transfer to checking",
       "value": {
-        "price": 750.00,
+        "amount": 750.00,
         "currency": "USD"
       },
       "originAccountId": "ACC104",
@@ -111,11 +65,11 @@
       }
     },
     {
-      "id": "8",
+      "id": "456e7890-a12b-34cd-56ef-1234567890ab",
       "type": "SUBSCRIPTION",
       "description": "Magazine subscription",
       "value": {
-        "price": 50.00,
+        "amount": 50.00,
         "currency": "USD"
       },
       "originAccountId": "ACC106",
@@ -126,11 +80,11 @@
       }
     },
     {
-      "id": "9",
+      "id": "789a1234-b56c-78de-90fg-1234567890ab",
       "type": "REDEMPTION",
       "description": "Mutual fund redemption",
       "value": {
-        "price": 2500.00,
+        "amount": 2500.00,
         "currency": "USD"
       },
       "originAccountId": "ACC107",
@@ -141,11 +95,11 @@
       }
     },
     {
-      "id": "10",
+      "id": "321cba98-7654-32ed-10fg-1234567890ab",
       "type": "OTHER",
       "description": "Miscellaneous income",
       "value": {
-        "price": 100.00,
+        "amount": 100.00,
         "currency": "USD"
       },
       "originAccountId": "ACC108",
