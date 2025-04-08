@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { getMarketPlaceCode } from '../service/quote.service';
+import { getMarketPlaceCode } from '../../service/quote.service';
 
 @Pipe({
   name: 'assetCode',

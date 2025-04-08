@@ -10,7 +10,7 @@ import { Income, IncomeEnum, IncomeEnumType } from '../../model/investment.model
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode } from '../../service/quote.service';
-import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
+import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
 import { EarningsEntryDialogComponent } from '../earnings-entry-dialog/earnings-entry-dialog.component';
 import { EarningsFilterComponent, EarningsFilterType } from '../earnings-filter/earnings-filter.component';
 

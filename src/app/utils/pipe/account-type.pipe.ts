@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { AccountTypeEnum } from '../model/domain.model';
+import { AccountTypeEnum } from '../../model/domain.model';
 
 const AccountTypeDesc : Record<AccountTypeEnum, string> = {
   CHECKING: 'Conta Corrente',

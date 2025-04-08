@@ -38,6 +38,11 @@ export type CurrencyPrice = {
     currency: Currency;
 }
 
+export type CurrencyAmount = {
+    amount: number;
+    currency: Currency;
+}
+
 export type Exchange = {
     date: Date;
     from: Currency;
@@ -112,10 +117,14 @@ export type Account = {
 export type StatementEnumKeys = `${StatementEnum}`;
 
 type Statement$ = {
-    id: number;
+    id?: string;
     type: StatementEnum;
-    movement: string;
-    value: CurrencyPrice;
+    description: string;
+    value: CurrencyAmount;
+    originAccountId: string;
+    destAccounId?: string; // optional for transfer transaction
+    category?: string;
+    notes?: string;
 }
 
 export type StatementItem = Statement$ & {
@@ -131,28 +140,4 @@ export type ForecastDayItem = Statement$ & {
 export type ForecastDateItem = Statement$ & {
     date: Date;
     done?: boolean;
-}
-
-export type Transaction = {
-    id?: string;
-    type: TransactionEnum;
-    description: string;
-    value: CurrencyPrice;
-    originAccountId: string;
-    destAccounId?: string; // optional for transfer transaction
-    category?: string;
-    notes?: string;
-}
-
-export type RecurrenceTransaction = Transaction & {
-    recurrence: {
-        type: Recurrence;
-        startDate: Date;
-        endDate?: Date; // Optional, for recurrences that do not have an end date
-    };
-}
-
-export type BankTransaction = Transaction & {
-    date: Date;    
-    status: TransactionStatus;
 }

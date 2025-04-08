@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { IncomeEnum, IncomeDesc } from '../../model/investment.model';
-import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
+import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
 
 const PTBR_FORMATS = {
   parse: {

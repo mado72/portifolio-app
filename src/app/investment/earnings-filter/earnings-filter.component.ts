@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { IncomeEnum } from '../../model/investment.model';
 import { PortfolioService } from '../../service/portfolio-service';
-import { AssetTypePipe } from '../../utils/asset-type.pipe';
+import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { AssetEnum } from '../../model/source.model';
 
 export type EarningsFilterType = { portfolioReference: string | null; dateReference: Date, typeReference: AssetEnum | null };

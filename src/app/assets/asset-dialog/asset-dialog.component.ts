@@ -12,7 +12,7 @@ import { Currency, CurrencyPrice } from '../../model/domain.model';
 import { MarketPlaceEnum } from '../../model/investment.model';
 import { AssetEnum, AssetQuoteType } from '../../model/source.model';
 import { RemoteQuotesService } from '../../service/remote-quotes.service';
-import { AssetTypePipe } from '../../utils/asset-type.pipe';
+import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 
 export type AssetDialogType = {
   title: string,

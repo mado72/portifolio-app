@@ -1,4 +1,4 @@
-import { AccountTypeEnum, Currency, CurrencyPrice, Recurrence, StatementEnum } from "./domain.model";
+import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyPrice, Recurrence, StatementEnum } from "./domain.model";
 import { TransactionEnum, TransactionStatus, } from "./investment.model";
 
 export type EntityDataSource = {
@@ -141,18 +141,19 @@ export type InvestmentTransactionType = Omit<InvestmentTransactionSourceDataType
 export type TransactionRecord = Record<string, InvestmentTransactionType>;
 
 export type StatementSourceDataType = {
-    id: number;
+    id: string;
     type: string;
-    movement: string;
+    description: string;
     date: number;
     currency: string;
     amount: number;
     account_id: string;
 }
 
-export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency"> & {
+export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency" | "account_id"> & {
     type: StatementEnum;
-    value: CurrencyPrice;
+    value: CurrencyAmount;
+    originAccountId: string;
 }
 
 export type StatementRecord = Record<string, StatementType>;
@@ -206,7 +207,7 @@ export type RecurrencesSourceDataType = {
     description: string;
     value: {
         currency: string;
-        price: number;
+        amount: number;
     };
     originAccountId: string;
     destAccounId?: string; // optional for transfer transaction
@@ -219,9 +220,9 @@ export type RecurrencesSourceDataType = {
     };
 }
 
-export type RecurrenceType = Omit<RecurrencesSourceDataType, "recurrence" | "type" | "value"> & {
-    value: CurrencyPrice;
-    type: TransactionEnum;
+export type RecurrenceStatemetType = Omit<RecurrencesSourceDataType, "recurrence" | "type" | "value"> & {
+    value: CurrencyAmount;
+    type: StatementEnum;
     recurrence: {
         type: Recurrence;
         startDate: Date;
@@ -229,4 +230,4 @@ export type RecurrenceType = Omit<RecurrencesSourceDataType, "recurrence" | "typ
     }
 }
 
-export type RecurrenceSourceDataRecord = Record<string, RecurrenceType>;
+export type RecurrenceSourceDataRecord = Record<string, RecurrenceStatemetType>;

@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AssetCodePipe } from '../../utils/asset-code.pipe';
+import { AssetCodePipe } from '../../utils/pipe/asset-code.pipe';
 import { AssetQuoteType } from '../../model/source.model';
 
 export type PorfolioAllocationDataType = {

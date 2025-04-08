@@ -9,8 +9,8 @@ import { AssetQuoteType } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
-import { AssetCodePipe } from '../../utils/asset-code.pipe';
-import { AssetTypePipe } from '../../utils/asset-type.pipe';
+import { AssetCodePipe } from '../../utils/pipe/asset-code.pipe';
+import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TrendComponent } from '../../utils/trend/trend.component';
 
