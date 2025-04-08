@@ -95,7 +95,7 @@ export const StatementDesc = {
     OTHER : "Outros",
 }
 
-export enum Recurrence {
+export enum Scheduled {
     ONCE = 'ONCE',
     DIARY = 'DIARY',
     WEEKLY = 'WEEKLY',

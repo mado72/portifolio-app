@@ -1,4 +1,4 @@
-import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyPrice, Recurrence, StatementEnum } from "./domain.model";
+import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyPrice, Scheduled, StatementEnum } from "./domain.model";
 import { TransactionEnum, TransactionStatus, } from "./investment.model";
 
 export type EntityDataSource = {
@@ -13,7 +13,7 @@ export type DataSourceType = {
     transaction: InvestmentTransactionSourceDataType[],
     portfolio: PortfolioSourceDataType[],
     statement: StatementSourceDataType[],
-    recurrences: RecurrencesSourceDataType[],
+    scheduleds: ScheduledsSourceDataType[],
 }
 
 export type AssetSourceDataType = {
@@ -148,14 +148,14 @@ export type StatementSourceDataType = {
     currency: string;
     amount: number;
     account_id: string;
-    recurrence_ref?: string;
+    scheduled_ref?: string;
 }
 
-export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency" | "account_id" | "recurrence_ref"> & {
+export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency" | "account_id" | "scheduled_ref"> & {
     type: StatementEnum;
     value: CurrencyAmount;
     originAccountId: string;
-    recurrenceRef?: string;
+    scheduledRef?: string;
 }
 
 export type StatementRecord = Record<string, StatementType>;
@@ -203,7 +203,7 @@ export type PortfolioAllocationsArrayItemType = Omit<PortfolioType, "allocations
     allocations: PortfolioAllocationType[];
 }
 
-export type RecurrencesSourceDataType = {
+export type ScheduledsSourceDataType = {
     id?: string;
     type: string;
     description: string;
@@ -215,21 +215,21 @@ export type RecurrencesSourceDataType = {
     targetAccountId?: string; // optional for transfer transaction
     category?: string;
     notes?: string;
-    recurrence: {
+    scheduled: {
         type: string;
         startDate: string;
-        endDate?: string; // Optional, for recurrences that do not have an end date
+        endDate?: string; // Optional, for scheduleds that do not have an end date
     };
 }
 
-export type RecurrenceStatemetType = Omit<RecurrencesSourceDataType, "recurrence" | "type" | "value"> & {
+export type ScheduledStatemetType = Omit<ScheduledsSourceDataType, "scheduled" | "type" | "value"> & {
     value: CurrencyAmount;
     type: StatementEnum;
-    recurrence: {
-        type: Recurrence;
+    scheduled: {
+        type: Scheduled;
         startDate: Date;
-        endDate?: Date; // Optional, for recurrences that do not have an end date
+        endDate?: Date; // Optional, for scheduleds that do not have an end date
     }
 }
 
-export type RecurrenceSourceDataRecord = Record<string, RecurrenceStatemetType>;
+export type ScheduledSourceDataRecord = Record<string, ScheduledStatemetType>;

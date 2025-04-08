@@ -65,8 +65,8 @@
 
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Tipo de Recorrência</mat-label>
-            <mat-select formControlName="recurrenceType">
-                @for(type of recurrenceTypes; track $index) {
+            <mat-select formControlName="scheduledType">
+                @for(type of scheduledTypes; track $index) {
                 <mat-option [value]="type">
                     {{ type }}
                 </mat-option>

@@ -14,8 +14,8 @@ export const statementRoutes: Routes = [
         }
     },
     {
-        path: 'recurrence',
-        loadComponent: () => import('./recurrence-transaction-list/recurrence-transaction-list.component').then(mod => mod.RecurrenceTransactionListComponent),
+        path: 'scheduled',
+        loadComponent: () => import('./scheduled-transaction-list/scheduled-transaction-list.component').then(mod => mod.ScheduledTransactionListComponent),
         data: {
             editable: true
         }

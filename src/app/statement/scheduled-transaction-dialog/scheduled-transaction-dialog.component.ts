@@ -6,14 +6,14 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { UTCDate } from '@date-fns/utc';
-import { Currency, Recurrence, StatementEnum } from '../../model/domain.model';
-import { RecurrenceStatemetType } from '../../model/source.model';
+import { Currency, Scheduled, StatementEnum } from '../../model/domain.model';
+import { ScheduledStatemetType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
 
 export type DialogData = {
   title: string,
-  recurrence: RecurrenceStatemetType
+  scheduled: ScheduledStatemetType
 }
 
 const PTBR_FORMATS = {
@@ -29,7 +29,7 @@ const PTBR_FORMATS = {
 };
 
 @Component({
-  selector: 'app-recurrence-transaction-dialog',
+  selector: 'app-scheduled-transaction-dialog',
   standalone: true,
   imports: [
     MatInputModule,
@@ -42,51 +42,51 @@ const PTBR_FORMATS = {
   providers: [
     provideAppDateAdapter(PTBR_FORMATS)
   ],
-  templateUrl: './recurrence-transaction-dialog.component.html',
-  styleUrl: './recurrence-transaction-dialog.component.scss'
+  templateUrl: './scheduled-transaction-dialog.component.html',
+  styleUrl: './scheduled-transaction-dialog.component.scss'
 })
-export class RecurrenceTransactionDialogComponent implements OnInit {
+export class ScheduledTransactionDialogComponent implements OnInit {
 
   private data = inject<DialogData>(MAT_DIALOG_DATA);
 
-  private dialogRef = inject(MatDialogRef<RecurrenceTransactionDialogComponent>);
+  private dialogRef = inject(MatDialogRef<ScheduledTransactionDialogComponent>);
 
   private balanceService = inject(BalanceService);
 
   private fb = inject(FormBuilder);
   form: FormGroup = this.fb.group({
-    description: this.fb.control(this.data.recurrence.description, [Validators.required]),
-    amount: this.fb.control(this.data.recurrence.value.amount, [Validators.required, Validators.min(0.01)]),
-    currency: this.fb.control(this.data.recurrence.value.currency, [Validators.required]),
-    type: this.fb.control(this.data.recurrence.type, [Validators.required]),
-    originAccountId: this.fb.control(this.data.recurrence.originAccountId, [Validators.required]),
-    targetAccounId: this.fb.control(this.data.recurrence.targetAccountId || ''),
-    category: this.fb.control(this.data.recurrence.category || ''),
-    recurrenceType: this.fb.control(this.data.recurrence.recurrence.type, [Validators.required]),
-    startDate: this.fb.control(this.data.recurrence.recurrence.startDate, [Validators.required]),
-    endDate: this.fb.control(this.data.recurrence.recurrence.endDate || ''),
+    description: this.fb.control(this.data.scheduled.description, [Validators.required]),
+    amount: this.fb.control(this.data.scheduled.value.amount, [Validators.required, Validators.min(0.01)]),
+    currency: this.fb.control(this.data.scheduled.value.currency, [Validators.required]),
+    type: this.fb.control(this.data.scheduled.type, [Validators.required]),
+    originAccountId: this.fb.control(this.data.scheduled.originAccountId, [Validators.required]),
+    targetAccounId: this.fb.control(this.data.scheduled.targetAccountId || ''),
+    category: this.fb.control(this.data.scheduled.category || ''),
+    scheduledType: this.fb.control(this.data.scheduled.scheduled.type, [Validators.required]),
+    startDate: this.fb.control(this.data.scheduled.scheduled.startDate, [Validators.required]),
+    endDate: this.fb.control(this.data.scheduled.scheduled.endDate || ''),
   });
 
   currencies = Object.values(Currency);
 
   statementTypes = Object.values(StatementEnum);
 
-  recurrenceTypes = Object.values(Recurrence);
+  scheduledTypes = Object.values(Scheduled);
 
   accounts = Object.values(this.balanceService.getAllBalances()) as {id?: string, accountName: string}[];
 
   accountsDest = [{id: undefined, accountName: 'Selecione...'}, ...this.accounts]
 
   ngOnInit(): void {
-    this.enableDisableRecurrenceType();
+    this.enableDisableScheduledType();
 
-    this.form.get('recurrenceType')?.valueChanges.subscribe(_=>{
-      this.enableDisableRecurrenceType();
+    this.form.get('scheduledType')?.valueChanges.subscribe(_=>{
+      this.enableDisableScheduledType();
     });
   }
   
-  enableDisableRecurrenceType() {
-    if (this.form.get('recurrenceType')?.value === Recurrence.ONCE) {
+  enableDisableScheduledType() {
+    if (this.form.get('scheduledType')?.value === Scheduled.ONCE) {
       this.form.get('endDate')?.disable()
     }
     else {
@@ -111,7 +111,7 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
 
   onSave(): void {
     if (this.form.valid) {
-      const updatedData: RecurrenceStatemetType = {
+      const updatedData: ScheduledStatemetType = {
         ...this.data,
         description: this.form.value.description,
         type: this.form.value.type,
@@ -122,8 +122,8 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
         originAccountId: this.form.value.originAccountId,
         targetAccountId: this.form.value.targetAccounId,
         category: this.form.value.category,
-        recurrence: {
-          type: this.form.value.recurrenceType,
+        scheduled: {
+          type: this.form.value.scheduledType,
           startDate: new UTCDate(this.form.value.startDate),
           endDate: new UTCDate(this.form.value.endDate),
         },
@@ -132,7 +132,7 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
     }
   }
 
-  displayRecurrencePeriod() {
-    return this.form.value.recurrenceType !== Recurrence.ONCE;
+  displayScheduledPeriod() {
+    return this.form.value.scheduledType !== Scheduled.ONCE;
   }
 }

@@ -1,7 +1,7 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Recurrence } from '../../model/domain.model';
+import { Scheduled } from '../../model/domain.model';
 
-const LABELS : Record<`${Recurrence}`, string> = {
+const LABELS : Record<`${Scheduled}`, string> = {
   "ONCE" : 'Uma vez',
   "DIARY" : 'Diário',
   "WEEKLY" : 'Semanal',
@@ -10,12 +10,12 @@ const LABELS : Record<`${Recurrence}`, string> = {
 }
 
 @Pipe({
-  name: 'recurrence',
+  name: 'scheduled',
   standalone: true
 })
-export class RecurrencePipe implements PipeTransform {
+export class ScheduledPipe implements PipeTransform {
 
-  transform(value: Recurrence): string {
+  transform(value: Scheduled): string {
     return LABELS[value];
   }
 

@@ -6,17 +6,17 @@ import balanceSource from '../../data/balance.json';
 import classConsolidationSource from '../../data/class-consolidation.json';
 import incomeSource from '../../data/earnings.json';
 import portfolioSource from '../../data/portfolio.json';
-import recurrenceSource from '../../data/recurring-account-transaction.json';
+import scheduledSource from '../../data/recurring-account-transaction.json';
 import statementSource from '../../data/statement-forecast.json';
 import transactionsSource from '../../data/transactions.json';
-import { AccountTypeEnum, Currency, CurrencyType, Recurrence, StatementEnum } from '../model/domain.model';
+import { AccountTypeEnum, Currency, CurrencyType, Scheduled, StatementEnum } from '../model/domain.model';
 import { TransactionEnum, TransactionStatus } from '../model/investment.model';
 import {
   AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType,
   ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType,
   InvestmentTransactionSourceDataType, InvestmentTransactionType, PortfolioAllocationType,
-  PortfolioRecord, PortfolioSourceDataType, PortfolioType, RecurrencesSourceDataType,
-  RecurrenceStatemetType, StatementSourceDataType, StatementType
+  PortfolioRecord, PortfolioSourceDataType, PortfolioType, ScheduledsSourceDataType,
+  ScheduledStatemetType, StatementSourceDataType, StatementType
 } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
@@ -35,7 +35,7 @@ export class SourceService {
     transaction: signal<Record<string, InvestmentTransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
     statement: signal<Record<string, StatementType>>(this.statementSourceToRecord(statementSource.data)),
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data)),
-    recurrences: signal<Record<string, RecurrenceStatemetType>>(this.recurrenceSourceToRecord(recurrenceSource.data))
+    scheduled: signal<Record<string, ScheduledStatemetType>>(this.scheduledSourceToRecord(scheduledSource.data))
   };
 
   readonly currencyDefault = signal<Currency>(Currency.BRL);
@@ -145,7 +145,7 @@ export class SourceService {
     return entries;
   });
 
-  readonly recurrenceSource = computed(() => this.dataSource.recurrences())
+  readonly scheduledSource = computed(() => this.dataSource.scheduled())
 
   constructor() { }
 
@@ -173,7 +173,7 @@ export class SourceService {
           this.dataSource.transaction.set(this.transactionSourceToRecord(jsonData.transaction));
           this.dataSource.statement.set(this.statementSourceToRecord(jsonData.statement));
           this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
-          this.dataSource.recurrences.set(this.recurrenceSourceToRecord(jsonData.recurrence));
+          this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
           alert('Dados carregados com sucesso!');
         } catch (error) {
           alert('Erro ao carregar o arquivo JSON.');
@@ -191,7 +191,7 @@ export class SourceService {
     this.dataSource.transaction.set({});
     this.dataSource.statement.set({});
     this.dataSource.portfolio.set({});
-    this.dataSource.recurrences.set({});
+    this.dataSource.scheduled.set({});
     alert('Todos os dados foram excluídos!');
   }
 
@@ -217,7 +217,7 @@ export class SourceService {
       transaction: Object.values(this.dataSource.transaction()),
       statement: Object.values(this.dataSource.statement()),
       portfolio: Object.values(this.dataSource.portfolio()),
-      recurrence: Object.values(this.dataSource.recurrences())
+      scheduled: Object.values(this.dataSource.scheduled())
     }
     const jsonString = JSON.stringify(data);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -268,7 +268,7 @@ export class SourceService {
     return data.reduce((acc, item) => {
       acc[item.id] = {
         ...item,
-         recurrenceRef : item.recurrence_ref,
+         scheduledRef : item.scheduled_ref,
          originAccountId : item.account_id,
          type: StatementEnum[item.type as keyof typeof StatementEnum],
          value : {
@@ -287,7 +287,7 @@ export class SourceService {
     }, {} as Record<string, PortfolioSourceDataType>)
   }
 
-  protected recurrenceSourceToRecord(data: RecurrencesSourceDataType[]) {
+  protected scheduledSourceToRecord(data: ScheduledsSourceDataType[]) {
     return data.reduce((acc, item) => {
       acc[item.id as string] = {
         ...item,
@@ -296,14 +296,14 @@ export class SourceService {
           amount: item.value.amount
         },
         type: StatementEnum[item.type as keyof typeof StatementEnum],
-        recurrence: {
-          type: Recurrence[item.recurrence.type as keyof typeof Recurrence],
-          startDate: parse(item.recurrence.startDate, 'yyyy-MM-dd', new Date()),
-          endDate: item.recurrence.endDate? parse(item.recurrence.endDate, 'yyyy-MM-dd', new Date()) : undefined
+        scheduled: {
+          type: Scheduled[item.scheduled.type as keyof typeof Scheduled],
+          startDate: parse(item.scheduled.startDate, 'yyyy-MM-dd', new Date()),
+          endDate: item.scheduled.endDate? parse(item.scheduled.endDate, 'yyyy-MM-dd', new Date()) : undefined
         }
       };
       return acc;
-    }, {} as Record<string, RecurrenceStatemetType>)
+    }, {} as Record<string, ScheduledStatemetType>)
   }
 
   addAsset(asset: AssetQuoteType) {
@@ -472,7 +472,7 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord([{
         ...item,
-        recurrence_ref: item.recurrenceRef,
+        scheduled_ref: item.scheduledRef,
         account_id: item.originAccountId,
         amount: item.value.amount,
         currency: item.value.currency as string
@@ -485,7 +485,7 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord(changes.map(item => ({
         ...item,
-        recurrence_ref: item.recurrenceRef,
+        scheduled_ref: item.scheduledRef,
         account_id: item.originAccountId,
         amount: item.value.amount,
         currency: item.value.currency as string
@@ -528,38 +528,38 @@ export class SourceService {
     this.dataSource.asset.update(assets=> ({...assets})); // force update
   }
 
-  addRecurrenceStatement(item: RecurrenceStatemetType) {
-    this.dataSource.recurrences.update(recurrences => ({
-      ...recurrences,
-      ...this.recurrenceSourceToRecord([{
+  addScheduledStatement(item: ScheduledStatemetType) {
+    this.dataSource.scheduled.update(scheduleds => ({
+      ...scheduleds,
+      ...this.scheduledSourceToRecord([{
         ...item,
-        recurrence: {
-          ...item.recurrence,
-          startDate: format(item.recurrence.startDate, 'yyyy-MM-dd'),
-          endDate: item.recurrence.endDate? format(item.recurrence.endDate, 'yyyy-MM-dd') : undefined
+        scheduled: {
+          ...item.scheduled,
+          startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
+          endDate: item.scheduled.endDate? format(item.scheduled.endDate, 'yyyy-MM-dd') : undefined
         }
       }])
     }));
   }
 
-  updateRecurrenceStatement(changes: RecurrenceStatemetType[]) {
-    this.dataSource.recurrences.update(recurrences => ({
-      ...recurrences,
-      ...this.recurrenceSourceToRecord(changes.map(item => ({
+  updateScheduledStatement(changes: ScheduledStatemetType[]) {
+    this.dataSource.scheduled.update(scheduleds => ({
+      ...scheduleds,
+      ...this.scheduledSourceToRecord(changes.map(item => ({
         ...item,
-        recurrence: {
-          ...item.recurrence,
-          startDate: format(item.recurrence.startDate, 'yyyy-MM-dd'),
-          endDate: !Number.isNaN(item.recurrence.endDate?.getTime()) ? format(item.recurrence.endDate as Date, 'yyyy-MM-dd') : undefined
+        scheduled: {
+          ...item.scheduled,
+          startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
+          endDate: !Number.isNaN(item.scheduled.endDate?.getTime()) ? format(item.scheduled.endDate as Date, 'yyyy-MM-dd') : undefined
         }
       })))
     }));
   }
 
-  deleteRecurrenceStatement(recurrenceId: string) {
-    this.dataSource.recurrences.update(recurrences => {
-      delete recurrences[recurrenceId];
-      return { ...recurrences };
+  deleteScheduledStatement(scheduledId: string) {
+    this.dataSource.scheduled.update(scheduleds => {
+      delete scheduleds[scheduledId];
+      return { ...scheduleds };
     })
     this.dataSource.asset.update(assets=> ({...assets})); // force update
   }

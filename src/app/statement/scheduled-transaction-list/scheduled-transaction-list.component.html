@@ -14,14 +14,14 @@
         
             <mat-form-field appearance="outline" class="filter-field mx-2">
               <mat-label>Filtrar por Tipo de Recorrência</mat-label>
-              <input matInput (keyup)="applyFilter('recurrenceType', $event)" placeholder="Digite o tipo de recorrência">
+              <input matInput (keyup)="applyFilter('scheduledType', $event)" placeholder="Digite o tipo de recorrência">
             </mat-form-field>
           </div>
     </div>
 
     <div>
 
-        <button mat-button (click)="newRecurrence()">
+        <button mat-button (click)="newScheduled()">
             Nova transação...
         </button>
 
@@ -65,26 +65,26 @@
                 <td mat-cell *matCellDef="let element"> {{ element.category || 'N/A' }} </td>
             </ng-container>
     
-            <!-- Column: recurrenceType -->
-            <ng-container matColumnDef="recurrenceType">
+            <!-- Column: scheduledType -->
+            <ng-container matColumnDef="scheduledType">
                 <th mat-header-cell *matHeaderCellDef> Tipo de Recorrência </th>
-                <td mat-cell *matCellDef="let element"> {{ element.recurrence.type | recurrence }} </td>
+                <td mat-cell *matCellDef="let element"> {{ element.scheduled.type | scheduled }} </td>
             </ng-container>
     
             <!-- Column: startDate -->
             <ng-container matColumnDef="startDate">
                 <th mat-header-cell *matHeaderCellDef> Data de Início </th>
-                <td mat-cell *matCellDef="let element"> {{ element.recurrence.startDate | date:'dd/MM/yyyy' }} </td>
+                <td mat-cell *matCellDef="let element"> {{ element.scheduled.startDate | date:'dd/MM/yyyy' }} </td>
             </ng-container>
     
             <!-- Column: startDate -->
             <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef></th>
                 <td mat-cell *matCellDef="let element">
-                    <button mat-icon-button class="edit-button" (click)="editRecurrence(element)">
+                    <button mat-icon-button class="edit-button" (click)="editScheduled(element)">
                         <mat-icon>edit</mat-icon>
                     </button>
-                    <button mat-icon-button class="delete-button deletable" (click)="deleteRecurrence(element)">
+                    <button mat-icon-button class="delete-button deletable" (click)="deleteScheduled(element)">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </td>

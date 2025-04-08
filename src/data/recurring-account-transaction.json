@@ -11,7 +11,7 @@
       "originAccountId": "ACC123",
       "category": "Investments",
       "notes": "Long-term investment",
-      "recurrence": {
+      "scheduled": {
         "type": "ONCE",
         "startDate": "2025-04-01"
       }
@@ -27,7 +27,7 @@
       "originAccountId": "ACC456",
       "category": "Investments",
       "notes": "Profit booking",
-      "recurrence": {
+      "scheduled": {
         "type": "ONCE",
         "startDate": "2025-04-05"
       }
@@ -43,7 +43,7 @@
       "originAccountId": "ACC103",
       "targetAccounId": "ACC104",
       "category": "Transfers",
-      "recurrence": {
+      "scheduled": {
         "type": "ONCE",
         "startDate": "2025-04-02"
       }
@@ -59,7 +59,7 @@
       "originAccountId": "ACC104",
       "targetAccounId": "ACC105",
       "category": "Transfers",
-      "recurrence": {
+      "scheduled": {
         "type": "ONCE",
         "startDate": "2025-04-03"
       }
@@ -74,7 +74,7 @@
       },
       "originAccountId": "ACC106",
       "category": "Expenses",
-      "recurrence": {
+      "scheduled": {
         "type": "YEARLY",
         "startDate": "2025-04-01"
       }
@@ -89,7 +89,7 @@
       },
       "originAccountId": "ACC107",
       "category": "Investments",
-      "recurrence": {
+      "scheduled": {
         "type": "ONCE",
         "startDate": "2025-04-04"
       }
@@ -104,7 +104,7 @@
       },
       "originAccountId": "ACC108",
       "category": "Miscellaneous",
-      "recurrence": {
+      "scheduled": {
         "type": "DIARY",
         "startDate": "2025-04-01",
         "endDate": "2025-04-10"

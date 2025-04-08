@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
-import { RecurrenceStatemetType } from '../model/source.model';
+import { ScheduledStatemetType } from '../model/source.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Recurrence, StatementEnum } from '../model/domain.model';
+import { Scheduled, StatementEnum } from '../model/domain.model';
 import { SourceService } from './source.service';
-import { RecurrenceTransactionDialogComponent } from '../statement/recurrence-transaction-dialog/recurrence-transaction-dialog.component';
+import { ScheduledTransactionDialogComponent } from '../statement/scheduled-transaction-dialog/scheduled-transaction-dialog.component';
 
 @Injectable({
   providedIn: 'root'
@@ -14,37 +14,37 @@ export class StatementService {
 
   private sourceService = inject(SourceService);
 
-  openRecurrenceDialog(title: string, recurrence: RecurrenceStatemetType) {
-    const dialogRef: MatDialogRef<RecurrenceTransactionDialogComponent, RecurrenceStatemetType> = 
-      this.dialog.open(RecurrenceTransactionDialogComponent, {
+  openScheduledDialog(title: string, scheduled: ScheduledStatemetType) {
+    const dialogRef: MatDialogRef<ScheduledTransactionDialogComponent, ScheduledStatemetType> = 
+      this.dialog.open(ScheduledTransactionDialogComponent, {
         data: {
           title,
-          recurrence
+          scheduled
         }
       });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (!recurrence.id) {
-          this.sourceService.addRecurrenceStatement(result)
+        if (!scheduled.id) {
+          this.sourceService.addScheduledStatement(result)
         }
         else {
-          this.sourceService.updateRecurrenceStatement([{
+          this.sourceService.updateScheduledStatement([{
             ...result,
-            id: recurrence.id
+            id: scheduled.id
           }]);
         }
       }
     })
   }
 
-  newRecurrenceStatement() {
-    this.openRecurrenceDialog('Nova transação recorrente', {
+  newScheduledStatement() {
+    this.openScheduledDialog('Nova transação recorrente', {
       description: '',
       originAccountId: '',
       type: StatementEnum.EXPENSE,
-      recurrence: {
-        type: Recurrence.MONTHLY,
+      scheduled: {
+        type: Scheduled.MONTHLY,
         startDate: new Date(),
         endDate: undefined
       },
@@ -55,12 +55,12 @@ export class StatementService {
     });
 }
 
-editRecurrenceStatement(recurrence: RecurrenceStatemetType) {
-  this.openRecurrenceDialog('Edição de transação recorrente', recurrence)  
+editScheduledStatement(scheduled: ScheduledStatemetType) {
+  this.openScheduledDialog('Edição de transação recorrente', scheduled)  
 }
 
-deleteRecurrenceStatement(recurrenceId: string) {
-  this.sourceService.deleteRecurrenceStatement(recurrenceId);
+deleteScheduledStatement(scheduledId: string) {
+  this.sourceService.deleteScheduledStatement(scheduledId);
 }
 
 constructor() { }
