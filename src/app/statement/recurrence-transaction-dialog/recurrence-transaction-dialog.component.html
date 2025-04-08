@@ -8,7 +8,7 @@
         </mat-form-field>
     </div>
 
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between flex-wrap">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Moeda</mat-label>
             <mat-select formControlName="currency">
@@ -24,9 +24,7 @@
             <mat-label>Valor</mat-label>
             <input matInput type="number" formControlName="amount" />
         </mat-form-field>
-    </div>
 
-    <div class="d-flex justify-content-between">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Conta de Origem</mat-label>
             <mat-select formControlName="originAccountId">
@@ -48,9 +46,7 @@
                 }
             </mat-select>
         </mat-form-field>
-    </div>
 
-    <div class="d-flex justify-content-between">
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Categoria</mat-label>
             <input matInput formControlName="category" />
@@ -66,10 +62,8 @@
                 }
             </mat-select>
         </mat-form-field>
-    </div>
 
-    <div class="d-flex justify-content-between">
-        <mat-form-field appearance="fill" class="full-width me-2">
+        <mat-form-field appearance="fill" class="full-width">
             <mat-label>Data de Início</mat-label>
             <input matInput [matDatepicker]="startDatePicker" formControlName="startDate" />
             <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
