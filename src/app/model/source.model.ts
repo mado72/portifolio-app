@@ -148,12 +148,14 @@ export type StatementSourceDataType = {
     currency: string;
     amount: number;
     account_id: string;
+    recurrence_ref?: string;
 }
 
-export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency" | "account_id"> & {
+export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency" | "account_id" | "recurrence_ref"> & {
     type: StatementEnum;
     value: CurrencyAmount;
     originAccountId: string;
+    recurrenceRef?: string;
 }
 
 export type StatementRecord = Record<string, StatementType>;
@@ -210,7 +212,7 @@ export type RecurrencesSourceDataType = {
         amount: number;
     };
     originAccountId: string;
-    destAccounId?: string; // optional for transfer transaction
+    targetAccountId?: string; // optional for transfer transaction
     category?: string;
     notes?: string;
     recurrence: {

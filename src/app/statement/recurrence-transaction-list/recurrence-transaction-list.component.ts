@@ -46,6 +46,7 @@ export class RecurrenceTransactionListComponent {
     'type',
     'value',
     'originAccountId',
+    'targetAccountId',
     'category',
     'recurrenceType',
     'startDate',

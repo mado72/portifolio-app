@@ -41,7 +41,7 @@
         "currency": "USD"
       },
       "originAccountId": "ACC103",
-      "destAccounId": "ACC104",
+      "targetAccounId": "ACC104",
       "category": "Transfers",
       "recurrence": {
         "type": "ONCE",
@@ -57,7 +57,7 @@
         "currency": "USD"
       },
       "originAccountId": "ACC104",
-      "destAccounId": "ACC105",
+      "targetAccounId": "ACC105",
       "category": "Transfers",
       "recurrence": {
         "type": "ONCE",

@@ -122,7 +122,7 @@ type Statement$ = {
     description: string;
     value: CurrencyAmount;
     originAccountId: string;
-    destAccounId?: string; // optional for transfer transaction
+    targetAccounId?: string; // optional for transfer transaction
     category?: string;
     notes?: string;
 }

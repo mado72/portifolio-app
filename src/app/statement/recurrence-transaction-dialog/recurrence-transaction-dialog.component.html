@@ -38,8 +38,8 @@
 
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Conta de Destino</mat-label>
-            <mat-select formControlName="destAccounId">
-                @for(account of accounts; track $index) {
+            <mat-select formControlName="targetAccounId">
+                @for(account of accountsDest; track $index) {
                 <mat-option [value]="account.id">
                     {{ account.accountName }}
                 </mat-option>

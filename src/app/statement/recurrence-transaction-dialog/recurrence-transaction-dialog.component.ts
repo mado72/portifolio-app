@@ -60,7 +60,7 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
     currency: this.fb.control(this.data.recurrence.value.currency, [Validators.required]),
     type: this.fb.control(this.data.recurrence.type, [Validators.required]),
     originAccountId: this.fb.control(this.data.recurrence.originAccountId, [Validators.required]),
-    destAccounId: this.fb.control(this.data.recurrence.destAccounId || ''),
+    targetAccounId: this.fb.control(this.data.recurrence.targetAccountId || ''),
     category: this.fb.control(this.data.recurrence.category || ''),
     recurrenceType: this.fb.control(this.data.recurrence.recurrence.type, [Validators.required]),
     startDate: this.fb.control(this.data.recurrence.recurrence.startDate, [Validators.required]),
@@ -75,7 +75,7 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
 
   accounts = Object.values(this.balanceService.getAllBalances()) as {id?: string, accountName: string}[];
 
-  accountsDest = [...this.accounts].unshift({id: undefined, accountName: 'Nenhuma'})
+  accountsDest = [{id: undefined, accountName: 'Selecione...'}, ...this.accounts]
 
   ngOnInit(): void {
     this.enableDisableRecurrenceType();
@@ -90,7 +90,13 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
       this.form.get('endDate')?.disable()
     }
     else {
-      this.form.get('endDate')?.enable()
+      const endDate = this.form.get('endDate');
+      if (endDate) {
+        endDate.enable();
+        if (!endDate.value) {
+          endDate.setValue(this.form.get('startDate')?.value);
+        }
+      }
     }
   }
 
@@ -114,7 +120,7 @@ export class RecurrenceTransactionDialogComponent implements OnInit {
           currency: this.form.value.currency,
         },
         originAccountId: this.form.value.originAccountId,
-        destAccounId: this.form.value.destAccounId,
+        targetAccountId: this.form.value.targetAccounId,
         category: this.form.value.category,
         recurrence: {
           type: this.form.value.recurrenceType,

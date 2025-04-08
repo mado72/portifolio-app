@@ -33,7 +33,7 @@ export class SourceService {
       return {...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
     }))),
     transaction: signal<Record<string, InvestmentTransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
-    statement: signal<Record<string, StatementSourceDataType>>(this.statementSourceToRecord(statementSource.data)),
+    statement: signal<Record<string, StatementType>>(this.statementSourceToRecord(statementSource.data)),
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data)),
     recurrences: signal<Record<string, RecurrenceStatemetType>>(this.recurrenceSourceToRecord(recurrenceSource.data))
   };
@@ -102,18 +102,7 @@ export class SourceService {
     return acc;
   }, {} as Record<string, InvestmentTransactionType>));
 
-  readonly statementSource = computed(() => Object.entries(this.dataSource.statement()).reduce((acc, [key, item]) => {
-    acc[key] = {
-      ...item,
-      originAccountId: item.account_id,
-      type: StatementEnum[item.type as keyof typeof StatementEnum],
-      value: {
-        amount: item.amount,
-        currency: Currency[item.currency as CurrencyType]
-      }
-    }
-    return acc;
-  }, {} as Record<string, StatementType>));
+  readonly statementSource = computed(() => this.dataSource.statement());
 
   readonly portfolioSource = computed<PortfolioRecord>(() => {
     const asset = this.dataSource.asset();
@@ -277,9 +266,18 @@ export class SourceService {
 
   protected statementSourceToRecord(data: StatementSourceDataType[]) {
     return data.reduce((acc, item) => {
-      acc[item.id] = item;
+      acc[item.id] = {
+        ...item,
+         recurrenceRef : item.recurrence_ref,
+         originAccountId : item.account_id,
+         type: StatementEnum[item.type as keyof typeof StatementEnum],
+         value : {
+          amount: item.amount,
+          currency: Currency[item.currency as keyof typeof Currency]
+         }
+      };
       return acc;
-    }, {} as Record<string, StatementSourceDataType>)
+    }, {} as Record<string, StatementType>)
   }
 
   protected portfolioSourceToRecord(data: PortfolioSourceDataType[]) {
@@ -474,9 +472,10 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord([{
         ...item,
+        recurrence_ref: item.recurrenceRef,
         account_id: item.originAccountId,
         amount: item.value.amount,
-        currency: item.value.currency
+        currency: item.value.currency as string
       }])
     }));
   }
@@ -486,9 +485,10 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord(changes.map(item => ({
         ...item,
+        recurrence_ref: item.recurrenceRef,
         account_id: item.originAccountId,
         amount: item.value.amount,
-        currency: item.value.currency
+        currency: item.value.currency as string
       })))
     }));
   }
@@ -550,7 +550,7 @@ export class SourceService {
         recurrence: {
           ...item.recurrence,
           startDate: format(item.recurrence.startDate, 'yyyy-MM-dd'),
-          endDate: item.recurrence.endDate? format(item.recurrence.endDate, 'yyyy-MM-dd') : undefined
+          endDate: !Number.isNaN(item.recurrence.endDate?.getTime()) ? format(item.recurrence.endDate as Date, 'yyyy-MM-dd') : undefined
         }
       })))
     }));
