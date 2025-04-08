@@ -7,6 +7,7 @@ import { BalanceType, ClassConsolidationType } from '../model/source.model';
 import { BalanceDialogComponent } from '../statement/balance-dialog/balance-dialog.component';
 import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
+import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -279,11 +280,14 @@ export class BalanceService {
   }
 
   addAccount(account: BalanceType) {
-    this.sourceService.addBalance(account);
+    return this.sourceService.addBalance(account);
   }
 
   updateAccount(id: string, result: BalanceType) {
-    this.sourceService.updateBalance([result]);
+    return this.sourceService.updateBalance([{
+      ...result,
+      id
+    }])[0];
   }
 
   newAccount() {
@@ -291,6 +295,7 @@ export class BalanceService {
       data: {
         title: 'Nova Conta',
         account: {
+          accountName: '',
           type: AccountTypeEnum.CHECKING,
           balance: {
             price: 0,
@@ -301,7 +306,7 @@ export class BalanceService {
       }
     });
 
-    this.processDialog(dialogRef);
+    return this.processDialog(dialogRef);
   }
 
   editAccount(account: AccountBalanceExchange) {
@@ -312,24 +317,27 @@ export class BalanceService {
       }
     });
 
-    this.processDialog(dialogRef);
+    return this.processDialog(dialogRef);
   }
 
   protected processDialog(dialogRef: MatDialogRef<BalanceDialogComponent, any>) {
-    dialogRef.afterClosed().subscribe((result: AccountBalanceExchange) => {
-      if (result) {
-        let account = this.sourceService.balanceSource()[result?.id as string];
-        if (!account) {
-          this.addAccount(result);
+    return dialogRef.afterClosed().pipe(
+      map((result: AccountBalanceExchange) => {
+        if (result) {
+          let account = this.sourceService.balanceSource()[result?.id as string];
+          if (!account) {
+            return this.addAccount(result);
+          }
+          else {
+            return this.updateAccount(account.id as string, {
+              ...account,
+              ...result
+            });
+          }
         }
-        else {
-          this.updateAccount(account.id as string, {
-            ...account,
-            ...result
-          });
-        }
-      }
-    });
+        return undefined;
+      })
+    );
   }
 
   deleteAccount(id: string) {

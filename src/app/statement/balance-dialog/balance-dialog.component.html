@@ -4,8 +4,8 @@
         <div class="d-flex flex-column">
             <mat-form-field>
                 <mat-label>Conta</mat-label>
-                <input type="text" matInput formControlName="account" required>
-                @if (account.invalid && account.touched) {
+                <input type="text" matInput formControlName="accountName" required>
+                @if (accountName.invalid && accountName.touched) {
                     <mat-error>
                         Campo obrigatório
                     </mat-error>

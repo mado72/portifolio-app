@@ -184,6 +184,7 @@ export class SourceService {
           this.dataSource.transaction.set(this.transactionSourceToRecord(jsonData.transaction));
           this.dataSource.statement.set(this.statementSourceToRecord(jsonData.statement));
           this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
+          this.dataSource.recurrences.set(this.recurrenceSourceToRecord(jsonData.recurrence));
           alert('Dados carregados com sucesso!');
         } catch (error) {
           alert('Erro ao carregar o arquivo JSON.');
@@ -201,6 +202,7 @@ export class SourceService {
     this.dataSource.transaction.set({});
     this.dataSource.statement.set({});
     this.dataSource.portfolio.set({});
+    this.dataSource.recurrences.set({});
     alert('Todos os dados foram excluídos!');
   }
 
@@ -225,7 +227,8 @@ export class SourceService {
       income: Object.values(this.dataSource.income()),
       transaction: Object.values(this.dataSource.transaction()),
       statement: Object.values(this.dataSource.statement()),
-      portfolio: Object.values(this.dataSource.portfolio())
+      portfolio: Object.values(this.dataSource.portfolio()),
+      recurrence: Object.values(this.dataSource.recurrences())
     }
     const jsonString = JSON.stringify(data);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -297,8 +300,8 @@ export class SourceService {
         type: StatementEnum[item.type as keyof typeof StatementEnum],
         recurrence: {
           type: Recurrence[item.recurrence.type as keyof typeof Recurrence],
-          startDate: new Date(item.recurrence.startDate),
-          endDate: item.recurrence.endDate? new Date(item.recurrence.endDate) : undefined
+          startDate: parse(item.recurrence.startDate, 'yyyy-MM-dd', new Date()),
+          endDate: item.recurrence.endDate? parse(item.recurrence.endDate, 'yyyy-MM-dd', new Date()) : undefined
         }
       };
       return acc;
@@ -338,28 +341,32 @@ export class SourceService {
   }
 
   addBalance(item: BalanceType) {
+    const account = {
+      ...item,
+      id: uuid(),
+      balance: item.balance.price,
+      currency: item.balance.currency,
+      date: formatISO(new Date())
+    };
     this.dataSource.balance.update(balances => ({
       ...balances,
-      ...this.balanceToRecord([{
-        ...item,
-        id: uuid(),
-        balance: item.balance.price,
-        currency: item.balance.currency,
-        date: formatISO(new Date())
-      }])
+      ...this.balanceToRecord([account])
     }))
+    return account;
   }
 
   updateBalance(changes: BalanceType[]) {
+    const accounts = changes.map(item => ({
+      ...item,
+      balance: item.balance.price,
+      currency: item.balance.currency,
+      date: formatISO(new Date())
+    }));
     this.dataSource.balance.update(balances => ({
       ...balances,
-      ...this.balanceToRecord(changes.map(item => ({
-        ...item,
-        balance: item.balance.price,
-        currency: item.balance.currency,
-        date: formatISO(new Date())
-      })))
+      ...this.balanceToRecord(accounts)
     }))
+    return accounts;
   }
 
   deleteBalance(id: string) {

@@ -90,11 +90,15 @@ export class BalancesComponent implements OnInit {
   }
 
   editAccount(account: AccountBalanceExchange) {
-    this.balanceService.editAccount(account);
+    this.balanceService.editAccount(account).subscribe();
   }
 
   newAccount() {
-    this.balanceService.newAccount();
+    this.balanceService.newAccount().subscribe(account=>{
+      if (account) {
+        this.selects.update(items=>[...items, account.id as string])
+      }
+    })
   }
 
   deleteAccount(account: AccountBalanceExchange) {

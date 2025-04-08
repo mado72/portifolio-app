@@ -38,9 +38,9 @@ export class BalanceDialogComponent implements OnInit {
   readonly data = inject<BalanceDialogType>(MAT_DIALOG_DATA);
 
   readonly entryForm = this.fb.group({
-    id: '',
-    account: this.fb.control('', [Validators.required]),
-    type: this.fb.control(AccountTypeEnum.CHECKING, [Validators.required]),
+    id: this.data.account.id,
+    accountName: this.fb.control(this.data.account.accountName, [Validators.required]),
+    type: this.fb.control(this.data.account.type, [Validators.required]),
     balance: this.fb.group({
       currency: this.fb.control(this.data.account.balance.currency, [Validators.required]),
       price: this.fb.control(this.data.account.balance.price, [Validators.required])
@@ -51,11 +51,10 @@ export class BalanceDialogComponent implements OnInit {
   readonly currencyOptions = Object.values(Currency)
 
   ngOnInit(): void {
-    this.entryForm.patchValue(this.data.account);
   }
 
-  get account() {
-    return this.entryForm.get('account') as FormControl;
+  get accountName() {
+    return this.entryForm.get('accountName') as FormControl;
   }
 
   get type() {

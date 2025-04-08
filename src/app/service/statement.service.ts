@@ -45,7 +45,8 @@ export class StatementService {
       type: StatementEnum.EXPENSE,
       recurrence: {
         type: Recurrence.MONTHLY,
-        startDate: new Date()
+        startDate: new Date(),
+        endDate: undefined
       },
       value: {
         currency: this.sourceService.currencyDefault(),

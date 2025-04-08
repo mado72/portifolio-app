@@ -8,7 +8,7 @@
     <table mat-table [dataSource]="dataSource()" class="mat-elevation-z2" [class]="!editable()? 'mat-table-hover' : 'mat-table-selectable'">
         <ng-container matColumnDef="account">
             <td mat-header-cell *matHeaderCellDef>Conta</td>
-            <td mat-cell *matCellDef="let item"> {{ item.account }}</td>
+            <td mat-cell *matCellDef="let item"> {{ item.accountName }}</td>
             <td mat-footer-cell *matFooterCellDef>
                 Saldo Total
             </td>
@@ -23,7 +23,7 @@
             </td>
         </ng-container>
         <ng-container matColumnDef="balance">
-            <td mat-header-cell *matHeaderCellDef>Saldo na Conta</td>
+            <td mat-header-cell *matHeaderCellDef>Saldo na moeda</td>
             <td mat-cell *matCellDef="let item" class="number"> 
                 @if( ! isSameCurrency(item)) {
                     <app-currency [value]="item.balance"></app-currency>

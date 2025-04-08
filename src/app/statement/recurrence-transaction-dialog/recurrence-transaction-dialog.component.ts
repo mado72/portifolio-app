@@ -1,16 +1,15 @@
-import { Component, inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { StatementService } from '../../service/statement.service';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RecurrenceStatemetType } from '../../model/source.model';
 import { MatButtonModule } from '@angular/material/button';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { Currency, StatementEnum } from '../../model/domain.model';
-import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
-import { JsonPipe } from '@angular/common';
+import { MatSelectModule } from '@angular/material/select';
+import { UTCDate } from '@date-fns/utc';
+import { Currency, Recurrence, StatementEnum } from '../../model/domain.model';
+import { RecurrenceStatemetType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
+import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
 
 export type DialogData = {
   title: string,
@@ -26,7 +25,7 @@ const PTBR_FORMATS = {
     monthYearLabel: 'MMM yyyy',
     dateA11yLabel: 'LL',
     monthYearA11yLabel: 'MMMM yyyy',
-  },
+  }
 };
 
 @Component({
@@ -38,8 +37,7 @@ const PTBR_FORMATS = {
     MatButtonModule,
     MatSelectModule,
     MatDatepickerModule,
-    ReactiveFormsModule,
-    JsonPipe
+    ReactiveFormsModule
   ],
   providers: [
     provideAppDateAdapter(PTBR_FORMATS)
@@ -47,13 +45,11 @@ const PTBR_FORMATS = {
   templateUrl: './recurrence-transaction-dialog.component.html',
   styleUrl: './recurrence-transaction-dialog.component.scss'
 })
-export class RecurrenceTransactionDialogComponent {
+export class RecurrenceTransactionDialogComponent implements OnInit {
 
   private data = inject<DialogData>(MAT_DIALOG_DATA);
 
   private dialogRef = inject(MatDialogRef<RecurrenceTransactionDialogComponent>);
-
-  private statementService = inject(StatementService);
 
   private balanceService = inject(BalanceService);
 
@@ -73,11 +69,35 @@ export class RecurrenceTransactionDialogComponent {
 
   currencies = Object.values(Currency);
 
-  recurrenceTypes = Object.values(StatementEnum);
+  statementTypes = Object.values(StatementEnum);
+
+  recurrenceTypes = Object.values(Recurrence);
 
   accounts = Object.values(this.balanceService.getAllBalances()) as {id?: string, accountName: string}[];
 
   accountsDest = [...this.accounts].unshift({id: undefined, accountName: 'Nenhuma'})
+
+  ngOnInit(): void {
+    this.enableDisableRecurrenceType();
+
+    this.form.get('recurrenceType')?.valueChanges.subscribe(_=>{
+      this.enableDisableRecurrenceType();
+    });
+  }
+  
+  enableDisableRecurrenceType() {
+    if (this.form.get('recurrenceType')?.value === Recurrence.ONCE) {
+      this.form.get('endDate')?.disable()
+    }
+    else {
+      this.form.get('endDate')?.enable()
+    }
+  }
+
+  get labelStartDate () {
+    return this.form.get('endDate')?.enabled ? 'Data de Início' : 'Data da Transação';
+  }
+
 
   onCancel(): void {
     this.dialogRef.close();
@@ -98,11 +118,15 @@ export class RecurrenceTransactionDialogComponent {
         category: this.form.value.category,
         recurrence: {
           type: this.form.value.recurrenceType,
-          startDate: this.form.value.startDate,
-          endDate: this.form.value.endDate,
+          startDate: new UTCDate(this.form.value.startDate),
+          endDate: new UTCDate(this.form.value.endDate),
         },
       };
       this.dialogRef.close(updatedData);
     }
+  }
+
+  displayRecurrencePeriod() {
+    return this.form.value.recurrenceType !== Recurrence.ONCE;
   }
 }
