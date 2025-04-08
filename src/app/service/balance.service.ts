@@ -169,7 +169,7 @@ export class BalanceService {
    * ```
    */
   getForecastSummary(currency: Currency): { start: number, end: number, amount: number }[] {
-    const statements = this.getRecurringStatements(currency);
+    const statements = this.getScheduledStatements(currency);
 
     const depositStatements = statements.filter(statement => !isStatementExpense(statement.type));
 
@@ -236,7 +236,7 @@ export class BalanceService {
 
 
   // FIXME: This method should be refactored to include database query.
-  getRecurringStatements(currency: Currency): ForecastDayItem[] {
+  getScheduledStatements(currency: Currency): ForecastDayItem[] {
     const statements = Object.values(this.sourceService.statementSource());
 
     return statements.map(item => {
@@ -256,12 +256,12 @@ export class BalanceService {
 
 
   getCurrentMonthForecast(currency: Currency) {
-    return this.getRecurringStatements(currency);
+    return this.getScheduledStatements(currency);
   }
 
   getPeriodForecast(currency: Currency, start: Date, end: Date) {
 
-    const statements = this.getRecurringStatements(currency);
+    const statements = this.getScheduledStatements(currency);
 
     const months = eachMonthOfInterval({ start, end });
     // MOCK logic

@@ -6,7 +6,7 @@ import balanceSource from '../../data/balance.json';
 import classConsolidationSource from '../../data/class-consolidation.json';
 import incomeSource from '../../data/earnings.json';
 import portfolioSource from '../../data/portfolio.json';
-import scheduledSource from '../../data/recurring-account-transaction.json';
+import scheduledSource from '../../data/scheduled-account-transaction.json';
 import statementSource from '../../data/statement-forecast.json';
 import transactionsSource from '../../data/transactions.json';
 import { AccountTypeEnum, Currency, CurrencyType, Scheduled, StatementEnum } from '../model/domain.model';
