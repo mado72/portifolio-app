@@ -21,6 +21,7 @@
     "@angular/platform-browser-dynamic": "^18.2.0",
     "@angular/router": "^18.2.0",
     "@date-fns/tz": "^1.2.0",
+    "@date-fns/utc": "^2.1.0",
     "@fortawesome/angular-fontawesome": "^0.15.0",
     "@fortawesome/free-brands-svg-icons": "^6.5.2",
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
