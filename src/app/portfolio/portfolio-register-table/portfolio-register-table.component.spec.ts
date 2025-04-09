@@ -1,6 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PortfolioRegisterTableComponent } from './portfolio-register-table.component';
+import { PortfolioService } from '../../service/portfolio-service';
+
+class MyService {
+  portfolioAllocation = () => ([]);
+  total = () => ({});
+}
 
 describe('PortfolioRegisterTableComponent', () => {
   let component: PortfolioRegisterTableComponent;
@@ -8,7 +14,10 @@ describe('PortfolioRegisterTableComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PortfolioRegisterTableComponent]
+      imports: [PortfolioRegisterTableComponent],
+      providers: [
+        { provide: PortfolioService, useClass: MyService }
+      ]
     })
     .compileComponents();
 

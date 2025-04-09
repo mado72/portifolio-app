@@ -1,6 +1,34 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { PortfolioAllocationDialogComponent } from './portfolio-allocation-dialog.component';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Currency } from '../../model/domain.model';
+import { AssetEnum } from '../../model/source.model';
+
+const dataMock = {
+  portfolio: '',
+  ticker: '',
+  asset: {
+    marketPlace: 'TEST',
+    code: "CODE000",
+    ticker: '',
+    initialPrice: 0,
+    lastUpdate: new Date(),
+    quote: {
+      price: 0,
+      currency: Currency.BRL
+    },
+    type: AssetEnum.OTHER,
+    trend: "up"
+  },
+  quantity: 0,
+  percent: 0,
+}
+
+const dialogMock = {
+  close: () => {}
+};
 
 describe('PortfolioAllocationDialogComponent', () => {
   let component: PortfolioAllocationDialogComponent;
@@ -8,7 +36,14 @@ describe('PortfolioAllocationDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PortfolioAllocationDialogComponent]
+      imports: [
+        PortfolioAllocationDialogComponent
+      ],
+      providers: [
+        provideAnimationsAsync(),
+        { provide: MatDialogRef, useValue: dialogMock },
+        { provide: MAT_DIALOG_DATA, useValue: dataMock }
+      ]
     })
     .compileComponents();
 
@@ -16,6 +51,11 @@ describe('PortfolioAllocationDialogComponent', () => {
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
+
+  it('should print ok', ()=> {
+    console.log('ok');
+    expect(1).not.toBe(0);
+  })
 
   it('should create', () => {
     expect(component).toBeTruthy();

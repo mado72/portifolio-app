@@ -1,6 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BalancesComponent } from './balances.component';
+import { BalanceService } from '../../service/balance.service';
+
+class MyService {
+  getBalancesByCurrencyExchange = () => ([]);
+}
 
 describe('BalancesComponent', () => {
   let component: BalancesComponent;
@@ -8,7 +13,10 @@ describe('BalancesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BalancesComponent]
+      imports: [BalancesComponent],
+      providers: [
+        { provide: BalanceService, useClass: MyService }
+      ]
     })
     .compileComponents();
 

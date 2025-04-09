@@ -1,6 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { EarningsFilterComponent } from './earnings-filter.component';
+import { PortfolioService } from '../../service/portfolio-service';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+
+class MyService {
+  portfolios = () => ({});
+}
 
 describe('EarningsFilterComponent', () => {
   let component: EarningsFilterComponent;
@@ -8,7 +15,12 @@ describe('EarningsFilterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EarningsFilterComponent]
+      imports: [EarningsFilterComponent],
+      providers: [
+        { provide: PortfolioService, useClass: MyService },
+        provideNativeDateAdapter(),
+        provideAnimationsAsync()
+      ]
     })
     .compileComponents();
 

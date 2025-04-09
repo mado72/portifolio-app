@@ -1,6 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FinancialForecastSummaryComponent } from './financial-forecast-summary.component';
+import { BalanceService } from '../../service/balance.service';
+import { DecimalPipe } from '@angular/common';
+
+class MyService{
+  getBalancesSummarized = () => 0;
+  getForecastSummary = () => ([]);
+}
 
 describe('FinancialForecastSummaryComponent', () => {
   let component: FinancialForecastSummaryComponent;
@@ -8,7 +15,10 @@ describe('FinancialForecastSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FinancialForecastSummaryComponent]
+      imports: [FinancialForecastSummaryComponent],
+      providers: [
+        { provide: BalanceService, useClass: MyService }
+      ]
     })
     .compileComponents();
 

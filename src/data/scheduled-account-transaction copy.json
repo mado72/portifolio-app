@@ -2,18 +2,18 @@
   "data": [
     {
       "id": "f3b9c8a4-1d2b-4e3a-9c8a-1234567890ab",
-      "type": "EXPENSE",
+      "type": "BUY",
       "description": "Fundação Logosófica",
       "value": {
-        "amount": 350.00,
-        "currency": "BRL"
+        "amount": 1500.00,
+        "currency": "USD"
       },
       "originAccountId": "ACC123",
       "category": "Investments",
       "notes": "Long-term investment",
       "scheduled": {
-        "type": "MONTHLY",
-        "startDate": "1996-04-05"
+        "type": "ONCE",
+        "startDate": "2025-04-01"
       }
     },
     {
@@ -50,18 +50,18 @@
     },
     {
       "id": "987f6543-21ab-43cd-85ef-1234567890ab",
-      "type": "EXPENSE",
-      "description": "Eduardo",
+      "type": "TRANSFER",
+      "description": "Transfer to checking",
       "value": {
-        "amount": 500.00,
-        "currency": "BRL"
+        "amount": 750.00,
+        "currency": "USD"
       },
-      "originAccountId": "CC-123456",
-      "category": "Pagamento",
+      "originAccountId": "ACC104",
+      "targetAccounId": "ACC105",
+      "category": "Transfers",
       "scheduled": {
-        "type": "MONTHLY",
-        "startDate": "2025-01-10",
-        "endDate": "2025-06-01"
+        "type": "ONCE",
+        "startDate": "2025-04-03"
       }
     },
     {
@@ -96,18 +96,18 @@
     },
     {
       "id": "321cba98-7654-32ed-10fg-1234567890ab",
-      "type": "EXPENSE",
-      "description": "Enzo",
+      "type": "OTHER",
+      "description": "Miscellaneous income",
       "value": {
         "amount": 100.00,
-        "currency": "BRL"
+        "currency": "USD"
       },
-      "originAccountId": "CC-123456",
-      "category": "Família",
+      "originAccountId": "ACC108",
+      "category": "Miscellaneous",
       "scheduled": {
-        "type": "WEEKLY",
-        "startDate": "2025-01-01",
-        "endDate": "2026-04-10"
+        "type": "DIARY",
+        "startDate": "2025-04-01",
+        "endDate": "2025-04-10"
       }
     }
   ]

@@ -1,3 +1,6 @@
+import { Interval, eachDayOfInterval, eachMonthOfInterval, eachQuarterOfInterval, eachWeekOfInterval, eachYearOfInterval, getDate, getDay, isWithinInterval, setDate, setDay } from "date-fns";
+import { Scheduled } from "./domain.model";
+
 /**
 * @description
 * Takes an Array<V>, and a grouping function,
@@ -9,9 +12,9 @@
 *
 * @returns Map of the array grouped by the grouping function.
 */
-export function groupBy<K, V>(list: V[], keyGetter: (v: V) => K): Map<K, V[]>{
-   const map = new Map<K, V[]>();
-   list.forEach((item) => {
+export function groupBy<K, V>(list: V[], keyGetter: (v: V) => K): Map<K, V[]> {
+    const map = new Map<K, V[]>();
+    list.forEach((item) => {
         const key = keyGetter(item);
         const collection = map.get(key);
         if (!collection) {
@@ -19,8 +22,8 @@ export function groupBy<K, V>(list: V[], keyGetter: (v: V) => K): Map<K, V[]>{
         } else {
             collection.push(item);
         }
-   });
-   return map;
+    });
+    return map;
 }
 
 /**
@@ -55,4 +58,60 @@ export function toRecord<T extends Record<string, any>, K extends keyof T>(array
 export function divide(dividend: number, divisor: number, precision: number = 2) {
     const factor = 10 ^ precision;
     return Math.trunc((dividend * factor) / divisor) / factor;
+}
+
+/**
+ * Generates a list of dates based on a specified scheduling pattern and filters them
+ * to ensure they fall within a given date range.
+ *
+ * @param scheduledRange - The interval representing the range of dates to generate the schedule from.
+ * @param dateRange - The interval representing the range of dates to filter the generated schedule.
+ * @param schedule - The scheduling pattern to use for generating dates (e.g., daily, weekly, monthly, etc.).
+ * @returns An array of dates that match the scheduling pattern and fall within the specified date range.
+ */
+export function getScheduleDates(scheduledRange: Interval, dateRange: Interval, schedule: Scheduled) {
+    let dates: Date[];
+
+    switch (schedule) {
+        case Scheduled.DIARY: {
+            dates = eachDayOfInterval(scheduledRange);
+            break;
+        }
+        case Scheduled.WEEKLY: {
+            dates = eachWeekOfInterval(scheduledRange)
+                .map(date=>setDay(date, getDay(scheduledRange.start)));
+            break;
+        }
+        case Scheduled.FORTNIGHTLY: {
+            dates = eachWeekOfInterval(scheduledRange)
+                .filter((_,idx)=>idx %2 === 0)
+                .map(date=>setDay(date, getDay(scheduledRange.start)));
+            break;
+        }
+        case Scheduled.MONTHLY: {
+            dates = eachMonthOfInterval(scheduledRange)
+                .map(date=>setDate(date, getDate(scheduledRange.start)));
+            break;
+        }
+        case Scheduled.QUARTER: {
+            dates = eachQuarterOfInterval(scheduledRange)
+                .map(date=>setDate(date, getDate(scheduledRange.start)));
+            break;
+        }
+        case Scheduled.HALF_YEARLY: {
+            dates = eachMonthOfInterval(scheduledRange).filter((_,idx)=>idx % 6 === 0)
+                .map(date=>setDate(date, getDate(scheduledRange.start)));
+            break;
+        }
+        case Scheduled.YEARLY: {
+            dates = eachYearOfInterval(scheduledRange)
+                .map(date=>setDate(date, getDate(scheduledRange.start)));
+            break;
+        }
+        default: {
+            const date = scheduledRange.start as Date;
+            dates = [date];
+        }
+    }
+    return dates.filter(date => isWithinInterval(date, dateRange));
 }

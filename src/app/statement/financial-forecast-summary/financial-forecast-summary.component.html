@@ -19,6 +19,7 @@
     </ng-container>
     <ng-container matColumnDef="balance">
         <th mat-header-cell *matHeaderCellDef>
+            {{ initialBalance }}
             <app-currency [amount]="initialBalance"></app-currency>
         </th>
         <td mat-cell *matCellDef="let element">

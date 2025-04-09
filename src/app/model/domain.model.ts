@@ -70,10 +70,9 @@ export type AccountBalanceSummary = {
 export enum StatementEnum {
     DEPOSIT = 'DEPOSIT',
     INCOME = 'INCOME',
-    TRANSFER_IN = 'TRANSFER_IN',
+    TRANSFER = 'TRANSFER',
     WITHDRAWAL = 'WITHDRAWAL',
     EXPENSE = 'EXPENSE',
-    TRANSFER_OUT = 'TRANSFER_OUT',
     BUY = 'BUY',
     SELL = 'SELL',
     SUBSCRIPTION = 'SUBSCRIPTION',
@@ -84,10 +83,9 @@ export enum StatementEnum {
 export const StatementDesc = {
     DEPOSIT : "Depósito",
     INCOME : "Renda",
-    TRANSFER_IN : "Transf. Entrada",
+    TRANSFER : "Transf. Entrada",
     WITHDRAWAL : "Retirada",
     EXPENSE : "Despesa",
-    TRANSFER_OUT : "Transf. Saída",
     BUY : "Compra",
     SELL : "Venda",
     SUBSCRIPTION : "Subscrição",
@@ -99,12 +97,19 @@ export enum Scheduled {
     ONCE = 'ONCE',
     DIARY = 'DIARY',
     WEEKLY = 'WEEKLY',
+    FORTNIGHTLY = 'FORTNIGHTLY',
     MONTHLY = 'MONTHLY',
+    QUARTER = 'QUARTER',
+    HALF_YEARLY = 'HALF_YEARLY',
     YEARLY = 'YEARLY'
 }
 
 export function isStatementExpense(item: StatementEnum) {
-    return [StatementEnum.EXPENSE, StatementEnum.TRANSFER_OUT, StatementEnum.WITHDRAWAL].includes(item);
+    return [StatementEnum.EXPENSE, StatementEnum.WITHDRAWAL, StatementEnum.BUY, StatementEnum.SUBSCRIPTION].includes(item);
+}
+
+export function isStatementDeposit(item: StatementEnum) {
+    return [StatementEnum.DEPOSIT, StatementEnum.INCOME, StatementEnum.SELL].includes(item);
 }
 
 export type Account = {

@@ -2,10 +2,12 @@ import { Component, computed, EventEmitter, inject, OnInit, signal } from '@angu
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { isStatementExpense } from '../../model/domain.model';
+import { isStatementDeposit, isStatementExpense } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { DatePipe, JsonPipe } from '@angular/common';
+import { differenceInDays, isBefore } from 'date-fns';
 
 @Component({
   selector: 'app-financial-forecast',
@@ -14,7 +16,9 @@ import { CurrencyComponent } from '../../utils/currency/currency.component';
     FormsModule,
     MatTableModule,
     MatCheckboxModule,
-    CurrencyComponent
+    CurrencyComponent,
+    DatePipe,
+    JsonPipe
   ],
   templateUrl: './financial-forecast.component.html',
   styleUrl: './financial-forecast.component.scss'
@@ -27,12 +31,12 @@ export class FinancialForecastComponent implements OnInit {
 
   onCheckboxChange = new EventEmitter<boolean>();
 
-  datasource = computed (() => this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault())
+  datasource = computed (() => this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault()).sort((a,b)=>differenceInDays(a.date,b.date))
     .map(item => ({
       ...item,
       value: {
         ...item.value,
-        amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : item.value.amount
+        amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : isStatementDeposit(item.type) ? item.value.amount : 0
       }
     })));
 
@@ -46,7 +50,7 @@ export class FinancialForecastComponent implements OnInit {
 
   forecast = computed(() => this.notDone().reduce((acc, item) => acc += item.value.amount, 0))
 
-  displayedColumns = ["description", "due", "amount", "done"];
+  displayedColumns = ["description", "type", "due", "amount", "done"];
 
   ngOnInit(): void {
   }

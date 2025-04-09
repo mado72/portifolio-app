@@ -1,13 +1,13 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { eachMonthOfInterval, getDate, getMonth, setDay } from 'date-fns';
-import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, ForecastDayItem, isStatementExpense, StatementEnum } from '../model/domain.model';
-import { groupBy } from '../model/functions.model';
-import { BalanceType, ClassConsolidationType } from '../model/source.model';
+import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, getDate, interval, Interval, isBefore, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
+import { map } from 'rxjs';
+import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isStatementDeposit, isStatementExpense } from '../model/domain.model';
+import { getScheduleDates, groupBy } from '../model/functions.model';
+import { BalanceType, ClassConsolidationType, ScheduledStatemetType, StatementType } from '../model/source.model';
 import { BalanceDialogComponent } from '../statement/balance-dialog/balance-dialog.component';
 import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
-import { map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +65,7 @@ export class BalanceService {
    * });
    * ```
    */
-  getBalancesByCurrencyExchange(currency: Currency) {
+  getBalancesByCurrencyExchange(currency: Currency): AccountBalanceExchange[] {
     return Object.values(this.getAllBalances()).map(item => {
       const quoteFactor = this.quoteService.getExchangeQuote(item.balance.currency, currency);
       return {
@@ -95,7 +95,7 @@ export class BalanceService {
    * // Output: 12345.67 (example total balance amount)
    * ```
    */
-  getBalancesSummarized(currency: Currency, excludeAccTypes: AccountTypeEnum[] = []) {
+  getBalancesSummarized(currency: Currency, excludeAccTypes: AccountTypeEnum[] = []): number {
     return this.getBalancesByCurrencyExchange(currency)
       .filter(acc => !excludeAccTypes.includes(acc.type))
       .map(item => item.exchange.price)
@@ -169,21 +169,22 @@ export class BalanceService {
    * ```
    */
   getForecastSummary(currency: Currency): { start: number, end: number, amount: number }[] {
-    const statements = this.getScheduledStatements(currency);
+    const statements = this.getScheduledStatements(currency, new Date(), "month");
 
-    const depositStatements = statements.filter(statement => !isStatementExpense(statement.type));
+    const depositStatements = statements.filter(statement => isStatementDeposit(statement.type));
 
     const mapPeriods: number[][] = [];
     let initialDate = 1;
     depositStatements.forEach((depositStatement) => {
-      const day = depositStatement.day;
+      const day = getDate(depositStatement.date);
       mapPeriods.push([initialDate, day]);
       initialDate = day + 1;
     });
     mapPeriods.push([initialDate, 31]);
 
     const expensePeriods = groupBy(statements, (statement) => {
-      return (mapPeriods.find(period => period[0] <= statement.day && statement.day <= period[1]) || [])
+      const day = getDate(statement.date);
+      return (mapPeriods.find(period => period[0] <= day && day <= period[1]) || [])
     });
     const summaryPeriod = Array.from(
       expensePeriods
@@ -199,8 +200,8 @@ export class BalanceService {
 
     for (let i = 0; i < depositStatements.length; i++) {
       summaryPeriod.splice((i * 2) + 1, 0, {
-        start: depositStatements[i].day,
-        end: depositStatements[i].day,
+        start: getDate(depositStatements[i].date),
+        end: getDate(depositStatements[i].date),
         amount: depositStatements[i].value.amount
       });
     }
@@ -236,47 +237,60 @@ export class BalanceService {
 
 
   // FIXME: This method should be refactored to include database query.
-  getScheduledStatements(currency: Currency): ForecastDayItem[] {
-    const statements = Object.values(this.sourceService.statementSource());
+  getScheduledStatements(currency: Currency, dateRef: Date, period: "month" | "year"): ForecastDateItem[] {
+    const dateRange = interval(
+      period === "month" ? startOfMonth(dateRef) : startOfYear(dateRef),
+      period === "month" ? endOfMonth(dateRef) : endOfYear(dateRef)
+    )
 
-    return statements.map(item => {
-      const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency)
+    const scheduledStatements = Object.values(this.sourceService.scheduledSource());
+
+    const statements = Object.values(this.sourceService.statementSource())
+      .filter(item => isWithinInterval(item.date, dateRange))
+      .reduce((acc, vl) => {
+        acc[vl.scheduledRef || ''] = [...acc[vl.scheduledRef || ''], vl];
+        return acc;
+      }, {} as Record<string, StatementType[]>)
+
+    const fnIntervalScheduled = (item: ScheduledStatemetType): Interval => {
       return {
-        ...item,
-        type: StatementEnum[item.type as keyof typeof StatementEnum],
-        value: {
-          amount: item.value.amount * quoteFactor,
-          currency
-        },
-        day: item.date,
-        done: item.date <= getDate(new Date()) // TODO: should be defined by database query
+        start: item.scheduled.startDate,
+        end: item.scheduled.endDate || endOfYear(addYears(dateRef, 25))
       }
-    })
-  }
-
-
-  getCurrentMonthForecast(currency: Currency) {
-    return this.getScheduledStatements(currency);
-  }
-
-  getPeriodForecast(currency: Currency, start: Date, end: Date) {
-
-    const statements = this.getScheduledStatements(currency);
-
-    const months = eachMonthOfInterval({ start, end });
-    // MOCK logic
-    const result: ForecastDateItem[] = [];
-
-    // TODO: Implement real logic to calculate forecast for each month
-    for (var i = 0; i < months.length; i++) {
-      result.push(...statements.map(item => ({
-        ...item,
-        date: setDay(getDate(months[i]), item.day),
-        done: getMonth(months[i]) === getMonth(start) && item.day < getDate(new Date()) // TODO should be defined by database query
-      })))
     }
 
-    return result;
+    const extractForecastItem = (item: ScheduledStatemetType, quoteFactor: number, date: Date): ForecastDateItem => {
+      return {
+        ...item,
+        value: {
+          ...item.value,
+          amount: item.value.amount * quoteFactor
+        },
+        date,
+        done: isBefore(date, new Date()) // FIXME: Deve obter a informação do status do statement
+      };
+    }
+
+    const extractSchedulerDates = (item: ScheduledStatemetType, dateRange: Interval): Date[] => {
+      const scheduledRange = interval(
+        max([item.scheduled.startDate, setDate(dateRange.start, getDate(item.scheduled.startDate))]), 
+        min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
+
+      return getScheduleDates(scheduledRange, dateRange, item.scheduled.type);
+    }
+
+    return scheduledStatements
+      .filter(item=> areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
+      .flatMap(item => {
+        const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency)
+        const items = extractSchedulerDates(item, dateRange)
+          .map(date=>extractForecastItem(item, quoteFactor, date));
+        return items;
+      })
+  }
+
+  getCurrentMonthForecast(currency: Currency): ForecastDateItem[] {
+    return this.getScheduledStatements(currency, new Date(), "month");
   }
 
   addAccount(account: BalanceType) {

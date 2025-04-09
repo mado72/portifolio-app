@@ -1,12 +1,21 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BalanceService } from './balance.service';
+import { QuoteService } from './quote.service';
 
-describe('ContaService', () => {
+class MyService {
+
+}
+
+describe('BalanceService', () => {
   let service: BalanceService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: QuoteService, useClass: MyService }
+      ]
+    });
     service = TestBed.inject(BalanceService);
   });
 

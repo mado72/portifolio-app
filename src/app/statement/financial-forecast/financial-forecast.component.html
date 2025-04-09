@@ -4,15 +4,20 @@
         <td mat-cell *matCellDef="let item">{{item.description}}</td>
         <td mat-footer-cell *matFooterCellDef>Previsão</td>
     </ng-container>
+    <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Dia</th>
+        <td mat-cell *matCellDef="let item" class="text-center">{{item.type}}</td>
+        <td mat-footer-cell *matFooterCellDef></td>
+    </ng-container>
     <ng-container matColumnDef="due">
         <th mat-header-cell *matHeaderCellDef>Dia</th>
-        <td mat-cell *matCellDef="let item" class="text-center">{{item.day}}</td>
+        <td mat-cell *matCellDef="let item" class="text-center">{{item.date | date:'dd/MM/yyyy'}}</td>
         <td mat-footer-cell *matFooterCellDef></td>
     </ng-container>
     <ng-container matColumnDef="amount">
         <th mat-header-cell *matHeaderCellDef>Valor</th>
         <td mat-cell *matCellDef="let item" class="cell-number">
-            <app-currency [value]="item.value"></app-currency>
+            <app-currency [amount]="item.value.amount" [currency]="item.value.currency"></app-currency>
         </td>
         <td mat-footer-cell *matFooterCellDef class="cell-number">
             <app-currency [amount]="total() || 0"></app-currency>
@@ -36,3 +41,6 @@
     <tr mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"></tr>
 </table>
 
+<pre>
+{{datasource() | json}}
+</pre>
