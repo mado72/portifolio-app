@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { UTCDate } from '@date-fns/utc';
-import { Currency, Scheduled, StatementEnum } from '../../model/domain.model';
+import { Currency, Scheduled, TransactionEnum } from '../../model/domain.model';
 import { ScheduledStatemetType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
@@ -69,7 +69,7 @@ export class ScheduledTransactionDialogComponent implements OnInit {
 
   currencies = Object.values(Currency);
 
-  statementTypes = Object.values(StatementEnum);
+  transactionTypes = Object.values(TransactionEnum);
 
   scheduledTypes = Object.values(Scheduled);
 

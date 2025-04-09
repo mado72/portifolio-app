@@ -1,8 +1,8 @@
 import { Component, OnInit, viewChild } from '@angular/core';
 import { MatAccordion, MatExpansionModule } from "@angular/material/expansion";
 import { AllocationSummaryComponent } from '../../assets/allocation-summary/allocation-summary.component';
-import { BalancesComponent } from '../../statement/balances/balances.component';
-import { FinancialForecastSummaryComponent } from '../../statement/financial-forecast-summary/financial-forecast-summary.component';
+import { BalancesComponent } from '../../cashflow/balances/balances.component';
+import { FinancialForecastSummaryComponent } from '../../cashflow/financial-forecast-summary/financial-forecast-summary.component';
 import { PortfolioRegisterTableComponent } from '../../portfolio/portfolio-register-table/portfolio-register-table.component';
 
 @Component({

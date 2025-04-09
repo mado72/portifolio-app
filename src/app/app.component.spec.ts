@@ -37,7 +37,7 @@ describe('AppComponent', () => {
   //   const compiled = fixture.nativeElement as HTMLElement;
   //   expect(compiled.querySelector('h1')?.textContent).toContain('Hello, portifolio-app');
   // });
-  fdescribe('getScheduleDates', () => {
+  describe('getScheduleDates', () => {
     const scheduledRange = { start: new Date(2023, 0, 3), end: new Date(2023, 11, 28) };
     const dateRange = { start: new Date(2023, 2, 1), end: new Date(2023, 8, 31) };
 

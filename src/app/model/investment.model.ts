@@ -62,7 +62,7 @@ export type AllocationSet = {
     total: AllocationCalc;
 }
 
-export enum TransactionEnum {
+export enum InvestmentEnum {
     BUY = 'BUY',
     SELL = 'SELL',
     DIVIDENDS = 'DIVIDENDS',
@@ -74,9 +74,9 @@ export enum TransactionEnum {
     OTHER = 'OTHER',
 }
 
-type TransactionEnumType = `${TransactionEnum}`;
+type InvestmentEnumType = `${InvestmentEnum}`;
 
-export const TransactionEnumDesc : Record<TransactionEnumType, string> = {
+export const InvestmentEnumDesc : Record<InvestmentEnumType, string> = {
     "BUY": 'Compra',
     "SELL": 'Venda',
     "DIVIDENDS": 'Dividendos',

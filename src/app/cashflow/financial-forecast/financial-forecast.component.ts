@@ -2,7 +2,7 @@ import { Component, computed, EventEmitter, inject, OnInit, signal } from '@angu
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
-import { isStatementDeposit, isStatementExpense } from '../../model/domain.model';
+import { isTransactionDeposit, isTransactionExpense } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
@@ -36,7 +36,7 @@ export class FinancialForecastComponent implements OnInit {
       ...item,
       value: {
         ...item.value,
-        amount: item.value.amount = isStatementExpense(item.type) ? - item.value.amount : isStatementDeposit(item.type) ? item.value.amount : 0
+        amount: item.value.amount = isTransactionExpense(item.type) ? - item.value.amount : isTransactionDeposit(item.type) ? item.value.amount : 0
       }
     })));
 

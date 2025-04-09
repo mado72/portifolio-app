@@ -1,8 +1,8 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TransactionEnum, TransactionStatus } from '../model/investment.model';
+import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import { InvestmentTransactionType } from '../model/source.model';
-import { TransactionDialogComponent, TransactionDialogType } from '../statement/transaction-dialog/transaction-dialog.component';
+import { TransactionDialogComponent, TransactionDialogType } from '../cashflow/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
 
@@ -18,22 +18,22 @@ export class TransactionService {
   private dialog = inject(MatDialog);
 
   transactionSignal = computed(() => {
-    return Object.values(this.sourceService.transactionSource());
+    return Object.values(this.sourceService.investmentSource());
   })
 
   constructor() {}
 
   saveTransaction(result: InvestmentTransactionType) {
     if (!! result.id) {
-      this.sourceService.updateTransaction([result]);
+      this.sourceService.updateInvestmentTransaction([result]);
     }
     else {
-      this.sourceService.addTransaction(result);
+      this.sourceService.addInvestmentTransaction(result);
     }
   }
 
   deleteTransaction(id: string) {
-    this.sourceService.deleteTransaction(id);
+    this.sourceService.deleteInvestmentTransaction(id);
   }
 
 
@@ -61,8 +61,8 @@ export class TransactionService {
           const previousQuantity = portfolio.allocations[result.transaction.ticker]?.quantity || 0;
           
           // Avoid unnecessary allocation adjustment if quantity doesn't change
-          if ((previousQuantity >= item.quantity && result.transaction.type === TransactionEnum.BUY)
-            || (previousQuantity <= item.quantity && result.transaction.type === TransactionEnum.SELL)
+          if ((previousQuantity >= item.quantity && result.transaction.type === InvestmentEnum.BUY)
+            || (previousQuantity <= item.quantity && result.transaction.type === InvestmentEnum.SELL)
           ) return alloc;
 
           // Adjust portfolio allocations
@@ -71,7 +71,7 @@ export class TransactionService {
             allocations: [...(alloc[item.id]?.allocations || []), {
               ticker: result.transaction.ticker,
               percPlanned: 0,
-              quantity: item.quantity * (result.transaction.type === TransactionEnum.BUY? 1 : -1)
+              quantity: item.quantity * (result.transaction.type === InvestmentEnum.BUY? 1 : -1)
             }]
           };
 
@@ -97,7 +97,7 @@ export class TransactionService {
             quantity: 0,
             quote: NaN,
             value: { price: 0, currency: this.sourceService.currencyDefault() },
-            type: TransactionEnum.BUY,
+            type: InvestmentEnum.BUY,
             status: TransactionStatus.COMPLETED
           },
           portfolios: []

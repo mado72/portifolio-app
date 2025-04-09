@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-export const statementRoutes: Routes = [
+export const cashflowRoutes: Routes = [
     {
         path: '',
         pathMatch: 'full',

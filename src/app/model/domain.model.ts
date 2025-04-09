@@ -1,4 +1,4 @@
-import { TransactionEnum, TransactionStatus } from "./investment.model";
+import { InvestmentEnum, TransactionStatus } from "./investment.model";
 import { BalanceType } from "./source.model";
 
 export enum Currency {
@@ -67,7 +67,7 @@ export type AccountBalanceSummary = {
     total: number;
 }
 
-export enum StatementEnum {
+export enum TransactionEnum {
     DEPOSIT = 'DEPOSIT',
     INCOME = 'INCOME',
     TRANSFER = 'TRANSFER',
@@ -80,7 +80,7 @@ export enum StatementEnum {
     OTHER = 'OTHER',
 }
 
-export const StatementDesc = {
+export const TransactionDesc = {
     DEPOSIT : "Depósito",
     INCOME : "Renda",
     TRANSFER : "Transf. Entrada",
@@ -104,12 +104,12 @@ export enum Scheduled {
     YEARLY = 'YEARLY'
 }
 
-export function isStatementExpense(item: StatementEnum) {
-    return [StatementEnum.EXPENSE, StatementEnum.WITHDRAWAL, StatementEnum.BUY, StatementEnum.SUBSCRIPTION].includes(item);
+export function isTransactionExpense(item: TransactionEnum) {
+    return [TransactionEnum.EXPENSE, TransactionEnum.WITHDRAWAL, TransactionEnum.BUY, TransactionEnum.SUBSCRIPTION].includes(item);
 }
 
-export function isStatementDeposit(item: StatementEnum) {
-    return [StatementEnum.DEPOSIT, StatementEnum.INCOME, StatementEnum.SELL].includes(item);
+export function isTransactionDeposit(item: TransactionEnum) {
+    return [TransactionEnum.DEPOSIT, TransactionEnum.INCOME, TransactionEnum.SELL].includes(item);
 }
 
 export type Account = {
@@ -119,11 +119,9 @@ export type Account = {
     balance: CurrencyPrice;
 }
 
-export type StatementEnumKeys = `${StatementEnum}`;
-
-type Statement$ = {
+type Transaction$ = {
     id?: string;
-    type: StatementEnum;
+    type: TransactionEnum;
     description: string;
     value: CurrencyAmount;
     originAccountId: string;
@@ -132,17 +130,17 @@ type Statement$ = {
     notes?: string;
 }
 
-export type StatementItem = Statement$ & {
+export type TransactionItem = Transaction$ & {
     date: Date;
     account: Account
 }
 
-export type ForecastDayItem = Statement$ & {
+export type ForecastDayItem = Transaction$ & {
     day: number;
     done?: boolean;
 }
 
-export type ForecastDateItem = Statement$ & {
+export type ForecastDateItem = Transaction$ & {
     date: Date;
     done?: boolean;
 }

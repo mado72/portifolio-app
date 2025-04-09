@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScheduledTransactionListComponent } from './scheduled-transaction-list.component';
 import { SourceService } from '../../service/source.service';
-import { StatementService } from '../../service/statement.service';
+import { CashflowService } from '../../service/cashflow.service';
 import { BalanceService } from '../../service/balance.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
@@ -20,7 +20,7 @@ describe('ScheduledTransactionListComponent', () => {
       imports: [ScheduledTransactionListComponent],
       providers: [
         {provide: SourceService, useClass: MyService},
-        {provide: StatementService, useClass: MyService},
+        {provide: CashflowService, useClass: MyService},
         {provide: BalanceService, useClass: MyService},
         provideAnimationsAsync()
       ]

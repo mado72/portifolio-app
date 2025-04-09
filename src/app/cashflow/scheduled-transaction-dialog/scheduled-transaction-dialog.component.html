@@ -50,7 +50,7 @@
         <mat-form-field appearance="fill" class="full-width">
             <mat-label>Tipo de Transação</mat-label>
             <mat-select formControlName="type">
-                @for(type of statementTypes; track $index) {
+                @for(type of transactionTypes; track $index) {
                 <mat-option [value]="type">
                     {{ type }}
                 </mat-option>

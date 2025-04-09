@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { TransactionEnum, TransactionEnumDesc } from '../../model/investment.model';
+import { InvestmentEnum, InvestmentEnumDesc } from '../../model/investment.model';
 
 
 @Pipe({
@@ -8,8 +8,8 @@ import { TransactionEnum, TransactionEnumDesc } from '../../model/investment.mod
 })
 export class TransactionTypePipe implements PipeTransform {
 
-  transform(value: TransactionEnum): string {
-    return TransactionEnumDesc[value];
+  transform(value: InvestmentEnum): string {
+    return InvestmentEnumDesc[value];
   }
 
 }

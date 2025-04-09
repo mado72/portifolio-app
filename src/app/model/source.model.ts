@@ -1,5 +1,5 @@
-import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyPrice, Scheduled, StatementEnum } from "./domain.model";
-import { TransactionEnum, TransactionStatus, } from "./investment.model";
+import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyPrice, Scheduled, TransactionEnum } from "./domain.model";
+import { InvestmentEnum, TransactionStatus, } from "./investment.model";
 
 export type EntityDataSource = {
     id: string;
@@ -10,9 +10,9 @@ export type DataSourceType = {
     balance: BalanceSourceDataType[],
     classConsolidation: ClassConsolidationSourceDataType[],
     earning: IncomeSourceDataType[],
-    transaction: InvestmentTransactionSourceDataType[],
+    investment: InvestmentTransactionSourceDataType[],
     portfolio: PortfolioSourceDataType[],
-    statement: StatementSourceDataType[],
+    cashflow: TransactionSourceDataType[],
     scheduleds: ScheduledsSourceDataType[],
 }
 
@@ -134,13 +134,13 @@ export type InvestmentTransactionSourceDataType = {
 export type InvestmentTransactionType = Omit<InvestmentTransactionSourceDataType, "date" | "value" | "type" | "status"> & {
     date: Date;
     value: CurrencyPrice;
-    type: TransactionEnum;
+    type: InvestmentEnum;
     status: TransactionStatus;
 }
 
-export type TransactionRecord = Record<string, InvestmentTransactionType>;
+export type InvestmentTransactionRecord = Record<string, InvestmentTransactionType>;
 
-export type StatementSourceDataType = {
+export type TransactionSourceDataType = {
     id: string;
     type: string;
     description: string;
@@ -151,15 +151,15 @@ export type StatementSourceDataType = {
     scheduled_ref?: string;
 }
 
-export type StatementType = Omit<StatementSourceDataType, "date" | "type" | "amount" | "currency" | "account_id" | "scheduled_ref"> & {
+export type TransactionType = Omit<TransactionSourceDataType, "date" | "type" | "amount" | "currency" | "account_id" | "scheduled_ref"> & {
     date: Date;
-    type: StatementEnum;
+    type: TransactionEnum;
     value: CurrencyAmount;
     originAccountId: string;
     scheduledRef?: string;
 }
 
-export type StatementRecord = Record<string, StatementType>;
+export type TransactionRecord = Record<string, TransactionType>;
 
 export type SummarizedDataType = {
     initialValue: number,
@@ -225,7 +225,7 @@ export type ScheduledsSourceDataType = {
 
 export type ScheduledStatemetType = Omit<ScheduledsSourceDataType, "scheduled" | "type" | "value"> & {
     value: CurrencyAmount;
-    type: StatementEnum;
+    type: TransactionEnum;
     scheduled: {
         type: Scheduled;
         startDate: Date;

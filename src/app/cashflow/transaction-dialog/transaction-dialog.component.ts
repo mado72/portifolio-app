@@ -13,7 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 import { combineLatest, startWith } from 'rxjs';
 import { AccountTypeEnum, Currency } from '../../model/domain.model';
 import { divide } from '../../model/functions.model';
-import { TransactionEnum, TransactionStatus } from '../../model/investment.model';
+import { InvestmentEnum, TransactionStatus } from '../../model/investment.model';
 import { AssetQuoteType, InvestmentTransactionType, PortfolioType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { InvestmentService } from '../../service/investment.service';
@@ -97,7 +97,7 @@ export class TransactionDialogComponent implements OnInit {
     portfolios: this.fb.array([], [])
   });
 
-  readonly transactionTypes = Object.values(TransactionEnum);
+  readonly transactionTypes = Object.values(InvestmentEnum);
   readonly transactionStatuses = Object.values(TransactionStatus);
   readonly currencies = Object.values(Currency);
 
@@ -204,7 +204,7 @@ export class TransactionDialogComponent implements OnInit {
   }
 
   get type() {
-    return this.transactionForm.get('transaction.type') as FormControl<TransactionEnum>;
+    return this.transactionForm.get('transaction.type') as FormControl<InvestmentEnum>;
   }
 
   get status() {

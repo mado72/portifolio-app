@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, JsonPipe } from '@angular/common';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -6,10 +6,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 import { ScheduledStatemetType } from '../../model/source.model';
-import { SourceService } from '../../service/source.service';
-import { StatementService } from '../../service/statement.service';
-import { StatementTypePipe } from '../../utils/pipe/statement-type.pipe';
 import { BalanceService } from '../../service/balance.service';
+import { SourceService } from '../../service/source.service';
+import { CashflowService } from '../../service/cashflow.service';
+import { CashflowTypePipe } from '../../utils/pipe/cashflow-type.pipe';
 import { ScheduledPipe } from '../../utils/pipe/scheduled.pipe';
 
 @Component({
@@ -23,7 +23,7 @@ import { ScheduledPipe } from '../../utils/pipe/scheduled.pipe';
     MatIconModule,
     DatePipe,
     CurrencyPipe,
-    StatementTypePipe,
+    CashflowTypePipe,
     ScheduledPipe
   ],
   templateUrl: './scheduled-transaction-list.component.html',
@@ -33,7 +33,7 @@ export class ScheduledTransactionListComponent {
 
   private sourceService = inject(SourceService);
   
-  private statementService = inject(StatementService);
+  private transactionService = inject(CashflowService);
 
   private balanceService = inject(BalanceService);
 
@@ -61,7 +61,7 @@ export class ScheduledTransactionListComponent {
 
   readonly scheduledPipe = new ScheduledPipe();
 
-  readonly statementTypePipe = new StatementTypePipe();
+  readonly cashflowTypePipe = new CashflowTypePipe();
 
   readonly activeRow = signal<ScheduledStatemetType | null>(null);
 
@@ -70,7 +70,7 @@ export class ScheduledTransactionListComponent {
   readonly filteredDataSource = computed(() => {
     const { type, category, scheduledType } = this.filters();
     return this.dataSource().filter(item =>
-      (!type || this.statementTypePipe.transform(item.type).toLowerCase().includes(type.toLowerCase())) &&
+      (!type || this.cashflowTypePipe.transform(item.type).toLowerCase().includes(type.toLowerCase())) &&
       (!category || (item.category?.toLowerCase().includes(category.toLowerCase()) || false)) &&
       (!scheduledType || this.scheduledPipe.transform(item.scheduled.type).toLowerCase().includes(scheduledType.toLowerCase()))
     );
@@ -87,14 +87,14 @@ export class ScheduledTransactionListComponent {
   }
 
   newScheduled() {
-    this.statementService.newScheduledStatement();
+    this.transactionService.newScheduledStatement();
   }
 
   editScheduled(transaction: ScheduledStatemetType) {
-    this.statementService.editScheduledStatement(transaction);
+    this.transactionService.editScheduledStatement(transaction);
   }
 
   deleteScheduled(transaction: ScheduledStatemetType) {
-    this.statementService.deleteScheduledStatement(transaction.id as string);
+    this.transactionService.deleteScheduledStatement(transaction.id as string);
   }
 }

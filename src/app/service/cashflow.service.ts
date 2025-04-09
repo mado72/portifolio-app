@@ -1,14 +1,14 @@
 import { inject, Injectable } from '@angular/core';
 import { ScheduledStatemetType } from '../model/source.model';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Scheduled, StatementEnum } from '../model/domain.model';
+import { Scheduled, TransactionEnum } from '../model/domain.model';
 import { SourceService } from './source.service';
-import { ScheduledTransactionDialogComponent } from '../statement/scheduled-transaction-dialog/scheduled-transaction-dialog.component';
+import { ScheduledTransactionDialogComponent } from '../cashflow/scheduled-transaction-dialog/scheduled-transaction-dialog.component';
 
 @Injectable({
   providedIn: 'root'
 })
-export class StatementService {
+export class CashflowService {
 
   private dialog = inject(MatDialog);
 
@@ -26,10 +26,10 @@ export class StatementService {
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         if (!scheduled.id) {
-          this.sourceService.addScheduledStatement(result)
+          this.sourceService.addScheduledTransaction(result)
         }
         else {
-          this.sourceService.updateScheduledStatement([{
+          this.sourceService.updateScheduledTransaction([{
             ...result,
             id: scheduled.id
           }]);
@@ -42,7 +42,7 @@ export class StatementService {
     this.openScheduledDialog('Nova transação recorrente', {
       description: '',
       originAccountId: '',
-      type: StatementEnum.EXPENSE,
+      type: TransactionEnum.EXPENSE,
       scheduled: {
         type: Scheduled.MONTHLY,
         startDate: new Date(),
@@ -60,7 +60,7 @@ editScheduledStatement(scheduled: ScheduledStatemetType) {
 }
 
 deleteScheduledStatement(scheduledId: string) {
-  this.sourceService.deleteScheduledStatement(scheduledId);
+  this.sourceService.deleteScheduledTransaction(scheduledId);
 }
 
 constructor() { }

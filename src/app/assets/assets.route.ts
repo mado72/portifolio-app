@@ -8,7 +8,7 @@ export const assetRoutes: Routes = [
     },
     {
         path: 'balances',
-        loadComponent: () => import('../statement/balances/balances.component').then(mod => mod.BalancesComponent),
+        loadComponent: () => import('../cashflow/balances/balances.component').then(mod => mod.BalancesComponent),
         data: {
             editEnable: true
         }
@@ -19,10 +19,10 @@ export const assetRoutes: Routes = [
     },
     {
         path: 'forecast',
-        loadComponent: () => import('../statement/financial-forecast/financial-forecast.component').then(mod => mod.FinancialForecastComponent),
+        loadComponent: () => import('../cashflow/financial-forecast/financial-forecast.component').then(mod => mod.FinancialForecastComponent),
     },
     {
         path: 'forecast-summary',
-        loadComponent: () => import('../statement/financial-forecast-summary/financial-forecast-summary.component').then(mod => mod.FinancialForecastSummaryComponent),
+        loadComponent: () => import('../cashflow/financial-forecast-summary/financial-forecast-summary.component').then(mod => mod.FinancialForecastSummaryComponent),
     }
 ]
