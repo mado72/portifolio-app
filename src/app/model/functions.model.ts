@@ -1,4 +1,5 @@
-import { Interval, eachDayOfInterval, eachMonthOfInterval, eachQuarterOfInterval, eachWeekOfInterval, eachYearOfInterval, getDate, getDay, isWithinInterval, setDate, setDay } from "date-fns";
+import { Interval, eachDayOfInterval, eachMonthOfInterval, eachQuarterOfInterval, eachWeekOfInterval, eachYearOfInterval, getDay, isWithinInterval, setDate, setDay } from "date-fns";
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import { Scheduled } from "./domain.model";
 
 /**
@@ -90,22 +91,22 @@ export function getScheduleDates(scheduledRange: Interval, dateRange: Interval, 
         }
         case Scheduled.MONTHLY: {
             dates = eachMonthOfInterval(scheduledRange)
-                .map(date=>setDate(date, getDate(scheduledRange.start)));
+                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         case Scheduled.QUARTER: {
             dates = eachQuarterOfInterval(scheduledRange)
-                .map(date=>setDate(date, getDate(scheduledRange.start)));
+                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         case Scheduled.HALF_YEARLY: {
             dates = eachMonthOfInterval(scheduledRange).filter((_,idx)=>idx % 6 === 0)
-                .map(date=>setDate(date, getDate(scheduledRange.start)));
+                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         case Scheduled.YEARLY: {
             dates = eachYearOfInterval(scheduledRange)
-                .map(date=>setDate(date, getDate(scheduledRange.start)));
+                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         default: {
@@ -114,4 +115,26 @@ export function getScheduleDates(scheduledRange: Interval, dateRange: Interval, 
         }
     }
     return dates.filter(date => isWithinInterval(date, dateRange));
+}
+
+export function parseDateYYYYMMDD(source: string) {
+    // const [year, month, day] = source.split('-').map(Number);
+    // // Create a date using UTC
+    // return new Date(Date.UTC(year, month - 1, day));
+    const utcDate = fromZonedTime(`${source}T00:00:00`, 'UTC')
+    return utcDate;
+}
+
+export function getZonedDate(date: Date | string) {
+    if (typeof date === 'string') {
+        date = parseDateYYYYMMDD(date as string);
+    }
+    const day = formatInTimeZone(date as Date, 'UTC', 'd');
+    return Number(day);
+}
+
+export function isSameZoneDate(d1: Date, d2: Date) {
+    const s1 = formatInTimeZone(d1, 'UTC', 'yyyy-MM-dd');
+    const s2 = formatInTimeZone(d2, 'UTC', 'yyyy-MM-dd');
+    return s1 === s2;
 }

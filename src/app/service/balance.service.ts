@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, getDate, interval, Interval, isBefore, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
+import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
 import { map } from 'rxjs';
-import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isStatementDeposit, isStatementExpense } from '../model/domain.model';
-import { getScheduleDates, groupBy } from '../model/functions.model';
+import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isStatementDeposit } from '../model/domain.model';
+import { getScheduleDates, getZonedDate, groupBy, isSameZoneDate } from '../model/functions.model';
 import { BalanceType, ClassConsolidationType, ScheduledStatemetType, StatementType } from '../model/source.model';
 import { BalanceDialogComponent } from '../statement/balance-dialog/balance-dialog.component';
 import { QuoteService } from './quote.service';
@@ -176,14 +176,14 @@ export class BalanceService {
     const mapPeriods: number[][] = [];
     let initialDate = 1;
     depositStatements.forEach((depositStatement) => {
-      const day = getDate(depositStatement.date);
+      const day = getZonedDate(depositStatement.date);
       mapPeriods.push([initialDate, day]);
       initialDate = day + 1;
     });
     mapPeriods.push([initialDate, 31]);
 
     const expensePeriods = groupBy(statements, (statement) => {
-      const day = getDate(statement.date);
+      const day = getZonedDate(statement.date);
       return (mapPeriods.find(period => period[0] <= day && day <= period[1]) || [])
     });
     const summaryPeriod = Array.from(
@@ -200,8 +200,8 @@ export class BalanceService {
 
     for (let i = 0; i < depositStatements.length; i++) {
       summaryPeriod.splice((i * 2) + 1, 0, {
-        start: getDate(depositStatements[i].date),
-        end: getDate(depositStatements[i].date),
+        start: getZonedDate(depositStatements[i].date),
+        end: getZonedDate(depositStatements[i].date),
         amount: depositStatements[i].value.amount
       });
     }
@@ -248,9 +248,10 @@ export class BalanceService {
     const statements = Object.values(this.sourceService.statementSource())
       .filter(item => isWithinInterval(item.date, dateRange))
       .reduce((acc, vl) => {
-        acc[vl.scheduledRef || ''] = [...acc[vl.scheduledRef || ''], vl];
+        const scheduledRef = vl.scheduledRef || '';
+        acc[scheduledRef || ''] = [...acc[scheduledRef] || [] , vl];
         return acc;
-      }, {} as Record<string, StatementType[]>)
+      }, {'': []} as Record<string, StatementType[]>)
 
     const fnIntervalScheduled = (item: ScheduledStatemetType): Interval => {
       return {
@@ -260,20 +261,23 @@ export class BalanceService {
     }
 
     const extractForecastItem = (item: ScheduledStatemetType, quoteFactor: number, date: Date): ForecastDateItem => {
-      return {
+      const statement = (statements[item.id as string] || []).find(statement => isSameZoneDate(statement.date, date));
+      const result = {
         ...item,
+        id: statement?.id || undefined,
         value: {
           ...item.value,
           amount: item.value.amount * quoteFactor
         },
         date,
-        done: isBefore(date, new Date()) // FIXME: Deve obter a informação do status do statement
+        done: !!statement
       };
+      return result;
     }
 
     const extractSchedulerDates = (item: ScheduledStatemetType, dateRange: Interval): Date[] => {
       const scheduledRange = interval(
-        max([item.scheduled.startDate, setDate(dateRange.start, getDate(item.scheduled.startDate))]), 
+        max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]), 
         min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
 
       return getScheduleDates(scheduledRange, dateRange, item.scheduled.type);

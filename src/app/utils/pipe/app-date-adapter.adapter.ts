@@ -1,8 +1,9 @@
 import { Provider } from "@angular/core";
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from "@angular/material/core";
-import { addDays, addMonths, addYears, format, getDate, getDaysInMonth, getMonth, getYear, parse, setDay, setMonth, toDate } from "date-fns";
 import { UTCDate } from '@date-fns/utc';
+import { addDays, addMonths, addYears, format, getDaysInMonth, getMonth, getYear, parse, setDay, setMonth, toDate } from "date-fns";
 import { it as locale } from 'date-fns/locale';
+import { getZonedDate } from "../../model/functions.model";
 
 export const DATE_FNS_FORMATS: MatDateFormats = {
     parse: {
@@ -40,7 +41,7 @@ export class AppDateAdapter extends DateAdapter<UTCDate, Date> {
         return getMonth(date);
     }
     override getDate(date: UTCDate): number {
-        return getDate(date);
+        return getZonedDate(date);
     }
     override getDayOfWeek(date: UTCDate): number {
         return parseInt(format(date, 'i'), 10);

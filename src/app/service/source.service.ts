@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { format, formatISO, parse, parseISO, setDayOfYear } from 'date-fns';
+import { format, formatISO, getMonth, parse, parseISO, setDayOfYear, setMonth } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import assetSourceData from '../../data/assets.json';
 import balanceSource from '../../data/balance.json';
@@ -19,6 +19,8 @@ import {
   ScheduledStatemetType, StatementSourceDataType, StatementType
 } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
+import { UTCDate } from '@date-fns/utc';
+import { parseDateYYYYMMDD } from '../model/functions.model';
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +31,11 @@ export class SourceService {
     asset: signal<Record<string, AssetSourceDataType>>(this.assertSourceToRecord(assetSourceData.data)),
     balance: signal<Record<string, BalanceSourceDataType>>(this.balanceToRecord(balanceSource.data)),
     classConsolidation: signal<Record<string, ClassConsolidationSourceDataType>>(this.classConsolidationToRecord(classConsolidationSource.data)),
-    income: signal<Record<string, IncomeSourceDataType>>(this.incomeSourceToRecord(incomeSource.data.map(item=> {
-      return {...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
+    income: signal<Record<string, IncomeSourceDataType>>(this.incomeSourceToRecord(incomeSource.data.map(item => {
+      return { ...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
     }))),
     transaction: signal<Record<string, InvestmentTransactionSourceDataType>>(this.transactionSourceToRecord(transactionsSource.data)),
-    statement: signal<Record<string, StatementType>>(this.statementSourceToRecord(statementSource.data)),
+    statement: signal<Record<string, StatementType>>(this.statementSourceToRecord(statementSource.data)), // FIXME forçando data para o mês corrente
     portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data)),
     scheduled: signal<Record<string, ScheduledStatemetType>>(this.scheduledSourceToRecord(scheduledSource.data))
   };
@@ -44,8 +46,8 @@ export class SourceService {
     const quote = {
       price: item.quote.price, currency: Currency[item.quote.currency as CurrencyType]
     }
-    acc[ticker] = { 
-      ...item, 
+    acc[ticker] = {
+      ...item,
       ticker,
       lastUpdate: parseISO(item.lastUpdate),
       initialPrice: quote.price,
@@ -107,7 +109,7 @@ export class SourceService {
   readonly portfolioSource = computed<PortfolioRecord>(() => {
     const asset = this.dataSource.asset();
     const entries = Object.entries(this.dataSource.portfolio()).reduce((acc, [key, item]) => {
-      acc[key] = 
+      acc[key] =
       {
         ...item,
         currency: Currency[item.currency as keyof typeof Currency],
@@ -125,7 +127,7 @@ export class SourceService {
           const averagePrice = initialValue / alloc.quantity;
           allocAcc[ticker] = {
             ...asset[ticker],
-            ...alloc, 
+            ...alloc,
             ticker,
             initialValue,
             averagePrice,
@@ -268,13 +270,14 @@ export class SourceService {
     return data.reduce((acc, item) => {
       acc[item.id] = {
         ...item,
-         scheduledRef : item.scheduled_ref,
-         originAccountId : item.account_id,
-         type: StatementEnum[item.type as keyof typeof StatementEnum],
-         value : {
+        date: parseDateYYYYMMDD(item.date),
+        scheduledRef: item.scheduled_ref,
+        originAccountId: item.account_id,
+        type: StatementEnum[item.type as keyof typeof StatementEnum],
+        value: {
           amount: item.amount,
           currency: Currency[item.currency as keyof typeof Currency]
-         }
+        }
       };
       return acc;
     }, {} as Record<string, StatementType>)
@@ -298,8 +301,8 @@ export class SourceService {
         type: StatementEnum[item.type as keyof typeof StatementEnum],
         scheduled: {
           type: Scheduled[item.scheduled.type as keyof typeof Scheduled],
-          startDate: parse(item.scheduled.startDate, 'yyyy-MM-dd', new Date()),
-          endDate: item.scheduled.endDate? parse(item.scheduled.endDate, 'yyyy-MM-dd', new Date()) : undefined
+          startDate: parseDateYYYYMMDD(item.scheduled.startDate),
+          endDate: item.scheduled.endDate ? parseDateYYYYMMDD(item.scheduled.endDate) : undefined
         }
       };
       return acc;
@@ -322,7 +325,7 @@ export class SourceService {
     this.dataSource.asset.update(asserts => {
       return {
         ...asserts,
-        ...this.assertSourceToRecord(changes.map(item=>({
+        ...this.assertSourceToRecord(changes.map(item => ({
           ...item,
           lastUpdate: formatISO(item.lastUpdate)
         })))
@@ -333,7 +336,7 @@ export class SourceService {
   deleteAsset(ticker: string) {
     this.dataSource.asset.update(asserts => {
       delete asserts[ticker];
-      
+
       return { ...asserts };
     })
   }
@@ -391,7 +394,7 @@ export class SourceService {
     this.dataSource.classConsolidation.update(classConsolidations => {
       return {
         ...classConsolidations,
-        ...this.classConsolidationToRecord(changes.map(item=>({
+        ...this.classConsolidationToRecord(changes.map(item => ({
           ...item,
           financial: item.financial.price,
           currency: item.financial.currency
@@ -423,7 +426,7 @@ export class SourceService {
     this.dataSource.income.update(incomes => {
       return {
         ...incomes,
-        ...this.incomeSourceToRecord(changes.map(item=>({
+        ...this.incomeSourceToRecord(changes.map(item => ({
           ...item,
           date: format(item.date, 'yyyy-MM-dd')
         })))
@@ -472,6 +475,7 @@ export class SourceService {
       ...statements,
       ...this.statementSourceToRecord([{
         ...item,
+        date: format(item.date, 'yyyy-MM-dd'),
         scheduled_ref: item.scheduledRef,
         account_id: item.originAccountId,
         amount: item.value.amount,
@@ -479,12 +483,13 @@ export class SourceService {
       }])
     }));
   }
-  
+
   updateStatement(changes: StatementType[]) {
     this.dataSource.statement.update(statements => ({
       ...statements,
       ...this.statementSourceToRecord(changes.map(item => ({
         ...item,
+        date: format(item.date, 'yyyy-MM-dd'),
         scheduled_ref: item.scheduledRef,
         account_id: item.originAccountId,
         amount: item.value.amount,
@@ -525,7 +530,7 @@ export class SourceService {
       delete portfolios[portfolioId];
       return { ...portfolios };
     })
-    this.dataSource.asset.update(assets=> ({...assets})); // force update
+    this.dataSource.asset.update(assets => ({ ...assets })); // force update
   }
 
   addScheduledStatement(item: ScheduledStatemetType) {
@@ -536,7 +541,7 @@ export class SourceService {
         scheduled: {
           ...item.scheduled,
           startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
-          endDate: item.scheduled.endDate? format(item.scheduled.endDate, 'yyyy-MM-dd') : undefined
+          endDate: item.scheduled.endDate ? format(item.scheduled.endDate, 'yyyy-MM-dd') : undefined
         }
       }])
     }));
@@ -561,7 +566,7 @@ export class SourceService {
       delete scheduleds[scheduledId];
       return { ...scheduleds };
     })
-    this.dataSource.asset.update(assets=> ({...assets})); // force update
+    this.dataSource.asset.update(assets => ({ ...assets })); // force update
   }
 }
 

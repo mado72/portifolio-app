@@ -144,14 +144,15 @@ export type StatementSourceDataType = {
     id: string;
     type: string;
     description: string;
-    date: number;
+    date: string;
     currency: string;
     amount: number;
     account_id: string;
     scheduled_ref?: string;
 }
 
-export type StatementType = Omit<StatementSourceDataType, "type" | "amount" | "currency" | "account_id" | "scheduled_ref"> & {
+export type StatementType = Omit<StatementSourceDataType, "date" | "type" | "amount" | "currency" | "account_id" | "scheduled_ref"> & {
+    date: Date;
     type: StatementEnum;
     value: CurrencyAmount;
     originAccountId: string;
