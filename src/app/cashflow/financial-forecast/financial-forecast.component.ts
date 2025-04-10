@@ -1,13 +1,15 @@
+import { DatePipe, JsonPipe } from '@angular/common';
 import { Component, computed, EventEmitter, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
+import { differenceInDays } from 'date-fns';
 import { isTransactionDeposit, isTransactionExpense } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { DatePipe, JsonPipe } from '@angular/common';
-import { differenceInDays, isBefore } from 'date-fns';
+import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
+import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 
 @Component({
   selector: 'app-financial-forecast',
@@ -17,6 +19,8 @@ import { differenceInDays, isBefore } from 'date-fns';
     MatTableModule,
     MatCheckboxModule,
     CurrencyComponent,
+    TransactionStatusPipe,
+    TransactionTypePipe,
     DatePipe,
     JsonPipe
   ],
@@ -50,7 +54,7 @@ export class FinancialForecastComponent implements OnInit {
 
   forecast = computed(() => this.notDone().reduce((acc, item) => acc += item.value.amount, 0))
 
-  displayedColumns = ["description", "type", "due", "amount", "done"];
+  displayedColumns = ["description", "type", "status", "due", "amount", "done"];
 
   ngOnInit(): void {
   }

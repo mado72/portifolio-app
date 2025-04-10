@@ -267,7 +267,7 @@ export class SourceService {
 
   protected cashSourceToRecord(data: TransactionSourceDataType[]) {
     return data.reduce((acc, item) => {
-      acc[item.id] = {
+      acc[item.id as string] = {
         ...item,
         date: parseDateYYYYMMDD(item.date),
         scheduledRef: item.scheduled_ref,
@@ -276,7 +276,8 @@ export class SourceService {
         value: {
           amount: item.amount,
           currency: Currency[item.currency as keyof typeof Currency]
-        }
+        },
+        status: TransactionStatus[item.status as keyof typeof TransactionStatus]
       };
       return acc;
     }, {} as Record<string, TransactionType>)

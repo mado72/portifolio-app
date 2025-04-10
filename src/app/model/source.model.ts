@@ -141,21 +141,23 @@ export type InvestmentTransactionType = Omit<InvestmentTransactionSourceDataType
 export type InvestmentTransactionRecord = Record<string, InvestmentTransactionType>;
 
 export type TransactionSourceDataType = {
-    id: string;
+    id?: string;
     type: string;
     description: string;
     date: string;
     currency: string;
     amount: number;
     account_id: string;
+    status: string;
     scheduled_ref?: string;
 }
 
-export type TransactionType = Omit<TransactionSourceDataType, "date" | "type" | "amount" | "currency" | "account_id" | "scheduled_ref"> & {
+export type TransactionType = Omit<TransactionSourceDataType, "date" | "type" | "amount" | "currency" | "account_id" | "scheduled_ref" | "status"> & {
     date: Date;
     type: TransactionEnum;
     value: CurrencyAmount;
     originAccountId: string;
+    status: TransactionStatus;
     scheduledRef?: string;
 }
 

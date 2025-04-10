@@ -8,7 +8,8 @@
       "currency": "BRL",
       "amount": 350.00,
       "account_id": "CC-654321",
-      "scheduled_ref": "f3b9c8a4-1d2b-4e3a-9c8a-1234567890ab"
+      "scheduled_ref": "f3b9c8a4-1d2b-4e3a-9c8a-1234567890ac",
+      "status": "COMPLETED"
     },
     {
       "id": "a1b2c3d4-e5f6-7g8h-9i0j-1234567890ab",
@@ -17,7 +18,8 @@
       "date": "2025-01-05",
       "currency": "BRL",
       "amount": 70.00,
-      "account_id": "CC-654321"
+      "account_id": "CC-654321",
+      "status": "PENDING"
     },
     {
       "id": "123e4567-e89b-12d3-a456-426614174000",
@@ -26,7 +28,8 @@
       "date": "2025-01-06",
       "currency": "BRL",
       "amount": 736.63,
-      "account_id": "CC-654321"
+      "account_id": "CC-654321",
+      "status": "COMPLETED"
     },
     {
       "id": "987f6543-21ab-43cd-85ef-1234567890ab",
@@ -35,7 +38,8 @@
       "date": "2025-01-06",
       "currency": "BRL",
       "amount": 6360.29,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
       "id": "456e7890-a12b-34cd-56ef-1234567890ab",
@@ -44,7 +48,8 @@
       "date": "2025-01-10",
       "currency": "BRL",
       "amount": 2277.00,
-      "account_id": "CC-654321"
+      "account_id": "CC-654321",
+      "status": "PENDING"
     },
     {
       "id": "789a1234-b56c-78de-90fg-1234567890ab",
@@ -53,7 +58,9 @@
       "date": "2025-01-10",
       "currency": "BRL",
       "amount": 200.00,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED",
+      "scheduled_ref": "321cba98-7654-32ed-10fg-1234567890ab"
     },
     {
       "id": "321cba98-7654-32ed-10fg-1234567890ab",
@@ -62,7 +69,8 @@
       "date": "2025-01-12",
       "currency": "BRL",
       "amount": 3481.76,
-      "account_id": "CC-654321"
+      "account_id": "CC-654321",
+      "status": "COMPLETED"
     },
     {
       "id": "654edc32-1098-76ba-54fg-1234567890ab",
@@ -71,7 +79,8 @@
       "date": "2025-01-14",
       "currency": "BRL",
       "amount": 8019.75,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "PENDING"
     },
     {
       "id": "987fedc1-2345-6789-0abc-1234567890ab",
@@ -80,7 +89,8 @@
       "date": "2025-01-15",
       "currency": "BRL",
       "amount": 934.82,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
       "id": "123abc45-6789-0def-1234-567890abcdef",
@@ -89,7 +99,8 @@
       "date": "2025-01-20",
       "currency": "BRL",
       "amount": 14840.67,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
       "id": "abcdef12-3456-7890-abcd-ef1234567890",
@@ -98,7 +109,8 @@
       "date": "2025-01-20",
       "currency": "BRL",
       "amount": 112.00,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "PENDING"
     },
     {
       "id": "fedcba98-7654-3210-fedc-ba9876543210",
@@ -107,16 +119,19 @@
       "date": "2025-01-20",
       "currency": "BRL",
       "amount": 616.00,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
-      "id": "01234567-89ab-cdef-0123-456789abcdef",
+      "id": "01234568-89ab-cdef-0123-456789abcdef",
       "type": "EXPENSE",
       "description": "Enzo II",
-      "date": "2025-01-20",
+      "date": "2025-04-22",
       "currency": "BRL",
       "amount": 200.00,
-      "account_id": "CC-654321"
+      "account_id": "CC-654321",
+      "status": "COMPLETED",
+      "scheduled_ref": "321cba98-7654-32ed-10fg-1234567890ab"
     },
     {
       "id": "89abcdef-0123-4567-89ab-cdef01234567",
@@ -125,7 +140,8 @@
       "date": "2025-01-20",
       "currency": "BRL",
       "amount": 954.60,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "PENDING"
     },
     {
       "id": "456789ab-cdef-0123-4567-89abcdef0123",
@@ -134,7 +150,8 @@
       "date": "2025-01-20",
       "currency": "BRL",
       "amount": 1667.94,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
       "id": "abcdef01-2345-6789-abcd-ef0123456789",
@@ -143,7 +160,8 @@
       "date": "2025-01-20",
       "currency": "BRL",
       "amount": 500.00,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
       "id": "01234567-89ab-cdef-0123-456789abcdef",
@@ -152,7 +170,8 @@
       "date": "2025-01-21",
       "currency": "BRL",
       "amount": 2037.14,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "PENDING"
     },
     {
       "id": "89abcdef-0123-4567-89ab-cdef01234567",
@@ -161,7 +180,8 @@
       "date": "2025-01-22",
       "currency": "BRL",
       "amount": 5890.66,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     },
     {
       "id": "456789ab-cdef-0123-4567-89abcdef0123",
@@ -170,7 +190,8 @@
       "date": "2025-01-25",
       "currency": "BRL",
       "amount": 204.56,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "PENDING"
     },
     {
       "id": "abcdef01-2345-6789-abcd-ef0123456789",
@@ -179,7 +200,8 @@
       "date": "2025-01-26",
       "currency": "BRL",
       "amount": 500.00,
-      "account_id": "CC-123456"
+      "account_id": "CC-123456",
+      "status": "COMPLETED"
     }
   ]
 }
