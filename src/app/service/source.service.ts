@@ -27,7 +27,7 @@ import { getMarketPlaceCode } from './quote.service';
 export class SourceService {
 
   private dataSource = {
-    asset: signal<Record<string, AssetSourceDataType>>(this.assertSourceToRecord(assetSourceData.data)),
+    asset: signal<Record<string, AssetSourceDataType>>(this.assetSourceToRecord(assetSourceData.data)),
     balance: signal<Record<string, BalanceSourceDataType>>(this.balanceToRecord(balanceSource.data)),
     classConsolidation: signal<Record<string, ClassConsolidationSourceDataType>>(this.classConsolidationToRecord(classConsolidationSource.data)),
     income: signal<Record<string, IncomeSourceDataType>>(this.incomeSourceToRecord(incomeSource.data.map(item => {
@@ -167,7 +167,7 @@ export class SourceService {
         // Parse JSON and set data
         try {
           const jsonData = JSON.parse(e.target.result);
-          this.dataSource.asset.set(this.assertSourceToRecord(jsonData.asset));
+          this.dataSource.asset.set(this.assetSourceToRecord(jsonData.asset));
           this.dataSource.balance.set(this.balanceToRecord(jsonData.balance));
           this.dataSource.classConsolidation.set(this.classConsolidationToRecord(jsonData.classConsolidation));
           this.dataSource.income.set(this.incomeSourceToRecord(jsonData.income));
@@ -230,7 +230,7 @@ export class SourceService {
     window.URL.revokeObjectURL(url);
   }
 
-  protected assertSourceToRecord(data: AssetSourceDataType[]) {
+  protected assetSourceToRecord(data: AssetSourceDataType[]) {
     return data.reduce((acc, item) => {
       acc[getMarketPlaceCode(item)] = item;
       return acc;
@@ -309,28 +309,30 @@ export class SourceService {
     }, {} as Record<string, ScheduledStatemetType>)
   }
 
+  // asset ------------------------
+  assetToSource(items: AssetQuoteType[]): AssetSourceDataType[] {
+    return items.map(item => ({
+      ...item,
+      lastUpdate: formatISO(item.lastUpdate)
+    }));
+  }
+
   addAsset(asset: AssetQuoteType) {
-    this.dataSource.asset.update(asserts => {
-      return {
-        ...asserts,
-        ...this.assertSourceToRecord([{
-          ...asset,
-          lastUpdate: formatISO(new Date())
-        }])
-      };
-    })
+    const added = this.assetSourceToRecord(this.assetToSource([asset]).map(item=>({...item, id: uuid()})));
+    this.dataSource.asset.update(assets => ({
+      ...assets,
+      ...added
+    }))
+    return Object.values(added)[0]
   }
 
   updateAsset(changes: AssetQuoteType[]) {
-    this.dataSource.asset.update(asserts => {
-      return {
-        ...asserts,
-        ...this.assertSourceToRecord(changes.map(item => ({
-          ...item,
-          lastUpdate: formatISO(item.lastUpdate)
-        })))
-      };
-    })
+    const updated = this.assetSourceToRecord(this.assetToSource(changes));
+    this.dataSource.asset.update(assets => ({
+      ...assets,
+      ...updated
+    }))
+    return Object.values(updated)
   }
 
   deleteAsset(ticker: string) {
@@ -341,33 +343,32 @@ export class SourceService {
     })
   }
 
-  addBalance(item: BalanceType) {
-    const account = {
-      ...item,
-      id: uuid(),
-      balance: item.balance.price,
-      currency: item.balance.currency,
-      date: formatISO(new Date())
-    };
-    this.dataSource.balance.update(balances => ({
-      ...balances,
-      ...this.balanceToRecord([account])
-    }))
-    return account;
-  }
-
-  updateBalance(changes: BalanceType[]) {
-    const accounts = changes.map(item => ({
+  // balance ------------------
+  balanceToSource(items: BalanceType[]): BalanceSourceDataType[] {
+    return items.map(item => ({
       ...item,
       balance: item.balance.price,
       currency: item.balance.currency,
       date: formatISO(new Date())
     }));
+  }
+
+  addBalance(item: BalanceType) {
+    const added = this.balanceToRecord(this.balanceToSource([item]).map(item=>({...item, id: uuid()})));
     this.dataSource.balance.update(balances => ({
       ...balances,
-      ...this.balanceToRecord(accounts)
+      ...added
     }))
-    return accounts;
+    return Object.values(added)[0];
+  }
+
+  updateBalance(changes: BalanceType[]) {
+    const updated = this.balanceToRecord(this.balanceToSource(changes));
+    this.dataSource.balance.update(balances => ({
+      ...balances,
+      ...updated
+    }))
+    return updated;
   }
 
   deleteBalance(id: string) {
@@ -377,30 +378,33 @@ export class SourceService {
     })
   }
 
+  // classConsolidation -------------------------
+  classConsolidationToSource(items: ClassConsolidationType[]): ClassConsolidationSourceDataType[] {
+    return items.map(item => ({
+      ...item,
+      financial: item.financial.price,
+      currency: item.financial.currency
+    }))
+  }
+
   addClassConsolidation(item: ClassConsolidationType) {
-    this.dataSource.classConsolidation.update(classConsolidations => {
-      return {
-        ...classConsolidations,
-        ...this.classConsolidationToRecord([{
-          ...item,
-          financial: item.financial.price,
-          currency: item.financial.currency
-        }])
-      };
-    })
+    const added = this.classConsolidationToRecord(
+      this.classConsolidationToSource([item]).map(item=>({...item, id: uuid()}))
+    );
+    this.dataSource.classConsolidation.update(classConsolidations => ({
+      ...classConsolidations,
+      ...added
+    }))
+    return Object.values(added)[0];
   }
 
   updateClassConsolidation(changes: ClassConsolidationType[]) {
-    this.dataSource.classConsolidation.update(classConsolidations => {
-      return {
-        ...classConsolidations,
-        ...this.classConsolidationToRecord(changes.map(item => ({
-          ...item,
-          financial: item.financial.price,
-          currency: item.financial.currency
-        })))
-      };
-    })
+    const updated = this.classConsolidationToRecord(this.classConsolidationToSource(changes));
+    this.dataSource.classConsolidation.update(classConsolidations => ({
+      ...classConsolidations,
+      ...updated
+    }))
+    return Object.values(updated);
   }
 
   deleteClassConsolidation(classId: string) {
@@ -410,28 +414,36 @@ export class SourceService {
     })
   }
 
+  // income ---------------------
+  incomeToSource(items: IncomeType[]) : IncomeSourceDataType[] {
+    return items.map(item => ({
+      ...item,
+      date: format(item.date, 'yyyy-MM-dd')
+    }))
+  }
+
   addIncome(item: IncomeType) {
-    this.dataSource.income.update(incomes => {
-      return {
+    const added = this.incomeSourceToRecord(this.incomeToSource([item])
+      .map(item => ({ ...item, id: uuid() })));
+    
+    this.dataSource.income.update(incomes => ({
         ...incomes,
-        ...this.incomeSourceToRecord([{
-          ...item,
-          date: format(item.date, 'yyyy-MM-dd')
-        }])
-      };
-    })
+        ...added
+    }))
+    return Object.values(added)[0];
   }
 
   updateIncome(changes: IncomeType[]) {
-    this.dataSource.income.update(incomes => {
-      return {
-        ...incomes,
-        ...this.incomeSourceToRecord(changes.map(item => ({
-          ...item,
-          date: format(item.date, 'yyyy-MM-dd')
-        })))
-      };
-    })
+    const updated = this.incomeSourceToRecord(changes.map(item => ({
+      ...item,
+      date: format(item.date, 'yyyy-MM-dd')
+    })));
+
+    this.dataSource.income.update(incomes => ({
+      ...incomes,
+      ...updated
+    }))
+    return Object.values(updated);
   }
 
   deleteIncome(incomeId: string) {
@@ -441,26 +453,34 @@ export class SourceService {
     })
   }
 
+  // investment -----------------
+
+  updateInvestmentToSource(items: InvestmentTransactionType[]) : InvestmentTransactionSourceDataType[]{
+    return items.map(item => ({
+      ...item,
+      date: formatISO(item.date)
+    }))
+  }
+
   addInvestmentTransaction(item: InvestmentTransactionType) {
-    this.dataSource.investment.update(transactions => {
-      return {
+    const newTransaction = this.investmentSourceToRecord(
+      this.updateInvestmentToSource([item]).map(item=>({...item, id: uuid()})))
+
+    this.dataSource.investment.update(transactions => ({
         ...transactions,
-        ...this.investmentSourceToRecord([({
-          ...item,
-          date: formatISO(item.date)
-        })])
-      };
-    })
+        ...newTransaction
+    }))
+    return Object.values(newTransaction)[0]
   }
 
   updateInvestmentTransaction(changes: InvestmentTransactionType[]) {
+    const itemsUpdated = this.investmentSourceToRecord(this.updateInvestmentToSource(changes));
+
     this.dataSource.investment.update(transactions => ({
       ...transactions,
-      ...this.investmentSourceToRecord(changes.map(item => ({
-        ...item,
-        date: formatISO(item.date)
-      })))
-    }))
+      ...itemsUpdated
+    }));
+    return Object.values(itemsUpdated);
   }
 
   deleteInvestmentTransaction(transactionId: string) {
@@ -470,32 +490,41 @@ export class SourceService {
     })
   }
 
+  // cashflow ----------------------------
+
+  cashflowTransactionTypeToSource(changes: TransactionType[]): TransactionSourceDataType[] {
+    return changes.map(item => ({
+      ...item,
+      date: format(item.date, 'yyyy-MM-dd'),
+      scheduled_ref: item.scheduledRef,
+      account_id: item.originAccountId,
+      amount: item.value.amount,
+      currency: item.value.currency as string
+    }))
+  }
+
   addCashflowTransaction(item: TransactionType) {
+    const added = this.cashSourceToRecord(
+      this.cashflowTransactionTypeToSource([item]).map(item=>({...item, id: uuid()}))
+    )
+
     this.dataSource.cashflow.update(items => ({
       ...items,
-      ...this.cashSourceToRecord([{
-        ...item,
-        date: format(item.date, 'yyyy-MM-dd'),
-        scheduled_ref: item.scheduledRef,
-        account_id: item.originAccountId,
-        amount: item.value.amount,
-        currency: item.value.currency as string
-      }])
+      ...added
     }));
+    return Object.values(added)[0];
   }
 
   updateCashflowTransaction(changes: TransactionType[]) {
+    const updated = this.cashSourceToRecord(
+      this.cashflowTransactionTypeToSource(changes)
+    );
+
     this.dataSource.cashflow.update(items => ({
       ...items,
-      ...this.cashSourceToRecord(changes.map(item => ({
-        ...item,
-        date: format(item.date, 'yyyy-MM-dd'),
-        scheduled_ref: item.scheduledRef,
-        account_id: item.originAccountId,
-        amount: item.value.amount,
-        currency: item.value.currency as string
-      })))
+      ...updated
     }));
+    return Object.values(updated);
   }
 
   deleteCashflowTransaction(transactionId: number) {
@@ -505,24 +534,33 @@ export class SourceService {
     })
   }
 
+  // portfolio ------------------------
+  portfolioToSource(items: PortfolioType[]): PortfolioSourceDataType[] {
+    return items.map(item => ({
+      ...item,
+      allocations: Object.values(item.allocations)
+    }))
+  }
+
   addPortfolio(item: PortfolioType) {
+    const added = this.portfolioSourceToRecord(
+      this.portfolioToSource([item]).map(item=>({...item, id: uuid()}))
+    );
+
     this.dataSource.portfolio.update(portfolios => ({
       ...portfolios,
-      ...this.portfolioSourceToRecord([{
-        ...item,
-        allocations: Object.values(item.allocations)
-      }])
+      ...added
     }));
+    return Object.values(added)[0]
   }
 
   updatePortfolio(changes: PortfolioType[]) {
+    const updated = this.portfolioSourceToRecord(this.portfolioToSource(changes));
     this.dataSource.portfolio.update(portfolios => ({
       ...portfolios,
-      ...this.portfolioSourceToRecord(changes.map(item => ({
-        ...item,
-        allocations: Object.values(item.allocations)
-      })))
+      ...updated
     }));
+    return Object.values(updated)
   }
 
   deletePortfolio(portfolioId: string) {
@@ -533,32 +571,39 @@ export class SourceService {
     this.dataSource.asset.update(assets => ({ ...assets })); // force update
   }
 
+  // scheduledTransaction --------------
+
+  scheduledTransactionToSource(items: ScheduledStatemetType[]): ScheduledsSourceDataType[] {
+    return items.map(item=>({
+      ...item,
+      scheduled: {
+        ...item.scheduled,
+        startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
+        endDate: item.scheduled.endDate ? format(item.scheduled.endDate, 'yyyy-MM-dd') : undefined
+      }
+    }))
+  }
+
   addScheduledTransaction(item: ScheduledStatemetType) {
+    const added = this.scheduledSourceToRecord(
+      this.scheduledTransactionToSource([item])
+        .map(item=>({...item, id: uuid()})));
+    
     this.dataSource.scheduled.update(scheduleds => ({
       ...scheduleds,
-      ...this.scheduledSourceToRecord([{
-        ...item,
-        scheduled: {
-          ...item.scheduled,
-          startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
-          endDate: item.scheduled.endDate ? format(item.scheduled.endDate, 'yyyy-MM-dd') : undefined
-        }
-      }])
+      ...added
     }));
+    return Object.values(added)[0]
   }
 
   updateScheduledTransaction(changes: ScheduledStatemetType[]) {
+    const updated = this.scheduledSourceToRecord(this.scheduledTransactionToSource(changes));
+
     this.dataSource.scheduled.update(scheduleds => ({
       ...scheduleds,
-      ...this.scheduledSourceToRecord(changes.map(item => ({
-        ...item,
-        scheduled: {
-          ...item.scheduled,
-          startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
-          endDate: !Number.isNaN(item.scheduled.endDate?.getTime()) ? format(item.scheduled.endDate as Date, 'yyyy-MM-dd') : undefined
-        }
-      })))
+      ...updated
     }));
+    return Object.values(updated)
   }
 
   deleteScheduledTransaction(scheduledId: string) {

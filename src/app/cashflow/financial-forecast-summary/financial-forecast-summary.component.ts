@@ -28,7 +28,9 @@ export class FinancialForecastSummaryComponent {
   inOutTotal = 0;
 
   datasource = computed(() => {
-    let balance = this.balanceService.getBalancesSummarized(this.sourceService.currencyDefault(),
+    let balance = this.balanceService.getBalancesSummarized(
+      Object.values(this.balanceService.getAllBalances()),
+      this.sourceService.currencyDefault(),
       [AccountTypeEnum.INVESTMENT, AccountTypeEnum.LOAN]);
 
     const forecastSummary = this.balanceService.getForecastSummary(this.sourceService.currencyDefault());

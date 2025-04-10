@@ -83,7 +83,7 @@ export enum TransactionEnum {
 export const TransactionDesc = {
     DEPOSIT : "Depósito",
     INCOME : "Renda",
-    TRANSFER : "Transf. Entrada",
+    TRANSFER : "Transferência",
     WITHDRAWAL : "Retirada",
     EXPENSE : "Despesa",
     BUY : "Compra",
@@ -109,7 +109,7 @@ export function isTransactionExpense(item: TransactionEnum) {
 }
 
 export function isTransactionDeposit(item: TransactionEnum) {
-    return [TransactionEnum.DEPOSIT, TransactionEnum.INCOME, TransactionEnum.SELL].includes(item);
+    return [TransactionEnum.DEPOSIT, TransactionEnum.INCOME, TransactionEnum.SELL, TransactionEnum.REDEMPTION].includes(item);
 }
 
 export type Account = {
@@ -122,6 +122,7 @@ export type Account = {
 type Transaction$ = {
     id?: string;
     type: TransactionEnum;
+    status: TransactionStatus;
     description: string;
     value: CurrencyAmount;
     originAccountId: string;

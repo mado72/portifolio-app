@@ -36,11 +36,14 @@ export class BalancesComponent implements OnInit {
   editable = input<boolean>(false);
 
   selects = signal<string[]>(
-    this.balanceService.getBalancesByCurrencyExchange(this.currency())
-      .map(item => item.id as string))
+    this.balanceService.getBalancesByCurrencyExchange(
+      Object.values(this.balanceService.getAllBalances()),
+      this.currency()).map(item => item.id as string))
 
   balances = computed<Record<string, AccountBalanceExchangeSelectable>>(()=>
-    this.balanceService.getBalancesByCurrencyExchange(this.currency())
+    this.balanceService.getBalancesByCurrencyExchange(
+      Object.values(this.balanceService.getAllBalances()),
+        this.currency())
       .reduce((acc, item) => {
         acc[item.id as string] = { ...item, selected: this.selects().includes(item.id as string) };
         return acc;

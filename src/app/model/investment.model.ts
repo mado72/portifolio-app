@@ -92,16 +92,12 @@ export enum TransactionStatus {
     PROGRAMING = 'PROGRAMING',
     PENDING = 'PENDING',
     COMPLETED = 'COMPLETED',
-    CANCELLED = 'CANCELLED',
-    REVERSED = 'REVERSED'
+    CANCELLED = 'CANCELLED'
 }
 
-type TransactionStatusType = `${TransactionStatus}`;
-
-export const TransactionStatusDesc : Record<TransactionStatusType, string> = {
+export const TransactionStatusDesc : Record<`${TransactionStatus}`, string> = {
     "PROGRAMING": "Programada",
     "PENDING": 'Pendente',
     "COMPLETED": 'Confirmada',
-    "CANCELLED": 'Cancelada',
-    "REVERSED": 'Estornada'
+    "CANCELLED": 'Cancelada'
 }

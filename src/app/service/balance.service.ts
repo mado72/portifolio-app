@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
 import { map } from 'rxjs';
@@ -38,9 +38,9 @@ export class BalanceService {
    * });
    * ```
    */
-  getAllBalances() {
+  getAllBalances = computed(()=> {
     return this.sourceService.balanceSource();
-  }
+  })
 
   /**
    * Retrieves all account balances and calculates the balance quotation in the specified currency.
@@ -66,8 +66,8 @@ export class BalanceService {
    * });
    * ```
    */
-  getBalancesByCurrencyExchange(currency: Currency): AccountBalanceExchange[] {
-    return Object.values(this.getAllBalances()).map(item => {
+  getBalancesByCurrencyExchange(balances: BalanceType[], currency: Currency): AccountBalanceExchange[] {
+    return balances.map(item => {
       const quoteFactor = this.quoteService.getExchangeQuote(item.balance.currency, currency);
       return {
         ...item,
@@ -96,8 +96,8 @@ export class BalanceService {
    * // Output: 12345.67 (example total balance amount)
    * ```
    */
-  getBalancesSummarized(currency: Currency, excludeAccTypes: AccountTypeEnum[] = []): number {
-    return this.getBalancesByCurrencyExchange(currency)
+  getBalancesSummarized(balances: BalanceType[], currency: Currency, excludeAccTypes: AccountTypeEnum[] = []): number {
+    return this.getBalancesByCurrencyExchange(balances, currency)
       .filter(acc => !excludeAccTypes.includes(acc.type))
       .map(item => item.exchange.price)
       .reduce((acc, vl) => acc += vl, 0)
@@ -170,7 +170,8 @@ export class BalanceService {
    * ```
    */
   getForecastSummary(currency: Currency): { start: number, end: number, amount: number }[] {
-    const scheduleds = this.getScheduledTransactions(currency, new Date(), "month");
+    const scheduleds = this.getForecastTransactions(currency, new Date(), "month")
+        .filter(item=> ![TransactionStatus.COMPLETED].includes(item.status))
 
     const depositTransactions = scheduleds.filter(transaction => isTransactionDeposit(transaction.type));
 
@@ -286,72 +287,15 @@ export class BalanceService {
     return combinedTransactions
       .filter((transaction, index, self) =>
         index === self.findIndex((t) => (
-          isSameZoneDate(t.date, transaction.date)
-          && t.scheduledRef === transaction.scheduledRef 
+          t.scheduledRef === transaction.scheduledRef 
           && isSameZoneDate(t.date, transaction.date)
         )))
-  }
-
-  // FIXME: This method should be refactored to include database query.
-  getScheduledTransactions(currency: Currency, dateRef: Date, period: "month" | "year"): ForecastDateItem[] {
-    const dateRange = interval(
-      period === "month" ? startOfMonth(dateRef) : startOfYear(dateRef),
-      period === "month" ? endOfMonth(dateRef) : endOfYear(dateRef)
-    )
-
-
-    const scheduledTransactions = Object.values(this.sourceService.scheduledSource());
-
-    const transactions = Object.values(this.sourceService.cashflowSource())
-      .filter(item => isWithinInterval(item.date, dateRange))
-      .reduce((acc, vl) => {
-        const scheduledRef = vl.scheduledRef || '';
-        acc[scheduledRef || ''] = [...acc[scheduledRef] || [], vl];
-        return acc;
-      }, { '': [] } as Record<string, TransactionType[]>)
-
-    const fnIntervalScheduled = (item: ScheduledStatemetType): Interval => {
-      return {
-        start: item.scheduled.startDate,
-        end: item.scheduled.endDate || endOfYear(addYears(dateRef, 25))
-      }
-    }
-
-    const extractForecastItem = (item: ScheduledStatemetType, quoteFactor: number, date: Date): ForecastDateItem => {
-      const transaction = (transactions[item.id as string] || []).find(item => isSameZoneDate(item.date, date));
-      const result = {
-        ...item,
-        id: transaction?.id || undefined,
-        value: {
-          ...item.value,
-          amount: item.value.amount * quoteFactor
-        },
-        date,
-        done: !!transaction
-      };
-      return result;
-    }
-
-    return scheduledTransactions
-      .filter(item => areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
-      .flatMap(item => {
-        const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency);
-        const scheduledRange = interval(
-          max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]),
-          min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
-
-        const dates = getScheduleDates(scheduledRange, dateRange, item.scheduled.type);
-        const items = dates.map(date => extractForecastItem(item, quoteFactor, date));
-        // const items = extractSchedulerDates(item, dateRange)
-        //   .map(date=>extractForecastItem(item, quoteFactor, date));
-        return items;
-      })
   }
 
   getCurrentMonthForecast(currency: Currency): ForecastDateItem[] {
     return this.getForecastTransactions(currency, new Date(), "month").map(item => ({
       ...item,
-      done: !! item.id && !!item.scheduledRef && [TransactionStatus.COMPLETED, TransactionStatus.PENDING].includes(item.status)
+      done: !! item.id && [TransactionStatus.COMPLETED, TransactionStatus.PENDING].includes(item.status)
     }))
   }
 
@@ -418,5 +362,16 @@ export class BalanceService {
 
   deleteAccount(id: string) {
     this.sourceService.deleteBalance(id);
+  }
+
+  addTransaction(transaction: TransactionType) {
+    return this.sourceService.addCashflowTransaction(transaction);
+  }
+
+  updateTransaction(id: string, transaction: TransactionType) {
+    return this.sourceService.updateCashflowTransaction([{
+      ...transaction,
+      id
+    }])[0];
   }
 }

@@ -4,12 +4,16 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { differenceInDays } from 'date-fns';
-import { isTransactionDeposit, isTransactionExpense } from '../../model/domain.model';
+import { CurrencyAmount, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
+import { TransactionStatus } from '../../model/investment.model';
+import { v4 as uuid } from 'uuid';
+
+type DataSourceItem = ForecastDateItem & {calc: CurrencyAmount, balanceId: string};
 
 @Component({
   selector: 'app-financial-forecast',
@@ -35,31 +39,68 @@ export class FinancialForecastComponent implements OnInit {
 
   onCheckboxChange = new EventEmitter<boolean>();
 
-  datasource = computed (() => this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault()).sort((a,b)=>differenceInDays(a.date,b.date))
-    .map(item => ({
+
+  /**
+   * A computed property that generates a record of forecasted financial data for the current month.
+   * 
+   * The data is fetched from the `balanceService` using the default currency provided by the `sourceService`.
+   * The forecasted items are sorted by their date in ascending order and then reduced into a record
+   * where each key is a unique UUID and the value is the corresponding forecasted date item.
+   * 
+   * Important: The UUID is used to make a reference for the original transaction, that it would be useful for 
+   * updates operations.
+   * 
+   * @returns A record where the keys are UUIDs and the values are `ForecastDateItem` objects,
+   *          representing the forecasted financial data for the current month.
+   */
+  balanceSource = computed(() => 
+    this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault()).sort((a,b)=>differenceInDays(a.date,b.date))
+      .reduce((acc, vl)=> {
+        acc[uuid()] = {...vl};
+        return acc;
+      }, {} as Record<string, ForecastDateItem>)
+  );
+
+  datasource = computed (() => Object.entries(this.balanceSource())
+    .map(([key, item]) => ({
       ...item,
-      value: {
+      balanceId: key,
+      calc: {
         ...item.value,
-        amount: item.value.amount = isTransactionExpense(item.type) ? - item.value.amount : isTransactionDeposit(item.type) ? item.value.amount : 0
+        amount: isTransactionExpense(item.type) 
+          ? - item.value.amount 
+          : isTransactionDeposit(item.type) 
+            ? item.value.amount : 0
       }
-    })));
+    } as DataSourceItem)));
 
   total = computed(() => this.datasource().reduce((acc, item) => acc += item.value.amount, 0))
 
   // Signal to update computed value for notDone property
   forceUpdateSig = signal<boolean>(false);
 
-  notDone = computed(() => this.datasource()
-    .filter((item) => !item.done || (this.forceUpdateSig() && false)));
-
-  forecast = computed(() => this.notDone().reduce((acc, item) => acc += item.value.amount, 0))
+  forecast = computed(() => this.datasource()
+    .filter((item) => !item.done || (this.forceUpdateSig() && false)) // force update
+    .reduce((acc, item) => acc += item.value.amount, 0))
 
   displayedColumns = ["description", "type", "status", "due", "amount", "done"];
 
   ngOnInit(): void {
   }
 
-  checkboxClicked(id: number, checked: boolean): void {
+  checkboxClicked(balanceId: string, checked: boolean): void {
+    const transaction = this.balanceSource()[balanceId];
+    if (!!transaction) {
+      transaction.status = checked ? TransactionStatus.COMPLETED 
+        : transaction.status === TransactionStatus.COMPLETED 
+          ? TransactionStatus.CANCELLED : TransactionStatus.PENDING  ;
+
+      if (! transaction.id) {
+        this.balanceService.addTransaction(transaction);
+      } else {
+        this.balanceService.updateTransaction(transaction.id, transaction)
+      }
+    }
     this.forceUpdateSig.set(!this.forceUpdateSig()); // force update
   }
 
