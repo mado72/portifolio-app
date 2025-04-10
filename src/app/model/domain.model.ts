@@ -1,5 +1,5 @@
 import { InvestmentEnum, TransactionStatus } from "./investment.model";
-import { BalanceType } from "./source.model";
+import { BalanceType, TransactionType } from "./source.model";
 
 export enum Currency {
     BRL = 'BRL',
@@ -119,29 +119,17 @@ export type Account = {
     balance: CurrencyPrice;
 }
 
-type Transaction$ = {
-    id?: string;
-    type: TransactionEnum;
-    status: TransactionStatus;
-    description: string;
-    value: CurrencyAmount;
-    originAccountId: string;
-    targetAccounId?: string; // optional for transfer transaction
-    category?: string;
-    notes?: string;
-}
-
-export type TransactionItem = Transaction$ & {
+export type TransactionItem = TransactionType & {
     date: Date;
     account: Account
 }
 
-export type ForecastDayItem = Transaction$ & {
+export type ForecastDayItem = TransactionType & {
     day: number;
     done?: boolean;
 }
 
-export type ForecastDateItem = Transaction$ & {
+export type ForecastDateItem = TransactionType & {
     date: Date;
     done?: boolean;
 }

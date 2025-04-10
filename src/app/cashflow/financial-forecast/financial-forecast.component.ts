@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { differenceInDays } from 'date-fns';
-import { CurrencyAmount, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../../model/domain.model';
+import { CurrencyAmount, ForecastDateItem, isTransactionDeposit, isTransactionExpense, TransactionEnum } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
@@ -27,7 +27,6 @@ type DataSourceItem = ForecastDateItem & {calc: CurrencyAmount, balanceId: strin
     TransactionStatusPipe,
     TransactionTypePipe,
     DatePipe,
-    JsonPipe,
     FinancialForecastSummaryComponent
 ],
   templateUrl: './financial-forecast.component.html',
@@ -56,7 +55,9 @@ export class FinancialForecastComponent implements OnInit {
    *          representing the forecasted financial data for the current month.
    */
   balanceSource = computed(() => 
-    this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault()).sort((a,b)=>differenceInDays(a.date,b.date))
+    this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault())
+      .filter(transaction=>transaction.type !== TransactionEnum.TRANSFER)
+      .sort((a,b)=>differenceInDays(a.date,b.date))
       .reduce((acc, vl)=> {
         acc[uuid()] = {...vl};
         return acc;
@@ -76,16 +77,11 @@ export class FinancialForecastComponent implements OnInit {
       }
     } as DataSourceItem)));
 
-  total = computed(() => this.datasource().reduce((acc, item) => acc += item.value.amount, 0))
-
-  // Signal to update computed value for notDone property
-  forceUpdateSig = signal<boolean>(false);
-
   forecast = computed(() => this.datasource()
-    .filter((item) => !item.done || (this.forceUpdateSig() && false)) // force update
-    .reduce((acc, item) => acc += item.value.amount, 0))
+      .filter(transaction=>![TransactionStatus.COMPLETED, TransactionStatus.CANCELLED].includes(transaction.status))
+      .reduce((acc, item) => acc += item.value.amount, 0))
 
-  displayedColumns = ["description", "type", "status", "due", "amount", "done"];
+  displayedColumns = ["done", "description", "amount", "due", "type", "status"];
 
   ngOnInit(): void {
   }
@@ -94,8 +90,8 @@ export class FinancialForecastComponent implements OnInit {
     const transaction = this.balanceSource()[balanceId];
     if (!!transaction) {
       transaction.status = checked ? TransactionStatus.COMPLETED 
-        : transaction.status === TransactionStatus.COMPLETED 
-          ? TransactionStatus.CANCELLED : TransactionStatus.PENDING  ;
+        : transaction.status === TransactionStatus.COMPLETED && transaction.scheduledRef
+          ? TransactionStatus.PROGRAMING : TransactionStatus.PENDING  ;
 
       if (! transaction.id) {
         this.balanceService.addTransaction(transaction);
@@ -103,7 +99,6 @@ export class FinancialForecastComponent implements OnInit {
         this.balanceService.updateTransaction(transaction.id, transaction)
       }
     }
-    this.forceUpdateSig.set(!this.forceUpdateSig()); // force update
   }
 
 }

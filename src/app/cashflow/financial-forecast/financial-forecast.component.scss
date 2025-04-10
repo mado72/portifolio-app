@@ -1,0 +1,42 @@
+#cashflow {
+    min-width: 640px;
+    overflow-x: auto;
+}
+
+.mat-mdc-table {
+    table-layout: fixed; // Garante que as larguras das colunas sejam respeitadas
+    width: 100%; // Faz a tabela ocupar toda a largura disponível
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+    overflow: hidden; // Evita que o conteúdo ultrapasse os limites da célula
+    text-overflow: ellipsis; // Adiciona reticências caso o texto seja muito longo
+    // white-space: nowrap; // Impede que o texto quebre em várias linhas
+}
+
+.mat-column-description {
+    width: 25%; // Define 25% da largura para a coluna "Movimento"
+}
+
+.mat-column-type, 
+.mat-column-status,
+.mat-column-due {
+    width: 15%; 
+    text-align: center; // Centraliza o texto
+}
+
+.mat-column-amount {
+    width: 20%; // Define 20% da largura para a coluna "Valor"
+    text-align: right; // Alinha o texto à direita
+}
+
+
+.mat-mdc-footer-cell.mat-column-done {
+    text-align: start;
+}
+
+.mat-column-done {
+    width: 10%; // Define 10% da largura para a coluna "Pago"
+    text-align: center; // Centraliza o texto
+}

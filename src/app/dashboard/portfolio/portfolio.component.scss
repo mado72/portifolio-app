@@ -2,3 +2,8 @@ mat-expansion-panel#panel-allocation .mat-expansion-panel-body {
     padding: 0 !important;
     background-color: pink;
 }
+
+#portfolios {
+    overflow-x: auto;
+    overflow-y: visible;
+}

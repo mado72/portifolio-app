@@ -19,14 +19,13 @@
     </ng-container>
     <ng-container matColumnDef="balance">
         <th mat-header-cell *matHeaderCellDef>
-            {{ initialBalance }}
-            <app-currency [amount]="initialBalance"></app-currency>
+            <app-currency [amount]="initialBalance" [currency]="currency"></app-currency>
         </th>
         <td mat-cell *matCellDef="let element">
-            <app-currency [amount]="element.balance"></app-currency>
+            <app-currency [amount]="element.balance" [currency]="currency"></app-currency>
         </td>
         <td mat-footer-cell *matFooterCellDef="let element">
-            <app-currency [amount]="forecastBalance"></app-currency>
+            <app-currency [amount]="forecastBalance" [currency]="currency"></app-currency>
         </td>
     </ng-container>
 

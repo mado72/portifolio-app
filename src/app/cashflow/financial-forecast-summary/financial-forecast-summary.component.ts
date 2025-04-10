@@ -21,6 +21,8 @@ export class FinancialForecastSummaryComponent {
 
   private balanceService = inject(BalanceService);
 
+  currency = this.sourceService.currencyDefault();
+
   initialBalance = 0;
 
   forecastBalance = 0;
