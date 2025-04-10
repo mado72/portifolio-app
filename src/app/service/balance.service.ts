@@ -8,6 +8,7 @@ import { BalanceType, ClassConsolidationType, ScheduledStatemetType, Transaction
 import { BalanceDialogComponent } from '../cashflow/balance-dialog/balance-dialog.component';
 import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
+import { TransactionStatus } from '../model/investment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,7 +41,7 @@ export class BalanceService {
   getAllBalances() {
     return this.sourceService.balanceSource();
   }
-  
+
   /**
    * Retrieves all account balances and calculates the balance quotation in the specified currency.
    *
@@ -235,6 +236,61 @@ export class BalanceService {
     });
   }
 
+  generateForecastTransactions(currency: Currency, dateRef: Date, period: "month" | "year"): TransactionType[] {
+    const fnIntervalScheduled = (item: ScheduledStatemetType): Interval => ({
+      start: item.scheduled.startDate,
+      end: item.scheduled.endDate || endOfYear(addYears(dateRef, 100))
+    })
+
+    const dateRange = this.getDateRange(period, dateRef)
+    const scheduledTransactions = Object.values(this.sourceService.scheduledSource());
+
+    return scheduledTransactions
+      .filter(item => areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
+      .flatMap(item => {
+        const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency);
+        const scheduledRange = interval(
+          max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]),
+          min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
+
+        const dates = getScheduleDates(scheduledRange, dateRange, item.scheduled.type);
+        const items: TransactionType[] = dates.map(date => ({
+          ...item,
+          id: undefined,
+          date,
+          value: {
+            ...item.value,
+            amount: item.value.amount * quoteFactor
+          },
+          status: TransactionStatus.PROGRAMING,
+          scheduledRef: item.id,
+        }));
+        return items;
+      })
+  }
+
+  private getDateRange(period: string, dateRef: Date) {
+    return interval(
+      period === "month" ? startOfMonth(dateRef) : startOfYear(dateRef),
+      period === "month" ? endOfMonth(dateRef) : endOfYear(dateRef)
+    );
+  }
+
+  getForecastTransactions(currency: Currency, dateRef: Date, period: "month" | "year"): TransactionType[] {
+    const dateRange = this.getDateRange(period, dateRef);
+    const futureTransactions = this.generateForecastTransactions(currency, dateRef, period);
+    const transactions = Object.values(this.sourceService.cashflowSource())
+      .filter(transaction => isWithinInterval(transaction.date, dateRange));
+
+    const combinedTransactions = [ ...transactions, ...futureTransactions];
+    return combinedTransactions
+      .filter((transaction, index, self) =>
+        index === self.findIndex((t) => (
+          isSameZoneDate(t.date, transaction.date)
+          && t.scheduledRef === transaction.scheduledRef 
+          && isSameZoneDate(t.date, transaction.date)
+        )))
+  }
 
   // FIXME: This method should be refactored to include database query.
   getScheduledTransactions(currency: Currency, dateRef: Date, period: "month" | "year"): ForecastDateItem[] {
@@ -243,15 +299,16 @@ export class BalanceService {
       period === "month" ? endOfMonth(dateRef) : endOfYear(dateRef)
     )
 
+
     const scheduledTransactions = Object.values(this.sourceService.scheduledSource());
 
     const transactions = Object.values(this.sourceService.cashflowSource())
       .filter(item => isWithinInterval(item.date, dateRange))
       .reduce((acc, vl) => {
         const scheduledRef = vl.scheduledRef || '';
-        acc[scheduledRef || ''] = [...acc[scheduledRef] || [] , vl];
+        acc[scheduledRef || ''] = [...acc[scheduledRef] || [], vl];
         return acc;
-      }, {'': []} as Record<string, TransactionType[]>)
+      }, { '': [] } as Record<string, TransactionType[]>)
 
     const fnIntervalScheduled = (item: ScheduledStatemetType): Interval => {
       return {
@@ -275,26 +332,27 @@ export class BalanceService {
       return result;
     }
 
-    const extractSchedulerDates = (item: ScheduledStatemetType, dateRange: Interval): Date[] => {
-      const scheduledRange = interval(
-        max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]), 
-        min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
-
-      return getScheduleDates(scheduledRange, dateRange, item.scheduled.type);
-    }
-
     return scheduledTransactions
-      .filter(item=> areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
+      .filter(item => areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
       .flatMap(item => {
-        const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency)
-        const items = extractSchedulerDates(item, dateRange)
-          .map(date=>extractForecastItem(item, quoteFactor, date));
+        const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency);
+        const scheduledRange = interval(
+          max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]),
+          min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
+
+        const dates = getScheduleDates(scheduledRange, dateRange, item.scheduled.type);
+        const items = dates.map(date => extractForecastItem(item, quoteFactor, date));
+        // const items = extractSchedulerDates(item, dateRange)
+        //   .map(date=>extractForecastItem(item, quoteFactor, date));
         return items;
       })
   }
 
   getCurrentMonthForecast(currency: Currency): ForecastDateItem[] {
-    return this.getScheduledTransactions(currency, new Date(), "month");
+    return this.getForecastTransactions(currency, new Date(), "month").map(item => ({
+      ...item,
+      done: !! item.id && !!item.scheduledRef && [TransactionStatus.COMPLETED, TransactionStatus.PENDING].includes(item.status)
+    }))
   }
 
   addAccount(account: BalanceType) {

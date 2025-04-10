@@ -121,7 +121,7 @@ export function parseDateYYYYMMDD(source: string) {
     // const [year, month, day] = source.split('-').map(Number);
     // // Create a date using UTC
     // return new Date(Date.UTC(year, month - 1, day));
-    const utcDate = fromZonedTime(`${source}T00:00:00`, 'UTC')
+    const utcDate = fromZonedTime(`${source}T12:00:00`, 'UTC')
     return utcDate;
 }
 
