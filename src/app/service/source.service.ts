@@ -122,21 +122,25 @@ export class SourceService {
         },
         allocations: item.allocations.reduce((allocAcc, alloc) => {
           const ticker = getMarketPlaceCode(alloc);
-          const initialValue = (alloc.initialValue || alloc.marketValue);
-          const averagePrice = initialValue / alloc.quantity;
+          const initialPrice = (alloc.initialValue || alloc.marketValue);
+          const averagePrice = initialPrice / alloc.quantity;
           allocAcc[ticker] = {
             ...asset[ticker],
             ...alloc,
             ticker,
-            initialValue,
+            initialPrice,
             averagePrice,
             quote: {
               price: NaN,
               currency: Currency[alloc.quote?.currency as CurrencyType] || Currency.USD
             },
-            profit: alloc.profit || alloc.marketValue - initialValue,
-            performance: alloc.performance || (alloc.marketValue - initialValue) / initialValue,
-            percAllocation: alloc.percAllocation || 0
+            profit: alloc.profit || alloc.marketValue - initialPrice,
+            performance: alloc.performance || (alloc.marketValue - initialPrice) / initialPrice,
+            percAllocation: alloc.percAllocation || 0,
+            trend: "unchanged",
+            manualQuote: !!asset[ticker]?.manualQuote,
+            lastUpdate: new Date(asset[ticker]?.lastUpdate),
+            type: AssetEnum[asset[ticker]?.type as keyof typeof AssetEnum]
           };
           return allocAcc;
         }, {} as Record<string, PortfolioAllocationType>)

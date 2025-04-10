@@ -159,6 +159,7 @@ export class PortfolioService {
             throw new Error(`Asset not found: ${ticker}`);
           }
           updatedAllocations[ticker] = {
+            ...asset,
             ticker,
             marketPlace,
             code,
@@ -171,6 +172,7 @@ export class PortfolioService {
             percAllocation: 0,
             percPlanned,
             quantity,
+            manualQuote: !!asset.manualQuote
           };
         }
       });

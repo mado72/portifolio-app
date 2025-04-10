@@ -4,7 +4,7 @@
     <button mat-button type="button" (click)="addTransaction()">Adicionar Transação</button>
 </div>
 }
-<table class="table table-stick mat-elevation-z8 table-responsive" id="table-master" [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">
+<table class="table table-stick mat-elevation-z8 table-hover" id="table-master" [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">
     <caption class="visually-hidden">Tabela de carteiras</caption>
 
     <thead>
@@ -71,7 +71,7 @@
         <tr class="row-expansible" [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [style.overflow]="isExpanded(portfolio) ? 'auto' : 'hidden'">
             <td colspan="8" class="px-4 py-2 mb-4 w-100 d-flex flex-column align-items-start">
                 <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
-                <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3" [editMode]="editable()"></app-investment-portfolio-table>
+                <app-investment-portfolio-table [portfolio]="portfolio" class="w-100 mat-elevation-z3" [editable]="editable()"></app-investment-portfolio-table>
             </td>
         </tr>
         } 

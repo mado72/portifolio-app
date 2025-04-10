@@ -8,12 +8,11 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { Currency } from '../../model/domain.model';
 import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
+import { SourceService } from '../../service/source.service';
 import { TransactionService } from '../../service/transaction.service';
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
-import { SourceService } from '../../service/source.service';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"> & {
   allocations: PortfolioAllocationType[];

@@ -188,7 +188,7 @@ export type PortfolioSourceDataType = {
     allocations: PortfolioAllocationSourceDataType[];
 }
 
-export type PortfolioAllocationType = Required<PortfolioAllocationSourceDataType> & Required<SummarizedDataType> & {
+export type PortfolioAllocationType = Required<PortfolioAllocationSourceDataType & AssetQuoteType> & Required<SummarizedDataType> & {
     ticker: string;
 }
 

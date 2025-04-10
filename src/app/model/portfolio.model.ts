@@ -1,5 +1,4 @@
-import { Currency } from "./domain.model";
-import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocationSourceDataType, PortfolioAllocationType, SummarizedDataType } from "./source.model";
+import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocationType, SummarizedDataType } from "./source.model";
 
 const INITIAL_TOTAL: Required<SummarizedDataType> = {
     initialValue: 0,

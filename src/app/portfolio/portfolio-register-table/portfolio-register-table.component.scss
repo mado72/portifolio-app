@@ -34,7 +34,7 @@ $padding-right-perc: 5%;
       display: flex;
       line-height: 20px;
       white-space-collapse: collapse;
-      border-bottom: 1px solid rgb(116, 119, 127);
+      border-bottom: 1px solid var(--table-row-border-bottom-color);
   
       td,
       th {

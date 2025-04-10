@@ -1,38 +1,80 @@
-.mat-column-quantity, .mat-column-percPlanned, .mat-column-percAllocation, .mat-column-averagePrice {
-    text-align: right !important;
-    width: 6% !important;
+.table {
+    table-layout: fixed;
+    width: 100%;
 }
-.mat-column-name {
-    width: 14% !important;
+
+#table-master {
+    tr, tr td {
+        border-bottom: 1px solid rgb(116, 119, 127);
+    }
 }
-.mat-column-code {
-    width: 13% !important;
-    overflow: hidden !important;
-    word-break: break-all;
+
+tr {
+    min-height: 48px;
+    height: 48px;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--table-row-border-bottom-color)
 }
-.mat-column-type
-{
-    width: 7% !important;
-    overflow: hidden !important;
-    word-break: break-all;
+tr, td {
+    background-color: var(--bs-body-bg);
+    padding: 4px 0;
 }
-.mat-column-trend
-{
-    width: 9% !important;
-    overflow: hidden !important;
-    word-break: break-all;
+
+.column-name {
+    width: 18%; // Largura maior para o nome do ativo
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-.mat-column-quote {
-    width: 12% !important;
-    text-align: end !important;
+
+.column-code {
+    width: 12%; // Código do ativo
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
-.mat-column-profit {
-    width: 8% !important;
-    text-align: end !important;
+
+.column-type {
+    width: 10%; // Tipo do ativo
+    text-align: center;
 }
-.mat-column-marketValue
-{
-    width: 12% !important;
-    word-break: break-all;
-    text-align: end !important;
+
+.column-quote {
+    width: 10%; // Cotação
+    text-align: end;
+}
+
+.column-quantity {
+    width: 8%; // Quantidade
+    text-align: end;
+}
+
+.column-averagePrice {
+    width: 10%; // Preço médio
+    text-align: end;
+}
+
+.column-marketValue {
+    width: 12%; // Valor de mercado
+    text-align: end;
+}
+
+.column-profit {
+    width: 8%; // Resultado
+    text-align: end;
+}
+
+.column-percPlanned {
+    width: 6%; // % Planejada
+    justify-content: end !important;
+}
+
+.column-percAllocation {
+    width: 6%; // % Alocada
+    justify-content: end !important;
+}
+
+.cell-total {
+    flex-grow: 1;
+    flex-shrink: 1;
 }

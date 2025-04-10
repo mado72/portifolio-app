@@ -10,19 +10,12 @@
 @import "bootstrap/scss/_variables";
 @import url("https://fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined");
 
-$theme: mat.define-theme((
-  color: (
-    theme-type: dark,
-    primary: mat.$red-palette,
-  ),
-  typography: (
-    brand-family: 'Roboto',
-    bold-weight: 900
-  ),
-  density: (
-    scale: -1
-  )
-));
+$theme: mat.define-theme((color: (theme-type: dark,
+                primary: mat.$red-palette,
+            ),
+            typography: (brand-family: 'Roboto',
+                bold-weight: 900),
+            density: (scale: -1)));
 
 
 @mixin portfolio-theme($dark-theme) {
@@ -31,12 +24,14 @@ $theme: mat.define-theme((
     }
 }
 
-html, body { 
+html,
+body {
     height: 100%;
     @include mat.core-theme(m3-theme.$light-theme)
 }
-body { 
-    margin: 0; 
+
+body {
+    margin: 0;
     font-family: var(--bs-font-sans-serif);
     background: var(--mat-sys-surface);
     color: var(--mat-sys-on-surface);
@@ -52,6 +47,10 @@ body {
 $valor-positivo: rgb(0, 80, 0);
 $valor-negativo: rgb(215, 0, 0);
 
+:root {
+    --table-row-border-bottom-color: rgb(116, 119, 127);
+}
+
 .negative {
     color: $valor-negativo;
 }
@@ -61,7 +60,13 @@ $valor-negativo: rgb(215, 0, 0);
 }
 
 .table-total {
-    td, th { border-top: 3px double var(--mat-table-row-item-outline-color) };
+
+    td,
+    th {
+        border-top: 3px double var(--mat-table-row-item-outline-color)
+    }
+
+    ;
     font-weight: bold !important;
 }
 
@@ -76,19 +81,24 @@ $valor-negativo: rgb(215, 0, 0);
         margin-bottom: 1rem;
     }
 }
+
 .mat-table-hover {
     .mat-mdc-row:hover {
         background-color: #ecffe4;
         cursor: pointer !important;
     }
 }
+
 .mat-table-selectable {
     .mat-mdc-row:hover {
         background-color: #b8ccb2;
         cursor: pointer !important;
     }
 }
-mat-table, table, .mat-table {
+
+mat-table,
+table,
+.mat-table {
     tr.active {
         background-color: #98b48f;
     }
@@ -104,4 +114,71 @@ button.edit-button {
 
 button.delete-button.deletable {
     color: var(--bs-danger)
+}
+
+.table-default {
+
+    &.table {
+        table-layout: fixed;
+        width: 100% !important;
+        border-collapse: collapse;
+        border-radius: 4px;
+        font-family: Roboto, sans-serif;
+        font-size: 14px;
+
+        thead,
+        tfoot {
+
+            th,
+            td {
+                font-weight: 500;
+            }
+        }
+        
+        tr, tbody tr {
+            min-height: 48px;
+            height: 48px;
+            align-items: center;
+            box-sizing: border-box;
+            display: flex;
+            line-height: 20px;
+            white-space-collapse: collapse;
+            border-bottom: 1px solid var(--table-row-border-bottom-color);
+
+            td,
+            th {
+                align-self: stretch;
+                align-items: center;
+                padding: 8px;
+                vertical-align: middle;
+                display: flex;
+                flex-basis: 0%;
+                flex-grow: 1;
+                flex-shrink: 1;
+                justify-content: space-between;
+                min-height: 48px;
+                padding: 0 16px;
+                overflow-x: hidden;
+                overflow-y: hidden;
+                overflow-wrap: break-word;
+                line-height: 20px;
+                text-overflow: ellipsis;
+                text-wrap-mode: wrap;
+                white-space-collapse: collapse;
+                border-bottom: 1px solid var(--table-row-border-bottom-color);
+            }
+
+        }
+
+        tfoot tr:last-of-type {
+            border-bottom: 0;
+        }
+
+    
+        &.table-hover tbody tr:hover {
+            &, & td, & th {
+                background-color: #ddd;
+            }
+        }
+    }
 }
