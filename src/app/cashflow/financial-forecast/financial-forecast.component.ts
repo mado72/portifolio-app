@@ -12,6 +12,7 @@ import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe'
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 import { TransactionStatus } from '../../model/investment.model';
 import { v4 as uuid } from 'uuid';
+import { FinancialForecastSummaryComponent } from "../financial-forecast-summary/financial-forecast-summary.component";
 
 type DataSourceItem = ForecastDateItem & {calc: CurrencyAmount, balanceId: string};
 
@@ -26,8 +27,9 @@ type DataSourceItem = ForecastDateItem & {calc: CurrencyAmount, balanceId: strin
     TransactionStatusPipe,
     TransactionTypePipe,
     DatePipe,
-    JsonPipe
-  ],
+    JsonPipe,
+    FinancialForecastSummaryComponent
+],
   templateUrl: './financial-forecast.component.html',
   styleUrl: './financial-forecast.component.scss'
 })

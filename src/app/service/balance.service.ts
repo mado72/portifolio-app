@@ -1,8 +1,8 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
+import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, getDate, getTime, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
 import { map } from 'rxjs';
-import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit } from '../model/domain.model';
+import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../model/domain.model';
 import { getScheduleDates, getZonedDate, groupBy, isSameZoneDate } from '../model/functions.model';
 import { BalanceType, ClassConsolidationType, ScheduledStatemetType, TransactionType } from '../model/source.model';
 import { BalanceDialogComponent } from '../cashflow/balance-dialog/balance-dialog.component';
@@ -175,21 +175,15 @@ export class BalanceService {
 
     const depositTransactions = scheduleds.filter(transaction => isTransactionDeposit(transaction.type));
 
-    const mapPeriods: number[][] = [];
-    let initialDate = 1;
-    depositTransactions.forEach((transaction) => {
-      const day = getZonedDate(transaction.date);
-      mapPeriods.push([initialDate, day]);
-      initialDate = day + 1;
-    });
-    mapPeriods.push([initialDate, 31]);
+    const mapPeriods: number[][] = extractIntervalsOfDeposits(depositTransactions);
 
-    const expensePeriods = groupBy(scheduleds, (transaction) => {
-      const day = getZonedDate(transaction.date);
-      return (mapPeriods.find(period => period[0] <= day && day <= period[1]) || [])
-    });
+    const expensesPeriods = groupBy(scheduleds.filter(transaction => isTransactionExpense(transaction.type)), 
+      (transaction) => {
+        const day = getZonedDate(transaction.date);
+        return (mapPeriods.find(period => period[0] <= day && day <= period[1]) || [])
+      });
     const summaryPeriod = Array.from(
-      expensePeriods
+      expensesPeriods
         .entries()).reduce((accSt, [period, group]) => {
           const item = {
             start: period[0],
@@ -198,7 +192,8 @@ export class BalanceService {
           }
           accSt.push(item);
           return accSt;
-        }, [] as { start: number, end: number, amount: number }[]);
+        }, [] as { start: number, end: number, amount: number }[])
+        .sort((a,b)=>a.start-b.start);
 
     for (let i = 0; i < depositTransactions.length; i++) {
       summaryPeriod.splice((i * 2) + 1, 0, {
@@ -208,6 +203,21 @@ export class BalanceService {
       });
     }
     return summaryPeriod;
+
+    function extractIntervalsOfDeposits(depositTransactions: TransactionType[]): number[][] {
+      depositTransactions = depositTransactions.sort((a,b)=>getTime(a.date)-getTime(b.date))
+      const intervals: number[][] = [];
+      let initialDate = 1;
+
+      for (const { date } of depositTransactions) {
+        const day = getZonedDate(date);
+        intervals.push([initialDate, day]);
+        initialDate = day + 1;
+      }
+
+      intervals.push([initialDate, getDate(endOfMonth(new Date()))]);
+      return intervals;
+    }
   }
 
 
