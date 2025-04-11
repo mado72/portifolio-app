@@ -10,6 +10,7 @@ import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 import { BalanceService } from '../../service/balance.service';
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
+import { InvestmentTransactionFormComponent } from '../investment-transaction-form/investment-transaction-form.component';
 
 
 @Component({
@@ -24,6 +25,7 @@ import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
     TransactionTypePipe,
     TransactionStatusPipe,
     CurrencyComponent,
+    InvestmentTransactionFormComponent
   ],
   templateUrl: './transaction-table.component.html',
   styleUrl: './transaction-table.component.scss'
@@ -39,7 +41,7 @@ export class TransactionTableComponent {
   readonly displayedColumns = ["ticker", "date", "type", "quantity", "quote", "value", "status", "account", "brokerage", "actions"];
 
   dataSource = computed(() => {
-    return this.transactionService.transactionSignal();
+    return this.transactionService.investmentTransactions();
   });
 
   readonly accounts = computed(() => this.balanceService.getAllBalances())

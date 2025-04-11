@@ -21,8 +21,9 @@ import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
+import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 
-type Pages = "Asset" | "Portfolio";
+const PagesArray = new Array(5).fill(0).map((_,i)=>i);
 
 type PortfolioQuantityType = PortfolioType & { quantity: number};
 
@@ -51,7 +52,7 @@ export type TransactionDialogType = {
     MatDialogModule,
     MatTableModule,
     MatIconModule,
-    TransactionTypePipe,
+    InvestmentTypePipe,
     TransactionStatusPipe
   ],
   providers: [
@@ -76,12 +77,25 @@ export class TransactionDialogComponent implements OnInit {
   
   private fb = inject(FormBuilder);
 
-  page : Pages = "Asset";
+  page : number = 0;
+
+  assets = computed(() => {
+    return Object.values(this.investmentService.assertsSignal()).reduce((acc, asset)=>{
+      acc[getMarketPlaceCode(asset)] = asset;
+      return acc;
+    }, {} as {[key: string]:AssetQuoteType});
+  })
+
+  marketPlaces = computed(() => {
+    const values = new Set(Object.values((this.assets() || {} as Record<string, AssetQuoteType>)).map(asset=>(asset.marketPlace)));
+    return Array.from(values);
+  })
 
   readonly transactionForm = this.fb.group({
     transaction: this.fb.group({
+      marketPlace: this.fb.control(this.assets()[this.data.transaction.ticker]?.marketPlace, [Validators.required]),
+      ticker: this.fb.control(this.assets()[this.data.transaction.ticker]?.code, [Validators.required]),
       id: this.fb.control(this.data.transaction.id),
-      ticker: this.fb.control(this.data.transaction.ticker, [Validators.required]),
       date: this.fb.control(this.data.transaction.date, [Validators.required]),
       accountId: this.fb.control(this.data.transaction.accountId, []),
       quantity: this.fb.control(this.data.transaction.quantity, [Validators.required, Validators.min(0)]),
@@ -91,25 +105,12 @@ export class TransactionDialogComponent implements OnInit {
         currency: this.fb.control(this.data.transaction.value.currency, [Validators.required])
       }),
       type: this.fb.control(this.data.transaction.type, [Validators.required]),
-      status: this.fb.control(this.data.transaction.status, [Validators.required]),
       brokerage: this.fb.control(this.data.transaction.brokerage, []),
     }),
     portfolios: this.fb.array([], [])
   });
 
   readonly transactionTypes = Object.values(InvestmentEnum);
-  readonly transactionStatuses = Object.values(TransactionStatus);
-  readonly currencies = Object.values(Currency);
-
-  assets = computed(() => {
-    if (!this.data.transaction.ticker) {
-      return Object.values(this.investmentService.assertsSignal()).reduce((acc, asset)=>{
-        acc[getMarketPlaceCode(asset)] = asset;
-        return acc;
-      }, {} as {[key: string]:AssetQuoteType});
-    }
-    return undefined;
-  })
 
   portfolioList = signal(this.portfolios.value)
 
@@ -127,7 +128,6 @@ export class TransactionDialogComponent implements OnInit {
       const quoteTicker = quotes[ticker];
       if (quoteTicker) {
         this.quote.setValue(quoteTicker.quote.price);
-        this.currency.setValue(quoteTicker.quote.currency);
       }
     }
     else {
@@ -135,7 +135,6 @@ export class TransactionDialogComponent implements OnInit {
         const quoteTicker = quotes[ticker];
         if (quoteTicker) {
           this.quote.setValue(quoteTicker.quote.price);
-          this.currency.setValue(quoteTicker.quote.currency);
         }
       })
     }
@@ -199,16 +198,8 @@ export class TransactionDialogComponent implements OnInit {
     return this.transactionForm.get('transaction.value.amount') as FormControl<number>;
   }
 
-  get currency() {
-    return this.transactionForm.get('transaction.value.currency') as FormControl<Currency>;
-  }
-
   get type() {
     return this.transactionForm.get('transaction.type') as FormControl<InvestmentEnum>;
-  }
-
-  get status() {
-    return this.transactionForm.get('transaction.status') as FormControl<TransactionStatus>;
   }
 
   get brokerage() {
@@ -246,7 +237,7 @@ export class TransactionDialogComponent implements OnInit {
     ($event.target as HTMLInputElement).select();
   }
 
-  gotoPage(page: Pages) {
+  gotoPage(page: number) {
     this.page = page;
   }
 

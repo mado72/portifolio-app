@@ -5,6 +5,18 @@ import { addDays, addMonths, addYears, format, getDaysInMonth, getMonth, getYear
 import { it as locale } from 'date-fns/locale';
 import { getZonedDate } from "../../model/functions.model";
 
+export const PTBR_FORMATS = {
+    parse: {
+        dateInput: 'dd/MM/yyyy',
+    },
+    display: {
+        dateInput: 'dd/MM/yyyy',
+        monthYearLabel: 'MMM yyyy',
+        dateA11yLabel: 'LL',
+        monthYearA11yLabel: 'MMMM yyyy',
+    },
+};
+
 export const DATE_FNS_FORMATS: MatDateFormats = {
     parse: {
         dateInput: 'P',
@@ -131,7 +143,8 @@ export class AppDateAdapter extends DateAdapter<UTCDate, Date> {
         return obj instanceof Date || obj instanceof UTCDate;
     }
     override isValid(date: UTCDate): boolean {
-        return this.isDateInstance(date) && !isNaN(date.getTime());
+        const valid = this.isDateInstance(date) && !isNaN(date.getTime());
+        return valid;
     }
     override invalid(): UTCDate {
         return new UTCDate(NaN);

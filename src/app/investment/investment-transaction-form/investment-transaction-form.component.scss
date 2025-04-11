@@ -1,0 +1,24 @@
+.flex-direction,
+.form-fields {
+    display: flex !important;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (min-width: 992px) {
+
+    .flex-direction,
+    .form-fields {
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        width: 75%;
+    }
+
+    mat-form-field {
+        padding: 0 16px;
+        width: 29%;
+    }
+
+}

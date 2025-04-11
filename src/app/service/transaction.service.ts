@@ -2,7 +2,7 @@ import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import { InvestmentTransactionType } from '../model/source.model';
-import { TransactionDialogComponent, TransactionDialogType } from '../cashflow/transaction-dialog/transaction-dialog.component';
+import { TransactionDialogComponent, TransactionDialogType } from '../investment/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
 
@@ -17,7 +17,7 @@ export class TransactionService {
 
   private dialog = inject(MatDialog);
 
-  transactionSignal = computed(() => {
+  investmentTransactions = computed(() => {
     return Object.values(this.sourceService.investmentSource());
   })
 

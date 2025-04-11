@@ -25,7 +25,7 @@ export const investmentRoutes: Routes = [
     },
     {
         path: 'transactions',
-        loadComponent: () => import('../cashflow/transaction-table/transaction-table.component').then(mod => mod.TransactionTableComponent)
+        loadComponent: () => import('./transaction-table/transaction-table.component').then(mod => mod.TransactionTableComponent)
     }
 
 ]

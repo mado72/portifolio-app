@@ -18,7 +18,7 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="type">
-        <mat-header-cell *matHeaderCellDef> Tipo </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> Operação </mat-header-cell>
         <mat-cell *matCellDef="let row">
             {{ row.type | transactionType }}
         </mat-cell>
@@ -85,3 +85,4 @@
 </mat-table>
 
 <!-- <code><pre>{{tData | json}}</pre></code> -->
+ <app-investment-transaction-form></app-investment-transaction-form>

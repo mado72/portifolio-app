@@ -1,0 +1,121 @@
+<div>
+    <h3>Preencha a Transação</h3>
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+        <div class="d-block d-lg-none p-4">
+            <mat-tab-group>
+                <mat-tab label="Geral" class="w-75 text-center">
+                    <div [formGroup]="transactionForm" class="form-fields flex-direction">
+                        <ng-container [ngTemplateOutlet]="general"/>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Financeiro" class="w-75 text-center">
+                    <div [formGroup]="transactionForm" class="form-fields flex-direction">
+                        <ng-container [ngTemplateOutlet]="financial"/>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+        <div class="card d-none d-lg-block w-50">
+            <div class="p-4 card-body d-flex">
+                <div [formGroup]="transactionForm" class="d-flex flex-wrap">
+                    <ng-container [ngTemplateOutlet]="general"/>
+                    <ng-container [ngTemplateOutlet]="financial"/>
+                    <div class="w-100 card">
+                        <div class="card-title">
+                            Alocações
+                        </div>
+                        <div class="card-body">
+                            <ng-container [ngTemplateOutlet]="allocation"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button mat-raised-button color="primary" type="submit" [disabled]="!transactionForm.valid">
+            Salvar
+        </button>
+    </form>
+</div>
+
+<ng-template #general>
+    <ng-container [formGroup]="transactionForm">
+
+        <mat-form-field class="full-width">
+            <mat-label>MarketPlace</mat-label>
+            <mat-select formControlName="marketPlace">
+                @for (place of marketPlaces; track $index) {
+                    <mat-option [value]="place">{{ place }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Ticker</mat-label>
+            <input matInput formControlName="ticker" [matAutocomplete]="auto">
+            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <!-- Opções de auto completar -->
+            </mat-autocomplete>
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Data</mat-label>
+            <input matInput [matDatepicker]="picker" formControlName="date" placeholder="Data da transação">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Conta</mat-label>
+            <input matInput formControlName="accountId">
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Operação</mat-label>
+            <mat-select formControlName="type">
+                @for(type of transactionTypes; track $index) {
+                    <mat-option [value]="type">{{ type }}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+    </ng-container>
+</ng-template>
+
+
+<ng-template #financial>
+    <ng-container [formGroup]="transactionForm">
+        <mat-form-field class="full-width">
+            <mat-label>Quantidade</mat-label>
+            <input matInput type="number" formControlName="quantity">
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Cotação</mat-label>
+            <input matInput type="number" formControlName="quote" step="0.1" min="0">
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Valor</mat-label>
+            <input matInput type="number" formControlName="amount" min="0">
+        </mat-form-field>
+    
+        <mat-form-field class="full-width">
+            <mat-label>Comissão</mat-label>
+            <input matInput type="number" formControlName="brokerage">
+        </mat-form-field>
+    </ng-container>
+</ng-template>
+
+<ng-template #allocation>
+    <ng-container [formGroup]="transactionForm">
+        <ng-container formArrayName="allocations">
+            @for (portfolio of portfolios() ; track portfolio.id; let idx = $index) {
+                <mat-form-field class="full-width">
+                    <mat-label>{{portfolio.name}}</mat-label>
+                    <input matInput type="number" [formControlName]="idx">
+                </mat-form-field>
+            }
+        </ng-container>
+    </ng-container>
+</ng-template>
+
+{{transactionForm.value | json}}
