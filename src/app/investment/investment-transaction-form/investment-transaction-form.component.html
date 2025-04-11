@@ -4,13 +4,18 @@
         <div class="d-block d-lg-none p-4">
             <mat-tab-group>
                 <mat-tab label="Geral" class="w-75 text-center">
-                    <div [formGroup]="transactionForm" class="form-fields flex-direction">
+                    <div class="form-fields flex-direction">
                         <ng-container [ngTemplateOutlet]="general"/>
                     </div>
                 </mat-tab>
                 <mat-tab label="Financeiro" class="w-75 text-center">
-                    <div [formGroup]="transactionForm" class="form-fields flex-direction">
+                    <div class="form-fields flex-direction">
                         <ng-container [ngTemplateOutlet]="financial"/>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Alocações" class="w-75 text-center">
+                    <div class="form-fields flex-direction">
+                        <ng-container [ngTemplateOutlet]="allocation"/>
                     </div>
                 </mat-tab>
             </mat-tab-group>
@@ -43,17 +48,19 @@
         <mat-form-field class="full-width">
             <mat-label>MarketPlace</mat-label>
             <mat-select formControlName="marketPlace">
-                @for (place of marketPlaces; track $index) {
+                @for (place of marketPlaces(); track $index) {
                     <mat-option [value]="place">{{ place }}</mat-option>
                 }
             </mat-select>
         </mat-form-field>
     
         <mat-form-field class="full-width">
-            <mat-label>Ticker</mat-label>
-            <input matInput formControlName="ticker" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-                <!-- Opções de auto completar -->
+            <mat-label>Sigla</mat-label>
+            <input matInput formControlName="code" [matAutocomplete]="autoCode" (input)="toUpercase($event)">
+            <mat-autocomplete autoActiveFirstOption #autoCode="matAutocomplete">
+                @for(option of optionsCode(); track option) {
+                    <mat-option [value]="option">{{option}}</mat-option>
+                }
             </mat-autocomplete>
         </mat-form-field>
     
@@ -66,14 +73,20 @@
     
         <mat-form-field class="full-width">
             <mat-label>Conta</mat-label>
-            <input matInput formControlName="accountId">
+            <input matInput formControlName="accountId" [matAutocomplete]="autoAccount">
+            <mat-autocomplete autoActiveFirstOption #autoAccount="matAutocomplete" [displayWith]="accountNameDisplay">
+                @for(option of optionsAccount(); track option) {
+                    <mat-option [value]="option.id">{{option.account}}</mat-option>
+                }
+                <!-- Opções de auto completar -->
+            </mat-autocomplete>
         </mat-form-field>
     
         <mat-form-field class="full-width">
             <mat-label>Operação</mat-label>
             <mat-select formControlName="type">
                 @for(type of transactionTypes; track $index) {
-                    <mat-option [value]="type">{{ type }}</mat-option>
+                    <mat-option [value]="type">{{ type | investmentType }}</mat-option>
                 }
             </mat-select>
         </mat-form-field>
@@ -118,4 +131,5 @@
     </ng-container>
 </ng-template>
 
+{{optionsCode() | json}}
 {{transactionForm.value | json}}

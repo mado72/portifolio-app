@@ -1,6 +1,6 @@
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
-import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -10,7 +10,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { provideAppDateAdapter, PTBR_FORMATS } from '../../utils/pipe/app-date-adapter.adapter';
 import { PortfolioService } from '../../service/portfolio-service';
-import { debounceTime, distinctUntilChanged, takeLast } from 'rxjs';
+import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith, takeLast, tap } from 'rxjs';
+import { AssetService } from '../../service/asset.service';
+import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
+import { InvestmentEnum } from '../../model/investment.model';
+import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
+import { BalanceService } from '../../service/balance.service';
 
 @Component({
   selector: 'app-investment-transaction-form',
@@ -25,6 +30,7 @@ import { debounceTime, distinctUntilChanged, takeLast } from 'rxjs';
     MatAutocompleteModule,
     MatDatepickerModule,
     NgTemplateOutlet,
+    InvestmentTypePipe,
     JsonPipe
   ],
   providers: [
@@ -35,15 +41,32 @@ import { debounceTime, distinctUntilChanged, takeLast } from 'rxjs';
 })
 export class InvestmentTransactionFormComponent {
 
+  private quoteService = inject(QuoteService);
+
   private portfolioService = inject(PortfolioService);
 
-  marketPlaces = ['NYSE', 'NASDAQ', 'B3', 'LSE']; // Exemplo de MarketPlaces
+  private balanceService = inject(BalanceService);
+
   currencies = ['BRL', 'USD', 'EUR']; // Moedas disponíveis
-  transactionTypes = ['BUY', 'SELL', 'REDEMPTION', 'SUBSCRIPTION']; // Tipos de transação
+  transactionTypes = Object.keys(InvestmentEnum); // Tipos de transação
 
   private fb = inject(FormBuilder);
 
+  assets = this.quoteService.quotes;
+
+  marketPlaces = computed(() => {
+    const assets = this.assets();
+    const marketPlaces = new Set(Object.values(assets).map(asset=>asset.marketPlace))
+    return Array.from(marketPlaces);
+  })
+  //['NYSE', 'NASDAQ', 'B3', 'LSE']; // Exemplo de MarketPlaces
+  
+
   ticker = signal<string | null>(null);
+
+  accountName = signal('');
+
+  accounts = this.balanceService.getAccounts;
 
   portfolios = computed(() =>
     Object.values(this.portfolioService.getAllPortfolios()
@@ -59,9 +82,9 @@ export class InvestmentTransactionFormComponent {
 
   transactionForm = this.fb.group({
     marketPlace: ['', Validators.required],
-    ticker: ['', Validators.required],
+    code: ['', Validators.required],
     date: [null as unknown as Date, Validators.required],
-    accountId: ['', Validators.required],
+    accountId: ['', Validators.required, isAccountMatched(this.accounts())],
     quantity: [0, [Validators.required, Validators.min(1)]],
     quote: [0, [Validators.required, Validators.min(0)]],
     amount: [0, [Validators.required, Validators.min(0)]],
@@ -69,6 +92,22 @@ export class InvestmentTransactionFormComponent {
     brokerage: [0, [Validators.min(0)]],
     allocations: this.fb.array([] as number[])
   });
+
+  optionsCode = computed(() => { 
+    const ticker = this.ticker();
+    if (! ticker) return [];
+    return Object.keys(this.assets()).filter(key=>key.startsWith(ticker))
+  });
+
+  optionsAccount = computed(() => {
+    const accountName = this.accountName();
+    return this.accounts()
+      .filter(acc=>acc.account.toLocaleLowerCase().includes(accountName.toLocaleLowerCase()));
+  });
+
+  accountNameDisplay = (id: string) : string => this.balanceService.getAccounts()
+      .filter(acc=>acc.id === id)
+      .map(acc=>acc.account).find(_=>true) || '';
 
   constructor() {
     const portfolios = this.portfolios();
@@ -79,10 +118,30 @@ export class InvestmentTransactionFormComponent {
       this.generateAllocationControls(portfolios);
     })
 
-    this.transactionForm.get("ticker")?.valueChanges.pipe(
+    const marketPlaceField = this.transactionForm.get("marketPlace") as FormControl<string>;
+    const codeField = this.transactionForm.get("code") as FormControl<string>;
+
+    combineLatest({
+      marketPlace: marketPlaceField.valueChanges.pipe(
+        startWith(marketPlaceField.value)
+      ),
+      code: codeField.valueChanges.pipe(
+        startWith(codeField.value)
+      )
+    }).pipe(
       debounceTime(1000),
       distinctUntilChanged()
-    ).subscribe(ticker=>this.ticker.set(ticker));
+    ).subscribe((ticker)=>
+      this.ticker.set(getMarketPlaceCode(ticker))
+    );
+
+    const accountIdField = this.transactionForm.get("accountId") as FormControl;
+    accountIdField.valueChanges.pipe(
+      startWith(accountIdField.value),
+      debounceTime(1000),
+      distinctUntilChanged()
+    )
+    .subscribe(accountName=>this.accountName.set(accountName));
   }
 
   ngOnInit() {
@@ -108,12 +167,34 @@ export class InvestmentTransactionFormComponent {
       console.log(this.transactionForm.value);
     }
   }
+  
   displayFn(code: string): string {
-    return "";
+    const marketPlace = this.transactionForm?.value?.marketPlace;
+    return getMarketPlaceCode({marketPlace: marketPlace || '', code});
   }
 
   get allocationArray() {
     return this.transactionForm.get("allocations") as FormArray;
   }
 
+  toUpercase($event: Event) {
+    const input = ($event.target) as HTMLInputElement;
+    input.value = input.value.toLocaleUpperCase();
+  }
+    
 }
+function isAccountMatched(accounts: {account: string, id: string}[]): AsyncValidatorFn {
+  return (control: AbstractControl): Observable<ValidationErrors | null> => {
+    return new Observable<ValidationErrors | null>(subscriber=>{
+      const value = control.value as string;
+      if (! accounts.find(account=>account.id===value)) {
+        subscriber.next({"accountNotFound": {value}});
+      }
+      else {
+        subscriber.next(null);
+      }
+      subscriber.complete();
+    })
+  }
+}
+

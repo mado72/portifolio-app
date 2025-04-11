@@ -42,6 +42,8 @@ export class BalanceService {
     return this.sourceService.balanceSource();
   })
 
+  getAccounts = computed(() => Object.values(this.sourceService.balanceSource()).map(item=>({account: item.accountName, id: item.id as string})))
+
   /**
    * Retrieves all account balances and calculates the balance quotation in the specified currency.
    *
@@ -78,7 +80,6 @@ export class BalanceService {
       } as AccountBalanceExchange;
     });
   }
-
 
   /**
    * Retrieves the summarized balance amount for all accounts, excluding specific account types,

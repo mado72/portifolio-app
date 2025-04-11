@@ -7,8 +7,9 @@ import { InvestmentEnum, InvestmentEnumDesc } from '../../model/investment.model
 })
 export class InvestmentTypePipe implements PipeTransform {
 
-  transform(value: InvestmentEnum): string {
-    return InvestmentEnumDesc[value];
+  transform(value: InvestmentEnum | string): string {
+    const k = typeof value === 'string' ? InvestmentEnum[value as keyof typeof InvestmentEnum] : value;
+    return InvestmentEnumDesc[k];
   }
 
 }
