@@ -1,0 +1,14 @@
+@if(! showForm()) {
+    <button mat-button class="primary button" (click)="addTransaction()">
+        <mat-icon>add</mat-icon>
+        Nova transação
+    </button>
+        <app-transaction-table
+        (onClickItem)="onClickItem($event)"
+        (onDeleteItem)="onDeleteItem($event)"/>
+}
+@else {
+    <app-investment-transaction-form
+        (onSubmit)="onSaveTransaction($event)"
+        (onCancel)="onCancelTransactionForm()"/>
+}

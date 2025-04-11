@@ -1,14 +1,13 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Output } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { InvestmentTransactionType } from '../../model/source.model';
+import { BalanceService } from '../../service/balance.service';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
-import { BalanceService } from '../../service/balance.service';
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 
@@ -22,10 +21,9 @@ import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
     MatTableModule,
     MatIconModule,
     MatButtonModule,
-    TransactionTypePipe,
+    InvestmentTypePipe,
     TransactionStatusPipe,
-    CurrencyComponent,
-    InvestmentTransactionFormComponent
+    CurrencyComponent
   ],
   templateUrl: './transaction-table.component.html',
   styleUrl: './transaction-table.component.scss'
@@ -40,29 +38,24 @@ export class TransactionTableComponent {
 
   readonly displayedColumns = ["ticker", "date", "type", "quantity", "quote", "value", "status", "account", "brokerage", "actions"];
 
+  @Output() onDeleteItem = new EventEmitter<string>();
+
+  @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
+
   dataSource = computed(() => {
     return this.transactionService.investmentTransactions();
   });
 
   readonly accounts = computed(() => this.balanceService.getAllBalances())
 
-  addTransaction() {
-    this.transactionService.openAddDialog()
-  }
-
   deleteTransaction(event: MouseEvent, transaction: InvestmentTransactionType) {
     event.stopPropagation();
-    this.transactionService.deleteTransaction(transaction.id as string);
+    this.onDeleteItem.emit(transaction.id);
     this.changeDetectorRef.detectChanges(); // Refresh table data
   }
 
   editTransaction(transaction: InvestmentTransactionType) {
-    this.transactionService.openDialog({
-      newTransaction: false,
-      title: 'Editar Transação',
-      transaction,
-      portfolios: []
-    })
+    this.onClickItem.emit(transaction);
   }
 
 }

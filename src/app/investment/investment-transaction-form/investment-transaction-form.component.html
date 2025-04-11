@@ -1,7 +1,7 @@
-<div>
+<div class="box-container d-flex flex-column justify-content-center align-items-center">
     <h3>Preencha a Transação</h3>
-    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
-        <div class="d-block d-lg-none p-4">
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmitRequest()" class="mb-4">
+        <div class="d-block d-lg-none p-4 mb-4">
             <mat-tab-group>
                 <mat-tab label="Geral" class="w-75 text-center">
                     <div class="form-fields flex-direction">
@@ -19,15 +19,20 @@
                     </div>
                 </mat-tab>
             </mat-tab-group>
+            <footer class="footer mt-auto fixed-bottom d-flex justify-content-end py-3 bg-light">
+                <ng-container [ngTemplateOutlet]="actions"/>
+            </footer>
         </div>
-        <div class="card d-none d-lg-block w-50">
+        <div class="card d-none d-lg-block">
             <div class="p-4 card-body d-flex">
-                <div [formGroup]="transactionForm" class="d-flex flex-wrap">
+                <div [formGroup]="transactionForm" class="d-flex flex-wrap justify-content-evenly">
                     <ng-container [ngTemplateOutlet]="general"/>
                     <ng-container [ngTemplateOutlet]="financial"/>
-                    <div class="w-100 card">
-                        <div class="card-title">
-                            Alocações
+                    <div class="w-100 card mt-3">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <h3 class="ps-4 mb-0">Alocações</h3>
+                            </div>
                         </div>
                         <div class="card-body">
                             <ng-container [ngTemplateOutlet]="allocation"/>
@@ -35,12 +40,21 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer d-flex justify-content-end">
+                <ng-container [ngTemplateOutlet]="actions"/>
+            </div>
         </div>
-        <button mat-raised-button color="primary" type="submit" [disabled]="!transactionForm.valid">
-            Salvar
-        </button>
     </form>
 </div>
+
+<ng-template #actions>
+    <button mat-stroked-button color="primary" type="submit" [disabled]="!transactionForm.valid">
+        Salvar
+    </button>
+    <button mat-button color="secondary" type="button">
+        Cancelar
+    </button>
+</ng-template>
 
 <ng-template #general>
     <ng-container [formGroup]="transactionForm">
@@ -73,7 +87,7 @@
     
         <mat-form-field class="full-width">
             <mat-label>Conta</mat-label>
-            <input matInput formControlName="accountId" [matAutocomplete]="autoAccount">
+            <input matInput formControlName="accountId" appSelectOnFocus [matAutocomplete]="autoAccount">
             <mat-autocomplete autoActiveFirstOption #autoAccount="matAutocomplete" [displayWith]="accountNameDisplay">
                 @for(option of optionsAccount(); track option) {
                     <mat-option [value]="option.id">{{option.account}}</mat-option>
@@ -98,22 +112,22 @@
     <ng-container [formGroup]="transactionForm">
         <mat-form-field class="full-width">
             <mat-label>Quantidade</mat-label>
-            <input matInput type="number" formControlName="quantity">
+            <input matInput type="number" formControlName="quantity" appSelectOnFocus>
         </mat-form-field>
     
         <mat-form-field class="full-width">
             <mat-label>Cotação</mat-label>
-            <input matInput type="number" formControlName="quote" step="0.1" min="0">
+            <input matInput type="number" formControlName="quote" appSelectOnFocus step="0.1" min="0">
         </mat-form-field>
     
         <mat-form-field class="full-width">
             <mat-label>Valor</mat-label>
-            <input matInput type="number" formControlName="amount" min="0">
+            <input matInput type="number" formControlName="amount" appSelectOnFocus min="0">
         </mat-form-field>
     
         <mat-form-field class="full-width">
             <mat-label>Comissão</mat-label>
-            <input matInput type="number" formControlName="brokerage">
+            <input matInput type="number" formControlName="brokerage" appSelectOnFocus>
         </mat-form-field>
     </ng-container>
 </ng-template>
@@ -123,13 +137,22 @@
         <ng-container formArrayName="allocations">
             @for (portfolio of portfolios() ; track portfolio.id; let idx = $index) {
                 <mat-form-field class="full-width">
-                    <mat-label>{{portfolio.name}}</mat-label>
-                    <input matInput type="number" [formControlName]="idx">
+                    <mat-label>
+                        {{portfolio.name}}
+                    </mat-label>
+                    <div [matBadge]="portfolio.allocation">
+                        <input matInput type="number" [formControlName]="idx" appSelectOnFocus>
+                    </div>
                 </mat-form-field>
             }
         </ng-container>
     </ng-container>
 </ng-template>
 
-{{optionsCode() | json}}
+<pre>
+{{allocationArray.value | json}}
+
+----------
+
 {{transactionForm.value | json}}
+</pre>

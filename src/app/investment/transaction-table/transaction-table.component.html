@@ -1,7 +1,3 @@
-<button mat-stroked-button class="primary button" (click)="addTransaction()">
-    <mat-icon>add</mat-icon>
-    Adicionar
-</button>
 <mat-table [dataSource]="dataSource()" class="mat-table-hover">
     <ng-container matColumnDef="ticker">
         <mat-header-cell *matHeaderCellDef class="text-break"> Ativo </mat-header-cell>
@@ -13,14 +9,32 @@
     <ng-container matColumnDef="date">
         <mat-header-cell *matHeaderCellDef> Data </mat-header-cell>
         <mat-cell *matCellDef="let row">
-            {{ row.date | date: 'dd/MM/yyyy' }}
+            <span class="d-none d-sm-inline d-lg-none">
+                {{ row.date | date: 'dd/MM' }}
+            </span>
+            <span class="d-none d-lg-inline">
+                {{ row.date | date: 'dd/MM/yyyy' }}
+            </span>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="type">
-        <mat-header-cell *matHeaderCellDef> Operação </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef>
+            <span class="d-none d-sm-inline d-lg-none">
+                Op.
+            </span>
+            <span class="d-none d-lg-inline">
+                Operação
+            </span>
+
+        </mat-header-cell>
         <mat-cell *matCellDef="let row">
-            {{ row.type | transactionType }}
+            <span class="d-none d-sm-inline d-lg-none">
+                {{ row.type | investmentType:'short' }}
+            </span>
+            <span class="d-none d-lg-inline">
+                {{ row.type | investmentType }}
+            </span>
         </mat-cell>
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>
@@ -35,7 +49,14 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="quote">
-        <mat-header-cell *matHeaderCellDef> Cotação </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> 
+            <span class="d-none d-sm-inline d-lg-none">
+                Pr.
+            </span>
+            <span class="d-none d-lg-inline">
+                Preço
+            </span>
+        </mat-header-cell>
         <mat-cell *matCellDef="let row">
             {{ row.quote | number:'1.2-2'}}
         </mat-cell>
@@ -49,11 +70,11 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="status">
-        <mat-header-cell *matHeaderCellDef> Status </mat-header-cell>
-        <mat-cell *matCellDef="let row">
+        <mat-header-cell *matHeaderCellDef class="d-none d-lg-flex"> Status </mat-header-cell>
+        <mat-cell *matCellDef="let row" class="d-none d-lg-flex">
             {{ row.status | transactionStatus }}
         </mat-cell>
-        <mat-footer-cell *matFooterCellDef></mat-footer-cell>
+        <mat-footer-cell *matFooterCellDef class="d-none d-lg-flex"></mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="account">
         <mat-header-cell *matHeaderCellDef> Conta </mat-header-cell>
@@ -63,7 +84,14 @@
         <mat-footer-cell *matFooterCellDef></mat-footer-cell>
     </ng-container>
     <ng-container matColumnDef="brokerage">
-        <mat-header-cell *matHeaderCellDef> Corretagem </mat-header-cell>
+        <mat-header-cell *matHeaderCellDef> 
+            <span class="d-none d-sm-inline d-lg-none">
+                Corrtgm.
+            </span>
+            <span class="d-none d-lg-inline">
+                Corretagem
+            </span>            
+        </mat-header-cell>
         <mat-cell *matCellDef="let row">
             {{ row.brokerage | number: '1.2-2'}}
         </mat-cell>
@@ -83,6 +111,3 @@
     <mat-row *matRowDef="let row; columns: displayedColumns;" (click)="editTransaction(row)"></mat-row>
     <mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"></mat-footer-row>
 </mat-table>
-
-<!-- <code><pre>{{tData | json}}</pre></code> -->
- <app-investment-transaction-form></app-investment-transaction-form>
