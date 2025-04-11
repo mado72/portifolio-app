@@ -38,8 +38,7 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
     NgTemplateOutlet,
     MatBadgeModule,
     InvestmentTypePipe,
-    SelectOnFocusDirective,
-    JsonPipe
+    SelectOnFocusDirective
   ],
   providers: [
     provideAppDateAdapter()
