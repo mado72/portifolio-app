@@ -9,7 +9,7 @@ import { UTCDate } from '@date-fns/utc';
 import { Currency, Scheduled, TransactionEnum } from '../../model/domain.model';
 import { ScheduledStatemetType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
-import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
+import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 
 export type DialogData = {
   title: string,

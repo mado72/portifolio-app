@@ -1,9 +1,9 @@
 import { Provider } from "@angular/core";
 import { DateAdapter, MAT_DATE_FORMATS, MatDateFormats } from "@angular/material/core";
 import { UTCDate } from '@date-fns/utc';
-import { addDays, addMonths, addYears, format, getDaysInMonth, getMonth, getYear, parse, setDay, setMonth, toDate } from "date-fns";
+import { addDays, addMonths, addYears, endOfDay, format, getDaysInMonth, getMonth, getYear, parse, setDay, setMonth, startOfDay, toDate } from "date-fns";
 import { it as locale } from 'date-fns/locale';
-import { getZonedDate } from "../../model/functions.model";
+import { getZonedDate } from "../model/functions.model";
 
 export const PTBR_FORMATS = {
     parse: {
@@ -108,7 +108,8 @@ export class AppDateAdapter extends DateAdapter<UTCDate, Date> {
         return toDate(date);
     }
     override createDate(year: number, month: number, date: number): UTCDate {
-        return new UTCDate(year, month, date);
+        const utc = endOfDay(new UTCDate(year, month, date));
+        return utc;
     }
     override today(): UTCDate {
         return new UTCDate();

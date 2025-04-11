@@ -8,7 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { endOfMonth, startOfMonth } from 'date-fns';
 import { Income } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
-import { provideAppDateAdapter } from '../../utils/pipe/app-date-adapter.adapter';
+import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { InvestmentEarningsTableComponent } from '../investment-earnings-table/investment-earnings-table.component';
 
 
