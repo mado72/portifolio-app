@@ -1,3 +1,6 @@
+<div id="summary" class="mb-4 mat-elevation-z2">
+    <app-financial-forecast-summary class="w-25" caption="Resumo"></app-financial-forecast-summary>
+</div>
 <div id="cashflow">
     <table mat-table [dataSource]="datasource()" class="mat-elevation-z2">
         <ng-container matColumnDef="description">
@@ -46,7 +49,4 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns"  [class]="[row.type.toLowerCase(), row.status.toLowerCase()]"></tr>
         <tr mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"></tr>
     </table>
-</div>
-<div class="mt-4">
-    <app-financial-forecast-summary></app-financial-forecast-summary>
 </div>

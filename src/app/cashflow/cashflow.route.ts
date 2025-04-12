@@ -27,5 +27,8 @@ export const cashflowRoutes: Routes = [
     {
         path: 'forecast-summary',
         loadComponent: () => import('./financial-forecast-summary/financial-forecast-summary.component').then(mod => mod.FinancialForecastSummaryComponent),
+        data: {
+            caption: 'Previsão'
+        }
     }
 ]

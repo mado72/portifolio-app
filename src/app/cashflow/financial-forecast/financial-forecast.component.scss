@@ -1,3 +1,10 @@
+@media screen and (min-width: 800px) {
+    #summary {
+        width: 50vw;
+        left: 25%;
+        position: relative;
+    }
+}
 #cashflow {
     min-width: 640px;
     overflow-x: auto;

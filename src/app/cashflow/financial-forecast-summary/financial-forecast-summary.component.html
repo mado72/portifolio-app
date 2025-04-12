@@ -31,7 +31,8 @@
         </td>
     </ng-container>
 
-    <caption>{{caption()}}</caption>
+    @if(caption()) {<caption>{{caption()}}</caption>}
+    
     <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
     <tr mat-footer-row *matFooterRowDef="displayedColumn" class="table-total"></tr>
