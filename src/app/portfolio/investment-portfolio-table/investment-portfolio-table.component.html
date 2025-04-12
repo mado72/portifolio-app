@@ -13,7 +13,7 @@
               <span class="text-truncate d-flex d-lg-none" title="Quantidade">Qtd.</span>
             </th>
             <th class="column-quote">Cotação</th>
-            <th class="column-averagePrice d-md-none d-lg-flex" >
+            <th class="column-averagePrice d-none d-lg-flex" >
               <span class="text-truncate d-none d-lg-flex">Preço Médio</span>
               <span class="text-truncate d-flex d-lg-none" title="Preço Médio">PM</span>
             </th>
@@ -27,7 +27,7 @@
             <th class="column-profit" >
               <div>
                 <span class="text-truncate d-none d-lg-flex">Resultado</span>
-                <span class="text-truncate d-flex d-lg-none" title="Resultado">$</span>
+                <span class="text-truncate d-flex d-lg-none" title="Resultado">Result.</span>
                 ({{currency()}})
               </div>
             </th>
@@ -44,9 +44,9 @@
     <tbody>
       @for(row of datasource(); track $index) {
         <tr (click)="editable() && selectRow(row)">
-          <td class="column-name d-md-none d-lg-flex">{{row.name}}</td>
+          <td class="column-name d-none d-lg-flex">{{row.name}}</td>
           <td class="column-code">{{row.ticker}}</td>
-          <td class="column-type d-md-none d-lg-flex">{{row.type | assetType }}</td>
+          <td class="column-type d-none d-lg-flex">{{row.type | assetType }}</td>
           <td class="column-quantity">
             {{row.quantity}}
           </td>
@@ -54,7 +54,7 @@
             <span>{{row.quote.currency}}</span>
             {{row.quote.price | number:'1.2-2'}}            
           </td>
-          <td class="column-averagePrice d-md-none d-lg-flex" >
+          <td class="column-averagePrice d-none d-lg-flex" >
             <span>{{row.quote.currency}}</span>
             {{row.averagePrice | number:'1.2-2'}}            
           </td>
@@ -81,15 +81,15 @@
         <th class="cell-total">Total</th>
         <th></th>
         <th></th>
-        <th class="d-md-none d-lg-flex"></th>
-        <th class="d-md-none d-lg-flex"></th>
-        <th class="d-md-none d-lg-flex"></th>
+        <th class="d-none d-lg-flex"></th>
+        <th class="d-none d-lg-flex"></th>
+        <th class="d-none d-lg-flex"></th>
         <th class="column-marketValue">
-          <span>{{currency()}}</span>
+          <span></span>
           {{total()?.marketValue| number:'1.2-2'}}
         </th>
         <th class="column-profit" [class.negative]="(total()?.profit || 0) < 0">
-          <span>{{currency()}}</span>
+          <span></span>
           {{total()?.profit| number:'1.2-2'}}
         </th>
         <th class="column-percPlanned" >

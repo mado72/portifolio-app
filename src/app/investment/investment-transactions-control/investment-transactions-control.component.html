@@ -8,7 +8,9 @@
         (onDeleteItem)="onDeleteItem($event)"/>
 }
 @else {
-    <app-investment-transaction-form
-        (onSubmit)="onSaveTransaction($event)"
-        (onCancel)="onCancelTransactionForm()"/>
+    <div class="force-orientation-landscape">
+        <app-investment-transaction-form
+            (onSubmit)="onSaveTransaction($event)"
+            (onCancel)="onCancelTransactionForm()"/>
+    </div>
 }

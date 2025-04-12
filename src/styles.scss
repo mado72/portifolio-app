@@ -135,8 +135,9 @@ button.delete-button.deletable {
                 font-weight: 500;
             }
         }
-        
-        tr, tbody tr {
+
+        tr,
+        tbody tr {
             min-height: 48px;
             height: 48px;
             align-items: center;
@@ -144,7 +145,6 @@ button.delete-button.deletable {
             display: flex;
             line-height: 20px;
             white-space-collapse: collapse;
-            border-bottom: 1px solid var(--table-row-border-bottom-color);
 
             td,
             th {
@@ -166,7 +166,9 @@ button.delete-button.deletable {
                 text-overflow: ellipsis;
                 text-wrap-mode: wrap;
                 white-space-collapse: collapse;
-                border-bottom: 1px solid var(--table-row-border-bottom-color);
+                border-top: 0;
+                border-bottom: 1px dotted var(--table-row-border-bottom-color);
+                box-sizing: border-box;
             }
 
         }
@@ -175,11 +177,52 @@ button.delete-button.deletable {
             border-bottom: 0;
         }
 
-    
+
         &.table-hover tbody tr:hover {
-            &, & td, & th {
+
+            &,
+            & td,
+            & th {
                 background-color: #ddd;
             }
         }
+    }
+}
+
+
+@media (max-width: 800px) {
+    .mat-mdc-cell,
+    .mat-mdc-header-cell {
+        font-size: 0.8em;
+        padding: 4px;
+    }
+}
+
+.force-orientation-landscape {
+    @media (orientation: landscape) {
+        .rotate-notice {
+            display: block;
+        }
+    }
+
+    @media (orientation: portrait) {
+        .rotate-notice {
+            display: none;
+        }
+    }
+
+    .rotate-notice {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        color: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.5em;
+        z-index: 1000;
     }
 }

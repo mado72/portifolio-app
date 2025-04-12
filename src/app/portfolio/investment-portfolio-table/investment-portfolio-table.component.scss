@@ -3,17 +3,10 @@
     width: 100%;
 }
 
-#table-master {
-    tr, tr td {
-        border-bottom: 1px solid rgb(116, 119, 127);
-    }
-}
-
 tr {
     min-height: 48px;
     height: 48px;
     vertical-align: middle;
-    border-bottom: 1px solid var(--table-row-border-bottom-color)
 }
 tr, td {
     background-color: var(--bs-body-bg);
@@ -29,9 +22,9 @@ tr, td {
 
 .column-code {
     width: 12%; // Código do ativo
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
 }
 
 .column-type {
@@ -40,12 +33,12 @@ tr, td {
 }
 
 .column-quote {
-    width: 10%; // Cotação
+    width: 13%; // Cotação
     text-align: end;
 }
 
 .column-quantity {
-    width: 8%; // Quantidade
+    width: 5%; // Quantidade
     text-align: end;
 }
 

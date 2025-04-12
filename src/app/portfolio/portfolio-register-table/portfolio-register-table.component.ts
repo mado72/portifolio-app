@@ -70,12 +70,11 @@ export class PortfolioRegisterTableComponent {
 
   editable = input<boolean>(false)
 
-  s = [];
-  value = 0;
-
   formSliders = this.fb.group({
     sliders : this.fb.array([]),
   });
+
+  currency = computed(() => this.sourceService.currencyDefault());
 
   get slidersControl() {
     return this.formSliders.get('sliders') as FormArray<FormControl<number | null>>;
