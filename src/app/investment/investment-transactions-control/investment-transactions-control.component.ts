@@ -1,10 +1,10 @@
 import { Component, inject, signal } from '@angular/core';
-import { TransactionTableComponent } from '../transaction-table/transaction-table.component';
-import { TransactionService } from '../../service/transaction.service';
-import { InvestmentTransactionType } from '../../model/source.model';
-import { InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from '../investment-transaction-form/investment-transaction-form.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { InvestmentTransactionType } from '../../model/source.model';
+import { TransactionService } from '../../service/transaction.service';
+import { InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from '../investment-transaction-form/investment-transaction-form.component';
+import { TransactionTableComponent } from '../transaction-table/transaction-table.component';
 
 @Component({
   selector: 'app-investment-transactions-control',
@@ -45,11 +45,11 @@ export class InvestmentTransactionsControlComponent {
 
   onSaveTransaction(transaction: InvestmentTransactionFormResult) {
     this.showForm.set(false);
-    console.log(transaction);
+    const t = {... transaction} as InvestmentTransactionType;
+    this.transactionService.saveTransaction(t);
   }
   
   onCancelTransactionForm() {
     this.showForm.set(false);
-    console.log(`cancel`);
   }
 }

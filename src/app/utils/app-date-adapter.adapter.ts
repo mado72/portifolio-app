@@ -108,7 +108,7 @@ export class AppDateAdapter extends DateAdapter<UTCDate, Date> {
         return toDate(date);
     }
     override createDate(year: number, month: number, date: number): UTCDate {
-        const utc = endOfDay(new UTCDate(year, month, date));
+        const utc = new UTCDate(year, month, date, 12, 0, 0);
         return utc;
     }
     override today(): UTCDate {
