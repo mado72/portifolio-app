@@ -1,0 +1,12 @@
+:host {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.exch-currency {
+    flex-grow: 1;
+    text-align: start;
+}

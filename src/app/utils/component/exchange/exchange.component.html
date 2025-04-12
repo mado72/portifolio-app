@@ -1,0 +1,10 @@
+<span class="exch-currency">{{ value()?.currency }}</span>
+<span class="exch-value">
+    @if (value()?.value) {
+        {{ value()?.value | number:'1.2-2' }}
+    }
+    @else { - }
+</span>
+<button class="exch-icon" mat-icon-button (click)="toggle()" [title]="iconTitle()" [disabled]="other()?.currency === value()?.currency">
+     <mat-icon>currency_exchange</mat-icon>
+</button>

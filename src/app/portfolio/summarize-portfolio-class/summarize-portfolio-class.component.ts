@@ -1,11 +1,11 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
 import { Component, computed, inject, input } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faExchange } from '@fortawesome/free-solid-svg-icons';
 import { Currency } from '../../model/domain.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { SourceService } from '../../service/source.service';
+import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 
 @Component({
   selector: 'app-summarize-portfolio-class',
@@ -14,8 +14,8 @@ import { SourceService } from '../../service/source.service';
     MatTableModule,
     DecimalPipe,
     PercentPipe,
-    FaIconComponent
-  ],
+    ExchangeComponent
+],
   templateUrl: './summarize-portfolio-class.component.html',
   styleUrl: './summarize-portfolio-class.component.scss'
 })

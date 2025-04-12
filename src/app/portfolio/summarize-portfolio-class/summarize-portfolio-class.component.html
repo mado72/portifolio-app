@@ -8,15 +8,7 @@
         <th mat-header-cell *matHeaderCellDef>Financeiro</th>
         <td mat-cell *matCellDef="let item">
             <div class="cell-number">
-                <span>{{ item.value.exchanged.currency }}</span>
-                <span>{{ item.value.exchanged.value | number:'1.2-2' }}</span>                
-                @if (item.value.exchanged.currency !== item.value.financial.currency) {
-                    <span [title]="item.value.financial.currency + ' ' + item.value.financial.value" class="info">
-                        <fa-icon [icon]="faExchange"></fa-icon>
-                    </span>
-                } @else {
-                    <span class="info"></span>
-                }
+                <app-exchange [exchange]="{original: item.value.financial, exchanged: item.value.exchanged}"></app-exchange>
             </div>
         </td>
         <td mat-footer-cell *matFooterCellDef>
