@@ -1,8 +1,8 @@
-<span class="d-flex justify-content-between" [style.color]="elementStyle">
+<span class="d-flex justify-content-between" [class]="value$().value < 0 ? 'negative' : 'positive'">
     <span>{{this.currency}}</span>
     <span>
-        @if (this.amount || displayZero) {
-            {{this.amount | number: format}}
+        @if (this.value$().value || displayZero) {
+            {{this.value$().value | number: format}}
         }
         @else { - }
     </span>

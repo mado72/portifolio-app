@@ -39,7 +39,7 @@ export class QuoteService {
           ...asset.quote,
           currency: Currency[asset.quote.currency as keyof typeof Currency]
         },
-        initialPrice: asset.quote.price
+        initialPrice: asset.quote.value
       }
       return acc;
     }, {} as AssetQuoteRecord);
@@ -70,7 +70,7 @@ export class QuoteService {
   exchange(value: number, from: Currency, to: Currency) {
     return ({
       currency: to,
-      amount: value * this.getExchangeQuote(from, to)
+      value: value * this.getExchangeQuote(from, to)
     });
   }
 
@@ -80,7 +80,7 @@ export class QuoteService {
     this.remoteQuotesService.getRemoteQuote(asset.marketPlace, asset.code).subscribe(quote => {
       asset = { ...original, ...asset,
         quote: {
-          price: quote.price,
+          value: quote.price,
           currency: quote.currency
         }
       }

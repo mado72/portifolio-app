@@ -48,9 +48,9 @@ export class CashflowService {
         startDate: new Date(),
         endDate: undefined
       },
-      value: {
+      amount: {
         currency: this.sourceService.currencyDefault(),
-        amount: 0
+        value: 0
       }
     });
 }

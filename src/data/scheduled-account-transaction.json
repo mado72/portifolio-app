@@ -4,8 +4,8 @@
       "id": "f3b9c8a4-1d2b-4e3a-9c8a-1234567890ac",
       "type": "EXPENSE",
       "description": "Fundação Logosófica",
-      "value": {
-        "amount": 350.00,
+      "amount": {
+        "value": 350.00,
         "currency": "BRL"
       },
       "originAccountId": "ACC123",
@@ -20,8 +20,8 @@
       "id": "a1b2c3d4-e5f6-7g8h-9i0j-1234567890ab",
       "type": "SELL",
       "description": "Sale of bonds",
-      "value": {
-        "amount": 2000.00,
+      "amount": {
+        "value": 2000.00,
         "currency": "EUR"
       },
       "originAccountId": "ACC456",
@@ -36,8 +36,8 @@
       "id": "123e4567-e89b-12d3-a456-426614174000",
       "type": "TRANSFER",
       "description": "Transfer from savings",
-      "value": {
-        "amount": 1000.00,
+      "amount": {
+        "value": 1000.00,
         "currency": "USD"
       },
       "originAccountId": "ACC103",
@@ -52,8 +52,8 @@
       "id": "987f6543-21ab-43cd-85ef-1234567890ab",
       "type": "EXPENSE",
       "description": "Eduardo",
-      "value": {
-        "amount": 500.00,
+      "amount": {
+        "value": 500.00,
         "currency": "BRL"
       },
       "originAccountId": "CC-123456",
@@ -68,8 +68,8 @@
       "id": "456e7890-a12b-34cd-56ef-1234567890ab",
       "type": "SUBSCRIPTION",
       "description": "Magazine subscription",
-      "value": {
-        "amount": 50.00,
+      "amount": {
+        "value": 50.00,
         "currency": "USD"
       },
       "originAccountId": "ACC106",
@@ -83,8 +83,8 @@
       "id": "789a1234-b56c-78de-90fg-1234567890ab",
       "type": "REDEMPTION",
       "description": "Mutual fund redemption",
-      "value": {
-        "amount": 2500.00,
+      "amount": {
+        "value": 2500.00,
         "currency": "USD"
       },
       "originAccountId": "ACC107",
@@ -98,8 +98,8 @@
       "id": "321cba98-7654-32ed-10fg-1234567890ab",
       "type": "EXPENSE",
       "description": "Enzo",
-      "value": {
-        "amount": 100.00,
+      "amount": {
+        "value": 100.00,
         "currency": "BRL"
       },
       "originAccountId": "CC-123456",

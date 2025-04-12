@@ -74,7 +74,7 @@ export class BalanceService {
       return {
         ...item,
         exchange: {
-          amount: item.balance.price * quoteFactor,
+          value: item.balance.value * quoteFactor,
           currency
         },
       } as AccountBalanceExchange;
@@ -100,7 +100,7 @@ export class BalanceService {
   getBalancesSummarized(balances: BalanceType[], currency: Currency, excludeAccTypes: AccountTypeEnum[] = []): number {
     return this.getBalancesByCurrencyExchange(balances, currency)
       .filter(acc => !excludeAccTypes.includes(acc.type))
-      .map(item => item.exchange.amount)
+      .map(item => item.exchange.value)
       .reduce((acc, vl) => acc += vl, 0)
   }
 
@@ -145,7 +145,7 @@ export class BalanceService {
           const item = {
             start: period[0],
             end: period[1],
-            amount: group.reduce((acc, item) => acc - item.value.amount, 0)
+            amount: group.reduce((acc, item) => acc - item.value.value, 0)
           }
           accSt.push(item);
           return accSt;
@@ -156,10 +156,10 @@ export class BalanceService {
       summaryPeriod.splice((i * 2) + 1, 0, {
         start: getZonedDate(depositTransactions[i].date),
         end: getZonedDate(depositTransactions[i].date),
-        amount: depositTransactions[i].value.amount
+        amount: depositTransactions[i].value.value
       });
     }
-    return summaryPeriod;
+    return summaryPeriod.sort((a,b)=>1000 * (a.start - b.start) + (a.end - b.end));
 
     function extractIntervalsOfDeposits(depositTransactions: TransactionType[]): number[][] {
       depositTransactions = depositTransactions.sort((a,b)=>getTime(a.date)-getTime(b.date))
@@ -189,7 +189,7 @@ export class BalanceService {
     return scheduledTransactions
       .filter(item => areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
       .flatMap(item => {
-        const quoteFactor = this.quoteService.getExchangeQuote(item.value.currency, currency);
+        const quoteFactor = this.quoteService.getExchangeQuote(item.amount.currency, currency);
         const scheduledRange = interval(
           max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]),
           min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
@@ -200,8 +200,8 @@ export class BalanceService {
           id: undefined,
           date,
           value: {
-            ...item.value,
-            amount: item.value.amount * quoteFactor
+            ...item.amount,
+            amount: item.amount.value * quoteFactor
           },
           status: TransactionStatus.PROGRAMING,
           scheduledRef: item.id,

@@ -44,7 +44,7 @@ export class AssetService {
               marketPlace: '',
               quote: {
                 currency: this.sourceService.currencyDefault(),
-                price: 0
+                value: 0
               },
               trend: "unchanged"
             },

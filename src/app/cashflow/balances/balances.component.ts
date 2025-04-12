@@ -1,12 +1,12 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
-import { AccountBalanceExchange, AccountTypeEnum, Currency } from '../../model/domain.model';
+import { AccountBalanceExchange, AccountTypeEnum } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { MatIconModule } from '@angular/material/icon';
 
 type AccountBalanceExchangeSelectable = AccountBalanceExchange & {
   selected: boolean;
@@ -76,7 +76,7 @@ export class BalancesComponent implements OnInit {
 
   summarize(balances: AccountBalanceExchange[]) {
     return balances
-      .map(item => item.exchange.amount)
+      .map(item => item.exchange.value)
       .reduce((acc, vl) => acc += vl, 0);
   }
 

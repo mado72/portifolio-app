@@ -1,8 +1,8 @@
-import { CurrencyPrice, Exchange } from "./domain.model";
+import { CurrencyValue, Exchange } from "./domain.model";
 
 export type QuoteExchangeInfo = {
-  original: CurrencyPrice;
-  value: CurrencyPrice;
+  original: CurrencyValue;
+  value: CurrencyValue;
   exchange: Exchange;
 }
 

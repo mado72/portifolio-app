@@ -23,7 +23,7 @@
         <ng-container matColumnDef="amount">
             <th mat-header-cell *matHeaderCellDef>Valor</th>
             <td mat-cell *matCellDef="let item" class="cell-number">
-                <app-currency [amount]="item.calc.amount" [currency]="item.calc.currency"></app-currency>
+                <app-currency [value]="item.calc"></app-currency>
             </td>
             <td mat-footer-cell *matFooterCellDef class="cell-number">
                 <app-currency [amount]="forecast() || 0"></app-currency>

@@ -12,7 +12,7 @@ const INITIAL_TOTAL: Required<SummarizedDataType> = {
 export function calcPosition(quotes: AssetQuoteRecord, allocations: PortfolioAllocationRecord) {
     const calc = Object.entries(allocations).reduce((acc, [key, allocation]) => {
         if (! quotes[key]) return acc;
-        const quotePrice = quotes[key].quote.price;
+        const quotePrice = quotes[key].quote.value;
         const marketValue = quotePrice * allocation.quantity;
         const averagePrice = Math.trunc(100 * allocation.initialValue / allocation.quantity) / 100;
 

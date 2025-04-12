@@ -43,7 +43,7 @@ export class BalanceDialogComponent implements OnInit {
     type: this.fb.control(this.data.account.type, [Validators.required]),
     balance: this.fb.group({
       currency: this.fb.control(this.data.account.balance.currency, [Validators.required]),
-      price: this.fb.control(this.data.account.balance.price, [Validators.required])
+      price: this.fb.control(this.data.account.balance.value, [Validators.required])
     })
   })
 

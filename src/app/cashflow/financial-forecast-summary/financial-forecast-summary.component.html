@@ -1,11 +1,12 @@
-<table mat-table [dataSource]="datasource()" class="mat-elevation-z2">
-
+<table mat-table [dataSource]="dataSource()">
+    
     <!-- Define columns -->
     <ng-container matColumnDef="period">
         <th mat-header-cell *matHeaderCellDef>Saldo Inicial</th>
         <td mat-cell *matCellDef="let element" class="text-end me-4"> {{ element.period }} </td>
         <td mat-footer-cell *matFooterCellDef="let element">Previsão Final:</td>
     </ng-container>
+
     <ng-container matColumnDef="summary">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element"> 
@@ -14,22 +15,23 @@
             }
         </td>
         <td mat-footer-cell *matFooterCellDef="let element">
-            <app-currency [amount]="inOutTotal"></app-currency>
+            <app-currency [amount]="cashflowResult()" [currency]="currency"></app-currency>
         </td>
     </ng-container>
+
     <ng-container matColumnDef="balance">
         <th mat-header-cell *matHeaderCellDef>
-            <app-currency [amount]="initialBalance" [currency]="currency"></app-currency>
+            <app-currency [amount]="initialBalance()" [currency]="currency"></app-currency>
         </th>
         <td mat-cell *matCellDef="let element">
             <app-currency [amount]="element.balance" [currency]="currency"></app-currency>
         </td>
         <td mat-footer-cell *matFooterCellDef="let element">
-            <app-currency [amount]="forecastBalance" [currency]="currency"></app-currency>
+            <app-currency [amount]="forecastResult()" [currency]="currency"></app-currency>
         </td>
     </ng-container>
 
-    <caption>Previsão</caption>
+    <caption>{{caption()}}</caption>
     <tr mat-header-row *matHeaderRowDef="displayedColumn"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumn"></tr>
     <tr mat-footer-row *matFooterRowDef="displayedColumn" class="table-total"></tr>

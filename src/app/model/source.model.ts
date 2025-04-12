@@ -1,4 +1,4 @@
-import { AccountTypeEnum, Currency, CurrencyAmount, CurrencyPrice, Scheduled, TransactionEnum } from "./domain.model";
+import { AccountTypeEnum, Currency, CurrencyValue, Scheduled, TransactionEnum } from "./domain.model";
 import { InvestmentEnum, TransactionStatus, } from "./investment.model";
 
 export type EntityDataSource = {
@@ -20,7 +20,7 @@ export type AssetSourceDataType = {
     marketPlace: string;
     controlByQty: boolean;
     quote: {
-        price: number;
+        value: number;
         currency: string;
     };
     lastUpdate: string;
@@ -31,10 +31,10 @@ export type AssetSourceDataType = {
 
 export type TrendType = 'up' | 'down' | 'unchanged';
 
-export const fnTrend = (quotation: { initialPrice: number, quote: CurrencyPrice }): TrendType => {
-    if (!quotation.quote.price) return 'unchanged';
-    const up = quotation.quote.price > quotation.initialPrice;
-    const down = quotation.quote.price < quotation.initialPrice;
+export const fnTrend = (quotation: { initialPrice: number, quote: CurrencyValue }): TrendType => {
+    if (!quotation.quote.value) return 'unchanged';
+    const up = quotation.quote.value > quotation.initialPrice;
+    const down = quotation.quote.value < quotation.initialPrice;
     return up ? 'up' : down ? 'down' : 'unchanged';
 };
 
@@ -63,7 +63,7 @@ export type AssetQuoteType = Omit<AssetSourceDataType, "quote" | "type" | "lastU
     ticker: string;
     initialPrice: number;
     lastUpdate: Date;
-    quote: CurrencyPrice;
+    quote: CurrencyValue;
     type: AssetEnum;
     trend: TrendType
 }
@@ -80,7 +80,7 @@ export type BalanceSourceDataType = {
 };
 
 export type BalanceType = Omit<BalanceSourceDataType, "balance" | "currency" | "type" | "date"> & {
-    balance: CurrencyPrice;
+    balance: CurrencyValue;
     type: AccountTypeEnum;
     date: Date;
 }
@@ -110,7 +110,7 @@ export type InvestmentTransactionSourceDataType = {
     quote: number;
     value: {
         currency: string;
-        price: number;
+        value: number;
     };
     type: string;
     status: string;
@@ -119,7 +119,7 @@ export type InvestmentTransactionSourceDataType = {
 
 export type InvestmentTransactionType = Omit<InvestmentTransactionSourceDataType, "date" | "value" | "type" | "status"> & {
     date: Date;
-    value: CurrencyPrice;
+    value: CurrencyValue;
     type: InvestmentEnum;
     status: TransactionStatus;
 }
@@ -141,7 +141,7 @@ export type TransactionSourceDataType = {
 export type TransactionType = Omit<TransactionSourceDataType, "date" | "type" | "amount" | "currency" | "account_id" | "scheduled_ref" | "status"> & {
     date: Date;
     type: TransactionEnum;
-    value: CurrencyAmount;
+    value: CurrencyValue;
     originAccountId: string;
     status: TransactionStatus;
     scheduledRef?: string;
@@ -163,7 +163,7 @@ export type PortfolioAllocationSourceDataType = SummarizedDataType & {
     code: string;
     quantity: number;
     averagePrice?: number;
-    quote?: CurrencyPrice;
+    quote?: CurrencyValue;
 }
 
 export type PortfolioSourceDataType = {
@@ -197,9 +197,9 @@ export type ScheduledsSourceDataType = {
     id?: string;
     type: string;
     description: string;
-    value: {
+    amount: {
         currency: string;
-        amount: number;
+        value: number;
     };
     originAccountId: string;
     targetAccountId?: string; // optional for transfer transaction
@@ -213,7 +213,7 @@ export type ScheduledsSourceDataType = {
 }
 
 export type ScheduledStatemetType = Omit<ScheduledsSourceDataType, "scheduled" | "type" | "value"> & {
-    value: CurrencyAmount;
+    amount: CurrencyValue;
     type: TransactionEnum;
     scheduled: {
         type: Scheduled;

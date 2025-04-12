@@ -24,14 +24,14 @@ export class InvestmentService {
     const quotes = this.quoteService.quotes() || {};
 
     return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
-      const initialPrice = acc[ticker]?.initialPrice || quotes[ticker]?.quote.price || NaN;
+      const initialPrice = acc[ticker]?.initialPrice || quotes[ticker]?.quote.value || NaN;
       const trend = quotes[ticker] ? fnTrend(quotes[ticker]) : 'unchanged';
 
       acc[ticker] = {
         ...asset,
         type: AssetEnum[asset.type as keyof typeof AssetEnum],
         lastUpdate: quotes[ticker]?.lastUpdate || new Date(),
-        quote: quotes[ticker]?.quote || { price: NaN, currency: this.sourceService.currencyDefault() },
+        quote: quotes[ticker]?.quote || { value: NaN, currency: this.sourceService.currencyDefault() },
         initialPrice,
         trend
       };

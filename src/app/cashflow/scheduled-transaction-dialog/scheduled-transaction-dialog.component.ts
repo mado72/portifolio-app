@@ -56,8 +56,8 @@ export class ScheduledTransactionDialogComponent implements OnInit {
   private fb = inject(FormBuilder);
   form: FormGroup = this.fb.group({
     description: this.fb.control(this.data.scheduled.description, [Validators.required]),
-    amount: this.fb.control(this.data.scheduled.value.amount, [Validators.required, Validators.min(0.01)]),
-    currency: this.fb.control(this.data.scheduled.value.currency, [Validators.required]),
+    amount: this.fb.control(this.data.scheduled.amount.value, [Validators.required, Validators.min(0.01)]),
+    currency: this.fb.control(this.data.scheduled.amount.currency, [Validators.required]),
     type: this.fb.control(this.data.scheduled.type, [Validators.required]),
     originAccountId: this.fb.control(this.data.scheduled.originAccountId, [Validators.required]),
     targetAccounId: this.fb.control(this.data.scheduled.targetAccountId || ''),
@@ -115,8 +115,8 @@ export class ScheduledTransactionDialogComponent implements OnInit {
         ...this.data,
         description: this.form.value.description,
         type: this.form.value.type,
-        value: {
-          amount: this.form.value.amount,
+        amount: {
+          value: this.form.value.amount,
           currency: this.form.value.currency,
         },
         originAccountId: this.form.value.originAccountId,

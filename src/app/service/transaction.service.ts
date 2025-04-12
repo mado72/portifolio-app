@@ -96,7 +96,7 @@ export class TransactionService {
             accountId: '',
             quantity: 0,
             quote: NaN,
-            value: { price: 0, currency: this.sourceService.currencyDefault() },
+            value: { value: 0, currency: this.sourceService.currencyDefault() },
             type: InvestmentEnum.BUY,
             status: TransactionStatus.COMPLETED
           },

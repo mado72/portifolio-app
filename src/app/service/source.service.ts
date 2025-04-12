@@ -41,14 +41,18 @@ export class SourceService {
 
   readonly assertSource = computed(() => Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
     const quote = {
-      price: item.quote.price, currency: Currency[item.quote.currency as CurrencyType]
+      value: item.quote.value, 
+      currency: Currency[item.quote.currency as CurrencyType]
     }
     acc[ticker] = {
       ...item,
       ticker,
       lastUpdate: parseISO(item.lastUpdate),
-      initialPrice: quote.price,
-      quote,
+      initialPrice: quote.value,
+      quote: {
+        currency: quote.currency,
+        value: quote.value
+      },
       type: AssetEnum[item.type as keyof typeof AssetEnum],
       trend: 'unchanged'
     };
@@ -60,7 +64,7 @@ export class SourceService {
       ...item,
       type: AccountTypeEnum[item.type as keyof typeof AccountTypeEnum],
       balance: {
-        price: item.balance,
+        value: item.balance,
         currency: Currency[item.currency as CurrencyType],
       },
       date: parseISO(item.date)
@@ -81,7 +85,7 @@ export class SourceService {
       ...item,
       date: parseISO(item.date),
       value: {
-        price: item.value.price,
+        value: item.value.value,
         currency: Currency[item.value.currency as CurrencyType]
       },
       type: InvestmentEnum[item.type as keyof typeof InvestmentEnum],
@@ -118,7 +122,7 @@ export class SourceService {
             initialPrice,
             averagePrice,
             quote: {
-              price: NaN,
+              value: NaN,
               currency: Currency[alloc.quote?.currency as CurrencyType] || Currency.USD
             },
             profit: alloc.profit || alloc.marketValue - initialPrice,
@@ -255,7 +259,7 @@ export class SourceService {
         originAccountId: item.account_id,
         type: TransactionEnum[item.type as keyof typeof TransactionEnum],
         value: {
-          amount: item.amount,
+          value: item.amount,
           currency: Currency[item.currency as keyof typeof Currency]
         },
         status: TransactionStatus[item.status as keyof typeof TransactionStatus]
@@ -275,9 +279,9 @@ export class SourceService {
     return data.reduce((acc, item) => {
       acc[item.id as string] = {
         ...item,
-        value: {
-          currency: Currency[item.value.currency as keyof typeof Currency],
-          amount: item.value.amount
+        amount: {
+          currency: Currency[item.amount.currency as keyof typeof Currency],
+          value: item.amount.value
         },
         type: TransactionEnum[item.type as keyof typeof TransactionEnum],
         scheduled: {
@@ -328,7 +332,7 @@ export class SourceService {
   balanceToSource(items: BalanceType[]): BalanceSourceDataType[] {
     return items.map(item => ({
       ...item,
-      balance: item.balance.price,
+      balance: item.balance.value,
       currency: item.balance.currency,
       date: formatISO(new Date())
     }));
@@ -443,7 +447,7 @@ export class SourceService {
       date: format(item.date, 'yyyy-MM-dd'),
       scheduled_ref: item.scheduledRef,
       account_id: item.originAccountId,
-      amount: item.value.amount,
+      amount: item.value.value,
       currency: item.value.currency as string
     }))
   }

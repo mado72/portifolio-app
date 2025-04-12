@@ -101,7 +101,7 @@ export class TransactionDialogComponent implements OnInit {
       quantity: this.fb.control(this.data.transaction.quantity, [Validators.required, Validators.min(0)]),
       quote: this.fb.control(this.data.transaction.quote, [Validators.required, Validators.min(0.01)]),
       value: this.fb.group({
-        amount: this.fb.control(this.data.transaction.value.price, [Validators.required, Validators.min(0.01)]),
+        amount: this.fb.control(this.data.transaction.value.value, [Validators.required, Validators.min(0.01)]),
         currency: this.fb.control(this.data.transaction.value.currency, [Validators.required])
       }),
       type: this.fb.control(this.data.transaction.type, [Validators.required]),
@@ -127,14 +127,14 @@ export class TransactionDialogComponent implements OnInit {
       this.ticker.disable();
       const quoteTicker = quotes[ticker];
       if (quoteTicker) {
-        this.quote.setValue(quoteTicker.quote.price);
+        this.quote.setValue(quoteTicker.quote.value);
       }
     }
     else {
       this.ticker.valueChanges.subscribe(ticker=>{
         const quoteTicker = quotes[ticker];
         if (quoteTicker) {
-          this.quote.setValue(quoteTicker.quote.price);
+          this.quote.setValue(quoteTicker.quote.value);
         }
       })
     }

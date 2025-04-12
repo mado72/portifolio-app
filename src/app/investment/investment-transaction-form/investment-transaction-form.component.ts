@@ -139,7 +139,7 @@ export class InvestmentTransactionFormComponent {
     effect(() => {
       const assetSelected = this.assetSelected();
       if (assetSelected) {
-        this.transactionForm.get('quote')?.setValue(assetSelected.quote.price);
+        this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
       }
     })
 
@@ -225,7 +225,7 @@ export class InvestmentTransactionFormComponent {
         type: formData.type as InvestmentEnum,
         value: {
           currency: this.assetSelected()?.quote.currency as Currency,
-          price: formData.amount as number,
+          value: formData.amount as number,
         },
         brokerage: formData.brokerage || undefined,
         allocations: this.portfolios().reduce((acc, portfolio, index) => {

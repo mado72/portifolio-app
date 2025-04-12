@@ -44,7 +44,7 @@
             <!-- Column: value -->
             <ng-container matColumnDef="value">
                 <th mat-header-cell *matHeaderCellDef> Valor </th>
-                <td mat-cell *matCellDef="let element"> {{ element.value.amount | currency:element.value.currency }} </td>
+                <td mat-cell *matCellDef="let element"> {{ element.amount.value | currency:element.amount.currency }} </td>
             </ng-container>
     
             <!-- Column: Conta originAccountId -->

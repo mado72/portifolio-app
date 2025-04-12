@@ -94,7 +94,7 @@ export class RemoteQuotesService {
         acc[ticker] = {
           ...assets[ticker],
           quote: {
-            price: quote.price,
+            value: quote.price,
             currency: asset.quote.currency
           },
           trend: quote.price === quote.open ? 'unchanged' : quote.price > quote.open ? 'up' : 'down'

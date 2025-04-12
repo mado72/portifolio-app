@@ -37,7 +37,7 @@
     <ng-container matColumnDef="amount">
         <mat-header-cell *matHeaderCellDef> Valor </mat-header-cell>
         <mat-cell *matCellDef="let element">
-            <app-currency [amount]="element.amount" [currency]="element.currency"/>
+            <app-currency [value]="element"/>
         </mat-cell>
     </ng-container>
 

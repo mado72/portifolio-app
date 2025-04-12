@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { AccountTypeEnum } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
@@ -21,33 +21,37 @@ export class FinancialForecastSummaryComponent {
 
   private balanceService = inject(BalanceService);
 
+  caption = input<string>('');
+
   currency = this.sourceService.currencyDefault();
 
-  initialBalance = 0;
+  initialBalance = computed(() => this.balanceService.getBalancesSummarized(
+    Object.values(this.balanceService.getAllBalances()),
+    this.sourceService.currencyDefault(),
+    [AccountTypeEnum.INVESTMENT, AccountTypeEnum.LOAN]));
 
-  forecastBalance = 0;
+  forecastSummary = computed(() => this.balanceService.getForecastSummary(this.sourceService.currencyDefault()))
 
-  inOutTotal = 0;
+  cashflowResult = computed(() => this.forecastSummary().reduce((acc, entry) => acc + entry.amount, 0));
 
-  datasource = computed(() => {
-    let balance = this.balanceService.getBalancesSummarized(
-      Object.values(this.balanceService.getAllBalances()),
-      this.sourceService.currencyDefault(),
-      [AccountTypeEnum.INVESTMENT, AccountTypeEnum.LOAN]);
+  forecastResult = computed(() => this.initialBalance() + this.cashflowResult())
 
-    const forecastSummary = this.balanceService.getForecastSummary(this.sourceService.currencyDefault());
+  summarized = computed(() => 
+    this.forecastSummary().reduce((acc, entry) => {
+      acc.items.push({
+        period: entry.start !== entry.end ? `${entry.start} - ${entry.end}` : `${entry.start}`,
+        summary: entry.amount,
+        balance: (acc.balance += entry.amount)
+      });
+      return acc;
+    },
+      {
+        balance: this.initialBalance(),
+        items: [] as { period: string, summary: number, balance: number }[]
+      }
+    ));
 
-    this.forecastBalance = 0;
-    this.initialBalance = balance;
-    this.inOutTotal = forecastSummary.reduce((acc, entry) => acc + entry.amount, 0);
-    const output = forecastSummary.map(entry => ({
-      period: entry.start !== entry.end ? `${entry.start} - ${entry.end}` : `${entry.start}`,
-      summary: entry.amount,
-      balance: (balance += entry.amount)
-    }));
-    this.forecastBalance = balance;
-    return output;
-  })
+  dataSource = computed(() => this.summarized().items)
 
   displayedColumn = ['period', 'summary', 'balance'];
 

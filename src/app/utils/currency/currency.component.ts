@@ -1,6 +1,6 @@
-import { Component, inject, Input } from '@angular/core';
-import { Currency, CurrencyPrice as CurrencyPrice, toCurrencyCode } from '../../model/domain.model';
 import { DecimalPipe } from '@angular/common';
+import { Component, inject, Input, signal } from '@angular/core';
+import { Currency, CurrencyValue, toCurrencyCode } from '../../model/domain.model';
 import { SourceService } from '../../service/source.service';
 
 @Component({
@@ -14,34 +14,31 @@ export class CurrencyComponent {
 
   private sourceService = inject(SourceService);
 
-  @Input() value?: CurrencyPrice = {
-    price: 0,
+  protected value$ = signal<CurrencyValue>({
+    value: 0,
     currency: this.sourceService.currencyDefault()
-  }
+  });
 
-  get currency(): Currency {
-    return this.value?.currency || this.sourceService.currencyDefault();
-  }
   @Input()
-  set currency(value: Currency) {
-    if (!this.value) {
-      this.value = { price: 0, currency: value };
-    }
-    this.value.currency = value;
+  set currency(currency: Currency) {
+    this.value$.update((v)=>({
+      ...v,
+      currency
+    }))
   }
 
-  get amount(): number {
-    return this.value?.price || 0; 
-  }
   @Input()
-  set amount(value: number) {
-    if (!this.value) {
-      this.value = { price: value, currency: this.sourceService.currencyDefault() };
-    }
-    this.value.price = value;
+  set amount(amount: number) {
+    this.value$.update((v)=> ({
+      ...v,
+      value: amount
+    }))
   }
 
-  @Input() color: string | undefined = undefined;
+  @Input()
+  set value(value: CurrencyValue) {
+    this.value$.set(value);
+  }
 
   @Input() displayZero: boolean = false;
 
@@ -51,7 +48,4 @@ export class CurrencyComponent {
     return toCurrencyCode(this.currency)
   }
 
-  get elementStyle() {
-    return this.color ? this.color : this.amount < 0 ? 'red' : 'rgb(0,80,0)';
-  }
 }

@@ -1,5 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { Currency, CurrencyAmount, CurrencyType } from '../model/domain.model';
+import { Currency, CurrencyValue, CurrencyType } from '../model/domain.model';
 import { calcPosition } from '../model/portfolio.model';
 import { AssetQuoteType, PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
@@ -90,8 +90,8 @@ export class PortfolioService {
   }
 
   summarizeByClass(portfolios: PortfolioType[]) {
-    let total : CurrencyAmount = {
-      amount: 0,
+    let total : CurrencyValue = {
+      value: 0,
       currency: this.sourceService.currencyDefault()
     };
     const consolidation = Object.values(portfolios
@@ -102,7 +102,7 @@ export class PortfolioService {
             class: portfolio.class,
             value: {
               financial: {
-                amount: portfolio.total.marketValue,
+                value: portfolio.total.marketValue,
                 currency: portfolio.currency
               },
               exchanged: exchangeValue
@@ -122,23 +122,23 @@ export class PortfolioService {
             ...acc[portfolio.class],
             financial: {
               ...acc[portfolio.class].value.financial,
-              amount: acc[portfolio.class].value.financial.amount + portfolio.value.financial.amount
+              value: acc[portfolio.class].value.financial.value + portfolio.value.financial.value
             },
             exchanged: {
               ...acc[portfolio.class].value.exchanged,
-              amount: acc[portfolio.class].value.exchanged.amount + portfolio.value.exchanged.amount
+              value: acc[portfolio.class].value.exchanged.value + portfolio.value.exchanged.value
             }
           },
           percPlanned: acc[portfolio.class].percPlanned + portfolio.percPlanned
         }
       }
-      total.amount += portfolio.value.exchanged.amount;
+      total.value += portfolio.value.exchanged.value;
       return acc;
     }, {} as Record<string, {
       class: string,
       value: {
-        financial: CurrencyAmount,
-        exchanged: CurrencyAmount
+        financial: CurrencyValue,
+        exchanged: CurrencyValue
       }
       percPlanned: number,
       percAlloc: number
@@ -146,7 +146,7 @@ export class PortfolioService {
     
     const items = consolidation.map(item=> ({
       ...item,
-      percAlloc: Number((100 * item.value.exchanged.amount / total.amount).toPrecision(2))
+      percAlloc: Number((100 * item.value.exchanged.value / total.value).toPrecision(2))
     }));
 
     return {items, total};
@@ -201,7 +201,7 @@ export class PortfolioService {
 
           const deltaQty = quantity - updatedAllocations[ticker].quantity;
           const currentTotalInvestment = updatedAllocations[ticker].quantity * updatedAllocations[ticker].averagePrice;
-          const purchaseTotalInvestment = deltaQty * tickerQuote.quote.price;
+          const purchaseTotalInvestment = deltaQty * tickerQuote.quote.value;
           const newTotalInvestment = currentTotalInvestment + purchaseTotalInvestment;
 
           const newAveragePrice = newTotalInvestment / quantity;
@@ -224,9 +224,9 @@ export class PortfolioService {
             marketPlace,
             code,
             quote: asset.quote,
-            initialValue: asset.quote.price * quantity,
-            marketValue: asset.quote.price * quantity,
-            averagePrice: asset.quote.price,
+            initialValue: asset.quote.value * quantity,
+            marketValue: asset.quote.value * quantity,
+            averagePrice: asset.quote.value,
             profit: 0,
             performance: 0,
             percAllocation: 0,

@@ -33,13 +33,8 @@ export function toCurrencyCode(currency: Currency): CurrencyCode {
     return CurrencyCode[currency as keyof typeof CurrencyCode];
 }
 
-export type CurrencyPrice = {
-    price: number;
-    currency: Currency;
-}
-
-export type CurrencyAmount = {
-    amount: number;
+export type CurrencyValue = {
+    value: number;
     currency: Currency;
 }
 
@@ -51,13 +46,13 @@ export type Exchange = {
 }
 
 export type AccountBalanceExchange = BalanceType & {
-    exchange: CurrencyAmount
+    exchange: CurrencyValue
 }
 
 export type AccountBalanceSummaryItem = {
     class: string;
-    financial: CurrencyAmount;
-    exchange: CurrencyAmount;
+    financial: CurrencyValue;
+    exchange: CurrencyValue;
     percentagePlanned: number;
     percentageActual: number;
 }
@@ -116,7 +111,7 @@ export type Account = {
     id: string;
     name: string;
     type: AccountTypeEnum;
-    balance: CurrencyPrice;
+    balance: CurrencyValue;
 }
 
 export type TransactionItem = TransactionType & {
@@ -142,7 +137,7 @@ export type ClassConsolidationSourceDataType = {
 }
 
 export type ClassConsolidationType = Omit<ClassConsolidationSourceDataType, "financial" | "currency"> & {
-    financial: CurrencyAmount;
+    financial: CurrencyValue;
 }
 
 export type ClassConsolidationRecord = Record<string, ClassConsolidationType>;

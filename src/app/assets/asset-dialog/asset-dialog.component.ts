@@ -8,7 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { combineLatest, debounceTime, distinctUntilChanged, startWith } from 'rxjs';
-import { Currency, CurrencyPrice } from '../../model/domain.model';
+import { Currency, CurrencyValue } from '../../model/domain.model';
 import { MarketPlaceEnum } from '../../model/investment.model';
 import { AssetEnum, AssetQuoteType } from '../../model/source.model';
 import { RemoteQuotesService } from '../../service/remote-quotes.service';
@@ -59,7 +59,7 @@ export class AssetDialogComponent implements AfterViewInit {
     code: this.fb.control(this.data.asset?.code, [Validators.required]),
     type: this.fb.control(this.data.asset?.type, [Validators.required]),
     quote: this.fb.group({
-      amount: this.fb.control(this.data.asset?.quote.price, []),
+      amount: this.fb.control(this.data.asset?.quote.value, []),
       currency: this.fb.control(this.data.asset?.quote.currency, [Validators.required]),
     }),
     controlByQty: this.fb.control(this.data.asset?.controlByQty, []),
@@ -95,7 +95,7 @@ export class AssetDialogComponent implements AfterViewInit {
       marketPlace: this.formAsset.value.marketPlace,
       code: this.formAsset.value.code,
       type: this.formAsset.value.type as AssetEnum,
-      quote: this.formAsset.value.quote as CurrencyPrice,
+      quote: this.formAsset.value.quote as CurrencyValue,
       controlByQty: this.formAsset.value.controlByQty as boolean,
       manualQuote: this.formAsset.value.manualQuote as boolean
     };

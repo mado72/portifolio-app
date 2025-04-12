@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { differenceInDays } from 'date-fns';
-import { CurrencyAmount, ForecastDateItem, isTransactionDeposit, isTransactionExpense, TransactionEnum } from '../../model/domain.model';
+import { CurrencyValue, ForecastDateItem, isTransactionDeposit, isTransactionExpense, TransactionEnum } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
@@ -14,7 +14,7 @@ import { TransactionStatus } from '../../model/investment.model';
 import { v4 as uuid } from 'uuid';
 import { FinancialForecastSummaryComponent } from "../financial-forecast-summary/financial-forecast-summary.component";
 
-type DataSourceItem = ForecastDateItem & {calc: CurrencyAmount, balanceId: string};
+type DataSourceItem = ForecastDateItem & {calc: CurrencyValue, balanceId: string};
 
 @Component({
   selector: 'app-financial-forecast',
@@ -70,16 +70,16 @@ export class FinancialForecastComponent implements OnInit {
       balanceId: key,
       calc: {
         ...item.value,
-        amount: isTransactionExpense(item.type) 
-          ? - item.value.amount 
+        value: isTransactionExpense(item.type) 
+          ? - item.value.value 
           : isTransactionDeposit(item.type) 
-            ? item.value.amount : 0
+            ? item.value.value : 0
       }
     } as DataSourceItem)));
 
   forecast = computed(() => this.datasource()
       .filter(transaction=>![TransactionStatus.COMPLETED, TransactionStatus.CANCELLED].includes(transaction.status))
-      .reduce((acc, item) => acc += item.value.amount, 0))
+      .reduce((acc, item) => acc += item.value.value, 0))
 
   displayedColumns = ["done", "description", "amount", "due", "type", "status"];
 
