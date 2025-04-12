@@ -8,7 +8,6 @@ export type EntityDataSource = {
 export type DataSourceType = {
     asset: AssetSourceDataType[],
     balance: BalanceSourceDataType[],
-    classConsolidation: ClassConsolidationSourceDataType[],
     earning: IncomeSourceDataType[],
     investment: InvestmentTransactionSourceDataType[],
     portfolio: PortfolioSourceDataType[],
@@ -87,19 +86,6 @@ export type BalanceType = Omit<BalanceSourceDataType, "balance" | "currency" | "
 }
 
 export type BalanceRecord = Record<string, BalanceType>;
-
-export type ClassConsolidationSourceDataType = {
-    class: string;
-    financial: number;
-    currency: string;
-    percentagePlanned: number;
-}
-
-export type ClassConsolidationType = Omit<ClassConsolidationSourceDataType, "financial" | "currency"> & {
-    financial: CurrencyPrice;
-}
-
-export type ClassConsolidationRecord = Record<string, ClassConsolidationType>;
 
 export type IncomeSourceDataType = {
     id: string;
@@ -184,6 +170,7 @@ export type PortfolioSourceDataType = {
     id: string;
     name: string;
     currency: string;
+    class: string;
     percPlanned: number;
     allocations: PortfolioAllocationSourceDataType[];
 }

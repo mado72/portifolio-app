@@ -76,7 +76,7 @@ export class BalancesComponent implements OnInit {
 
   summarize(balances: AccountBalanceExchange[]) {
     return balances
-      .map(item => item.exchange.price)
+      .map(item => item.exchange.amount)
       .reduce((acc, vl) => acc += vl, 0);
   }
 

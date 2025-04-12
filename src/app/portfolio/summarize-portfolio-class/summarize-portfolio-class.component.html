@@ -1,0 +1,63 @@
+<table mat-table [dataSource]="datasource()" class="mat-elevation-z2">
+    <ng-container matColumnDef="class">
+        <th mat-header-cell *matHeaderCellDef>Classe</th>
+        <td mat-cell *matCellDef="let item" class="text-break">{{item.class}}</td>
+        <td mat-footer-cell *matFooterCellDef>Total</td>
+    </ng-container>
+    <ng-container matColumnDef="financial">
+        <th mat-header-cell *matHeaderCellDef>Financeiro</th>
+        <td mat-cell *matCellDef="let item">
+            <div class="cell-number">
+                <span>{{ item.value.exchanged.currency }}</span>
+                <span>{{ item.value.exchanged.amount | number:'1.2-2' }}</span>                
+                @if (item.value.exchanged.currency !== item.value.financial.currency) {
+                    <span [title]="item.value.financial.currency + ' ' + item.value.financial.amount" class="info">
+                        <fa-icon [icon]="faExchange"></fa-icon>
+                    </span>
+                } @else {
+                    <span class="info"></span>
+                }
+            </div>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+            <div class="cell-number">
+                <span>{{currency()}}</span>
+                {{total().amount | number:'1.2-2'}}
+                <span class="info"></span>
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="percPlanned">
+        <th mat-header-cell *matHeaderCellDef>Planejado</th>
+        <td mat-cell *matCellDef="let item">
+            <div class="cell-number">
+                <span></span>
+                {{item.percPlanned * .01 | percent:'1.0-2'}}
+            </div>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+            <div class="cell-number">
+                <span></span>
+                {{totalPercPlanned() * .01 | percent:'1.0-2'}}
+            </div>
+        </td>
+    </ng-container>
+    <ng-container matColumnDef="percActual">
+        <th mat-header-cell *matHeaderCellDef>Real</th>
+        <td mat-cell *matCellDef="let item">
+            <div class="cell-number">
+                <span></span>
+                {{item.percAlloc | number:'1.0-2'}}%
+            </div>
+        </td>
+        <td mat-footer-cell *matFooterCellDef>
+            <div class="cell-number">
+                <span></span>
+                {{totalPercActual() | number:'1.0-2'}}%
+            </div>
+        </td>
+    </ng-container>
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    <tr mat-footer-row *matFooterRowDef="displayedColumns" class="table-total"></tr>
+</table>

@@ -51,13 +51,13 @@ export type Exchange = {
 }
 
 export type AccountBalanceExchange = BalanceType & {
-    exchange: CurrencyPrice
+    exchange: CurrencyAmount
 }
 
 export type AccountBalanceSummaryItem = {
     class: string;
-    financial: CurrencyPrice;
-    exchange: CurrencyPrice;
+    financial: CurrencyAmount;
+    exchange: CurrencyAmount;
     percentagePlanned: number;
     percentageActual: number;
 }
@@ -133,3 +133,16 @@ export type ForecastDateItem = TransactionType & {
     date: Date;
     done?: boolean;
 }
+
+export type ClassConsolidationSourceDataType = {
+    class: string;
+    financial: number;
+    currency: string;
+    percentagePlanned: number;
+}
+
+export type ClassConsolidationType = Omit<ClassConsolidationSourceDataType, "financial" | "currency"> & {
+    financial: CurrencyAmount;
+}
+
+export type ClassConsolidationRecord = Record<string, ClassConsolidationType>;

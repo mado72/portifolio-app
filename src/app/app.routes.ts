@@ -11,10 +11,6 @@ export const routes: Routes = [
         loadComponent: () => import('./dashboard/portfolio/portfolio.component').then(mod => mod.PortfolioComponent),
     },
     {
-        path: 'assets',
-        loadChildren: () => import('./assets/assets.route').then(mod => mod.assetRoutes),
-    },
-    {
         path: 'investment',
         loadChildren: () => import('./investment/investment.route').then(mod => mod.investmentRoutes),
     },
