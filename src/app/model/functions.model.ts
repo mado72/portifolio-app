@@ -80,33 +80,33 @@ export function getScheduleDates(scheduledRange: Interval, dateRange: Interval, 
         }
         case Scheduled.WEEKLY: {
             dates = eachWeekOfInterval(scheduledRange)
-                .map(date=>setDay(date, getDay(scheduledRange.start)));
+                .map(date => setDay(date, getDay(scheduledRange.start)));
             break;
         }
         case Scheduled.FORTNIGHTLY: {
             dates = eachWeekOfInterval(scheduledRange)
-                .filter((_,idx)=>idx %2 === 0)
-                .map(date=>setDay(date, getDay(scheduledRange.start)));
+                .filter((_, idx) => idx % 2 === 0)
+                .map(date => setDay(date, getDay(scheduledRange.start)));
             break;
         }
         case Scheduled.MONTHLY: {
             dates = eachMonthOfInterval(scheduledRange)
-                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
+                .map(date => setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         case Scheduled.QUARTER: {
             dates = eachQuarterOfInterval(scheduledRange)
-                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
+                .map(date => setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         case Scheduled.HALF_YEARLY: {
-            dates = eachMonthOfInterval(scheduledRange).filter((_,idx)=>idx % 6 === 0)
-                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
+            dates = eachMonthOfInterval(scheduledRange).filter((_, idx) => idx % 6 === 0)
+                .map(date => setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         case Scheduled.YEARLY: {
             dates = eachYearOfInterval(scheduledRange)
-                .map(date=>setDate(date, getZonedDate(scheduledRange.start as Date)));
+                .map(date => setDate(date, getZonedDate(scheduledRange.start as Date)));
             break;
         }
         default: {
@@ -137,4 +137,15 @@ export function isSameZoneDate(d1: Date, d2: Date) {
     const s1 = formatInTimeZone(d1, 'UTC', 'yyyy-MM-dd');
     const s2 = formatInTimeZone(d2, 'UTC', 'yyyy-MM-dd');
     return s1 === s2;
+}
+
+export type ObjectDescriptor<D, M> = {
+    data?: D;
+    methods?: M & ThisType<D & M>; // Type of 'this' in methods is D & M
+};
+
+export function makeObject<D, M>(desc: ObjectDescriptor<D, M>): D & M {
+    let data: object = desc.data || {};
+    let methods: object = desc.methods || {};
+    return { ...data, ...methods } as D & M;
 }
