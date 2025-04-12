@@ -27,12 +27,20 @@ export class CurrencyComponent {
     }))
   }
 
+  get currency() {
+    return this.value$().currency;
+  }
+
   @Input()
   set amount(amount: number) {
     this.value$.update((v)=> ({
       ...v,
       value: amount
     }))
+  }
+
+  get amount() {
+    return this.value$().value;
   }
 
   @Input()
