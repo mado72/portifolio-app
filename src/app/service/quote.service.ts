@@ -63,8 +63,15 @@ export class QuoteService {
 
   constructor() {}
 
-  getExchangeQuote(de: Currency, para: Currency) {
-    return this.exchanges()[de][para];
+  getExchangeQuote(from: Currency, to: Currency) {
+    return this.exchanges()[from][to];
+  }
+
+  exchange(value: number, from: Currency, to: Currency) {
+    return ({
+      currency: to,
+      amount: value * this.getExchangeQuote(from, to)
+    });
   }
 
   updateQuoteAsset(asset: AssetQuoteType) {

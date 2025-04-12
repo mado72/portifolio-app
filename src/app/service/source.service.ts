@@ -4,7 +4,6 @@ import { v4 as uuid } from 'uuid';
 import assetSourceData from '../../data/assets.json';
 import balanceSource from '../../data/balance.json';
 import cashflowTransactionSource from '../../data/cashflow-transaction.json';
-import classConsolidationSource from '../../data/class-consolidation.json';
 import incomeSource from '../../data/earnings.json';
 import investmentTransactionsSource from '../../data/investment-transactions.json';
 import portfolioSource from '../../data/portfolio.json';
@@ -14,7 +13,7 @@ import { parseDateYYYYMMDD } from '../model/functions.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import {
   AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType,
-  ClassConsolidationSourceDataType, ClassConsolidationType, IncomeSourceDataType, IncomeType,
+  IncomeSourceDataType, IncomeType,
   InvestmentTransactionSourceDataType, InvestmentTransactionType, PortfolioAllocationType,
   PortfolioRecord, PortfolioSourceDataType, PortfolioType, ScheduledsSourceDataType,
   ScheduledStatemetType, TransactionSourceDataType, TransactionType
@@ -29,7 +28,6 @@ export class SourceService {
   private dataSource = {
     asset: signal<Record<string, AssetSourceDataType>>(this.assetSourceToRecord(assetSourceData.data)),
     balance: signal<Record<string, BalanceSourceDataType>>(this.balanceToRecord(balanceSource.data)),
-    classConsolidation: signal<Record<string, ClassConsolidationSourceDataType>>(this.classConsolidationToRecord(classConsolidationSource.data)),
     income: signal<Record<string, IncomeSourceDataType>>(this.incomeSourceToRecord(incomeSource.data.map(item => {
       return { ...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
     }))),
@@ -69,17 +67,6 @@ export class SourceService {
     };
     return acc;
   }, {} as Record<string, BalanceType>));
-
-  readonly classConsolidationSource = computed(() => Object.entries(this.dataSource.classConsolidation()).reduce((acc, [key, item]) => {
-    acc[key] = {
-      ...item,
-      financial: {
-        price: item.financial,
-        currency: Currency[item.currency as CurrencyType]
-      }
-    }
-    return acc;
-  }, {} as Record<string, ClassConsolidationType>));
 
   readonly incomeSource = computed(() => Object.entries(this.dataSource.income()).reduce((acc, [key, item]) => {
     acc[key] = {
@@ -173,7 +160,6 @@ export class SourceService {
           const jsonData = JSON.parse(e.target.result);
           this.dataSource.asset.set(this.assetSourceToRecord(jsonData.asset));
           this.dataSource.balance.set(this.balanceToRecord(jsonData.balance));
-          this.dataSource.classConsolidation.set(this.classConsolidationToRecord(jsonData.classConsolidation));
           this.dataSource.income.set(this.incomeSourceToRecord(jsonData.income));
           this.dataSource.investment.set(this.investmentSourceToRecord(jsonData.investment));
           this.dataSource.cashflow.set(this.cashSourceToRecord(jsonData.cashflow));
@@ -191,7 +177,6 @@ export class SourceService {
   emptyAllData() {
     this.dataSource.asset.set({});
     this.dataSource.balance.set({});
-    this.dataSource.classConsolidation.set({});
     this.dataSource.income.set({});
     this.dataSource.investment.set({});
     this.dataSource.cashflow.set({});
@@ -217,7 +202,6 @@ export class SourceService {
     const data = {
       asset: Object.values(this.dataSource.asset()),
       balance: Object.values(this.dataSource.balance()),
-      classConsolidation: Object.values(this.dataSource.classConsolidation()),
       income: Object.values(this.dataSource.income()),
       investment: Object.values(this.dataSource.investment()),
       cashflow: Object.values(this.dataSource.cashflow()),
@@ -246,13 +230,6 @@ export class SourceService {
       acc[item.id as string] = item;
       return acc;
     }, {} as Record<string, BalanceSourceDataType>)
-  }
-
-  protected classConsolidationToRecord(data: ClassConsolidationSourceDataType[]) {
-    return data.reduce((acc, item) => {
-      acc[item.class] = item;
-      return acc;
-    }, {} as Record<string, ClassConsolidationSourceDataType>)
   }
 
   protected incomeSourceToRecord(data: IncomeSourceDataType[]) {
@@ -379,42 +356,6 @@ export class SourceService {
     this.dataSource.balance.update(balances => {
       delete balances[id];
       return { ...balances };
-    })
-  }
-
-  // classConsolidation -------------------------
-  classConsolidationToSource(items: ClassConsolidationType[]): ClassConsolidationSourceDataType[] {
-    return items.map(item => ({
-      ...item,
-      financial: item.financial.price,
-      currency: item.financial.currency
-    }))
-  }
-
-  addClassConsolidation(item: ClassConsolidationType) {
-    const added = this.classConsolidationToRecord(
-      this.classConsolidationToSource([item]).map(item=>({...item, id: uuid()}))
-    );
-    this.dataSource.classConsolidation.update(classConsolidations => ({
-      ...classConsolidations,
-      ...added
-    }))
-    return Object.values(added)[0];
-  }
-
-  updateClassConsolidation(changes: ClassConsolidationType[]) {
-    const updated = this.classConsolidationToRecord(this.classConsolidationToSource(changes));
-    this.dataSource.classConsolidation.update(classConsolidations => ({
-      ...classConsolidations,
-      ...updated
-    }))
-    return Object.values(updated);
-  }
-
-  deleteClassConsolidation(classId: string) {
-    this.dataSource.classConsolidation.update(classConsolidations => {
-      delete classConsolidations[classId];
-      return { ...classConsolidations };
     })
   }
 

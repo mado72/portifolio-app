@@ -1,5 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { Currency, CurrencyType } from '../model/domain.model';
+import { Currency, CurrencyAmount, CurrencyType } from '../model/domain.model';
 import { calcPosition } from '../model/portfolio.model';
 import { AssetQuoteType, PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
@@ -79,10 +79,6 @@ export class PortfolioService {
     return Object.values(this.portfolios());
   }
 
-  // getPortfolioAllocations(portfolio: PortfolioDataType) {
-  //   return Object.values(portfolio.allocations);
-  // }
-
   getPortfolioByAsset({ marketPlace, code }: { marketPlace: string, code: string }) {
     const ticker = getMarketPlaceCode({ marketPlace, code });
     return this.getPortfoliosByTicker(ticker);
@@ -93,12 +89,76 @@ export class PortfolioService {
       .filter(portfolio => Object.keys(portfolio.allocations).includes(ticker));
   }
 
+  summarizeByClass(portfolios: PortfolioType[]) {
+    let total : CurrencyAmount = {
+      amount: 0,
+      currency: this.sourceService.currencyDefault()
+    };
+    const consolidation = Object.values(portfolios
+      .map(portfolio=>{
+        const exchangeValue = this.quoteService.exchange(portfolio.total.marketValue, 
+          portfolio.currency, total.currency);
+          return {
+            class: portfolio.class,
+            value: {
+              financial: {
+                amount: portfolio.total.marketValue,
+                currency: portfolio.currency
+              },
+              exchanged: exchangeValue
+            },
+            percPlanned: portfolio.percPlanned,
+            percAlloc: 0
+          };
+      })
+      .reduce((acc, portfolio) => {
+
+      if (!acc[portfolio.class]) {
+        acc[portfolio.class] = {...portfolio}
+      }
+      else {
+        acc[portfolio.class] = {...acc[portfolio.class],
+          value: {
+            ...acc[portfolio.class],
+            financial: {
+              ...acc[portfolio.class].value.financial,
+              amount: acc[portfolio.class].value.financial.amount + portfolio.value.financial.amount
+            },
+            exchanged: {
+              ...acc[portfolio.class].value.exchanged,
+              amount: acc[portfolio.class].value.exchanged.amount + portfolio.value.exchanged.amount
+            }
+          },
+          percPlanned: acc[portfolio.class].percPlanned + portfolio.percPlanned
+        }
+      }
+      total.amount += portfolio.value.exchanged.amount;
+      return acc;
+    }, {} as Record<string, {
+      class: string,
+      value: {
+        financial: CurrencyAmount,
+        exchanged: CurrencyAmount
+      }
+      percPlanned: number,
+      percAlloc: number
+    }>))
+    
+    const items = consolidation.map(item=> ({
+      ...item,
+      percAlloc: Number((100 * item.value.exchanged.amount / total.amount).toPrecision(2))
+    }));
+
+    return {items, total};
+  }
+
   addPortfolio({ name, currency, percPlanned }: { name: string; currency: CurrencyType; percPlanned: number; }) {
     this.sourceService.addPortfolio({
       id: '',
       name,
       percPlanned,
       currency: Currency[currency],
+      class: '',
       allocations: {},
       total: {
         initialValue: 0,

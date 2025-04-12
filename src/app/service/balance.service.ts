@@ -2,13 +2,13 @@ import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, getDate, getTime, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
 import { map } from 'rxjs';
-import { AccountBalanceExchange, AccountBalanceSummary, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../model/domain.model';
-import { getScheduleDates, getZonedDate, groupBy, isSameZoneDate } from '../model/functions.model';
-import { BalanceType, ClassConsolidationType, ScheduledStatemetType, TransactionType } from '../model/source.model';
 import { BalanceDialogComponent } from '../cashflow/balance-dialog/balance-dialog.component';
+import { AccountBalanceExchange, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../model/domain.model';
+import { getScheduleDates, getZonedDate, groupBy, isSameZoneDate } from '../model/functions.model';
+import { TransactionStatus } from '../model/investment.model';
+import { BalanceType, ScheduledStatemetType, TransactionType } from '../model/source.model';
 import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
-import { TransactionStatus } from '../model/investment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +74,7 @@ export class BalanceService {
       return {
         ...item,
         exchange: {
-          price: item.balance.price * quoteFactor,
+          amount: item.balance.price * quoteFactor,
           currency
         },
       } as AccountBalanceExchange;
@@ -100,53 +100,9 @@ export class BalanceService {
   getBalancesSummarized(balances: BalanceType[], currency: Currency, excludeAccTypes: AccountTypeEnum[] = []): number {
     return this.getBalancesByCurrencyExchange(balances, currency)
       .filter(acc => !excludeAccTypes.includes(acc.type))
-      .map(item => item.exchange.price)
+      .map(item => item.exchange.amount)
       .reduce((acc, vl) => acc += vl, 0)
   }
-
-
-  /**
-   * Retrieves a summary of account allocations, including the exchange amount and currency,
-   * and calculates the percentage of each allocation relative to the total allocation amount.
-   *
-   * @param currency - The target currency for the allocation summary calculation.
-   *
-   * @returns An AccountBalanceSummary object containing an array of AccountBalanceSummaryItem objects
-   * and the total allocation amount in the specified currency.
-   *
-   * @example
-   * ```typescript
-   * const currency = Currency.USD;
-   * const allocationSummary = balanceService.getAllocationSummary(currency);
-   * console.log(allocationSummary);
-   * // Output:
-   * // {
-   * //   items: [
-   * //     { ...AccountBalanceSummaryItem, percentageActual: 0.25 },
-   * //     { ...AccountBalanceSummaryItem, percentageActual: 0.50 },
-   * //     { ...AccountBalanceSummaryItem, percentageActual: 0.25 },
-   * //   ],
-   * //   total: 10000.00
-   * // }
-   * ```
-   */
-  getAllocationSummary(currency: Currency): AccountBalanceSummary {
-    const allocations = this.getAllocations(Object.values(this.sourceService.classConsolidationSource()), currency);
-    const total = allocations.map(item => item.exchange.price).reduce((acc, vl) => acc += vl, 0);
-
-    const items: AccountBalanceSummaryItem[] = allocations.map(item => {
-      return {
-        ...item,
-        percentageActual: item.exchange.price / total
-      }
-    });
-
-    return {
-      items,
-      total
-    };
-  }
-
 
   /**
    * Retrieves a summary of forecasted income and expenses for the current month,
@@ -219,33 +175,6 @@ export class BalanceService {
       intervals.push([initialDate, getDate(endOfMonth(new Date()))]);
       return intervals;
     }
-  }
-
-
-
-  /**
-   * Maps the allocation data to AccountBalanceSummaryItem objects,
-   * calculates the value in the specified currency, and determine the percentageActual to 0.
-   *
-   * @param data - An object containing allocations and exchanges data.
-   * @param data.allocations - An array of allocation data.
-   * @param data.exchanges - An array of exchange data.
-   * @param currency - The target currency for the value calculation.
-   *
-   * @returns An array of AccountBalanceSummaryItem objects.
-   */
-  protected getAllocations(allocations: ClassConsolidationType[], currency: Currency) {
-    return allocations.map(item => {
-      const quoteFactor = this.quoteService.getExchangeQuote(item.financial.currency, currency);
-      return {
-        ...item,
-        exchange: {
-          price: item.financial.price * quoteFactor,
-          currency
-        },
-        percentageActual: 0 // This should be calculated using total allocated amount
-      } as AccountBalanceSummaryItem;
-    });
   }
 
   generateForecastTransactions(currency: Currency, dateRef: Date, period: "month" | "year"): TransactionType[] {

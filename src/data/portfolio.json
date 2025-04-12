@@ -5,6 +5,7 @@
             "name": "Portfolio 1",
             "currency": "BRL",
             "percPlanned": 15,
+            "class": "Ativos",
             "allocations": [
                 {
                     "code": "WMB",
@@ -51,8 +52,9 @@
         {
             "id": "Portfolio2",
             "name": "Portfolio 2",
-            "currency": "BRL",
+            "currency": "USD",
             "percPlanned": 15,
+            "class": "Ativos 2",
             "allocations": [
                 {
                     "code": "STKB",
@@ -91,6 +93,7 @@
             "name": "Portfolio 3",
             "currency": "BRL",
             "percPlanned": 15,
+            "class": "Ativos",
             "allocations": [
                 {
                     "code": "BND1",
@@ -119,6 +122,7 @@
             "name": "Portfolio 4",
             "currency": "BRL",
             "percPlanned": 15,
+            "class": "Ativos",
             "allocations": [
                 {
                     "code": "BTC",
@@ -147,6 +151,7 @@
             "name": "Portfolio 5",
             "currency": "BRL",
             "percPlanned": 15,
+            "class": "Ativos",
             "allocations": [
                 {
                     "code": "VALE3",
