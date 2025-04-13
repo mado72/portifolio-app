@@ -1,31 +1,37 @@
-// mat-cell.mat-mdc-cell {
-//     border: 0;
-// }
+@media screen and (max-width: 799px) {
+    .transaction mat-form-field {
+        width: 100% !important;
+    }
+}
 
-// mat-row.mat-last-row mat-cell.mat-mdc-cell {
-//     border-bottom: 1px solid var(--mat-table-row-item-outline-color, var(--mat-app-outline, rgba(0, 0, 0, 0.12)))
-// }
+@media screen and (min-width: 800px) {
+    .transaction {
+        align-items: start;
+        display: grid;
+        grid-template-columns: 50% 50%;
+        column-gap: 15px;
 
-// .input-amount {
-//     max-height: 76px;
-// }
+        mat-form-field {
+            width: 100% !important;
+        }
 
-// .add-quantity {
-//     margin-top: -20px;
-// }
+        mat-form-field.market-place {
+            grid-column-start: 1;
+            grid-column-end: 3;
+        }
 
-// button#add-portifolio-button {
-//     position: relative;
-//     top: -73px;
-//     left: calc(50% - 20px);
-//     background-color: white;
-//     box-shadow: 4px 4px 4px;
-// }
-
-// mat-form-field#mat-field-date {
-//     max-width: 212px !important;
-
-//     .mdc-text-field__input {
-//         width: 150px !important;
-//     }
-// }
+        .add-quantity {
+            position: relative;
+            top: -5px;
+            display: flex;
+            justify-content: space-around;
+            font-size: 0.8em;
+    
+            & > a {
+                cursor: pointer;
+                text-decoration: none;
+                color: var(--bs-primary);
+            }
+        }
+    }
+}
