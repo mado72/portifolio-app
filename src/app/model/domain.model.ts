@@ -1,5 +1,6 @@
-import { InvestmentEnum, TransactionStatus } from "./investment.model";
 import { BalanceType, TransactionType } from "./source.model";
+
+export type KeyTypeOf<T> = keyof T;
 
 export enum Currency {
     BRL = 'BRL',
