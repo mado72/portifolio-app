@@ -1,7 +1,7 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { Currency, CurrencyValue, CurrencyType } from '../model/domain.model';
 import { calcPosition } from '../model/portfolio.model';
-import { AssetQuoteType, PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType } from '../model/source.model';
+import { AssetQuoteType, PortfolioAllocationRecord, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType, SummarizedDataType } from '../model/source.model';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 import { MatDialog } from '@angular/material/dialog';
@@ -56,7 +56,7 @@ export class PortfolioService {
       performance: 0,
       percAllocation: 0,
       percPlanned: 0
-    }))
+    } as Required<SummarizedDataType>))
 
   readonly portfolioAllocation = computed(() =>
     this.getAllPortfolios().map(portfolio => ({

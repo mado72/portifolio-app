@@ -4,7 +4,9 @@
     <button mat-button type="button" (click)="addTransaction()">Adicionar Transação</button>
 </div>
 }
-<table class="table table-stick table-hover mb-2" id="table-master" [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">
+<table class="table table-stick table-hover mb-2" id="table-master" 
+        [class]="editable() ? 'table-editable' : 'table-readonly'" 
+        [attr.aria-label]="'Portfolio table'">
     <caption class="visually-hidden">Tabela de carteiras</caption>
 
     <thead>
@@ -67,12 +69,10 @@
                 {{ portfolio.total.percAllocation | percent:'1.2-2' }}
             </td>
             <td class="td-cell column-marketValue">
-                <span></span>
-                <span>{{ portfolio.total.marketValue | number:'1.2-2' }}</span>
+                <app-exchange [exchange]="portfolio.total.marketValue" [display]="viewExchange" [hideIcon]="true"/>
             </td>
             <td class="td-cell column-profit">
-                <span></span>
-                {{ portfolio.total.profit | number:'1.2-2' }}
+                <app-exchange [exchange]="portfolio.total.profit" [display]="viewExchange" [hideIcon]="true"/>
             </td>
             <td class="td-cell column-performance">
                 <span></span>
@@ -87,10 +87,10 @@
                 </button>
             </td>
         </tr>
-        <tr class="row-expansible" [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [style.overflow]="isExpanded(portfolio) ? 'auto' : 'hidden'">
+        <tr class="row-expansible " [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [class.expanded]="isExpanded(portfolio)">
             <td colspan="8" class="py-2 mb-4 w-100 d-flex flex-column align-items-start">
                 <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
-                <app-investment-portfolio-table [portfolio]="portfolio" class="w-100 mat-elevation-z3" [editable]="editable()"></app-investment-portfolio-table>
+                <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3" [editable]="editable()"></app-investment-portfolio-table>
             </td>
         </tr>
         } 
@@ -120,11 +120,18 @@
                 <span></span>
                 {{ total().performance | percent:'1.2-2' }}
             </td>
-            <td class="td-cell column-actions"></td>
+            <td class="td-cell column-actions" #tablePortfolio>
+                <div #exchangeButton id="exchangeButton">
+                    <button mat-mini-fab (click)="toggleViewExchange()">
+                        <mat-icon>currency_exchange</mat-icon>
+                    </button>
+                </div>
+            </td>
         </tr>
     </tfoot>
 
 </table>
+
 
 <!-- <code>
     <pre>

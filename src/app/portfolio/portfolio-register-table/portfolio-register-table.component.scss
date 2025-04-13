@@ -66,20 +66,8 @@ $padding-right-perc: 4%;
         padding-right: $padding-right-perc !important;
       }
 
-      .column-actions,
-      .column-marketValue,
-      .column-profit,
-      .column-allocation,
-      .column-performance,
-      .column-percPlanned,
-      .column-percAllocation {
+      .column-actions, .column-marketValue, .column-profit, .column-allocation, .column-performance, .column-percPlanned, .column-percAllocation {
         text-align: end !important;
-      }
-
-      &.table-readonly {
-        .column-actions {
-          display: none !important;
-        }
       }
 
       .column-actions {
@@ -87,8 +75,7 @@ $padding-right-perc: 4%;
         max-width: $width-actions;
       }
 
-      .column-name,
-      .column-total {
+      .column-name, .column-total {
         text-align: left;
         width: $width-name;
       }
@@ -138,10 +125,15 @@ $padding-right-perc: 4%;
       border-top: 1px solid #e5e5e5 !important;
       background-color: #eee !important;
       padding: 2px 4px;
+      display: none;
 
       @media screen and (max-width: 800px) {
         padding: 2px 2px !important;
       }
+    }
+
+    .row-expansible.expanded {
+      display: flex !important;
     }
   }
 
@@ -156,6 +148,13 @@ $padding-right-perc: 4%;
     visibility: visible;
     opacity: 1;
   }
+
+  &.table-readonly tr {
+    .column-actions {
+      display: none !important;
+    }
+  }
+
 }
 
 #table-details {
@@ -184,9 +183,9 @@ $padding-right-perc: 4%;
   margin: 0 8px 0 0;
 }
 
-.tune-button {
-  color: var(--mdc-slider-handle-color, var(--mat-app-primary));
-}
+// .tune-button, .exchange-button {
+//   color: var(--mdc-slider-handle-color, var(--mat-app-primary));
+// }
 
 @media screen and (max-width: 800px) {
   #table-master.table tr {
@@ -196,4 +195,14 @@ $padding-right-perc: 4%;
       justify-content: space-between;
     }
   }
+}
+
+#exchangeButton {
+  position: relative;
+}
+
+#exchangeButton.fixed {
+  position: fixed;
+  right: 30px;
+  bottom: 30px;
 }
