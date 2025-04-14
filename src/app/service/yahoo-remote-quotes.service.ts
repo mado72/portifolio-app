@@ -4,9 +4,17 @@ import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
+import { Currency } from '../model/domain.model';
 
 const BATCH_SIZE = 5;
 const INTERVAL_MS = 500;
+
+const COIN_USD_CODES: Record<Currency, string> = {
+  USD: '',
+  BRL: 'BRLUSD=X',
+  USDT: 'USDT-USD',
+  EUR: 'EURUSD=X'
+}
 
 @Injectable({
   providedIn: 'root'
@@ -48,52 +56,6 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
     const url = `${environment.apiBaseUrl}/yahoo/price`;
     return this.http.get<Record<string, YahooQuoteResponse>>(url, { params });
   }
-  // priceWithMultipleRequests(tickers: string[]) {
-  //   const requests = tickers.reduce((acc, ticker) => {
-  //     acc[ticker] = this.fetchQuote(ticker);
-  //     return acc;
-  //   }, {} as Record<string, Observable<QuoteResponse>>);
-
-  //   const observables = Object.values(requests);
-  //   return from(observables).pipe(
-  //     // Divide in groups of BATCH_SIZE requests
-  //     bufferCount(BATCH_SIZE),
-  //     // Executes with delay between requests
-  //     concatMap((batch, batchIndex) => {
-  //       const totalBatches = Math.ceil(batch.length / BATCH_SIZE);
-  //       const execBatch = forkJoin(batch);
-
-  //       const aux = ((batchIndex < totalBatches)
-  //         ? execBatch.pipe(delay(INTERVAL_MS))
-  //         : execBatch);
-  //       return aux;
-  //     }),
-  //     // Combine batches into a single result
-  //     zipAll(),
-  //     // Map the results to a single object with quote data for each ticker
-  //     map(results => {
-  //       return results.reduce((acc, quote) => {
-  //         acc[quote.ticker] = quote;
-  //         return acc;
-  //       }, {} as Record<string, QuoteResponse>);
-  //     })
-  //   );
-  // }
-
-  // fetchQuote(ticker: string) {
-  //   return from(this.getQuote(ticker)).pipe(
-  //     map((response) => {
-  //       return this.responseToQuoteResponse(ticker, response)
-  //     })
-  //   );
-  // }
-
-  // getQuote(ticker: string) {
-  //   let yahooTicker = this.getYahooTicker(ticker);
-    
-  //   const url = `${environment.apiBaseUrl}/yahoo/price/${yahooTicker}`;
-  //   return this.http.get<YahooQuoteResponse>(url);
-  // }
 
   getYahooTicker(ticker: string) {
     const [marketPlaceCode, code] = ticker.split(':');
@@ -102,6 +64,9 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
     switch (marketPlace) {
       case MarketPlaceEnum.BVMF:
         yahooTicker = `${code}.SA`;
+        break;
+      case MarketPlaceEnum.COIN:
+        yahooTicker = COIN_USD_CODES[code as keyof typeof Currency];
         break;
       default:
         yahooTicker = code;

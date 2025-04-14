@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { Currency, CurrencyType, KeyTypeOf } from '../model/domain.model';
+import { Currency, CurrencyType } from '../model/domain.model';
 import { ExchangeStructureType, ExchangeView, MarketPlaceEnum } from '../model/investment.model';
-import { AssetQuoteRecord, AssetQuoteType, SummarizedDataType } from '../model/source.model';
+import { AssetQuoteRecord, AssetQuoteType } from '../model/source.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { SourceService } from './source.service';
 
@@ -47,23 +47,10 @@ export class QuoteService {
     }, {} as AssetQuoteRecord);
   })
   
-  readonly exchanges = signal<Record<CurrencyType, Record<CurrencyType, number>>>(
-    [
-      { date: new Date(), from: Currency.BRL, to: Currency.USD, factor: 1/5.76 },
-      { date: new Date(), from: Currency.USD, to: Currency.BRL, factor: 5.76 },
-      { date: new Date(), from: Currency.BRL, to: Currency.USDT, factor: 1/5.90 },
-      { date: new Date(), from: Currency.USDT, to: Currency.BRL, factor: 5.90 },
-      { date: new Date(), from: Currency.EUR, to: Currency.BRL, factor: 6.21 }
-    ].reduce((acc, item) => {
-      acc[item.from] = acc[item.from] || {};
-      acc[item.from][item.to] = item.factor;
-      acc[item.from][item.from] = 1;
-      acc[item.to] = acc[item.to] || {};
-      acc[item.to][item.to] = 1;
-      return acc;
-    }, {} as Record<CurrencyType, Record<CurrencyType, number>>));
+  readonly exchanges = computed(()=> this.remoteQuotesService.exchanges());
+  constructor() {
 
-  constructor() {}
+  }
 
   toggleExchangeView() {
     this.exchangeView.update(exchangeView => (exchangeView === "original" ? "exchanged" : "original"));

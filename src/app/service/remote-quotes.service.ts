@@ -1,6 +1,6 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
-import { differenceInMinutes } from 'date-fns';
-import { forkJoin, interval, map, zipAll } from 'rxjs';
+import { differenceInMinutes, differenceInSeconds } from 'date-fns';
+import { filter, forkJoin, interval, map, zipAll } from 'rxjs';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote } from '../model/remote-quote.model';
 import { AssetQuoteType } from '../model/source.model';
@@ -9,6 +9,8 @@ import { MockRemoteQuotesService } from './mock-remote-quotes.service';
 import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
 import { YahooRemoteQuotesService } from './yahoo-remote-quotes.service';
+import { CurrencyType } from '../model/domain.model';
+import { CoinService } from './coin-remote.service';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +26,13 @@ export class RemoteQuotesService {
     [MarketPlaceEnum.NASDAQ, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.NYSE, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.CRYPTO, this.mockRemoteQuotesService],
-    [MarketPlaceEnum.COIN, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.COIN, this.immutableRemoteQuotesService],
     [MarketPlaceEnum.BRTD, this.yahooRemoteQuotesService]
   ]);
 
   private sourceService = inject(SourceService);
+
+  private coinService = inject(CoinService);
 
   protected latestQuote = signal<Record<string, AssetQuoteType>>({});
 
@@ -47,6 +51,8 @@ export class RemoteQuotesService {
       }, {} as { [ticker: string]: AssetQuoteType })
   })
 
+  readonly exchanges = signal({} as Record<CurrencyType, Record<CurrencyType, number>>);
+
   readonly lastUpdate = signal<{old?: Date, value: Date}>({value: new Date()});
 
   readonly quotesRequests = computed(() => {
@@ -54,31 +60,22 @@ export class RemoteQuotesService {
     return this.prepareRequestsToUpdateQuotes(assets);
   });
 
-  timerId = interval(1 * 60 * 1000).pipe(
-    map(() => {
-      const now = new Date();
+  timertId = interval(1 * 60 * 1000).pipe(
+    filter(()=> {
       const diffLastUpdate = differenceInMinutes(this.lastUpdate().value, this.lastUpdate().old || new Date());
-      if (diffLastUpdate > 15) {
-        return Object.entries(this.assetsQuoted()).reduce((acc, [ticker, asset]) => {
-          if (differenceInMinutes(now, asset.lastUpdate) > 15) {
-            acc[ticker] = asset;
-          }
-          return acc;
-        }, {} as Record<string, AssetQuoteType>)
-      }
-      return null;
+      return diffLastUpdate > 15;
     })
   ).subscribe(assets => {
-    if (!! assets && Object.keys(assets).length) {
-      this.updateQuotes(assets);
-    }
+    this.updateQuotes(this.assetsQuoted());
+    this.updateExchanges();
   });
 
   constructor() {
     this.updateQuotes(this.sourceService.assertSource());
+    this.updateExchanges();
     effect(() => {
-      const diffLastUpdate = differenceInMinutes(new Date(), this.lastUpdate().value);
-      if (diffLastUpdate > 15) {
+      const diffLastUpdate = differenceInSeconds(this.lastUpdate().value, this.lastUpdate().old as Date);
+      if (diffLastUpdate > 0) {
         this.updateQuotes(this.sourceService.assertSource());
       }
     })
@@ -110,8 +107,12 @@ export class RemoteQuotesService {
     })
   }
 
+  updateExchanges() {
+    this.coinService.getExchanges().subscribe(exchanges=>this.exchanges.set(exchanges));
+  }
+
   destroy() {
-    this.timerId.unsubscribe();
+    this.timertId.unsubscribe();
   }
 
   getRemoteQuotesService(marketPlace: MarketPlaceEnum) {
