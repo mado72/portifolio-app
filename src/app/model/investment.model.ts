@@ -1,4 +1,4 @@
-import { CurrencyValue, Exchange } from "./domain.model";
+import { CurrencyType, CurrencyValue, Exchange } from "./domain.model";
 
 export type QuoteExchangeInfo = {
   original: CurrencyValue;
@@ -100,4 +100,19 @@ export const TransactionStatusDesc : Record<`${TransactionStatus}`, string> = {
     "PENDING": 'Pendente',
     "COMPLETED": 'Confirmada',
     "CANCELLED": 'Cancelada'
+}
+
+
+export type ExchangeReq = {
+  from: CurrencyType,
+  to: CurrencyType
+}
+
+export type ExchangeFactorType = ExchangeReq & {
+  factor?: number
+}
+
+export type ExchangeStructureType = {
+  original: CurrencyValue,
+  exchanged: CurrencyValue
 }

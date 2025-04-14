@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Currency, CurrencyType, KeyTypeOf } from '../model/domain.model';
-import { MarketPlaceEnum } from '../model/investment.model';
+import { ExchangeStructureType, MarketPlaceEnum } from '../model/investment.model';
 import { AssetQuoteRecord, AssetQuoteType, SummarizedDataType } from '../model/source.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { SourceService } from './source.service';
@@ -74,19 +74,19 @@ export class QuoteService {
     });
   }
 
-  enhanceExchangeInfo(obj: any, currency: Currency, properties: KeyTypeOf<SummarizedDataType>[]) {
-    let result = {...obj}
+  enhanceExchangeInfo<T, K extends keyof T>(obj: T, originalCurrency: Currency, properties: K[]): Omit<T, K> & Record<K, ExchangeStructureType> {
+    let result = {...obj} as Omit<T, K> & Record<K, ExchangeStructureType>;
 
     const defaultCurrency = this.sourceService.currencyDefault();
 
     properties.forEach(prop=>{
-      if (obj[prop] && typeof obj[prop] === 'number') {
-        result[prop] = {
+      if (typeof obj[prop] === 'number') {
+        (result as any)[prop] = {
           original: {
-            value: obj[prop],
-            currency
+            value: obj[prop] as number,
+            currency: originalCurrency
           },
-          exchanged: this.exchange(obj[prop], currency, defaultCurrency)
+          exchanged: this.exchange(obj[prop] as number, originalCurrency, defaultCurrency)
         }
       }
     })

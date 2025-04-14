@@ -3,14 +3,16 @@ import { Component, computed, inject, input, OnInit, Signal } from '@angular/cor
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, TrendType } from '../../model/source.model';
+import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { SourceService } from '../../service/source.service';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
+import { QuoteService } from '../../service/quote.service';
+import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 
-type DatasourceRowType = PortfolioAllocationType & {ticker: string, name: string, trend: TrendType};
+type DatasourceInputType = PortfolioAllocationType & {ticker: string, name: string, trend: TrendType};
 
 @Component({
   selector: 'app-investment-portfolio-table',
@@ -20,8 +22,9 @@ type DatasourceRowType = PortfolioAllocationType & {ticker: string, name: string
     DecimalPipe,
     PercentPipe,
     AssetTypePipe,
-    JsonPipe
-  ],
+    JsonPipe,
+    ExchangeComponent
+],
   templateUrl: './investment-portfolio-table.component.html',
   styleUrl: './investment-portfolio-table.component.scss'
 })
@@ -31,17 +34,21 @@ export class InvestmentPortfolioTableComponent {
 
   private investmentService = inject(InvestmentService);
 
+  private quoteService = inject(QuoteService);
+
   private portfolioService = inject(PortfolioService);
 
   private dialog = inject(MatDialog);
 
   readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'averagePrice', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
 
+  displayExchange = input<"original" | "exchanged">("original");
+
   editable = input<boolean>(false);
 
   currency = input<Currency>(this.sourceService.currencyDefault());
 
-  source!: Signal<Record<string,DatasourceRowType>>;
+  source!: Signal<Record<string,DatasourceInputType>>;
 
   portfolioId = input<string>();
 
@@ -52,16 +59,39 @@ export class InvestmentPortfolioTableComponent {
   })
 
   datasource = computed(() => {
-    return Object.values(this.portfolio()?.allocations || {});
+    const portfolio = this.portfolio();
+    if (!portfolio) return [];
+    return this.convertPortfolio(portfolio)
   });
 
-  total = computed(() => this.portfolio()?.total);
+  total = computed(() => {
+    const portfolio = this.portfolio();
+    if (!portfolio) return null;
+
+    return this.quoteService.enhanceExchangeInfo(
+      portfolio.total as SummarizedDataType, portfolio.currency as Currency, 
+      ["marketValue", "profit"])
+  });
 
   portfolioName = computed(() => {
     return this.portfolio()?.name || '';
   });
 
-  selectRow(row: DatasourceRowType) {
+  convertPortfolio(portfolio: PortfolioType) {
+    return Object.values(portfolio.allocations || {})
+      .map(allocation=> this.convertAllocation(allocation))
+    ;
+  }
+
+  private convertAllocation(allocation: PortfolioAllocationType)  {
+    return {
+      ...allocation,
+      ...this.quoteService.enhanceExchangeInfo(allocation, allocation.quote.currency, ["initialValue", "marketValue", "profit", "averagePrice"]),
+      quote: this.quoteService.enhanceExchangeInfo(allocation.quote, allocation.quote.currency, ["value"]).value
+    };
+  }
+
+  selectRow(row: ReturnType<InvestmentPortfolioTableComponent["convertAllocation"]>) {
     const asset = this.investmentService.assertsSignal()[row.ticker];
 
     const data: PorfolioAllocationDataType = {

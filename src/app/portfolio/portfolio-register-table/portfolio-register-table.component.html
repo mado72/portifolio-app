@@ -92,7 +92,11 @@
             <tr class="row-expansible " [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [class.expanded]="isExpanded(portfolio)">
                 <td colspan="8" class="py-2 mb-4 w-100 d-flex flex-column align-items-start">
                     <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
-                    <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3" [editable]="editable()"></app-investment-portfolio-table>
+                    <app-investment-portfolio-table [portfolioId]="portfolio.id" 
+                        [currency]="portfolio.currency"
+                        class="w-100 mat-elevation-z3" 
+                        [editable]="editable()"
+                        [displayExchange]="viewExchange"/>
                 </td>
             </tr>
             } 

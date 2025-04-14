@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, computed, effect, ElementRef, HostListener, inject, input, signal, viewChild, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, computed, effect, ElementRef, HostListener, inject, input, signal, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,21 +8,25 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType, SummarizedDataType } from '../../model/source.model';
+import { InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from "../../investment/investment-transaction-form/investment-transaction-form.component";
+import { ExchangeStructureType } from '../../model/investment.model';
+import { PortfolioAllocationType, PortfolioType, SummarizedDataType } from '../../model/source.model';
 import { PortfolioChangeType, PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
 import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
-import { InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from "../../investment/investment-transaction-form/investment-transaction-form.component";
 
-type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"> & {
+type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
   allocations: PortfolioAllocationType[];
   percAllocation: number;
+  total: Omit<SummarizedDataType, "initialValue" | "marketValue" | "profit"> & {
+    initialValue: ExchangeStructureType;
+    marketValue: ExchangeStructureType;
+    profit: ExchangeStructureType;
+  }
 }
-
-type SummarizedDataTypeKey = keyof SummarizedDataType;
 
 @Component({
   selector: 'app-portfolio-register-table',
@@ -85,7 +89,7 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
         ...portfolio.total,
         ...this.quoteService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["initialValue", "marketValue", "profit"])
       }
-    })));
+    } as DatasourceMasterType)));
 
   expandedElement: DatasourceMasterType | null = null;
 
@@ -152,17 +156,17 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
     }
   }
 
-  trackBy(_: number, item: PortfolioAllocationsArrayItemType) {
+  trackBy(_: number, item: DatasourceMasterType) {
     return item.id;
   }
 
   expanded: string[] = [];
 
-  isExpanded(portfolio: PortfolioAllocationsArrayItemType) {
+  isExpanded(portfolio: DatasourceMasterType) {
     return this.expanded.includes(portfolio.id);
   }
 
-  toggleExpanded(portfolio: PortfolioAllocationsArrayItemType) {
+  toggleExpanded(portfolio: DatasourceMasterType) {
     if (this.isExpanded(portfolio)) {
       this.expanded = this.expanded.filter(id => id !== portfolio.id);
     } else {

@@ -22,14 +22,12 @@
               <div>
                 <span class="text-truncate d-none d-lg-flex">Valor de Mercado</span>
                 <span class="text-truncate d-flex d-lg-none" title="Valor de Mercado">VM</span>
-                ({{currency()}})
               </div>
             </th>
             <th class="column-profit" >
               <div>
                 <span class="text-truncate d-none d-lg-flex">Resultado</span>
                 <span class="text-truncate d-flex d-lg-none" title="Resultado">Result.</span>
-                ({{currency()}})
               </div>
             </th>
             <th class="column-percPlanned" >
@@ -52,20 +50,16 @@
             {{row.quantity}}
           </td>
           <td class="column-quote">
-            <span>{{row.quote.currency}}</span>
-            {{row.quote.value | number:'1.2-2'}}
+            <app-exchange [exchange]="row.quote" [display]="displayExchange()" [hideIcon]="true"/>
           </td>
           <td class="column-averagePrice d-none d-lg-flex" >
-            <span>{{row.quote.currency}}</span>
-            {{row.averagePrice | number:'1.2-2'}}
+            <app-exchange [exchange]="row.averagePrice" [display]="displayExchange()" [hideIcon]="true"/>
           </td>
           <td class="column-marketValue" >
-            <span></span>
-            {{row.marketValue | number:'1.2-2'}}
+            <app-exchange [exchange]="row.marketValue" [display]="displayExchange()" [hideIcon]="true"/>
           </td>
-          <td class="column-profit" [class.negative]="row.profit < 0">
-            <span></span>
-            {{row.profit | number:'1.2-2'}}
+          <td class="column-profit">
+            <app-exchange [exchange]="row.profit" [display]="displayExchange()" [hideIcon]="true"/>
           </td>
           <td class="column-percPlanned">
             {{row.percPlanned}}%
@@ -86,12 +80,10 @@
         <th class="d-none d-lg-flex"></th>
         <th class="d-none d-lg-flex"></th>
         <th class="column-marketValue">
-          <span>{{currency()}}</span>
-          {{total()?.marketValue| number:'1.2-2'}}
+          <app-exchange [exchange]="total()?.marketValue" [display]="displayExchange()" [hideIcon]="true"/>
         </th>
-        <th class="column-profit" [class.negative]="(total()?.profit || 0) < 0">
-          <span>{{currency()}}</span>
-          {{total()?.profit| number:'1.2-2'}}
+        <th class="column-profit" [class.negative]="(total()?.profit?.original?.value ?? 0) < 0">
+          <app-exchange [exchange]="total()?.profit" [display]="displayExchange()" [hideIcon]="true"/>
         </th>
         <th class="column-percPlanned" >
           {{total()?.percPlanned | number:'1.2-2'}}%
