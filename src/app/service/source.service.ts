@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { format, formatISO, parse, parseISO, setDayOfYear } from 'date-fns';
+import { format, formatISO, parseISO, setDayOfYear } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import assetSourceData from '../../data/assets.json';
 import balanceSource from '../../data/balance.json';
@@ -75,7 +75,7 @@ export class SourceService {
   readonly incomeSource = computed(() => Object.entries(this.dataSource.income()).reduce((acc, [key, item]) => {
     acc[key] = {
       ...item,
-      date: parse(item.date, 'yyyy-MM-dd', new Date())
+      date: parseDateYYYYMMDD(item.date)
     }
     return acc;
   }, {} as Record<string, IncomeType>));

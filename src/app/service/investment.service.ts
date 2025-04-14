@@ -86,7 +86,8 @@ export class InvestmentService {
     this.sourceService.deleteAsset(ticker);
   }
 
-  findIncomesBetween(from: Date, to: Date) {
+  findIncomesBetween(from: Date, to: Date): Income[] {
+    // FIXME: Está mockado
     return Object.values(this.earningsData())
       .map(item => ({ ...item, date: setYear(item.date, getYear(from)) }));
   }
