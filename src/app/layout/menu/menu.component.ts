@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DownloadDataDirective } from '../../utils/directive/download-data.directive';
 import { UploadDataDirective } from '../../utils/directive/upload-data.directive';
 import { EmptyDataDirective } from '../../utils/directive/empty-data.directive';
+import { QuoteService } from '../../service/quote.service';
+import { Currency } from '../../model/domain.model';
+import { CurrencyChoiceDirective } from '../../utils/directive/currency-choice.directive';
 
 @Component({
   selector: 'app-menu',
@@ -11,12 +14,15 @@ import { EmptyDataDirective } from '../../utils/directive/empty-data.directive';
     RouterLink,
     DownloadDataDirective,
     UploadDataDirective,
-    EmptyDataDirective
+    EmptyDataDirective,
+    CurrencyChoiceDirective
   ],
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })
 export class MenuComponent {
+
+  currencies = Object.values(Currency);
 
   submenu : Record<string, boolean> = {};
 

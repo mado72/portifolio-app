@@ -60,6 +60,18 @@
                         <li><a class="dropdown-item" routerLink="/investment/earnings">Proventos</a></li>
                     </ul>
                 </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" (click)="openSubmenu('Currency')" role="button"
+                        [class.show]="submenu['Currency']">
+                        Moedas
+                    </a>
+                    <ul class="dropdown-menu currencies" [class.show]="submenu['Currency']" (click)="hideSubmenu('Currency')"
+                        role="menu">
+                        @for (currency of currencies; track currency) {
+                            <li><a class="dropdown-item" [appCurrencyChoice]="currency">{{currency}}</a></li>
+                        }
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">Disabled</a>
                 </li>
