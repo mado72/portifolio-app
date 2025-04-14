@@ -51,8 +51,8 @@ export class QuoteService {
     [
       { date: new Date(), from: Currency.BRL, to: Currency.USD, factor: 1/5.76 },
       { date: new Date(), from: Currency.USD, to: Currency.BRL, factor: 5.76 },
-      { date: new Date(), from: Currency.BRL, to: Currency.UTC, factor: 1/5.90 },
-      { date: new Date(), from: Currency.UTC, to: Currency.BRL, factor: 5.90 },
+      { date: new Date(), from: Currency.BRL, to: Currency.USDT, factor: 1/5.90 },
+      { date: new Date(), from: Currency.USDT, to: Currency.BRL, factor: 5.90 },
       { date: new Date(), from: Currency.EUR, to: Currency.BRL, factor: 6.21 }
     ].reduce((acc, item) => {
       acc[item.from] = acc[item.from] || {};

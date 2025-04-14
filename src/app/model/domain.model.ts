@@ -6,14 +6,14 @@ export enum Currency {
     BRL = 'BRL',
     USD = 'USD',
     EUR = 'EUR',
-    UTC = 'UTC'
+    USDT = 'USDT'
 } 
 
 export enum CurrencyCode {
     BRL = 'R$',
     USD = '$',
     EUR = '€',
-    UTC = 'UTC'
+    USDT = 'USDT'
 };
 
 export type CurrencyType = `${Currency}`;
