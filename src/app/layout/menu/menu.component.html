@@ -67,8 +67,13 @@
                     </a>
                     <ul class="dropdown-menu currencies" [class.show]="submenu['Currency']" (click)="hideSubmenu('Currency')"
                         role="menu">
-                        @for (currency of currencies; track currency) {
-                            <li><a class="dropdown-item" [appCurrencyChoice]="currency">{{currency}}</a></li>
+                        @for (exchange of exchanges(); track exchange.currency) {
+                            <li>
+                                <a class="dropdown-item d-flex justify-content-between" [appCurrencyChoice]="exchange.currency">
+                                    <span>{{exchange.symbol}}</span>
+                                    <span>{{exchange.factor | number:'1.2-4'}}</span>
+                                </a>
+                            </li>
                         }
                     </ul>
                 </li>

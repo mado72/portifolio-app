@@ -1,4 +1,5 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
+import { computed, inject, Injectable, LOCALE_ID, signal } from '@angular/core';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { ExchangeStructureType, ExchangeView, MarketPlaceEnum } from '../model/investment.model';
 import { AssetQuoteRecord, AssetQuoteType } from '../model/source.model';
@@ -31,6 +32,8 @@ export class QuoteService {
 
   readonly quotePendding = signal<AssetQuoteType | undefined>(undefined);
 
+  private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
+
   readonly quotes = computed(()=> {
     console.log(`quotes: ${this.quotePendding()}`);
     return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset])=>{
@@ -57,7 +60,8 @@ export class QuoteService {
   }
 
   getExchangeQuote(from: Currency, to: Currency) {
-    return this.exchanges()[from][to];
+    const exchanges = this.exchanges();
+    return exchanges[from]?.[to];
   }
 
   exchange(value: number, from: Currency, to: Currency) {
@@ -65,6 +69,11 @@ export class QuoteService {
       currency: to,
       value: value * this.getExchangeQuote(from, to)
     });
+  }
+
+  currencyToSymbol(currency: Currency | string): string {
+    const result = this.currencyPipe.transform(1, currency, "symbol", "1.0")?.replace(/\d/, '');
+    return result || currency;
   }
 
   enhanceExchangeInfo<T, K extends keyof T>(obj: T, originalCurrency: Currency, properties: K[]): Omit<T, K> & Record<K, ExchangeStructureType> {

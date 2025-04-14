@@ -4,20 +4,27 @@ a {
 ul.show li {
     overflow: hidden;
 }
-.active-currency:after {
-    content: '\2713';
+
+.active-currency span:last-child:after{
+    content: '\2713' !important;
     display: inline-block;
     color: red;
     padding: 0 6px 0 0;
 }
 
-.active-currency {
-    font-size: 1em;
-    display: flex;
-    width: 80%;
-    justify-content: space-between;
+.currencies {
+    width: 210px;
 }
 
 .currencies > li > *{
+    font-size: 1em;
+    width: 140px;
     margin-left: 10px;
+
+    span:last-child {
+        width: 20px;
+        &:after {
+            content: ' ';
+        }
+    }
 }
