@@ -1,4 +1,4 @@
-import { DatePipe } from '@angular/common';
+import { DatePipe, JsonPipe } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,10 +7,12 @@ import { AccountBalanceExchange, AccountTypeEnum } from '../../model/domain.mode
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { QuoteService } from '../../service/quote.service';
+import { ExchangeStructureType } from '../../model/investment.model';
+import { BalanceType } from '../../model/source.model';
+import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 
-type AccountBalanceExchangeSelectable = AccountBalanceExchange & {
-  selected: boolean;
-}
+type AccountBalanceExchangeSelectable = ReturnType<BalancesComponent["convertBalance"]>
 
 @Component({
   selector: 'app-balances',
@@ -20,8 +22,10 @@ type AccountBalanceExchangeSelectable = AccountBalanceExchange & {
     MatButtonModule,
     MatIconModule,
     CurrencyComponent,
-    DatePipe
-  ],
+    DatePipe,
+    JsonPipe,
+    ExchangeComponent
+],
   templateUrl: './balances.component.html',
   styleUrl: './balances.component.scss'
 })
@@ -29,9 +33,11 @@ export class BalancesComponent implements OnInit {
 
   private sourceService = inject(SourceService);
 
+  private quoteService = inject(QuoteService);
+
   private balanceService = inject(BalanceService);
 
-  currency = this.sourceService.currencyDefault;
+  currency = computed(()=> this.sourceService.currencyDefault());
 
   editable = input<boolean>(false);
 
@@ -41,11 +47,10 @@ export class BalancesComponent implements OnInit {
       this.currency()).map(item => item.id as string))
 
   balances = computed<Record<string, AccountBalanceExchangeSelectable>>(()=>
-    this.balanceService.getBalancesByCurrencyExchange(
-      Object.values(this.balanceService.getAllBalances()),
-        this.currency())
+    Object.values(this.balanceService.getAllBalances())
+      .map(balance=>this.convertBalance(balance))
       .reduce((acc, item) => {
-        acc[item.id as string] = { ...item, selected: this.selects().includes(item.id as string) };
+        acc[item.id as string] = item;
         return acc;
       }, {} as Record<string, AccountBalanceExchangeSelectable>))
 
@@ -53,11 +58,20 @@ export class BalancesComponent implements OnInit {
     .sort((balance1, balance2)=>balance1.accountName.localeCompare(balance2.accountName))
   ])
 
+  convertBalance(item: BalanceType) {
+    return {
+      ...item,
+      balance: this.quoteService.enhanceExchangeInfo(item.balance, item.balance.currency, ["value"]).value,
+      selected: this.selects().includes(item.id as string)
+    }
+  }
+
   totalBalance = 0;
 
   totalBalanceChecking = 0;
 
-  readonly displayedColumn = ['account', 'balanceQuote', 'balance'];
+  // readonly displayedColumn = ['account', 'balanceQuote', 'balance'];
+  readonly displayedColumn = ['account', 'balanceQuote'];
 
   constructor() {
     effect(()=> {
@@ -74,9 +88,9 @@ export class BalancesComponent implements OnInit {
     }
   }
 
-  summarize(balances: AccountBalanceExchange[]) {
+  summarize(balances: AccountBalanceExchangeSelectable[]) {
     return balances
-      .map(item => item.exchange.value)
+      .map(item => item.balance.exchanged.value)
       .reduce((acc, vl) => acc += vl, 0);
   }
 

@@ -78,7 +78,7 @@ export class PortfolioRegisterTableComponent {
 
   currency = computed(() => this.sourceService.currencyDefault());
 
-  total = computed(() => this.portfolioService.total());
+  total = computed(() => this.quoteService.enhanceExchangeInfo(this.portfolioService.total(), this.sourceService.currencyDefault(), ["marketValue", "profit"]));
 
   exchangeView = computed(() => this.quoteService.exchangeView())
 

@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, Input, signal } from '@angular/core';
+import { Component, effect, inject, Input, signal } from '@angular/core';
 import { Currency, CurrencyValue, toCurrencyCode } from '../../model/domain.model';
 import { SourceService } from '../../service/source.service';
 
@@ -18,6 +18,12 @@ export class CurrencyComponent {
     value: 0,
     currency: this.sourceService.currencyDefault()
   });
+
+  constructor() {
+    effect(()=> {
+      this.currency = this.sourceService.currencyDefault();
+    }, {allowSignalWrites: true})
+  }
 
   @Input()
   set currency(currency: Currency) {

@@ -6,6 +6,7 @@ import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 import { MatDialog } from '@angular/material/dialog';
 import { PortfolioRegisterDialogComponent } from '../portfolio/portfolio-register-dialog/portfolio-register-dialog.component';
+import { ExchangeStructureType } from '../model/investment.model';
 
 export type PortfolioChangeType = {
   name?: string;
@@ -39,12 +40,15 @@ export class PortfolioService {
   readonly total = computed(() => this.getAllPortfolios()
     .map(portfolio => ({
       ...portfolio.total,
+      currency: portfolio.currency,
       percPlanned: portfolio.percPlanned
     }))
     .reduce((acc, portfolio) => {
-      acc.initialValue += portfolio.initialValue;
-      acc.marketValue += portfolio.marketValue;
-      acc.profit += portfolio.profit;
+      const currencyDefault = this.sourceService.currencyDefault();
+
+      acc.initialValue += this.quoteService.exchange(portfolio.initialValue, portfolio.currency, currencyDefault).value;
+      acc.marketValue += this.quoteService.exchange(portfolio.marketValue, portfolio.currency, currencyDefault).value;
+      acc.profit += this.quoteService.exchange(portfolio.profit, portfolio.currency, currencyDefault).value;
       acc.performance += portfolio.performance;
       acc.percAllocation += portfolio.percAllocation;
       acc.percPlanned += portfolio.percPlanned;
@@ -64,7 +68,8 @@ export class PortfolioService {
       allocations: Object.values(portfolio.allocations),
       total: {
         ...portfolio.total,
-        percAllocation: portfolio.total.marketValue / this.total().marketValue
+        percAllocation: this.quoteService.exchange(portfolio.total.marketValue, portfolio.currency, this.sourceService.currencyDefault()).value 
+          / this.total().marketValue
       },
     } as PortfolioAllocationsArrayItemType)));
 
@@ -96,20 +101,12 @@ export class PortfolioService {
     };
     const consolidation = Object.values(portfolios
       .map(portfolio=>{
-        const exchangeValue = this.quoteService.exchange(portfolio.total.marketValue, 
-          portfolio.currency, total.currency);
-          return {
-            class: portfolio.class,
-            value: {
-              financial: {
-                value: portfolio.total.marketValue,
-                currency: portfolio.currency
-              },
-              exchanged: exchangeValue
-            },
-            percPlanned: portfolio.percPlanned,
-            percAlloc: 0
-          };
+        const result = {
+          ...portfolio,
+          value: {...this.quoteService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["marketValue"]).marketValue},
+          percAlloc: 0
+        };
+        return result
       })
       .reduce((acc, portfolio) => {
 
@@ -120,9 +117,9 @@ export class PortfolioService {
         acc[portfolio.class] = {...acc[portfolio.class],
           value: {
             ...acc[portfolio.class],
-            financial: {
-              ...acc[portfolio.class].value.financial,
-              value: acc[portfolio.class].value.financial.value + portfolio.value.financial.value
+            original: {
+              ...acc[portfolio.class].value.original,
+              value: acc[portfolio.class].value.original.value + portfolio.value.original.value
             },
             exchanged: {
               ...acc[portfolio.class].value.exchanged,
@@ -136,10 +133,7 @@ export class PortfolioService {
       return acc;
     }, {} as Record<string, {
       class: string,
-      value: {
-        financial: CurrencyValue,
-        exchanged: CurrencyValue
-      }
+      value: ExchangeStructureType,
       percPlanned: number,
       percAlloc: number
     }>))

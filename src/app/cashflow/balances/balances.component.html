@@ -13,24 +13,17 @@
                 Saldo Total
             </td>
         </ng-container>
+
         <ng-container matColumnDef="balanceQuote">
             <td mat-header-cell *matHeaderCellDef>Saldo em {{currency()}}</td>
-            <td mat-cell *matCellDef="let item" class="number"> 
-                <app-currency [value]="item.exchange"></app-currency>
+            <td mat-cell *matCellDef="let item" class="number flow-grow-1">
+                <app-exchange [exchange]="item.balance"/>
             </td>
             <td mat-footer-cell *matFooterCellDef>
                 <app-currency [amount]="totalBalance"></app-currency>
             </td>
         </ng-container>
-        <ng-container matColumnDef="balance">
-            <td mat-header-cell *matHeaderCellDef>Saldo na moeda</td>
-            <td mat-cell *matCellDef="let item" class="number"> 
-                @if( ! isSameCurrency(item)) {
-                    <app-currency [value]="item.balance"></app-currency>
-                }
-            </td>
-            <td mat-footer-cell *matFooterCellDef></td>
-        </ng-container>
+
         <ng-container matColumnDef="balanceDate">
             <td mat-header-cell *matHeaderCellDef>Data da Atualização</td>
             <td mat-cell *matCellDef="let item"> {{ item.date | date: 'dd/MM/yyyy' }}</td>
