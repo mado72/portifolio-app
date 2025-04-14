@@ -1,0 +1,14 @@
+
+.custom-button {
+    background-color: #4CAF50; /* Cor de fundo */
+    color: white;              /* Cor do texto */
+  }
+  
+  .custom-button.pressed {
+    background-color: #2e6930; /* Cor de fundo */
+    color: white;              /* Cor do texto */
+  }
+  
+  .custom-button:hover {
+    background-color: #45a049; /* Cor de fundo ao passar o mouse */
+  }

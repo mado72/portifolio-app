@@ -3,3 +3,10 @@
     min-height: calc(100vh - 95px) !important;
     overflow: auto !important;
 }
+
+#exchange-button {
+    position: fixed;
+    right: 10px;
+    top: 10px;
+    z-index: 20000;
+}

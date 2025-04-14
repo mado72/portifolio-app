@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, computed, effect, ElementRef, HostListener, inject, input, signal, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, inject, input, signal } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -44,7 +44,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
     InvestmentPortfolioTableComponent,
     ExchangeComponent,
     InvestmentTransactionFormComponent
-  ],
+],
   animations: [
     trigger('detailExpand', [
       state('collapsed', style({ height: '0', maxHeight: '0', opacity: '0' })),
@@ -56,7 +56,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
   templateUrl: './portfolio-register-table.component.html',
   styleUrl: './portfolio-register-table.component.scss'
 })
-export class PortfolioRegisterTableComponent implements AfterViewInit {
+export class PortfolioRegisterTableComponent {
 
   private sourceService = inject(SourceService);
 
@@ -80,7 +80,7 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
 
   total = computed(() => this.portfolioService.total());
 
-  viewExchange: "original" | "exchanged" = "original";
+  exchangeView = computed(() => this.quoteService.exchangeView())
 
   portfolios = computed(() => this.portfolioService.portfolioAllocation()
     .map(portfolio => ({
@@ -107,15 +107,6 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
 
   changeDetectRef = inject(ChangeDetectorRef);
 
-  @ViewChild("tablePortfolio", { static: true }) tablePortfolio !: ElementRef<HTMLElement>;
-
-  @ViewChild("exchangeButton") exchangeButton !: ElementRef<HTMLElement>;
-
-  @HostListener('window:resize', ['$event'])
-  onResize() {
-    this.adjustButtonPosition();
-  }
-
   constructor() {
     this.portfolios().map(portfolio => portfolio.percPlanned).forEach(perc => {
       this.slidersControl.push(this.fb.control(perc as number));
@@ -126,26 +117,6 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
         this.slidersControl.push(this.fb.control(perc as number));
       })
     })
-  }
-
-  ngAfterViewInit(): void {
-    this.adjustButtonPosition();
-  }
-
-  protected async adjustButtonPosition() {
-    await this.changeDetectRef.detectChanges();
-
-    const button = this.exchangeButton?.nativeElement;
-    const table = this.tablePortfolio?.nativeElement;
-
-    if (button && table) {
-      const btnRect = table.getBoundingClientRect();
-      if (btnRect.bottom > window.innerHeight) {
-        button.classList.add('fixed');
-      } else {
-        button.classList.remove('fixed');
-      }
-    }
   }
 
   updateSlider(index: number, value: number): void {
@@ -172,7 +143,6 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
     } else {
       this.expanded.push(portfolio.id);
     }
-    this.adjustButtonPosition();
   }
 
   addPortfolio() {
@@ -210,23 +180,19 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
     this.portfolioService.updatePortfolio(portfolio.id, { ...portfolio });
   }
 
-  toggleViewExchange() {
-    this.viewExchange = this.viewExchange === "original" ? "exchanged" : "original";
-  }
-
   cancelEditTransaction() {
     this.editingTransaction.set(false);
   }
-  
+
   submitEditTransaction(result: InvestmentTransactionFormResult) {
     this.transactionService.saveTransaction(result);
     const ticker = result.ticker;
     Object.entries(result.allocations)
       .filter(([_, qty]) => qty > 0)
-      .forEach(([portId, qty])=>{
+      .forEach(([portId, qty]) => {
         const portfolio = this.portfolioService.portfolios()[portId];
         if (!!portfolio) {
-          const changes : PortfolioChangeType = {
+          const changes: PortfolioChangeType = {
             ...portfolio,
             allocations: [
               ...Object.values(portfolio.allocations),

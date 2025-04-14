@@ -42,7 +42,7 @@ export class InvestmentPortfolioTableComponent {
 
   readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'averagePrice', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
 
-  displayExchange = input<"original" | "exchanged">("original");
+  exchangeView = computed(() => this.quoteService.exchangeView());
 
   editable = input<boolean>(false);
 

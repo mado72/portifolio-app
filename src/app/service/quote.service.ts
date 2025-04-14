@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { Currency, CurrencyType, KeyTypeOf } from '../model/domain.model';
-import { ExchangeStructureType, MarketPlaceEnum } from '../model/investment.model';
+import { ExchangeStructureType, ExchangeView, MarketPlaceEnum } from '../model/investment.model';
 import { AssetQuoteRecord, AssetQuoteType, SummarizedDataType } from '../model/source.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { SourceService } from './source.service';
@@ -26,6 +26,8 @@ export class QuoteService {
   private sourceService = inject(SourceService);
 
   private remoteQuotesService = inject(RemoteQuotesService);
+
+  readonly exchangeView = signal<ExchangeView>("original");
 
   readonly quotePendding = signal<AssetQuoteType | undefined>(undefined);
 
@@ -62,6 +64,10 @@ export class QuoteService {
     }, {} as Record<CurrencyType, Record<CurrencyType, number>>));
 
   constructor() {}
+
+  toggleExchangeView() {
+    this.exchangeView.update(exchangeView => (exchangeView === "original" ? "exchanged" : "original"));
+  }
 
   getExchangeQuote(from: Currency, to: Currency) {
     return this.exchanges()[from][to];

@@ -71,10 +71,10 @@
                     {{ portfolio.total.percAllocation | percent:'1.2-2' }}
                 </td>
                 <td class="td-cell column-marketValue">
-                    <app-exchange [exchange]="portfolio.total.marketValue" [display]="viewExchange" [hideIcon]="true"/>
+                    <app-exchange [exchange]="portfolio.total.marketValue" [display]="exchangeView()" [hideIcon]="true"/>
                 </td>
                 <td class="td-cell column-profit">
-                    <app-exchange [exchange]="portfolio.total.profit" [display]="viewExchange" [hideIcon]="true"/>
+                    <app-exchange [exchange]="portfolio.total.profit" [display]="exchangeView()" [hideIcon]="true"/>
                 </td>
                 <td class="td-cell column-performance">
                     <span></span>
@@ -95,8 +95,7 @@
                     <app-investment-portfolio-table [portfolioId]="portfolio.id" 
                         [currency]="portfolio.currency"
                         class="w-100 mat-elevation-z3" 
-                        [editable]="editable()"
-                        [displayExchange]="viewExchange"/>
+                        [editable]="editable()"/>
                 </td>
             </tr>
             } 
@@ -126,13 +125,7 @@
                     <span></span>
                     {{ total().performance | percent:'1.2-2' }}
                 </td>
-                <td class="td-cell column-actions" #tablePortfolio>
-                    <div #exchangeButton id="exchangeButton">
-                        <button mat-mini-fab (click)="toggleViewExchange()" class="custom-button" [class.pressed]="viewExchange === 'exchanged'">
-                            <mat-icon>currency_exchange</mat-icon>
-                        </button>
-                    </div>
-                </td>
+                <td class="td-cell column-actions"></td>
             </tr>
         </tfoot>
     

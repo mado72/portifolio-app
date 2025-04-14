@@ -116,3 +116,5 @@ export type ExchangeStructureType = {
   original: CurrencyValue,
   exchanged: CurrencyValue
 }
+
+export type ExchangeView = "original" | "exchanged";

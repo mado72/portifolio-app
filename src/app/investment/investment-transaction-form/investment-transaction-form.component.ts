@@ -146,10 +146,6 @@ export class InvestmentTransactionFormComponent {
     this.listenMarketplaceAndCodeToFillTickerValue();
     this.listenAccountIdToFillAccountName();
     this.listenQuantityAndQuoteToFillAmountValue();
-
-    (this.transactionForm.get("allocations") as FormArray).valueChanges.subscribe(values => {
-      console.log('Allocations updated', values); // Certifique-se de que os valores são atualizados
-    });    
   }
 
   listenMarketplaceAndCodeToFillTickerValue() {

@@ -50,16 +50,16 @@
             {{row.quantity}}
           </td>
           <td class="column-quote">
-            <app-exchange [exchange]="row.quote" [display]="displayExchange()" [hideIcon]="true"/>
+            <app-exchange [exchange]="row.quote" [display]="exchangeView()" [hideIcon]="true"/>
           </td>
           <td class="column-averagePrice d-none d-lg-flex" >
-            <app-exchange [exchange]="row.averagePrice" [display]="displayExchange()" [hideIcon]="true"/>
+            <app-exchange [exchange]="row.averagePrice" [display]="exchangeView()" [hideIcon]="true"/>
           </td>
           <td class="column-marketValue" >
-            <app-exchange [exchange]="row.marketValue" [display]="displayExchange()" [hideIcon]="true"/>
+            <app-exchange [exchange]="row.marketValue" [display]="exchangeView()" [hideIcon]="true"/>
           </td>
           <td class="column-profit">
-            <app-exchange [exchange]="row.profit" [display]="displayExchange()" [hideIcon]="true"/>
+            <app-exchange [exchange]="row.profit" [display]="exchangeView()" [hideIcon]="true"/>
           </td>
           <td class="column-percPlanned">
             {{row.percPlanned}}%
@@ -80,10 +80,10 @@
         <th class="d-none d-lg-flex"></th>
         <th class="d-none d-lg-flex"></th>
         <th class="column-marketValue">
-          <app-exchange [exchange]="total()?.marketValue" [display]="displayExchange()" [hideIcon]="true"/>
+          <app-exchange [exchange]="total()?.marketValue" [display]="exchangeView()" [hideIcon]="true"/>
         </th>
         <th class="column-profit" [class.negative]="(total()?.profit?.original?.value ?? 0) < 0">
-          <app-exchange [exchange]="total()?.profit" [display]="displayExchange()" [hideIcon]="true"/>
+          <app-exchange [exchange]="total()?.profit" [display]="exchangeView()" [hideIcon]="true"/>
         </th>
         <th class="column-percPlanned" >
           {{total()?.percPlanned | number:'1.2-2'}}%
