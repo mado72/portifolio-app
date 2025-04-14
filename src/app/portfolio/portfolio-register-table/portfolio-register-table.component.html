@@ -128,7 +128,7 @@
                 </td>
                 <td class="td-cell column-actions" #tablePortfolio>
                     <div #exchangeButton id="exchangeButton">
-                        <button mat-mini-fab (click)="toggleViewExchange()">
+                        <button mat-mini-fab (click)="toggleViewExchange()" class="custom-button" [class.pressed]="viewExchange === 'exchanged'">
                             <mat-icon>currency_exchange</mat-icon>
                         </button>
                     </div>
