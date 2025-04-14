@@ -1,16 +1,15 @@
-import { DatePipe, JsonPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { AccountBalanceExchange, AccountTypeEnum } from '../../model/domain.model';
-import { BalanceService } from '../../service/balance.service';
-import { SourceService } from '../../service/source.service';
-import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { QuoteService } from '../../service/quote.service';
-import { ExchangeStructureType } from '../../model/investment.model';
 import { BalanceType } from '../../model/source.model';
+import { BalanceService } from '../../service/balance.service';
+import { QuoteService } from '../../service/quote.service';
+import { SourceService } from '../../service/source.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
+import { CurrencyComponent } from '../../utils/currency/currency.component';
 
 type AccountBalanceExchangeSelectable = ReturnType<BalancesComponent["convertBalance"]>
 
@@ -23,7 +22,6 @@ type AccountBalanceExchangeSelectable = ReturnType<BalancesComponent["convertBal
     MatIconModule,
     CurrencyComponent,
     DatePipe,
-    JsonPipe,
     ExchangeComponent
 ],
   templateUrl: './balances.component.html',
