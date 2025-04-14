@@ -13,6 +13,16 @@
     justify-content: center;
 }
 
+.field-quantity {
+    display: inline-flex;
+    height: 76px;
+
+    mat-form-field {
+        width: 100%;
+    }
+}
+
+
 @media (min-width: 992px) {
 
     .flex-direction,
@@ -28,5 +38,31 @@
         padding: 0 16px;
         width: 29%;
     }
+    
+    .field-quantity {
+        width: 29%;
+        display: inline-flex;
+    
+        mat-form-field {
+            width: 100%;
+        }
+    }
+}
 
+.add-quantity {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    position: relative;
+    top: -37px;
+    margin-bottom: -37px;
+    margin-left: 15%;
+    width: 80%;
+
+    & > a {
+        text-decoration: none;
+        color: var(--bs-primary);
+        cursor: pointer;
+        font-size: 0.8em;
+    }
 }

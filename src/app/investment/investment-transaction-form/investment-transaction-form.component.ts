@@ -241,6 +241,11 @@ export class InvestmentTransactionFormComponent {
     this.onCancel.emit();
   }
 
+  addQuantity(value: number) {
+    const field = this.transactionForm.get('quantity') as FormControl<number>;
+    field.setValue(field.value + value);
+  }
+
 }
 
 function isAccountMatchedValidator(accounts: { account: string, id: string }[]): AsyncValidatorFn {

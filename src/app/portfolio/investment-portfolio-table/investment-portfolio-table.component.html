@@ -1,6 +1,7 @@
 @if (datasource() && total() ) {
 
-  <table class="table table-default mat-elevation-z8 table-hover" [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">
+  <table class="table table-default mat-elevation-z8 table-hover"
+      [class]="editable() ? 'table-editable' : 'table-readonly'" [attr.aria-label]="'Portfolio table'">
     <caption class="visually-hidden">Tabela de carteiras</caption>
 
     <thead>
@@ -52,11 +53,11 @@
           </td>
           <td class="column-quote">
             <span>{{row.quote.currency}}</span>
-            {{row.quote.value | number:'1.2-2'}}            
+            {{row.quote.value | number:'1.2-2'}}
           </td>
           <td class="column-averagePrice d-none d-lg-flex" >
             <span>{{row.quote.currency}}</span>
-            {{row.averagePrice | number:'1.2-2'}}            
+            {{row.averagePrice | number:'1.2-2'}}
           </td>
           <td class="column-marketValue" >
             <span></span>
@@ -85,11 +86,11 @@
         <th class="d-none d-lg-flex"></th>
         <th class="d-none d-lg-flex"></th>
         <th class="column-marketValue">
-          <span></span>
+          <span>{{currency()}}</span>
           {{total()?.marketValue| number:'1.2-2'}}
         </th>
         <th class="column-profit" [class.negative]="(total()?.profit || 0) < 0">
-          <span></span>
+          <span>{{currency()}}</span>
           {{total()?.profit| number:'1.2-2'}}
         </th>
         <th class="column-percPlanned" >

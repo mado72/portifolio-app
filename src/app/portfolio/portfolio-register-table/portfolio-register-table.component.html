@@ -1,140 +1,149 @@
-@if(editable()) {
-<div class="d-flex mb-3">
-    <button mat-button type="button" (click)="addPortfolio()">Adicionar Carteira</button>
-    <button mat-button type="button" (click)="addTransaction()">Adicionar Transação</button>
-</div>
-}
-<table class="table table-stick table-hover mb-2" id="table-master" 
-        [class]="editable() ? 'table-editable' : 'table-readonly'" 
-        [attr.aria-label]="'Portfolio table'">
-    <caption class="visually-hidden">Tabela de carteiras</caption>
+@if(!editingTransaction()) {
 
-    <thead>
-        <tr>
-            <th class="td-cell column-name">Carteira</th>
-            <th class="td-cell column-percPlanned">
-                <span class="d-none d-lg-inline">Planejado (%)</span>
-                <span class="d-sm-inline d-lg-none">Pljdo. (%)</span>
-            </th>
-            <th class="td-cell column-percAllocation">
-                <span class="d-none d-lg-inline">Alocação (%)</span>
-                <span class="d-sm-inline d-lg-none">Aloc. (%)</span>
-            </th>
-            <th class="td-cell column-marketValue">
-                <span>
-                    <span class="d-none d-lg-inline">Valor de Mercado</span>
-                    <span class="d-sm-inline d-lg-none">Vl.Mercado</span>
-                    {{currency()}}
-                </span>
-            </th>
-            <th class="td-cell column-profit" >
-                <span>
-                    <span>Resultado</span>
-                    {{currency()}}
-                </span>
-            </th>
-            <th class="td-cell column-performance" >Resultado (%)</th>
-            <th class="td-cell column-actions"></th>
-        </tr>
-    </thead>
-
-    <tbody class="table-group-divider" [formGroup]="formSliders">
-        @for(portfolio of portfolios(); track portfolio.id; let index = $index) {
-        <tr class="row-master" [formArrayName]="'sliders'">
-            <td class="td-cell column-name">
-                <div>
-                    <button class="button-toggle" type="button" aria-label="Toggle portfolio details" [attr.aria-expanded]="isExpanded(portfolio) ? 'true' : 'false'" (click)="toggleExpanded(portfolio)">
-                        <fa-icon [icon]="isExpanded(portfolio) ? iconOpen : iconClose"></fa-icon>
+    @if(editable()) {
+    <div class="d-flex mb-3">
+        <button mat-button type="button" (click)="addPortfolio()">Adicionar Carteira</button>
+        <button mat-button type="button" (click)="addTransaction()">Adicionar Transação</button>
+    </div>
+    }
+    <table class="table table-stick table-hover mb-2" id="table-master" 
+            [class]="editable() ? 'table-editable' : 'table-readonly'" 
+            [attr.aria-label]="'Portfolio table'">
+        <caption class="visually-hidden">Tabela de carteiras</caption>
+    
+        <thead>
+            <tr>
+                <th class="td-cell column-name">Carteira</th>
+                <th class="td-cell column-percPlanned">
+                    <span class="d-none d-lg-inline">Planejado (%)</span>
+                    <span class="d-sm-inline d-lg-none">Pljdo. (%)</span>
+                </th>
+                <th class="td-cell column-percAllocation">
+                    <span class="d-none d-lg-inline">Alocação (%)</span>
+                    <span class="d-sm-inline d-lg-none">Aloc. (%)</span>
+                </th>
+                <th class="td-cell column-marketValue">
+                    <span>
+                        <span class="d-none d-lg-inline">Valor de Mercado</span>
+                        <span class="d-sm-inline d-lg-none">Vl.Mercado</span>
+                        {{currency()}}
+                    </span>
+                </th>
+                <th class="td-cell column-profit" >
+                    <span>
+                        <span>Resultado</span>
+                        {{currency()}}
+                    </span>
+                </th>
+                <th class="td-cell column-performance" >Resultado (%)</th>
+                <th class="td-cell column-actions"></th>
+            </tr>
+        </thead>
+    
+        <tbody class="table-group-divider" [formGroup]="formSliders">
+            @for(portfolio of portfolios(); track portfolio.id; let index = $index) {
+            <tr class="row-master" [formArrayName]="'sliders'">
+                <td class="td-cell column-name">
+                    <div>
+                        <button class="button-toggle" type="button" aria-label="Toggle portfolio details" [attr.aria-expanded]="isExpanded(portfolio) ? 'true' : 'false'" (click)="toggleExpanded(portfolio)">
+                            <fa-icon [icon]="isExpanded(portfolio) ? iconOpen : iconClose"></fa-icon>
+                        </button>
+                        <span>{{ portfolio.name }}</span>
+                    </div>
+                </td>
+                <td class="td-cell column-percPlanned">
+                    <span></span>
+                    @if (editable()) {
+                        <div class="d-none d-lg-flex">
+                            <mat-slider min="0" max="100" step="0.5" [attr.aria-label]="'Slider for ' + portfolio.name">
+                                <input matSliderThumb [formControlName]="index" #slider 
+                                    (valueChange)="updateSlider(index, $event)" [value]="slidersControl.at(index).value" />
+                            </mat-slider>
+                            <button mat-icon-button type="button" class="tune-button" (click)="fillToHundredPercent(index)">
+                                <mat-icon>tune</mat-icon>
+                            </button>
+                        </div>
+                    }
+                    {{ portfolio.percPlanned | number:'1.2-2' }}%
+                </td>
+                <td class="td-cell column-percAllocation" >
+                    <span></span>
+                    {{ portfolio.total.percAllocation | percent:'1.2-2' }}
+                </td>
+                <td class="td-cell column-marketValue">
+                    <app-exchange [exchange]="portfolio.total.marketValue" [display]="viewExchange" [hideIcon]="true"/>
+                </td>
+                <td class="td-cell column-profit">
+                    <app-exchange [exchange]="portfolio.total.profit" [display]="viewExchange" [hideIcon]="true"/>
+                </td>
+                <td class="td-cell column-performance">
+                    <span></span>
+                    {{ portfolio.total.performance | percent:'1.2-2' }}
+                </td>
+                <td class="td-cell column-actions d-flex justify-content-end">
+                    <button mat-icon-button type="button" (click)="editPortfolio(portfolio.id)" [disabled]="!editable()" class="edit-button small-icon-button" [attr.aria-label]="'Edit portfolio ' + portfolio.name">
+                         <mat-icon>edit</mat-icon>
                     </button>
-                    <span>{{ portfolio.name }}</span>
-                </div>
-            </td>
-            <td class="td-cell column-percPlanned">
-                <span></span>
-                @if (editable()) {
-                    <div class="d-none d-lg-flex">
-                        <mat-slider min="0" max="100" step="0.5" [attr.aria-label]="'Slider for ' + portfolio.name">
-                            <input matSliderThumb [formControlName]="index" #slider 
-                                (valueChange)="updateSlider(index, $event)" [value]="slidersControl.at(index).value" />
-                        </mat-slider>
-                        <button mat-icon-button type="button" class="tune-button" (click)="fillToHundredPercent(index)">
-                            <mat-icon>tune</mat-icon>
+                    <button mat-icon-button type="button" (click)="deletePortfolio(portfolio.id)" [disabled]="!editable()" class="delete-button small-icon-button" [attr.aria-label]="'Delete portfolio ' + portfolio.name">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </td>
+            </tr>
+            <tr class="row-expansible " [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [class.expanded]="isExpanded(portfolio)">
+                <td colspan="8" class="py-2 mb-4 w-100 d-flex flex-column align-items-start">
+                    <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
+                    <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3" [editable]="editable()"></app-investment-portfolio-table>
+                </td>
+            </tr>
+            } 
+        </tbody>
+    
+        <tfoot>
+            <tr>
+                <th class="td-cell column-total">
+                    <em>Total</em>
+                </th>
+                <td class="td-cell column-percPlanned">
+                    <span></span>
+                    {{ total().percPlanned | number:'1.2-2' }}%
+                </td>
+                <td class="td-cell column-percAllocation">
+                    <span></span>
+                </td>
+                <td class="td-cell column-marketValue">
+                    <span></span>
+                    {{ total().marketValue | number:'1.2-2' }}
+                </td>
+                <td class="td-cell column-profit">
+                    <span></span>
+                    {{ total().profit | number:'1.2-2' }}
+                </td>
+                <td class="td-cell column-performance">
+                    <span></span>
+                    {{ total().performance | percent:'1.2-2' }}
+                </td>
+                <td class="td-cell column-actions" #tablePortfolio>
+                    <div #exchangeButton id="exchangeButton">
+                        <button mat-mini-fab (click)="toggleViewExchange()">
+                            <mat-icon>currency_exchange</mat-icon>
                         </button>
                     </div>
-                }
-                {{ portfolio.percPlanned | number:'1.2-2' }}%
-            </td>
-            <td class="td-cell column-percAllocation" >
-                <span></span>
-                {{ portfolio.total.percAllocation | percent:'1.2-2' }}
-            </td>
-            <td class="td-cell column-marketValue">
-                <app-exchange [exchange]="portfolio.total.marketValue" [display]="viewExchange" [hideIcon]="true"/>
-            </td>
-            <td class="td-cell column-profit">
-                <app-exchange [exchange]="portfolio.total.profit" [display]="viewExchange" [hideIcon]="true"/>
-            </td>
-            <td class="td-cell column-performance">
-                <span></span>
-                {{ portfolio.total.performance | percent:'1.2-2' }}
-            </td>
-            <td class="td-cell column-actions d-flex justify-content-end">
-                <button mat-icon-button type="button" (click)="editPortfolio(portfolio.id)" [disabled]="!editable()" class="edit-button small-icon-button" [attr.aria-label]="'Edit portfolio ' + portfolio.name">
-                     <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button type="button" (click)="deletePortfolio(portfolio.id)" [disabled]="!editable()" class="delete-button small-icon-button" [attr.aria-label]="'Delete portfolio ' + portfolio.name">
-                    <mat-icon>delete</mat-icon>
-                </button>
-            </td>
-        </tr>
-        <tr class="row-expansible " [@detailExpand]="isExpanded(portfolio) ? 'expanded' : 'collapsed'" [class.expanded]="isExpanded(portfolio)">
-            <td colspan="8" class="py-2 mb-4 w-100 d-flex flex-column align-items-start">
-                <h4 class="my-2">Ativos da carteira {{portfolio.name}}</h4>
-                <app-investment-portfolio-table [portfolioId]="portfolio.id" class="w-100 mat-elevation-z3" [editable]="editable()"></app-investment-portfolio-table>
-            </td>
-        </tr>
-        } 
-    </tbody>
-
-    <tfoot>
-        <tr>
-            <th class="td-cell column-total">
-                <em>Total</em>
-            </th>
-            <td class="td-cell column-percPlanned">
-                <span></span>
-                {{ total().percPlanned | number:'1.2-2' }}%
-            </td>
-            <td class="td-cell column-percAllocation">
-                <span></span>
-            </td>
-            <td class="td-cell column-marketValue">
-                <span></span>
-                {{ total().marketValue | number:'1.2-2' }}
-            </td>
-            <td class="td-cell column-profit">
-                <span></span>
-                {{ total().profit | number:'1.2-2' }}
-            </td>
-            <td class="td-cell column-performance">
-                <span></span>
-                {{ total().performance | percent:'1.2-2' }}
-            </td>
-            <td class="td-cell column-actions" #tablePortfolio>
-                <div #exchangeButton id="exchangeButton">
-                    <button mat-mini-fab (click)="toggleViewExchange()">
-                        <mat-icon>currency_exchange</mat-icon>
-                    </button>
-                </div>
-            </td>
-        </tr>
-    </tfoot>
-
-</table>
-
-
-<!-- <code>
-    <pre>
-formSliders: {{formSliders.value | json}}
-    </pre>
-</code> -->
+                </td>
+            </tr>
+        </tfoot>
+    
+    </table>
+    
+    
+    <!-- <code>
+        <pre>
+    formSliders: {{formSliders.value | json}}
+        </pre>
+    </code> -->
+}
+@else {
+    <app-investment-transaction-form
+        (onSubmit)="submitEditTransaction($event)"
+        (onCancel)="cancelEditTransaction()"
+        ></app-investment-transaction-form>
+}

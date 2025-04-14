@@ -39,13 +39,17 @@ export class InvestmentPortfolioTableComponent {
 
   editable = input<boolean>(false);
 
-  // portfolioId = input<string>('', {alias: 'portfolioId'});
-
   currency = input<Currency>(this.sourceService.currencyDefault());
 
   source!: Signal<Record<string,DatasourceRowType>>;
 
-  portfolio = input<PortfolioAllocationsArrayItemType>();
+  portfolioId = input<string>();
+
+  portfolio = computed(() => {
+    const id = this.portfolioId();
+    if (!id) return undefined;
+    return this.portfolioService.portfolios()[id]
+  })
 
   datasource = computed(() => {
     return Object.values(this.portfolio()?.allocations || {});

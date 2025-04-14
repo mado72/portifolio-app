@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, computed, effect, ElementRef, HostListener, inject, input, viewChild, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, computed, effect, ElementRef, HostListener, inject, input, signal, viewChild, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -9,12 +9,13 @@ import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType, SummarizedDataType } from '../../model/source.model';
-import { PortfolioService } from '../../service/portfolio-service';
+import { PortfolioChangeType, PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
 import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from "../../investment/investment-transaction-form/investment-transaction-form.component";
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"> & {
   allocations: PortfolioAllocationType[];
@@ -37,7 +38,8 @@ type SummarizedDataTypeKey = keyof SummarizedDataType;
     DecimalPipe,
     ReactiveFormsModule,
     InvestmentPortfolioTableComponent,
-    ExchangeComponent
+    ExchangeComponent,
+    InvestmentTransactionFormComponent
   ],
   animations: [
     trigger('detailExpand', [
@@ -87,7 +89,9 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
 
   expandedElement: DatasourceMasterType | null = null;
 
-  editable = input<boolean>(false)
+  editable = input<boolean>(false);
+
+  editingTransaction = signal(false);
 
   formSliders = this.fb.group({
     sliders: this.fb.array([]),
@@ -98,9 +102,9 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
   }
 
   changeDetectRef = inject(ChangeDetectorRef);
-  
-  @ViewChild("tablePortfolio", {static: true}) tablePortfolio !: ElementRef<HTMLElement>;
-  
+
+  @ViewChild("tablePortfolio", { static: true }) tablePortfolio !: ElementRef<HTMLElement>;
+
   @ViewChild("exchangeButton") exchangeButton !: ElementRef<HTMLElement>;
 
   @HostListener('window:resize', ['$event'])
@@ -189,7 +193,8 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
     this.portfolioService.removePortfolio(portfolioId);
   }
   addTransaction() {
-    this.transactionService.openAddDialog()
+    this.editingTransaction.set(true);
+    // this.transactionService.openAddDialog()
   }
 
   fillToHundredPercent(index: number) {
@@ -205,4 +210,32 @@ export class PortfolioRegisterTableComponent implements AfterViewInit {
     this.viewExchange = this.viewExchange === "original" ? "exchanged" : "original";
   }
 
+  cancelEditTransaction() {
+    this.editingTransaction.set(false);
+  }
+  
+  submitEditTransaction(result: InvestmentTransactionFormResult) {
+    this.transactionService.saveTransaction(result);
+    const ticker = result.ticker;
+    Object.entries(result.allocations)
+      .filter(([_, qty]) => qty > 0)
+      .forEach(([portId, qty])=>{
+        const portfolio = this.portfolioService.portfolios()[portId];
+        if (!!portfolio) {
+          const changes : PortfolioChangeType = {
+            ...portfolio,
+            allocations: [
+              ...Object.values(portfolio.allocations),
+              {
+                ticker,
+                percPlanned: 0,
+                quantity: qty
+              }
+            ]
+          };
+          this.portfolioService.updatePortfolio(portId, changes);
+        }
+      })
+    this.editingTransaction.set(false);
+  }
 }

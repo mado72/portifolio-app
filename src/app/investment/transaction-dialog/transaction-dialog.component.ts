@@ -11,17 +11,16 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { combineLatest, startWith } from 'rxjs';
-import { AccountTypeEnum, Currency } from '../../model/domain.model';
+import { AccountTypeEnum } from '../../model/domain.model';
 import { divide } from '../../model/functions.model';
-import { InvestmentEnum, TransactionStatus } from '../../model/investment.model';
+import { InvestmentEnum } from '../../model/investment.model';
 import { AssetQuoteType, InvestmentTransactionType, PortfolioType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
-import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
-import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
+import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 
 const PagesArray = new Array(5).fill(0).map((_,i)=>i);
 
@@ -52,8 +51,7 @@ export type TransactionDialogType = {
     MatDialogModule,
     MatTableModule,
     MatIconModule,
-    InvestmentTypePipe,
-    TransactionStatusPipe
+    InvestmentTypePipe
   ],
   providers: [
     provideNativeDateAdapter()
@@ -98,7 +96,7 @@ export class TransactionDialogComponent implements OnInit {
       id: this.fb.control(this.data.transaction.id),
       date: this.fb.control(this.data.transaction.date, [Validators.required]),
       accountId: this.fb.control(this.data.transaction.accountId, []),
-      quantity: this.fb.control(this.data.transaction.quantity, [Validators.required, Validators.min(0)]),
+      quantity: this.fb.control(this.data.transaction.quantity, [Validators.required, Validators.min(0.000001)]),
       quote: this.fb.control(this.data.transaction.quote, [Validators.required, Validators.min(0.01)]),
       value: this.fb.group({
         amount: this.fb.control(this.data.transaction.value.value, [Validators.required, Validators.min(0.01)]),
@@ -256,8 +254,6 @@ export class TransactionDialogComponent implements OnInit {
     });
     portfolioControl.patchValue({id, name, quantity})
     this.portfolios.push(portfolioControl);
-    // this.portfolioList.set(this.portfolios.value);
-    // this.changeDetectorRefs.detectChanges();
   }
 
     

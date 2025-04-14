@@ -161,7 +161,7 @@
                             }
                         </mat-form-field>
                     </mat-cell>
-                    <mat-footer-cell *matFooterCellDef>Não alocado</mat-footer-cell>
+                    <mat-footer-cell *matFooterCellDef>Distribuir</mat-footer-cell>
                 </ng-container>
                 <ng-container matColumnDef="quantity">
                     <mat-cell *matCellDef="let row; let i = index" [formGroupName]="i">
@@ -194,9 +194,9 @@
     </mat-dialog-content>
 
     <mat-dialog-actions>
-        <button type="button" mat-button (click)="gotoPage(page+1)" [disabled]="page > 3">Próximo</button>
+        <button type="button" mat-button (click)="gotoPage(page+1)" [disabled]="page >= 1">Próximo</button>
         <!-- <button type="button" mat-button (click)="gotoPage('Portfolio')" [disabled]="transactionForm.invalid">Próximo</button> -->
-        <button type="button" mat-button (click)="gotoPage(page-1)" [disabled]="page < 1">Voltar</button>
+        <button type="button" mat-button (click)="gotoPage(page-1)" [disabled]="page <= 0">Voltar</button>
         <button type="submit" mat-stroked-button [mat-dialog-close]="formValue" color="primary"
             [disabled]="transactionForm.invalid">Salvar</button>
         <button type="button" mat-button [mat-dialog-close]="undefined">Cancelar</button>

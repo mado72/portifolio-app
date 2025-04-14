@@ -25,7 +25,7 @@
         </div>
         <div class="card d-none d-lg-block">
             <div class="p-4 card-body d-flex">
-                <div [formGroup]="transactionForm" class="d-flex flex-wrap justify-content-evenly">
+                <div [formGroup]="transactionForm" class="g-form">
                     <ng-container [ngTemplateOutlet]="general"/>
                     <ng-container [ngTemplateOutlet]="financial"/>
                     <div class="w-100 card mt-3">
@@ -51,7 +51,7 @@
     <button mat-stroked-button color="primary" type="submit" [disabled]="!transactionForm.valid">
         Salvar
     </button>
-    <button mat-button color="secondary" type="button">
+    <button mat-button color="secondary" type="button" (click)="onCancelRequest()">
         Cancelar
     </button>
 </ng-template>
@@ -110,24 +110,34 @@
 
 <ng-template #financial>
     <ng-container [formGroup]="transactionForm">
-        <mat-form-field class="full-width">
-            <mat-label>Quantidade</mat-label>
-            <input matInput type="number" formControlName="quantity" appSelectOnFocus>
-        </mat-form-field>
+        <div class="full-width field-quantity">
+            <div class="d-flex flex-column w-100">
+                <mat-form-field class="full-width">
+                    <mat-label>Quantidade</mat-label>
+                    <input matInput type="number" formControlName="quantity" class="text-end" appSelectOnFocus min="0">
+                </mat-form-field>
+                <div class="add-quantity">
+                    <a role="button" (click)="addQuantity(1000)">+1000</a>
+                    <a role="button" (click)="addQuantity(100)">+100</a>
+                    <a role="button" (click)="addQuantity(10)">+10</a>
+                    <a role="button" (click)="addQuantity(1)">+1</a>
+                </div>
+            </div>
+    </div>
     
         <mat-form-field class="full-width">
             <mat-label>Cotação</mat-label>
-            <input matInput type="number" formControlName="quote" appSelectOnFocus step="0.1" min="0">
+            <input matInput type="number" formControlName="quote" class="text-end" appSelectOnFocus step="0.1" min="0">
         </mat-form-field>
     
         <mat-form-field class="full-width">
             <mat-label>Valor</mat-label>
-            <input matInput type="number" formControlName="amount" appSelectOnFocus min="0">
+            <input matInput type="number" formControlName="amount" class="text-end" appSelectOnFocus min="0">
         </mat-form-field>
     
         <mat-form-field class="full-width">
             <mat-label>Comissão</mat-label>
-            <input matInput type="number" formControlName="brokerage" appSelectOnFocus>
+            <input matInput type="number" formControlName="brokerage" class="text-end" appSelectOnFocus>
         </mat-form-field>
     </ng-container>
 </ng-template>
