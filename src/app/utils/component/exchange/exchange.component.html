@@ -6,7 +6,7 @@
     @else { - }
 </span>
 @if (!hideIcon()) {
-    <button class="exch-icon" mat-icon-button (click)="toggle()" [title]="iconTitle()" 
+    <button class="exch-icon" mat-icon-button (click)="$event.stopImmediatePropagation(); toggle();" [title]="iconTitle()" 
         [disabled]="other()?.currency === value()?.currency">
          <mat-icon>currency_exchange</mat-icon>
     </button>

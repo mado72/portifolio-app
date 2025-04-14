@@ -1,15 +1,10 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, computed, effect, inject, input, LOCALE_ID, OnInit, signal } from '@angular/core';
+import { Component, computed, inject, input, LOCALE_ID, signal } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { faExchange } from '@fortawesome/free-solid-svg-icons';
-import { CurrencyValue } from '../../../model/domain.model';
-import { toObservable } from '@angular/core/rxjs-interop';
-
-export type ExchangeInputType = {
-  original: CurrencyValue,
-  exchanged: CurrencyValue
-}
+import { ExchangeStructureType } from '../../../model/investment.model';
 
 @Component({
   selector: 'app-exchange',
@@ -28,7 +23,7 @@ export class ExchangeComponent {
 
   private decimalPipe = new DecimalPipe(inject(LOCALE_ID));
 
-  exchange = input<ExchangeInputType| null>(null);
+  exchange = input<ExchangeStructureType| null | undefined>(null);
 
   display = input<"original" | "exchanged" | null>(null);
 
@@ -41,7 +36,7 @@ export class ExchangeComponent {
     if (!exchange) {
       return null;
     }
-    const display = this.exchangeDisplay() as keyof ExchangeInputType;
+    const display = this.exchangeDisplay() as keyof ExchangeStructureType;
     return exchange[display];
   });
 
