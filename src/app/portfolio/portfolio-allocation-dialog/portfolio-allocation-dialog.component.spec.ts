@@ -16,7 +16,7 @@ const dataMock = {
     initialPrice: 0,
     lastUpdate: new Date(),
     quote: {
-      price: 0,
+      value: 0,
       currency: Currency.BRL
     },
     type: AssetEnum.OTHER,
