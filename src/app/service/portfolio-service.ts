@@ -15,6 +15,7 @@ export type PortfolioChangeType = {
     ticker: string;
     percPlanned: number;
     quantity: number;
+    marketValue?: number;
   }[];
 };
 
@@ -183,9 +184,13 @@ export class PortfolioService {
       // Update allocations
       const updatedAllocations = portfolio.allocations;
       const quotes = this.quoteService.quotes() || {};
+      const quotesChanged = new Map<string, number>();
 
-      changes.allocations?.forEach(({ ticker, percPlanned, quantity }) => {
+      changes.allocations?.forEach(({ ticker, percPlanned, quantity, marketValue }) => {
         const [marketPlace, code] = ticker.split(':');
+
+        const manualQuote = updatedAllocations[ticker].manualQuote && marketValue;
+
         if (updatedAllocations[ticker]) {
           const tickerQuote = quotes[ticker];
 
@@ -203,7 +208,8 @@ export class PortfolioService {
           const newValue = {
             ...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity,
             initialValue: newTotalInvestment,
-            averagePrice: newAveragePrice
+            averagePrice: newAveragePrice,
+            marketValue: manualQuote && marketValue || updatedAllocations[ticker].marketValue
           };
           updatedAllocations[ticker] = newValue;
         }
@@ -219,7 +225,7 @@ export class PortfolioService {
             code,
             quote: asset.quote,
             initialValue: asset.quote.value * quantity,
-            marketValue: asset.quote.value * quantity,
+            marketValue: marketValue ||  asset.quote.value * quantity,
             averagePrice: asset.quote.value,
             profit: 0,
             performance: 0,
@@ -228,6 +234,10 @@ export class PortfolioService {
             quantity,
             manualQuote: !!asset.manualQuote
           };
+        }
+        
+        if (manualQuote) {
+          quotesChanged.set(ticker, marketValue / quantity);
         }
       });
 
@@ -243,6 +253,12 @@ export class PortfolioService {
           return acc;
         }, {} as PortfolioAllocationRecord),
       }]);
+      
+      quotesChanged.forEach((value, ticker)=> {
+        const asset = this.sourceService.assertSource()[ticker];
+        asset.quote.value = value;
+        this.quoteService.updateQuoteAsset(asset);
+      })
     }
   }
 

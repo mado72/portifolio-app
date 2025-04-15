@@ -59,11 +59,11 @@ export class AssetDialogComponent implements AfterViewInit {
     code: this.fb.control(this.data.asset?.code, [Validators.required]),
     type: this.fb.control(this.data.asset?.type, [Validators.required]),
     quote: this.fb.group({
-      amount: this.fb.control(this.data.asset?.quote.value, []),
+      value: this.fb.control(this.data.asset?.quote.value, []),
       currency: this.fb.control(this.data.asset?.quote.currency, [Validators.required]),
     }),
     controlByQty: this.fb.control(this.data.asset?.controlByQty, []),
-    manualQuote: this.fb.control(this.data.asset?.manualQuote, [])
+    manualQuote: this.fb.control(this.data.asset?.manualQuote, []),
   });
 
   constructor() {}
@@ -118,16 +118,12 @@ export class AssetDialogComponent implements AfterViewInit {
     return this.formAsset.get("type") as FormControl<AssetEnum>;
   }
 
-  get quote() {
-    return this.formAsset.get('quote') as FormGroup;
-  }
-
-  get quotePrice() {
-    return this.quote.get("price") as FormControl<number>;
-  }
-
   get quoteCurrency() {
-    return this.quote.get("currency") as FormControl<Currency>;
+    return this.formAsset.get("quote.currency") as FormControl<Currency>;
+  }
+
+  get quoteValue() {
+    return this.formAsset.get("quote.value") as FormControl<number>;
   }
 
   get controlByQty() {

@@ -6,13 +6,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { AssetCodePipe } from '../../utils/pipe/asset-code.pipe';
 import { AssetQuoteType } from '../../model/source.model';
+import { Currency } from '../../model/domain.model';
 
 export type PorfolioAllocationDataType = {
   portfolio: string,
   ticker: string,
   asset: AssetQuoteType,
   quantity: number,
-  percent: number
+  percent: number,
+  currency: Currency,
+  marketValue?: number,
+  manualQuote: boolean
 }
 @Component({
   selector: 'app-portfolio-allocation-dialog',
@@ -39,7 +43,14 @@ export class PortfolioAllocationDialogComponent {
   readonly allocationForm = this.fb.group({
     quantity: this.fb.control(this.data.quantity, [Validators.required, Validators.min(0)]),
     percent: this.fb.control(this.data.percent, [Validators.required, Validators.min(0)]),
+    marketValue: this.fb.control(this.data.marketValue),
   })
+
+  constructor() {
+    if (this.data.manualQuote) {
+      this.marketValue.setValidators([Validators.required, Validators.min(0)]);
+    }
+  }
 
   get quantity() {
     return this.allocationForm.get('quantity') as FormControl;
@@ -47,6 +58,10 @@ export class PortfolioAllocationDialogComponent {
 
   get percent() {
     return this.allocationForm.get('percent') as FormControl;
+  }
+
+  get marketValue() {
+    return this.allocationForm.get('marketValue') as FormControl;
   }
 
   submitForm() {

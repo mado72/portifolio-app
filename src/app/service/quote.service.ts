@@ -99,14 +99,19 @@ export class QuoteService {
   updateQuoteAsset(asset: AssetQuoteType) {
     const ticker = getMarketPlaceCode(asset);
     const original = this.sourceService.assertSource()[ticker];
-    this.remoteQuotesService.getRemoteQuote(asset.marketPlace, asset.code).subscribe(quote => {
-      asset = { ...original, ...asset,
-        quote: {
-          value: quote.price,
-          currency: quote.currency
+    if (! asset.manualQuote) {
+      this.remoteQuotesService.getRemoteQuote(asset.marketPlace, asset.code).subscribe(quote => {
+        asset = { ...original, ...asset,
+          quote: {
+            value: quote.price,
+            currency: quote.currency
+          }
         }
-      }
-    })
-    this.quotePendding.set(asset);
+      })
+      this.quotePendding.set(asset);
+    }
+    else {
+      this.sourceService.updateAsset([asset]);
+    }
   }
 }

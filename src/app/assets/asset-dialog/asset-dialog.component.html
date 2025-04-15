@@ -33,14 +33,29 @@
                 }
             </mat-select>
         </mat-form-field>
-        <mat-form-field formGroupName="quote">
-            <mat-label>Moeda</mat-label>
-            <mat-select formControlName="currency">
-                @for (item of currencies; track $index) {
-                    <mat-option [value]="item">{{ item }}</mat-option>
-                }
-            </mat-select>
-        </mat-form-field>
+
+        <ng-container formGroupName="quote">
+            <mat-form-field>
+                <mat-label>Moeda</mat-label>
+                <mat-select formControlName="currency">
+                    @for (item of currencies; track $index) {
+                        <mat-option [value]="item">{{ item }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+
+            @if(manualQuote.value === true) {
+                <mat-form-field>
+                    <mat-label>Cotação</mat-label>
+                    <input matInput type="number" class="text-end" formControlName="value" step="0.01" min="0">
+                    @if (quoteValue.touched && quoteValue.invalid) {
+                        <mat-error>
+                            Valor inválido para a cotação.
+                        </mat-error>
+                    }
+                </mat-form-field>
+            }
+        </ng-container>
         
         <div class="d-flex justify-content-between">
             <mat-checkbox formControlName="controlByQty">Controlado por quantidade</mat-checkbox>

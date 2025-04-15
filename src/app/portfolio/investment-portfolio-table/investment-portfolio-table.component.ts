@@ -99,26 +99,27 @@ export class InvestmentPortfolioTableComponent {
       asset,
       portfolio: this.portfolioName(),
       quantity: row.quantity,
-      percent: row.percPlanned
+      percent: row.percPlanned,
+      currency: asset.quote.currency,
+      manualQuote: asset.manualQuote === true,
+      marketValue: row.marketValue?.original.value || 0
     }
     const dialogRef = this.dialog.open(PortfolioAllocationDialogComponent, { data });
 
     dialogRef.afterClosed().subscribe((result: PorfolioAllocationDataType) => {
       if (result) {
-        const delta = result.quantity - data.quantity;
-        if (delta !== 0) {
-          const changes = {
-            allocations: [{
-              ticker: result.ticker,
-              quantity: result.quantity,
-              percPlanned: result.percent,
-            }]
-          }
+        const changes = {
+          allocations: [{
+            ticker: result.ticker,
+            quantity: result.quantity,
+            percPlanned: result.percent,
+            marketValue: result.marketValue
+          }]
+        }
 
-          const portfolio = this.portfolio();
-          if (!! portfolio?.id) {
-            this.portfolioService.updatePortfolio(portfolio.id, changes)
-          }
+        const portfolio = this.portfolio();
+        if (!! portfolio?.id) {
+          this.portfolioService.updatePortfolio(portfolio.id, changes)
         }
       }
     });
