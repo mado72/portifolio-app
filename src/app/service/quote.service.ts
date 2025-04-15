@@ -5,6 +5,7 @@ import { ExchangeStructureType, ExchangeView, MarketPlaceEnum } from '../model/i
 import { AssetQuoteRecord, AssetQuoteType } from '../model/source.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { SourceService } from './source.service';
+import { map } from 'rxjs';
 
 export const getMarketPlaceCode = ({ marketPlace, code }: { marketPlace: string | MarketPlaceEnum; code: string; }): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
@@ -113,5 +114,17 @@ export class QuoteService {
     else {
       this.sourceService.updateAsset([asset]);
     }
+  }
+
+  getRemoteQuote(ticker: string) {
+    const [marketPlace, code] = ticker.includes(':') ? ticker.split(':') : ['', ticker];
+    return this.remoteQuotesService.getRemoteQuote(marketPlace, code).pipe(
+      map(resp => {
+        if (!!resp) {
+          return resp.price;
+        }
+        return null;
+      })
+    )
   }
 }

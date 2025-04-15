@@ -11,7 +11,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith } from 'rxjs';
 import { Currency } from '../../model/domain.model';
-import { InvestmentEnum, TransactionStatus } from '../../model/investment.model';
+import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
@@ -66,11 +66,7 @@ export class InvestmentTransactionFormComponent {
 
   assets = this.quoteService.quotes;
 
-  marketPlaces = computed(() => {
-    const assets = this.assets();
-    const marketPlaces = new Set(Object.values(assets).map(asset => asset.marketPlace))
-    return Array.from(marketPlaces);
-  })
+  marketPlaces = computed(() => Object.keys(MarketPlaceEnum));
 
   ticker = signal<string | null>(null);
 
@@ -138,8 +134,19 @@ export class InvestmentTransactionFormComponent {
 
     effect(() => {
       const assetSelected = this.assetSelected();
+      const ticker = this.ticker();
       if (assetSelected) {
         this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
+      }
+      else if (ticker && ticker.includes(':')) {
+        const [marketPlace, code] = ticker.split(':');
+        if (!!code) {
+          this.quoteService.getRemoteQuote(ticker).subscribe(price=>{
+            if (!! price) {
+              this.transactionForm.get('quote')?.setValue(price);
+            }
+          })
+        }
       }
     })
 
