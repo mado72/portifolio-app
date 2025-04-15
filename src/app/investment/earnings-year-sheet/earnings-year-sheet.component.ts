@@ -278,18 +278,24 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   private saveEarning(element: SheetRow, entry: EarningEntry) {
-    let [marketPlace, code] = element.ticker.split(':');
+    let [marketPlace, code] = element.ticker.includes(':') 
+      ? element.ticker.split(':') 
+      : [element.ticker, ''];
     const earnings = this.investmentService.findIncomesOfAsset({ marketPlace, code });
 
     const earning: Income | undefined = earnings.find(item => item.id === entry.id);
 
     if (!!earning) {
-      if (!entry.amount) {
+      if (!entry.amount && earning.id) {
         this.investmentService.deleteIncome(earning.id);
       }
-      else {
+      else if (earning.id) {
         const entryData = { ...earning, ...entry, ticker: element.ticker } as Required<Income>;
-        this.investmentService.updateIncome(earning.id, { ...entryData, date: entry.date as Date });
+        if (entry.date && !isNaN(new Date(entry.date).getTime())) {
+          this.investmentService.updateIncome(earning.id, { ...entryData, date: new Date(entry.date) });
+        } else {
+          console.warn('Invalid date provided for entry:', entry);
+        }
       }
     }
     else {
@@ -298,16 +304,13 @@ export class EarningsYearSheetComponent implements OnInit {
         .find(item => item.value === element.acronymEarn);
 
       const entryData = { type: earningTypeFound?.key, ...entry, ticker: element.ticker } as Required<Income>;
-      if (entry.amount) {
+      if (entry.amount && entryData.type && entryData.ticker && entryData.date && !isNaN(new Date(entryData.date).getTime())) {
         this.investmentService.addIncome(element.ticker, entryData);
         
-        // this.setEarningValue(earning, element);
-        this.doFilter();
+        this.changeDetectorRef.detectChanges();
       }
     }
-    this.changeDetectorRef.detectChanges();
   }
-
   getRowsPan(row: SheetRow) {
     return Object.keys(row.entries).length
   }
