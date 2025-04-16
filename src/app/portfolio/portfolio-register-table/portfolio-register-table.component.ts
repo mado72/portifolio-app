@@ -186,26 +186,7 @@ export class PortfolioRegisterTableComponent {
 
   submitEditTransaction(result: InvestmentTransactionFormResult) {
     this.transactionService.saveTransaction(result);
-    const ticker = result.ticker;
-    Object.entries(result.allocations)
-      .filter(([_, qty]) => qty > 0)
-      .forEach(([portId, qty]) => {
-        const portfolio = this.portfolioService.portfolios()[portId];
-        if (!!portfolio) {
-          const changes: PortfolioChangeType = {
-            ...portfolio,
-            allocations: [
-              ...Object.values(portfolio.allocations),
-              {
-                ticker,
-                percPlanned: 0,
-                quantity: qty
-              }
-            ]
-          };
-          this.portfolioService.updatePortfolio(portId, changes);
-        }
-      })
+    this.portfolioService.processTransaction(result.ticker, result.allocations);
     this.editingTransaction.set(false);
   }
 }

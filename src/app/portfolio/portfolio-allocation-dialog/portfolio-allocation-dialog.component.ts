@@ -52,6 +52,18 @@ export class PortfolioAllocationDialogComponent {
     }
   }
 
+  removeAllocation() {
+    this.dialogRef.close({remove: true});
+  }
+
+  submitForm() {
+    this.dialogRef.close(this.formData);
+  }
+
+  addQuantity(value: number) {
+    this.quantity.setValue(this.quantity.value + value);
+  }
+
   get quantity() {
     return this.allocationForm.get('quantity') as FormControl;
   }
@@ -62,14 +74,6 @@ export class PortfolioAllocationDialogComponent {
 
   get marketValue() {
     return this.allocationForm.get('marketValue') as FormControl;
-  }
-
-  submitForm() {
-    this.dialogRef.close(this.formData);
-  }
-
-  addQuantity(value: number) {
-    this.quantity.setValue(this.quantity.value + value);
   }
 
   get formData() {

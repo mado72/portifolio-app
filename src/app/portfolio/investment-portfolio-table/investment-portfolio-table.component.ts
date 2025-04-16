@@ -106,20 +106,28 @@ export class InvestmentPortfolioTableComponent {
     }
     const dialogRef = this.dialog.open(PortfolioAllocationDialogComponent, { data });
 
-    dialogRef.afterClosed().subscribe((result: PorfolioAllocationDataType) => {
+    dialogRef.afterClosed().subscribe((result: PorfolioAllocationDataType & {remove?: boolean}) => {
       if (result) {
-        const changes = {
-          allocations: [{
-            ticker: result.ticker,
-            quantity: result.quantity,
-            percPlanned: result.percent,
-            marketValue: result.marketValue
-          }]
-        }
-
         const portfolio = this.portfolio();
+
         if (!! portfolio?.id) {
-          this.portfolioService.updatePortfolio(portfolio.id, changes)
+          if (result.remove) {
+            const allocation = {...portfolio.allocations[data.ticker]};
+            allocation.quantity = 0;
+            this.portfolioService.updatePortfolio(portfolio.id, {allocations: [allocation]})
+          }
+          else {
+            const changes = {
+              allocations: [{
+                ticker: data.ticker,
+                quantity: result.quantity,
+                percPlanned: result.percent,
+                marketValue: result.marketValue
+              }]
+            }
+  
+            this.portfolioService.updatePortfolio(portfolio.id, changes)
+          }
         }
       }
     });

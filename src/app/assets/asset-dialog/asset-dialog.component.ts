@@ -66,7 +66,11 @@ export class AssetDialogComponent implements AfterViewInit {
     manualQuote: this.fb.control(this.data.asset?.manualQuote, []),
   });
 
-  constructor() {}
+  constructor() {
+    this.code.valueChanges.subscribe(v=>{
+      this.code.setValue(v.toLocaleUpperCase(), { emitEvent: false });
+    });
+  }
   
   ngAfterViewInit(): void {
     combineLatest([
@@ -77,10 +81,12 @@ export class AssetDialogComponent implements AfterViewInit {
       )
     ]).subscribe(([marketPlace, code]) => {
       if (!! code) {
-        this.remoteQuotesService.getRemoteQuote(marketPlace, code).subscribe(quoteResponse => {
+        this.remoteQuotesService.getRemoteQuote(marketPlace, code.toLocaleUpperCase()).subscribe(quoteResponse => {
           if (quoteResponse) {
             if (! this.name.value) {
               this.name.setValue(quoteResponse.name, {emitEvent: false});
+              this.quoteValue.setValue(quoteResponse.price, {emitEvent: false});
+              this.quoteCurrency.setValue(quoteResponse.currency, {emitEvent: false});
             }
             this.quoteCurrency.setValue(quoteResponse.currency, {emitEvent: false});
           }

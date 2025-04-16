@@ -70,7 +70,7 @@ export class InvestmentAssetsTableComponent implements OnInit {
   }
 
   newAsset() {
-    this.assetService.newDialog();
+    this.assetService.newDialog().subscribe();
   }
 
   deleteAsset(asset: AssetQuoteType) {

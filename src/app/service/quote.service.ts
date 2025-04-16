@@ -116,9 +116,13 @@ export class QuoteService {
     }
   }
 
-  getRemoteQuote(ticker: string) {
+  getRemoteAssetInfo(ticker: string) {
     const [marketPlace, code] = ticker.includes(':') ? ticker.split(':') : ['', ticker];
-    return this.remoteQuotesService.getRemoteQuote(marketPlace, code).pipe(
+    return this.remoteQuotesService.getRemoteQuote(marketPlace, code);
+  }
+
+  getRemoteQuote(ticker: string) {
+    return this.getRemoteAssetInfo(ticker).pipe(
       map(resp => {
         if (!!resp) {
           return resp.price;

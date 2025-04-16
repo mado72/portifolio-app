@@ -24,6 +24,28 @@ export type PortfolioChangeType = {
 })
 export class PortfolioService {
 
+  processTransaction(ticker: string, allocations: Record<string, number>) {
+    Object.entries(allocations)
+      .filter(([_, qty]) => qty > 0)
+      .forEach(([portId, qty]) => {
+        const portfolio = this.portfolios()[portId];
+        if (!!portfolio) {
+          const changes: PortfolioChangeType = {
+            ...portfolio,
+            allocations: [
+              ...Object.values(portfolio.allocations),
+              {
+                ticker,
+                percPlanned: 0,
+                quantity: qty
+              }
+            ]
+          };
+          this.updatePortfolio(portId, changes);
+        }
+      })
+  }
+
   private sourceService = inject(SourceService);
 
   private dialog = inject(MatDialog);
@@ -69,7 +91,7 @@ export class PortfolioService {
       allocations: Object.values(portfolio.allocations),
       total: {
         ...portfolio.total,
-        percAllocation: this.quoteService.exchange(portfolio.total.marketValue, portfolio.currency, this.sourceService.currencyDefault()).value 
+        percAllocation: this.quoteService.exchange(portfolio.total.marketValue, portfolio.currency, this.sourceService.currencyDefault()).value
           / this.total().marketValue
       },
     } as PortfolioAllocationsArrayItemType)));
@@ -96,55 +118,56 @@ export class PortfolioService {
   }
 
   summarizeByClass(portfolios: PortfolioType[]) {
-    let total : CurrencyValue = {
+    let total: CurrencyValue = {
       value: 0,
       currency: this.sourceService.currencyDefault()
     };
     const consolidation = Object.values(portfolios
-      .map(portfolio=>{
+      .map(portfolio => {
         const result = {
           ...portfolio,
-          value: {...this.quoteService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["marketValue"]).marketValue},
+          value: { ...this.quoteService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["marketValue"]).marketValue },
           percAlloc: 0
         };
         return result
       })
       .reduce((acc, portfolio) => {
 
-      if (!acc[portfolio.class]) {
-        acc[portfolio.class] = {...portfolio}
-      }
-      else {
-        acc[portfolio.class] = {...acc[portfolio.class],
-          value: {
-            ...acc[portfolio.class],
-            original: {
-              ...acc[portfolio.class].value.original,
-              value: acc[portfolio.class].value.original.value + portfolio.value.original.value
-            },
-            exchanged: {
-              ...acc[portfolio.class].value.exchanged,
-              value: acc[portfolio.class].value.exchanged.value + portfolio.value.exchanged.value
-            }
-          },
-          percPlanned: acc[portfolio.class].percPlanned + portfolio.percPlanned
+        if (!acc[portfolio.class]) {
+          acc[portfolio.class] = { ...portfolio }
         }
-      }
-      total.value += portfolio.value.exchanged.value;
-      return acc;
-    }, {} as Record<string, {
-      class: string,
-      value: ExchangeStructureType,
-      percPlanned: number,
-      percAlloc: number
-    }>))
-    
-    const items = consolidation.map(item=> ({
+        else {
+          acc[portfolio.class] = {
+            ...acc[portfolio.class],
+            value: {
+              ...acc[portfolio.class],
+              original: {
+                ...acc[portfolio.class].value.original,
+                value: acc[portfolio.class].value.original.value + portfolio.value.original.value
+              },
+              exchanged: {
+                ...acc[portfolio.class].value.exchanged,
+                value: acc[portfolio.class].value.exchanged.value + portfolio.value.exchanged.value
+              }
+            },
+            percPlanned: acc[portfolio.class].percPlanned + portfolio.percPlanned
+          }
+        }
+        total.value += portfolio.value.exchanged.value;
+        return acc;
+      }, {} as Record<string, {
+        class: string,
+        value: ExchangeStructureType,
+        percPlanned: number,
+        percAlloc: number
+      }>))
+
+    const items = consolidation.map(item => ({
       ...item,
       percAlloc: Number((100 * item.value.exchanged.value / total.value).toPrecision(2))
     }));
 
-    return {items, total};
+    return { items, total };
   }
 
   addPortfolio({ name, currency, percPlanned }: { name: string; currency: CurrencyType; percPlanned: number; }) {
@@ -188,10 +211,14 @@ export class PortfolioService {
 
       changes.allocations?.forEach(({ ticker, percPlanned, quantity, marketValue }) => {
         const [marketPlace, code] = ticker.split(':');
+        const asset = this.sourceService.assertSource()[ticker];
+        const manualQuote = asset?.manualQuote && !!marketValue;
 
-        const manualQuote = updatedAllocations[ticker].manualQuote && marketValue;
 
-        if (updatedAllocations[ticker]) {
+        if (updatedAllocations[ticker] && quantity === 0) {
+          delete updatedAllocations[ticker];
+        }
+        else if (updatedAllocations[ticker]) {
           const tickerQuote = quotes[ticker];
 
           if (!tickerQuote) {
@@ -206,7 +233,8 @@ export class PortfolioService {
           const newAveragePrice = newTotalInvestment / quantity;
 
           const newValue = {
-            ...updatedAllocations[ticker], marketPlace, code, percPlanned, quantity,
+            ...updatedAllocations[ticker],
+            marketPlace, code, percPlanned, quantity,
             initialValue: newTotalInvestment,
             averagePrice: newAveragePrice,
             marketValue: manualQuote && marketValue || updatedAllocations[ticker].marketValue
@@ -214,7 +242,6 @@ export class PortfolioService {
           updatedAllocations[ticker] = newValue;
         }
         else {
-          const asset = this.sourceService.assertSource()[ticker];
           if (!asset) {
             throw new Error(`Asset not found: ${ticker}`);
           }
@@ -225,7 +252,7 @@ export class PortfolioService {
             code,
             quote: asset.quote,
             initialValue: asset.quote.value * quantity,
-            marketValue: marketValue ||  asset.quote.value * quantity,
+            marketValue: marketValue || asset.quote.value * quantity,
             averagePrice: asset.quote.value,
             profit: 0,
             performance: 0,
@@ -235,7 +262,7 @@ export class PortfolioService {
             manualQuote: !!asset.manualQuote
           };
         }
-        
+
         if (manualQuote) {
           quotesChanged.set(ticker, marketValue / quantity);
         }
@@ -253,8 +280,8 @@ export class PortfolioService {
           return acc;
         }, {} as PortfolioAllocationRecord),
       }]);
-      
-      quotesChanged.forEach((value, ticker)=> {
+
+      quotesChanged.forEach((value, ticker) => {
         const asset = this.sourceService.assertSource()[ticker];
         asset.quote.value = value;
         this.quoteService.updateQuoteAsset(asset);

@@ -298,7 +298,7 @@ export class SourceService {
   assetToSource(items: AssetQuoteType[]): AssetSourceDataType[] {
     return items.map(item => ({
       ...item,
-      lastUpdate: formatISO(item.lastUpdate)
+      lastUpdate: formatISO(item.lastUpdate || new Date())
     }));
   }
 
