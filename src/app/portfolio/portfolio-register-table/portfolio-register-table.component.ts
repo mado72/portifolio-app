@@ -1,20 +1,19 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, inject, input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from "../../investment/investment-transaction-form/investment-transaction-form.component";
 import { ExchangeStructureType } from '../../model/investment.model';
 import { PortfolioAllocationType, PortfolioType, SummarizedDataType } from '../../model/source.model';
-import { PortfolioChangeType, PortfolioService } from '../../service/portfolio-service';
+import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
-import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
 
@@ -43,7 +42,6 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
     ReactiveFormsModule,
     InvestmentPortfolioTableComponent,
     ExchangeComponent,
-    InvestmentTransactionFormComponent
 ],
   animations: [
     trigger('detailExpand', [
@@ -58,11 +56,11 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
 })
 export class PortfolioRegisterTableComponent {
 
+  private router = inject(Router);
+
   private sourceService = inject(SourceService);
 
   private portfolioService = inject(PortfolioService);
-
-  private transactionService = inject(TransactionService);
 
   private quoteService = inject(QuoteService);
 
@@ -94,8 +92,6 @@ export class PortfolioRegisterTableComponent {
   expandedElement: DatasourceMasterType | null = null;
 
   editable = input<boolean>(false);
-
-  editingTransaction = signal(false);
 
   formSliders = this.fb.group({
     sliders: this.fb.array([]),
@@ -167,8 +163,7 @@ export class PortfolioRegisterTableComponent {
     this.portfolioService.removePortfolio(portfolioId);
   }
   addTransaction() {
-    this.editingTransaction.set(true);
-    // this.transactionService.openAddDialog()
+    this.router.navigateByUrl('/investment/transactions/new')
   }
 
   fillToHundredPercent(index: number) {
@@ -180,13 +175,4 @@ export class PortfolioRegisterTableComponent {
     this.portfolioService.updatePortfolio(portfolio.id, { ...portfolio });
   }
 
-  cancelEditTransaction() {
-    this.editingTransaction.set(false);
-  }
-
-  submitEditTransaction(result: InvestmentTransactionFormResult) {
-    this.transactionService.saveTransaction(result);
-    this.portfolioService.processTransaction(result.ticker, result.allocations);
-    this.editingTransaction.set(false);
-  }
 }

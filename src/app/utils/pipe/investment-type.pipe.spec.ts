@@ -13,7 +13,7 @@ describe('InvestmentTypePipe', () => {
     const mockEnumDescription = InvestmentEnumDesc.DIVIDENDS;
 
     // Mock the InvestmentEnumDesc object
-    jest.spyOn(InvestmentEnumDesc, 'DIVIDENDS', 'get').mockReturnValue(mockEnumDescription);
+    spyOnProperty(InvestmentEnumDesc, 'DIVIDENDS', 'get').and.returnValue(mockEnumDescription);
 
     const result = pipe.transform(mockEnumValue);
     expect(result).toBe(mockEnumDescription);

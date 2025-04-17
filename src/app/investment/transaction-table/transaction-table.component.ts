@@ -7,9 +7,8 @@ import { InvestmentTransactionType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
-import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
+import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 
 
 @Component({

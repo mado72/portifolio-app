@@ -1,4 +1,4 @@
-@if(! showForm()) {
+@if(! formData()) {
     <button mat-button class="primary button" (click)="addTransaction()">
         <mat-icon>add</mat-icon>
         Nova transação
@@ -10,6 +10,7 @@
 @else {
     <div class="force-orientation-landscape">
         <app-investment-transaction-form
+            [data]="formData()"
             (onSubmit)="onSaveTransaction($event)"
             (onCancel)="onCancelTransactionForm()"/>
     </div>

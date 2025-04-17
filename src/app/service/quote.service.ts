@@ -1,11 +1,12 @@
 import { CurrencyPipe } from '@angular/common';
-import { computed, inject, Injectable, LOCALE_ID, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, LOCALE_ID, OnDestroy, signal } from '@angular/core';
+import { differenceInMinutes, max, minutesToMilliseconds } from 'date-fns';
+import { concatMap, debounceTime, from, map, of, Subject, switchMap, tap, throttleTime } from 'rxjs';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { ExchangeStructureType, ExchangeView, MarketPlaceEnum } from '../model/investment.model';
-import { AssetQuoteRecord, AssetQuoteType } from '../model/source.model';
+import { AssetQuoteRecord, AssetQuoteType, Ticker } from '../model/source.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { SourceService } from './source.service';
-import { map } from 'rxjs';
 
 export const getMarketPlaceCode = ({ marketPlace, code }: { marketPlace: string | MarketPlaceEnum; code: string; }): string => {
   return marketPlace ? `${marketPlace}:${code}` : code;
@@ -23,7 +24,7 @@ export type ExchangeType = ExchangeReq & {
 @Injectable({
   providedIn: 'root'
 })
-export class QuoteService {
+export class QuoteService implements OnDestroy {
 
   private sourceService = inject(SourceService);
 
@@ -31,29 +32,73 @@ export class QuoteService {
 
   readonly exchangeView = signal<ExchangeView>("original");
 
-  readonly quotePendding = signal<AssetQuoteType | undefined>(undefined);
+  readonly quotePendding = signal<Set<string>>(new Set());
+
+  readonly lastUpdate = signal<Date>(new Date(0));
 
   private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
 
-  readonly quotes = computed(()=> {
-    console.log(`quotes: ${this.quotePendding()}`);
-    return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset])=>{
+  readonly quotes = computed(() => {
+    return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
       acc[ticker] = {
         ...asset,
-        lastUpdate: new Date(asset.lastUpdate),
+        lastUpdate: max([this.lastUpdate(), new Date(asset.lastUpdate)]),
         quote: {
           ...asset.quote,
           currency: Currency[asset.quote.currency as keyof typeof Currency]
         },
-        initialPrice: asset.quote.value
+        initialPrice: asset.quote.value // TODO: Verificar se o valor está vindo corretamente.
       }
       return acc;
     }, {} as AssetQuoteRecord);
   })
-  
-  readonly exchanges = computed(()=> this.remoteQuotesService.exchanges());
-  constructor() {
 
+  updateTrigger = new Subject<Record<Ticker, AssetQuoteType>>();
+  private subscription = this.updateTrigger.pipe(
+    throttleTime(minutesToMilliseconds(1)),
+    switchMap(request => this.remoteQuotesService.updateQuotes(request).pipe(
+      tap(response=>{
+        console.log(Object.keys(response))
+      })
+    )))
+    .subscribe(response=> {
+      this.lastUpdate.set(new Date());
+      this.quotePendding.set(new Set());
+    })
+
+  readonly exchanges = computed(() => this.remoteQuotesService.exchanges());
+  constructor() {
+    effect(() => {
+      const lastUpdate = this.lastUpdate();
+      const assets = this.sourceService.assertSource();
+      const pendding = this.quotePendding();
+      const request = Array.from(pendding)
+        .concat(Object.values(assets)
+          .filter(asset => Math.abs(differenceInMinutes(lastUpdate, asset.lastUpdate)) > 10)
+          .map(asset => asset.ticker))
+        .reduce((acc, ticker) => {
+          acc[ticker] = { ...assets[ticker] };
+          return acc;
+        }, {} as Record<string, AssetQuoteType>);
+
+      if (Object.keys(request).length || differenceInMinutes(new Date(), this.lastUpdate()) > 10) {
+        this.updateTrigger.next(request);
+      }
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();  
+  }
+
+  addPendding(ticker: Ticker) {
+    const asset = this.sourceService.assertSource()[ticker];
+    if (asset) {
+      this.quotePendding.update(set => set.add(ticker));
+      const request = {} as AssetQuoteRecord;
+      request[ticker] = asset;
+      this.updateTrigger.next(request);
+    }
   }
 
   toggleExchangeView() {
@@ -78,11 +123,11 @@ export class QuoteService {
   }
 
   enhanceExchangeInfo<T, K extends keyof T>(obj: T, originalCurrency: Currency, properties: K[]): Omit<T, K> & Record<K, ExchangeStructureType> {
-    let result = {...obj} as Omit<T, K> & Record<K, ExchangeStructureType>;
+    let result = { ...obj } as Omit<T, K> & Record<K, ExchangeStructureType>;
 
     const defaultCurrency = this.sourceService.currencyDefault();
 
-    properties.forEach(prop=>{
+    properties.forEach(prop => {
       if (typeof obj[prop] === 'number') {
         (result as any)[prop] = {
           original: {
@@ -100,16 +145,17 @@ export class QuoteService {
   updateQuoteAsset(asset: AssetQuoteType) {
     const ticker = getMarketPlaceCode(asset);
     const original = this.sourceService.assertSource()[ticker];
-    if (! asset.manualQuote) {
+    if (!asset.manualQuote) {
       this.remoteQuotesService.getRemoteQuote(asset.marketPlace, asset.code).subscribe(quote => {
-        asset = { ...original, ...asset,
+        asset = {
+          ...original, ...asset,
           quote: {
             value: quote.price,
             currency: quote.currency
           }
         }
       })
-      this.quotePendding.set(asset);
+      this.quotePendding.update(set => set.add(asset.ticker))
     }
     else {
       this.sourceService.updateAsset([asset]);

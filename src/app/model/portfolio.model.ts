@@ -10,27 +10,27 @@ const INITIAL_TOTAL: Required<SummarizedDataType> = {
 };
 
 export function calcPosition(quotes: AssetQuoteRecord, allocations: PortfolioAllocationRecord) {
-    const calc = Object.entries(allocations).reduce((acc, [key, allocation]) => {
-        if (! quotes[key]) return acc;
-        const quotePrice = quotes[key].quote.value;
+    const calc = Object.entries(allocations).reduce((acc, [ticker, allocation]) => {
+        if (! quotes[ticker]) return acc;
+        const quotePrice = quotes[ticker].quote.value;
         const marketValue = quotePrice * allocation.quantity;
         const averagePrice = Math.trunc(100 * allocation.initialValue / allocation.quantity) / 100;
 
-        acc.allocations[key] = {
+        acc.allocations[ticker] = {
             ...allocation,
             marketValue,
             averagePrice,
-            quote: quotes[key].quote,
+            quote: quotes[ticker].quote,
             percAllocation: 0,
             profit: allocation.quantity * (quotePrice - averagePrice),
             performance: (marketValue - allocation.initialValue) / allocation.initialValue
         };
 
-        acc.total.initialValue += acc.allocations[key].initialValue;
-        acc.total.marketValue += acc.allocations[key].marketValue;
-        acc.total.percPlanned += acc.allocations[key].percPlanned;
-        acc.total.percAllocation += acc.allocations[key].percAllocation || 0;
-        acc.total.profit += acc.allocations[key].profit || 0;
+        acc.total.initialValue += acc.allocations[ticker].initialValue;
+        acc.total.marketValue += acc.allocations[ticker].marketValue;
+        acc.total.percPlanned += acc.allocations[ticker].percPlanned;
+        acc.total.percAllocation += acc.allocations[ticker].percAllocation || 0;
+        acc.total.profit += acc.allocations[ticker].profit || 0;
         acc.total.performance = acc.total.profit / acc.total.marketValue;
 
         return acc;

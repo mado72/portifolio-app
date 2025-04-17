@@ -13,7 +13,11 @@
             },
             "type": "BUY",
             "status": "COMPLETED",
-            "brokerage": 19.99
+            "brokerage": 19.99,
+            "allocations": [{
+                "id": "Portfolio 1",
+                "qty": 100
+            }]
         },
         {
             "id": "tx-4d5e6f",
@@ -42,7 +46,17 @@
             },
             "type": "BUY",
             "status": "PENDING",
-            "brokerage": 25.50
+            "brokerage": 25.50,
+            "allocations": [
+                {
+                    "id": "Portfolio 3",
+                    "qty": 100
+                },
+                {
+                    "id": "Portfolio 4",
+                    "qty": 100
+                }
+            ]
         }
     ]
 }

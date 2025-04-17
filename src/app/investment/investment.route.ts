@@ -25,7 +25,31 @@ export const investmentRoutes: Routes = [
     },
     {
         path: 'transactions',
-        loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent)
+        children: [
+            {
+                path: '',
+                pathMatch: 'full',
+                redirectTo: 'list'
+            },
+            {
+                path: 'list',
+                loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent)
+            },
+            {
+                path: 'new',
+                loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent),
+                data: {
+                    action: 'create'
+                }
+            },
+            {
+                path: 'edit/:id',
+                loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent),
+                data: {
+                    action: 'edit'
+                }
+            },
+        ]
     }
 
 ]

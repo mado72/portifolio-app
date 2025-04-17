@@ -1,9 +1,9 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { differenceInMinutes, differenceInSeconds } from 'date-fns';
-import { filter, forkJoin, interval, map, zipAll } from 'rxjs';
+import { filter, forkJoin, interval, map, Observable, of, tap, zipAll } from 'rxjs';
 import { MarketPlaceEnum } from '../model/investment.model';
-import { IRemoteQuote } from '../model/remote-quote.model';
-import { AssetQuoteType } from '../model/source.model';
+import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
+import { AssetQuoteType, Ticker } from '../model/source.model';
 import { ImmutableRemoteQuotesService } from './immutable-remote-quotes.service';
 import { MockRemoteQuotesService } from './mock-remote-quotes.service';
 import { getMarketPlaceCode } from './quote.service';
@@ -20,7 +20,7 @@ export class RemoteQuotesService {
   private mockRemoteQuotesService = inject(MockRemoteQuotesService);
   private yahooRemoteQuotesService = inject(YahooRemoteQuotesService);
   private immutableRemoteQuotesService = inject(ImmutableRemoteQuotesService);
-  
+
   private serviceMap = new Map<MarketPlaceEnum, IRemoteQuote>([
     [MarketPlaceEnum.BVMF, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.NASDAQ, this.yahooRemoteQuotesService],
@@ -53,62 +53,66 @@ export class RemoteQuotesService {
 
   readonly exchanges = signal({} as Record<CurrencyType, Record<CurrencyType, number>>);
 
-  readonly lastUpdate = signal<{old?: Date, value: Date}>({value: new Date()});
+  readonly lastUpdate = signal<{ old?: Date, value: Date }>({ value: new Date() });
 
   readonly quotesRequests = computed(() => {
     const assets = this.sourceService.assertSource();
-    return this.prepareRequestsToUpdateQuotes(assets);
+    return this.prepareRequestsToUpdateQuotes(Object.keys(assets));
   });
 
   timertId = interval(1 * 60 * 1000).pipe(
-    filter(()=> {
+    filter(() => {
       const diffLastUpdate = differenceInMinutes(this.lastUpdate().value, this.lastUpdate().old || new Date());
       return diffLastUpdate > 15;
     })
   ).subscribe(assets => {
-    this.updateQuotes(this.assetsQuoted());
+    this.updateQuotes(this.assetsQuoted()).subscribe();
     this.updateExchanges();
   });
 
   constructor() {
-    this.updateQuotes(this.sourceService.assertSource());
+    this.updateQuotes(this.sourceService.assertSource()).subscribe();
     this.updateExchanges();
     effect(() => {
       const diffLastUpdate = differenceInSeconds(this.lastUpdate().value, this.lastUpdate().old as Date);
       if (diffLastUpdate > 0) {
-        this.updateQuotes(this.sourceService.assertSource());
+        this.updateQuotes(this.sourceService.assertSource()).subscribe();
       }
     })
   }
 
-  updateQuotes(assets: Record<string, AssetQuoteType>) {
-    if (!Object.keys(assets).length) return;
+  updateQuotes(assets: Record<Ticker, AssetQuoteType>): Observable<Record<string, QuoteResponse>> {
+    if (!Object.keys(assets).length) return of({});
 
-    this.prepareRequestsToUpdateQuotes(assets).subscribe(quotes=>{
-      
-      const updated = Object.entries(quotes).reduce((acc, [ticker, quote]) => {
-        const asset = assets[ticker];
-        acc[ticker] = {
-          ...assets[ticker],
-          quote: {
-            value: quote.price,
-            currency: asset.quote.currency
-          },
-          trend: quote.price === quote.open ? 'unchanged' : quote.price > quote.open ? 'up' : 'down'
-        }
-        return acc;
-      }, {} as Record<string, AssetQuoteType>);
+    const tickers = Object.entries(assets)
+      .filter(([ticker, asset])=>!asset.manualQuote)
+      .map(([ticker, asset])=>ticker);
 
-      this.lastUpdate.update(d => {
-        return { old: d.value, value: new Date() };
-      });
-      this.latestQuote.set(updated);
-      this.sourceService.updateAsset(Object.values(updated));
-    })
+    return this.prepareRequestsToUpdateQuotes(tickers).pipe(
+      tap(quotes => {
+        const updated = Object.entries(quotes).reduce((acc, [ticker, quote]) => {
+          const asset = assets[ticker];
+          acc[ticker] = {
+            ...assets[ticker],
+            quote: {
+              value: quote.price,
+              currency: asset.quote.currency
+            },
+            trend: quote.price === quote.open ? 'unchanged' : quote.price > quote.open ? 'up' : 'down'
+          }
+          return acc;
+        }, {} as Record<string, AssetQuoteType>);
+
+        this.lastUpdate.update(d => {
+          return { old: d.value, value: new Date() };
+        });
+        this.latestQuote.set(updated);
+        this.sourceService.updateAsset(Object.values(updated));
+      }))
   }
 
   updateExchanges() {
-    this.coinService.getExchanges().subscribe(exchanges=>this.exchanges.set(exchanges));
+    this.coinService.getExchanges().subscribe(exchanges => this.exchanges.set(exchanges));
   }
 
   destroy() {
@@ -161,12 +165,12 @@ export class RemoteQuotesService {
    * for each marketplace, and requests price updates for the tickers in that marketplace. The results
    * are then combined into a single object.
    */
-  prepareRequestsToUpdateQuotes(assets: Record<string, AssetQuoteType>) {
-    const marketPlaceRec = Object.keys(assets).reduce((acc, ticker) => {
+  prepareRequestsToUpdateQuotes(tickers: Ticker[]) {
+    const marketPlaceRec = tickers.reduce((acc, ticker) => {
       const marketPlaceCode = ticker.split(':')[0];
       acc[marketPlaceCode] = [...(acc[marketPlaceCode] || []), ticker]
       return acc;
-    }, {} as {[marketplace: string]: string[]});
+    }, {} as { [marketplace: string]: string[] });
 
     return forkJoin(
       Object.entries(marketPlaceRec).map(([marketPlaceCode, tickers]) => {
@@ -175,11 +179,11 @@ export class RemoteQuotesService {
         return service.price(tickers);
       })).pipe(
         zipAll(),
-        map(results=>{
+        map(results => {
           return results.reduce((acc, item) => {
-              acc = {...acc, ...item};
-              return acc;
-            });
+            acc = { ...acc, ...item };
+            return acc;
+          });
         })
       );
   }

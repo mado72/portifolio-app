@@ -145,15 +145,17 @@
 <ng-template #allocation>
     <ng-container [formGroup]="transactionForm">
         <ng-container formArrayName="allocations">
-            @for (portfolio of portfolios() ; track portfolio.id; let idx = $index) {
-                <mat-form-field class="full-width">
-                    <mat-label>
-                        {{portfolio.name}}
-                    </mat-label>
-                    <div [matBadge]="portfolio.allocation">
-                        <input matInput type="number" [formControlName]="idx" appSelectOnFocus>
-                    </div>
-                </mat-form-field>
+            @for (allocation of allocationValue() ; track $index; let idx = $index) {
+                <ng-container [formGroupName]="idx">
+                    <mat-form-field class="full-width">
+                        <mat-label>
+                            {{allocation.id}}
+                        </mat-label>
+                        <div [matBadge]="portfolios()[allocation.id].allocation">
+                            <input matInput type="number" formControlName="qty" appSelectOnFocus>
+                        </div>
+                    </mat-form-field>
+                </ng-container>
             }
         </ng-container>
     </ng-container>

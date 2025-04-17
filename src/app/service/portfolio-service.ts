@@ -24,7 +24,7 @@ export type PortfolioChangeType = {
 })
 export class PortfolioService {
 
-  processTransaction(ticker: string, allocations: Record<string, number>) {
+  processAllocations(ticker: string, quote: number, allocations: Record<string, number>) {
     Object.entries(allocations)
       .filter(([_, qty]) => qty > 0)
       .forEach(([portId, qty]) => {
@@ -37,7 +37,8 @@ export class PortfolioService {
               {
                 ticker,
                 percPlanned: 0,
-                quantity: qty
+                quantity: qty,
+                marketValue: qty * quote
               }
             ]
           };
@@ -245,14 +246,17 @@ export class PortfolioService {
           if (!asset) {
             throw new Error(`Asset not found: ${ticker}`);
           }
+          const quote = marketValue ? { currency: asset.quote.currency, value: marketValue / quantity } : asset.quote;
+          const initialValue = marketValue || asset.quote.value * quantity;
+          
           updatedAllocations[ticker] = {
             ...asset,
             ticker,
             marketPlace,
             code,
-            quote: asset.quote,
-            initialValue: asset.quote.value * quantity,
-            marketValue: marketValue || asset.quote.value * quantity,
+            quote,
+            initialValue,
+            marketValue: initialValue,
             averagePrice: asset.quote.value,
             profit: 0,
             performance: 0,

@@ -1,6 +1,8 @@
 import { AccountTypeEnum, Currency, CurrencyValue, Scheduled, TransactionEnum } from "./domain.model";
 import { InvestmentEnum, TransactionStatus, } from "./investment.model";
 
+export type Ticker = string;
+
 export type EntityDataSource = {
     id: string;
 }
@@ -115,6 +117,10 @@ export type InvestmentTransactionSourceDataType = {
     type: string;
     status: string;
     brokerage?: number;
+    allocations?: {
+        id: string;
+        qty: number;
+    }[];
 }
 
 export type InvestmentTransactionType = Omit<InvestmentTransactionSourceDataType, "date" | "value" | "type" | "status"> & {
