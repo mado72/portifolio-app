@@ -68,7 +68,7 @@ export class AssetService {
     };
 
     if (!!ticker) {
-      const asset = this.sourceService.assertSource()[ticker];
+      const asset = this.sourceService.assetSource()[ticker];
       if (!asset) {
         return this.quoteService.getRemoteAssetInfo(ticker).pipe(
           map((info) => {

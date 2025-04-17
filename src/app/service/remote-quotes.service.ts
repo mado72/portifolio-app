@@ -37,7 +37,7 @@ export class RemoteQuotesService {
   protected latestQuote = signal<Record<string, AssetQuoteType>>({});
 
   assetsQuoted = computed(() => {
-    const assets = this.sourceService.assertSource();
+    const assets = this.sourceService.assetSource();
     const quotes = this.latestQuote();
     const lastUpdate = this.lastUpdate().value;
     return Object.entries(assets)
@@ -56,7 +56,7 @@ export class RemoteQuotesService {
   readonly lastUpdate = signal<{ old?: Date, value: Date }>({ value: new Date() });
 
   readonly quotesRequests = computed(() => {
-    const assets = this.sourceService.assertSource();
+    const assets = this.sourceService.assetSource();
     return this.prepareRequestsToUpdateQuotes(Object.keys(assets));
   });
 
@@ -71,12 +71,12 @@ export class RemoteQuotesService {
   });
 
   constructor() {
-    this.updateQuotes(this.sourceService.assertSource()).subscribe();
+    this.updateQuotes(this.sourceService.assetSource()).subscribe();
     this.updateExchanges();
     effect(() => {
       const diffLastUpdate = differenceInSeconds(this.lastUpdate().value, this.lastUpdate().old as Date);
       if (diffLastUpdate > 0) {
-        this.updateQuotes(this.sourceService.assertSource()).subscribe();
+        this.updateQuotes(this.sourceService.assetSource()).subscribe();
       }
     })
   }

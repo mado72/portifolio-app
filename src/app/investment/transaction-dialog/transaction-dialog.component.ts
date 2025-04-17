@@ -20,7 +20,6 @@ import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
-import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 
 const PagesArray = new Array(5).fill(0).map((_,i)=>i);
 

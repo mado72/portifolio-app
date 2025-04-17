@@ -2,6 +2,12 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MenuComponent } from './menu.component';
 import { provideRouter, Router } from '@angular/router';
+import { QuoteService } from '../../service/quote.service';
+
+class MyService { 
+  getQuote = () => 'Mock Quote';
+  exchanges = () => ([]);
+}
 
 describe('MenuComponent', () => {
   let component: MenuComponent;
@@ -11,7 +17,8 @@ describe('MenuComponent', () => {
     await TestBed.configureTestingModule({
       imports: [MenuComponent],
       providers: [
-        provideRouter([])
+        provideRouter([]),
+        { provide: QuoteService, useClass: MyService }
       ]
     })
     .compileComponents();

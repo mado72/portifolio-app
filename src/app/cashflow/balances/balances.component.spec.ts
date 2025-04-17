@@ -2,9 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BalancesComponent } from './balances.component';
 import { BalanceService } from '../../service/balance.service';
+import { QuoteService } from '../../service/quote.service';
+import { SourceService } from '../../service/source.service';
+import { Currency } from '../../model/domain.model';
 
 class MyService {
   getBalancesByCurrencyExchange = () => ([]);
+  getAllBalances = () => ([]);
+  currencyDefault = () => (Currency.BRL);
 }
 
 describe('BalancesComponent', () => {
@@ -15,7 +20,9 @@ describe('BalancesComponent', () => {
     await TestBed.configureTestingModule({
       imports: [BalancesComponent],
       providers: [
-        { provide: BalanceService, useClass: MyService }
+        { provide: SourceService, useClass: MyService },
+        { provide: QuoteService, useClass: MyService },
+        { provide: BalanceService, useClass: MyService },
       ]
     })
     .compileComponents();

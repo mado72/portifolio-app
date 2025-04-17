@@ -23,7 +23,7 @@ export class InvestmentService {
   readonly assertsSignal = computed(() => {
     const quotes = this.quoteService.quotes() || {};
 
-    return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
+    return Object.entries(this.sourceService.assetSource()).reduce((acc, [ticker, asset]) => {
       const initialPrice = acc[ticker]?.initialPrice || quotes[ticker]?.quote.value || NaN;
       const trend = quotes[ticker] ? fnTrend(quotes[ticker]) : 'unchanged';
 

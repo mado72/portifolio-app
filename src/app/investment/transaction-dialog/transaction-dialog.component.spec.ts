@@ -8,6 +8,7 @@ import { QuoteService } from '../../service/quote.service';
 
 class MyService {
   quotes = () => ({});
+  assertsSignal = () => [];
 }
 
 const dataMock = {

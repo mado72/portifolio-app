@@ -7,6 +7,7 @@ import { ChangeDetectorRef } from '@angular/core';
 
 class MyService {
   transactionSignal = () => [];
+  investmentTransactions = () => []
 }
 
 describe('TransactionTableComponent', () => {

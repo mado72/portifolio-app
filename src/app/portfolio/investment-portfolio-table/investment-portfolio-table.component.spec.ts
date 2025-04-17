@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { InvestmentPortfolioTableComponent } from './investment-portfolio-table.component';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
+import { QuoteService } from '../../service/quote.service';
 
 class MyService {
 
@@ -18,6 +19,7 @@ describe('InvestmentPortfolioTableComponent', () => {
       providers: [
         {provide: InvestmentService, useClass: MyService },
         {provide: PortfolioService, useClass: MyService },
+        {provide: QuoteService, useClass: MyService },
       ]
     })
     .compileComponents();

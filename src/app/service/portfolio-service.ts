@@ -212,7 +212,7 @@ export class PortfolioService {
 
       changes.allocations?.forEach(({ ticker, percPlanned, quantity, marketValue }) => {
         const [marketPlace, code] = ticker.split(':');
-        const asset = this.sourceService.assertSource()[ticker];
+        const asset = this.sourceService.assetSource()[ticker];
         const manualQuote = asset?.manualQuote && !!marketValue;
 
 
@@ -286,7 +286,7 @@ export class PortfolioService {
       }]);
 
       quotesChanged.forEach((value, ticker) => {
-        const asset = this.sourceService.assertSource()[ticker];
+        const asset = this.sourceService.assetSource()[ticker];
         asset.quote.value = value;
         this.quoteService.updateQuoteAsset(asset);
       })

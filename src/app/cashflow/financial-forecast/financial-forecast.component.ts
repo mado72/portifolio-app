@@ -1,17 +1,17 @@
-import { DatePipe, JsonPipe } from '@angular/common';
-import { Component, computed, EventEmitter, inject, OnInit, signal } from '@angular/core';
+import { DatePipe } from '@angular/common';
+import { Component, computed, EventEmitter, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatTableModule } from '@angular/material/table';
 import { differenceInDays } from 'date-fns';
+import { v4 as uuid } from 'uuid';
 import { CurrencyValue, ForecastDateItem, isTransactionDeposit, isTransactionExpense, TransactionEnum } from '../../model/domain.model';
+import { TransactionStatus } from '../../model/investment.model';
 import { BalanceService } from '../../service/balance.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
-import { TransactionStatus } from '../../model/investment.model';
-import { v4 as uuid } from 'uuid';
 import { FinancialForecastSummaryComponent } from "../financial-forecast-summary/financial-forecast-summary.component";
 
 type DataSourceItem = ForecastDateItem & {calc: CurrencyValue, balanceId: string};

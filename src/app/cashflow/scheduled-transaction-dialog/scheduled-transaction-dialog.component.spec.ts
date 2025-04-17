@@ -12,8 +12,8 @@ class MyService {
 const dataMock = {
   scheduled: {
     description: "",
-    value : {
-      amount: 0,
+    amount : {
+      value: 0,
       currency: "BRL"
     },
     type: "EXPENSE",

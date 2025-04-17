@@ -89,10 +89,10 @@ export class InvestmentTransactionsControlComponent implements OnInit {
 
   onSaveTransaction(transaction: InvestmentTransactionFormResult) {
     this.formData.set(null);
-    let asset = this.sourceService.assertSource()[transaction.ticker];
+    let asset = this.sourceService.assetSource()[transaction.ticker];
     if (! asset) {
       this.assetService.newDialog(transaction.ticker).subscribe(()=>{
-        asset = this.sourceService.assertSource()[transaction.ticker];
+        asset = this.sourceService.assetSource()[transaction.ticker];
         transaction.value.currency = asset.quote.currency;
         this.saveTransaction(transaction);
       })

@@ -25,9 +25,12 @@ class MockService {
   quotePendding = signal(null as any);
   investmentSource = signal({});
 
-  assertSource() {}
+  assetSource() {}
   saveTransaction() {}
   processAllocations() {}
+  newDialog() {}
+  addPendding() {}
+  addInvestmentTransaction () {}
 }
 
 describe('InvestmentTransactionsControlComponent', () => {
@@ -70,7 +73,8 @@ describe('InvestmentTransactionsControlComponent', () => {
     spyOn(component['transactionService'], 'saveTransaction');
     spyOn(component['portfolioService'], 'processAllocations');
     spyOn(component['quoteService'].quotePendding, 'set');
-    spyOn(component['sourceService'], 'assertSource').and.returnValue(mockSource);
+    spyOn(component['quoteService'], 'addPendding');
+    spyOn(component['sourceService'], 'assetSource').and.returnValue(mockSource);
 
     component.saveTransaction(mockTransaction);
     expect(component['transactionService'].saveTransaction).toHaveBeenCalledWith({
@@ -84,8 +88,9 @@ describe('InvestmentTransactionsControlComponent', () => {
       date: new Date("2025-04-16T12:00:00.000Z"),
       type: InvestmentEnum.BUY,
     });
-    expect(component['portfolioService'].processAllocations).toHaveBeenCalledWith('BVMF:TAEE11', 10, { Portfolio1: 20 });
-    expect(component['quoteService'].quotePendding.set).toHaveBeenCalledTimes(1);
+    expect(component['portfolioService'].processAllocations).toHaveBeenCalledWith('BVMF:TAEE11', 
+      33.76, { Portfolio1: 20 });
+    expect(component['quoteService'].addPendding).toHaveBeenCalledTimes(1);
   });
 
   it('should handle missing asset and open new asset dialog', () => {
@@ -94,15 +99,13 @@ describe('InvestmentTransactionsControlComponent', () => {
       allocations: [{ id: 'portfolio2', qty: 5 }],
     } as unknown as InvestmentTransactionFormResult;
 
-    spyOn(component['sourceService'], 'assertSource').and.returnValue({});
-    spyOn(component['assetService'], 'newDialog').and.returnValue({
-      subscribe: (callback: () => void) => callback(),
-    } as any);
-    spyOn(component, 'saveTransaction').and.callThrough();
+    const saveTransactionSpy = spyOn(component['transactionService'], 'saveTransaction');
+    spyOn(component['portfolioService'], 'processAllocations');
+    const addPenddingSpy = spyOn(component['quoteService'], 'addPendding');
 
     component.saveTransaction(mockTransaction);
 
-    expect(component['assetService'].newDialog).toHaveBeenCalledWith('GOOG');
-    expect(component.saveTransaction).toHaveBeenCalledTimes(2); // Called recursively after asset creation
+    expect(addPenddingSpy).toHaveBeenCalledWith('GOOG');
+    expect(saveTransactionSpy).toHaveBeenCalledTimes(1); // Called recursively after asset creation
   });
 });

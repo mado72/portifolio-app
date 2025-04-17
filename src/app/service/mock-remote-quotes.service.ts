@@ -28,7 +28,7 @@ export class MockRemoteQuotesService implements IRemoteQuote {
   }
 
   fetchQuote(ticker: string): Observable<QuoteResponse> {
-    const asset = this.sourceService.assertSource()[ticker];
+    const asset = this.sourceService.assetSource()[ticker];
     const quoteCached = this.cacheQuotes[ticker];
     let quote: QuoteResponse;
     if (!quoteCached) {

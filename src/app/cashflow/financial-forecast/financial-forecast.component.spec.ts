@@ -5,6 +5,11 @@ import { BalanceService } from '../../service/balance.service';
 
 class MyService {
   getCurrentMonthForecast = () => ([]);
+  getForecastSummary = () => [];
+  addTransaction = ()=> {}
+  updateTransaction = () => {}
+  getAllBalances = () => []
+  getBalancesSummarized = () => 1
 }
 describe('FinancialForecastComponent', () => {
   let component: FinancialForecastComponent;

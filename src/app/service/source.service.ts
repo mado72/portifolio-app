@@ -39,7 +39,7 @@ export class SourceService {
 
   readonly currencyDefault = signal<Currency>(Currency.BRL);
 
-  readonly assertSource = computed(() => Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
+  readonly assetSource = computed(() => Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
     const quote = {
       value: item.quote.value, 
       currency: Currency[item.quote.currency as CurrencyType]

@@ -1,16 +1,16 @@
 import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject, input, OnInit, Signal } from '@angular/core';
+import { Component, computed, inject, input, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { PortfolioAllocationsArrayItemType, PortfolioAllocationType, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
+import { PortfolioAllocationType, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
+import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
+import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
-import { QuoteService } from '../../service/quote.service';
-import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 
 type DatasourceInputType = PortfolioAllocationType & {ticker: string, name: string, trend: TrendType};
 

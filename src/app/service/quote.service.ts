@@ -39,7 +39,7 @@ export class QuoteService implements OnDestroy {
   private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
 
   readonly quotes = computed(() => {
-    return Object.entries(this.sourceService.assertSource()).reduce((acc, [ticker, asset]) => {
+    return Object.entries(this.sourceService.assetSource()).reduce((acc, [ticker, asset]) => {
       acc[ticker] = {
         ...asset,
         lastUpdate: max([this.lastUpdate(), new Date(asset.lastUpdate)]),
@@ -55,7 +55,7 @@ export class QuoteService implements OnDestroy {
 
   updateTrigger = new Subject<Record<Ticker, AssetQuoteType>>();
   private subscription = this.updateTrigger.pipe(
-    throttleTime(minutesToMilliseconds(1)),
+    throttleTime(1 * 60 * 1000),
     switchMap(request => this.remoteQuotesService.updateQuotes(request).pipe(
       tap(response=>{
         console.log(Object.keys(response))
@@ -70,21 +70,25 @@ export class QuoteService implements OnDestroy {
   constructor() {
     effect(() => {
       const lastUpdate = this.lastUpdate();
-      const assets = this.sourceService.assertSource();
+      const assets = this.sourceService.assetSource();
       const pendding = this.quotePendding();
-      const request = Array.from(pendding)
-        .concat(Object.values(assets)
-          .filter(asset => Math.abs(differenceInMinutes(lastUpdate, asset.lastUpdate)) > 10)
-          .map(asset => asset.ticker))
-        .reduce((acc, ticker) => {
-          acc[ticker] = { ...assets[ticker] };
-          return acc;
-        }, {} as Record<string, AssetQuoteType>);
-
-      if (Object.keys(request).length || differenceInMinutes(new Date(), this.lastUpdate()) > 10) {
-        this.updateTrigger.next(request);
-      }
+      this.effectPendingAssetsLastUpdate(pendding, assets, lastUpdate);
     })
+  }
+
+  private effectPendingAssetsLastUpdate(pendding: Set<string>, assets: Record<string, AssetQuoteType>, lastUpdate: Date) {
+    const request = Array.from(pendding)
+      .concat(Object.values(assets)
+        .filter(asset => Math.abs(differenceInMinutes(lastUpdate, asset.lastUpdate)) > 10)
+        .map(asset => asset.ticker))
+      .reduce((acc, ticker) => {
+        acc[ticker] = { ...assets[ticker] };
+        return acc;
+      }, {} as Record<string, AssetQuoteType>);
+
+    if (Object.keys(request).length || differenceInMinutes(new Date(), lastUpdate) > 10) {
+      this.updateTrigger.next(request);
+    }
   }
 
   ngOnDestroy(): void {
@@ -92,7 +96,7 @@ export class QuoteService implements OnDestroy {
   }
 
   addPendding(ticker: Ticker) {
-    const asset = this.sourceService.assertSource()[ticker];
+    const asset = this.sourceService.assetSource()[ticker];
     if (asset) {
       this.quotePendding.update(set => set.add(ticker));
       const request = {} as AssetQuoteRecord;
@@ -144,7 +148,7 @@ export class QuoteService implements OnDestroy {
 
   updateQuoteAsset(asset: AssetQuoteType) {
     const ticker = getMarketPlaceCode(asset);
-    const original = this.sourceService.assertSource()[ticker];
+    const original = this.sourceService.assetSource()[ticker];
     if (!asset.manualQuote) {
       this.remoteQuotesService.getRemoteQuote(asset.marketPlace, asset.code).subscribe(quote => {
         asset = {

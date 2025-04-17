@@ -80,7 +80,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   accountName = signal('');
 
-  accounts = this.balanceService.getAccounts;
+  accounts = computed(()=>this.balanceService.getAccounts());
 
   portfolios = computed(() =>
     Object.values(this.portfolioService.getAllPortfolios()

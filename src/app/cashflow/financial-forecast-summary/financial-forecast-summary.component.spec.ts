@@ -7,6 +7,7 @@ import { DecimalPipe } from '@angular/common';
 class MyService{
   getBalancesSummarized = () => 0;
   getForecastSummary = () => ([]);
+  getAllBalances = () => []
 }
 
 describe('FinancialForecastSummaryComponent', () => {
