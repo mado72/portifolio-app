@@ -5,5 +5,13 @@ Todo list:
  - [x] Verificar se os proventos estão sendo armazenados em source
  - [ ] Corrigir investment service para obter os proventos para uma data.
  - [x] Prover mecanismo para alterar o valor de mercado de um ativo manual
- - [ ] Refatorar para obter cotação de um asset adicionado.
+ - [x] Refatorar para obter cotação de um asset adicionado.
  - [x] Remover ativo de carteira.
+ - [x] Calcular corretamente um novo asset que entra no portfolio
+ - [ ] Corrigir localização da data do formulário de transaction-form
+ - [ ] Adicionar campo classe em portfolio (formulário)
+ - [ ] Passar o nome do portfolio para o formulário de transaction
+ - [ ] Filtrar por classe de portfolio
+ - [ ] Filtrar transações por ticker, tipo e banco
+ - [ ] Acrescentar banco na lista de transações
+ - [ ] Acrescentar classe em portfolio
