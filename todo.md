@@ -8,10 +8,10 @@ Todo list:
  - [x] Refatorar para obter cotação de um asset adicionado.
  - [x] Remover ativo de carteira.
  - [x] Calcular corretamente um novo asset que entra no portfolio
- - [ ] Corrigir localização da data do formulário de transaction-form
- - [ ] Adicionar campo classe em portfolio (formulário)
+ - [x] Corrigir localização da data do formulário de transaction-form
+ - [x] Adicionar campo classe em portfolio (formulário)
  - [ ] Passar o nome do portfolio para o formulário de transaction
  - [ ] Filtrar por classe de portfolio
  - [ ] Filtrar transações por ticker, tipo e banco
  - [ ] Acrescentar banco na lista de transações
- - [ ] Acrescentar classe em portfolio
+ - [x] Acrescentar classe em portfolio

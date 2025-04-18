@@ -15,6 +15,16 @@
             </mat-select>
         </mat-form-field>
 
+        <mat-form-field>
+            <mat-label>Classe</mat-label>
+            <input type="text" matInput [matAutocomplete]="auto" formControlName="class" />
+            <mat-autocomplete #auto="matAutocomplete" [autoActiveFirstOption]="true">
+                @for (item of classes(); track $index) {
+                    <mat-option [value]="item">{{ item }}</mat-option>
+                }
+            </mat-autocomplete>
+        </mat-form-field>
+
         <div class="card">
             <div class="card-header">
                 <div class="card-title"><mat-label>Percentual Planejado</mat-label></div>

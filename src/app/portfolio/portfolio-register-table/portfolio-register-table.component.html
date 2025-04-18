@@ -12,6 +12,7 @@
     <thead>
         <tr>
             <th class="td-cell column-name">Carteira</th>
+            <th class="td-cell column-percPlanned">Classe</th>
             <th class="td-cell column-percPlanned">
                 <span class="d-none d-lg-inline">Planejado (%)</span>
                 <span class="d-sm-inline d-lg-none">Pljdo. (%)</span>
@@ -48,6 +49,9 @@
                     </button>
                     <span>{{ portfolio.name }}</span>
                 </div>
+            </td>
+            <td class="td-cell column-class">
+                {{ portfolio.class }}
             </td>
             <td class="td-cell column-percPlanned">
                 <span></span>
@@ -101,7 +105,7 @@
 
     <tfoot>
         <tr>
-            <th class="td-cell column-total">
+            <th colspan="2" class="td-cell column-total">
                 <em>Total</em>
             </th>
             <td class="td-cell column-percPlanned">

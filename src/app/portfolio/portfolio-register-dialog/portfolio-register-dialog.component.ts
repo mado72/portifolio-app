@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -10,6 +10,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { Currency } from '../../model/domain.model';
 import { PortfolioType } from '../../model/source.model';
 import { SourceService } from '../../service/source.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 export type DialogDataType = {
   title: string;
@@ -21,6 +22,7 @@ export type DialogDataType = {
   standalone: true,
   imports: [
     ReactiveFormsModule,
+    MatAutocompleteModule,
     MatDialogModule,
     MatButtonModule,
     MatFormFieldModule,
@@ -42,8 +44,17 @@ export class PortfolioRegisterDialogComponent {
 
   private fb = inject(FormBuilder);
 
+  classes = computed(() => 
+    Object.values(this.sourceService.portfolioSource())
+      .filter(portfolio => !!portfolio.class)
+      .reduce((acc, portfolio) => {
+        acc.add(portfolio.class);
+        return acc;
+      }, new Set()));
+
   readonly formPortfolio = this.fb.group({
     name: this.fb.control(this.data.portfolio.name || '', [Validators.required, Validators.minLength(2)]),
+    class: this.fb.control(this.data.portfolio.class || '', [Validators.required]),
     percPlanned: this.fb.control(this.data.portfolio.percPlanned || 0, [Validators.required, Validators.min(0), Validators.max(100)]),
     currency: this.fb.control(this.data.portfolio.currency || this.sourceService.currencyDefault(), [Validators.required]),
   });
