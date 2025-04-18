@@ -36,7 +36,7 @@ export const investmentRoutes: Routes = [
                 loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent)
             },
             {
-                path: 'new',
+                path: 'create',
                 loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent),
                 data: {
                     action: 'create'

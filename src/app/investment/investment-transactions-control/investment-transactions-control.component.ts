@@ -45,16 +45,27 @@ export class InvestmentTransactionsControlComponent implements OnInit {
   ngOnInit(): void {
     const action = this.activatedRoute.snapshot.data["action"];
     switch (action) {
-      case 'create' :
-        this.addTransaction();
+      case 'create':
+        this.formData.set({
+          allocations: Object.values(this.sourceService.portfolioSource()).map(allocation => {
+            return {
+              id: allocation.id,
+              name: allocation.name,
+              qty: 0
+            }
+          })
+        });
         break;
-      case 'edit' :
+      case 'edit':
         const transactionId = this.activatedRoute.snapshot.paramMap.get("id");
         if (transactionId) {
           const transaction = this.transactionService.investmentTransactions()
-            .find(transaction=>transaction.id === transactionId);
+            .find(transaction => transaction.id === transactionId);
+          const [marketPlace, code] = transaction?.ticker.split(':') || ['',''];
           this.formData.set({
             ...transaction,
+            marketPlace,
+            code,
             allocations: transaction?.allocations
           });
         }
@@ -64,7 +75,7 @@ export class InvestmentTransactionsControlComponent implements OnInit {
   }
 
   addTransaction() {
-    this.formData.set({});
+    this.router.navigate(['investment', 'transactions', 'create']);
   }
 
   editTransaction(ticker: string) {
@@ -90,8 +101,8 @@ export class InvestmentTransactionsControlComponent implements OnInit {
   onSaveTransaction(transaction: InvestmentTransactionFormResult) {
     this.formData.set(null);
     let asset = this.sourceService.assetSource()[transaction.ticker];
-    if (! asset) {
-      this.assetService.newDialog(transaction.ticker).subscribe(()=>{
+    if (!asset) {
+      this.assetService.newDialog(transaction.ticker).subscribe(() => {
         asset = this.sourceService.assetSource()[transaction.ticker];
         transaction.value.currency = asset.quote.currency;
         this.saveTransaction(transaction);
@@ -104,18 +115,19 @@ export class InvestmentTransactionsControlComponent implements OnInit {
 
   saveTransaction(transaction: InvestmentTransactionFormResult) {
 
-    const allocations = transaction.allocations.reduce((acc, vl)=> {
+    const allocations = transaction.allocations.reduce((acc, vl) => {
       acc[vl.id] = vl.qty;
       return acc;
-    }, {} as {[id: string]: number})
+    }, {} as { [id: string]: number })
 
-    const t = {... transaction} as InvestmentTransactionType;
+    const t = { ...transaction } as InvestmentTransactionType;
     delete t.allocations;
 
     t.status = TransactionStatus.COMPLETED;
     this.transactionService.saveTransaction(t);
     this.portfolioService.processAllocations(t.ticker, transaction.quote, allocations);
     this.quoteService.addPendding(t.ticker);
+    this.router.navigate(['investment', 'transactions'])
   }
 
   onCancelTransactionForm() {

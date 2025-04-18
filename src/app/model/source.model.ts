@@ -119,6 +119,7 @@ export type InvestmentTransactionSourceDataType = {
     brokerage?: number;
     allocations?: {
         id: string;
+        name: string;
         qty: number;
     }[];
 }

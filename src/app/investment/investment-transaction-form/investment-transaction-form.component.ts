@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -9,7 +9,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { Router } from '@angular/router';
 import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith } from 'rxjs';
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
@@ -41,14 +40,13 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
     NgTemplateOutlet,
     MatBadgeModule,
     InvestmentTypePipe,
-    SelectOnFocusDirective
+    SelectOnFocusDirective,
+    JsonPipe
   ],
   templateUrl: './investment-transaction-form.component.html',
   styleUrl: './investment-transaction-form.component.scss'
 })
 export class InvestmentTransactionFormComponent implements OnInit {
-
-  private router = inject(Router);
 
   private quoteService = inject(QuoteService);
 
@@ -78,12 +76,12 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   accounts = computed(()=>this.balanceService.getAccounts());
 
-  portfolios = computed(() =>
+  allocations = computed(() =>
     Object.values(this.portfolioService.getAllPortfolios()
       .map(portfolio => ({
         id: portfolio.id,
         name: portfolio.name,
-        allocation: Object.values(portfolio.allocations)
+        qty: Object.values(portfolio.allocations)
           .filter(allocation => allocation.ticker === this.ticker())
           .map(allocation => allocation.quantity)
           .reduce((tot, vl) => tot += vl, 0)
@@ -91,10 +89,11 @@ export class InvestmentTransactionFormComponent implements OnInit {
       .reduce((acc, portfolio)=>{
         acc[portfolio.id] = portfolio;
         return acc;
-      }, {} as Record<string, {id: string, name: string, allocation: number}>)
+      }, {} as Record<string, {id: string, name: string, qty: number}>)
     )
 
   transactionForm = this.fb.group({
+    id: [''],
     marketPlace: ['', Validators.required],
     code: ['', Validators.required],
     date: [null as unknown as Date, Validators.required],
@@ -104,13 +103,16 @@ export class InvestmentTransactionFormComponent implements OnInit {
     amount: [0, [Validators.required, Validators.min(0)]],
     type: ['', Validators.required],
     brokerage: [0, [Validators.min(0)]],
-    allocations: this.fb.array([] as { id: string, qty: number }[])
+    allocations: this.fb.array([] as { id: string, qty: number, name: string }[])
   }, {
     validators: [isAllAllocationsDoneValidator("quantity", "allocations")],
   });
 
   get allocationArray() {
-    return this.transactionForm.get("allocations") as FormArray<FormGroup<{ id: FormControl<string | null>, qty: FormControl<number | null> }>>;
+    return this.transactionForm.get("allocations") as FormArray<FormGroup<{ 
+      id: FormControl<string | null>, 
+      qty: FormControl<number | null>, 
+      name: FormControl<string | null> }>>;
   }
 
   optionsCode = computed(() => {
@@ -132,30 +134,34 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   constructor() {
     this.initializeAllocationControls();
+    const marketPlace = this.data()?.marketPlace
+    const code = this.data()?.code
+    if (marketPlace && code) {
+      this.transactionForm.get('marketPlace')?.setValue(marketPlace);
+      this.transactionForm.get('code')?.setValue(code);
+      this.ticker.set(getMarketPlaceCode({ marketPlace, code }));
+    }
 
     effect(() => {
-      const portfolios = Object.values(this.portfolios());
-      const allocations = portfolios.map(portfolio => ({
-        id: portfolio.id,
-        qty: 0
-      }))
-      this.allocationArray.patchValue(allocations);
+      this.allocationArray.patchValue(Object.values(this.allocations()));
     })
 
     effect(() => {
       const assetSelected = this.assetSelected();
       const ticker = this.ticker();
-      if (assetSelected) {
-        this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
-      }
-      else if (ticker && ticker.includes(':')) {
-        const [marketPlace, code] = ticker.split(':');
-        if (!!code) {
-          this.quoteService.getRemoteQuote(ticker).subscribe(price => {
-            if (!!price) {
-              this.transactionForm.get('quote')?.setValue(price);
-            }
-          })
+      if (!this.data()?.quote) {
+        if (assetSelected) {
+          this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
+        }
+        else if (ticker && ticker.includes(':')) {
+          const [marketPlace, code] = ticker.split(':');
+          if (!!code) {
+            this.quoteService.getRemoteQuote(ticker).subscribe(price => {
+              if (!!price) {
+                this.transactionForm.get('quote')?.setValue(price);
+              }
+            })
+          }
         }
       }
     })
@@ -167,18 +173,25 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   ngOnInit(): void {
     const data = this.data();
-    if (data)
+    if (data) {
       this.transactionForm.patchValue(data);
+    }
   }
 
   formValue() {
     return this.transactionForm.value;
   }
 
+  badgeValue(allocationId: string ) {
+    const portfolio = this.allocations()[allocationId];
+    return portfolio?.qty || 0;
+  }
+
   allocationValue() {
     return this.transactionForm.get('allocations')?.value as {
-      id: string;
-      qty: number;
+      id  : string;
+      name: string;
+      qty : number;
     }[];
   }
 
@@ -226,15 +239,16 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   initializeAllocationControls() {
     this.allocationArray.clear();
-    Object.values(this.portfolios()).forEach((portfolio) => {
-      this.allocationArray.push(this.createAllocationItem(portfolio.id, 0));
+    Object.values(this.allocations()).forEach((alloc) => {
+      this.allocationArray.push(this.createAllocationItem(alloc.id, alloc.name, alloc.qty));
     })
   }
 
-  createAllocationItem(id: string, qty: number) {
+  createAllocationItem(id: string, name: string, qty: number) {
     return this.fb.group({
-      id: this.fb.control<string>(id, [Validators.required, Validators.minLength(2)]),
-      qty: this.fb.control<number>(0, [Validators.required, Validators.min(0)])
+      id: this.fb.control<string>(id),
+      name: this.fb.control<string>(name),
+      qty: this.fb.control<number>(qty, [Validators.required, Validators.min(0)])
     });
   }
 
@@ -250,11 +264,14 @@ export class InvestmentTransactionFormComponent implements OnInit {
   onSubmitRequest() {
     if (this.transactionForm.valid) {
       const formData = this.transactionForm.value;
-      const allocations = this.allocationArray.value.filter(item => item.id && item.qty).map(item => ({ ...item as { id: string, qty: number } }));
+      this.allocationArray.errors
+      const allocations = this.allocationArray.value
+        .filter(item => item.id && item.qty)
+        .map(item => ({ ...item as { id: string, qty: number; name: string } }));
       const transaction: InvestmentTransactionFormResult = {
         accountId: formData.accountId as string,
         date: formData.date as Date,
-        id: null as unknown as string,
+        id: this.data()?.id as unknown as string,
         quantity: formData.quantity as number,
         quote: formData.quote as number,
         status: TransactionStatus.PENDING,

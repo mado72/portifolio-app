@@ -16,6 +16,7 @@
             "brokerage": 19.99,
             "allocations": [{
                 "id": "Portfolio 1",
+                "name": "Portfolio 1",
                 "qty": 100
             }]
         },
@@ -50,10 +51,12 @@
             "allocations": [
                 {
                     "id": "Portfolio 3",
+                    "name": "Portfolio 3",
                     "qty": 100
                 },
                 {
                     "id": "Portfolio 4",
+                    "name": "Portfolio 4",
                     "qty": 100
                 }
             ]

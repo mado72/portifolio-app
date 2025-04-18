@@ -10,7 +10,7 @@ Todo list:
  - [x] Calcular corretamente um novo asset que entra no portfolio
  - [x] Corrigir localização da data do formulário de transaction-form
  - [x] Adicionar campo classe em portfolio (formulário)
- - [ ] Passar o nome do portfolio para o formulário de transaction
+ - [x] Passar o nome do portfolio para o formulário de transaction
  - [ ] Filtrar por classe de portfolio
  - [ ] Filtrar transações por ticker, tipo e banco
  - [ ] Acrescentar banco na lista de transações
