@@ -1,8 +1,7 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -38,10 +37,8 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
     MatAutocompleteModule,
     MatDatepickerModule,
     NgTemplateOutlet,
-    MatBadgeModule,
     InvestmentTypePipe,
     SelectOnFocusDirective,
-    JsonPipe
   ],
   templateUrl: './investment-transaction-form.component.html',
   styleUrl: './investment-transaction-form.component.scss'

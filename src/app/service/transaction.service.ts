@@ -5,11 +5,14 @@ import { InvestmentTransactionType } from '../model/source.model';
 import { TransactionDialogComponent, TransactionDialogType } from '../investment/transaction-dialog/transaction-dialog.component';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TransactionService {
+
+  private router = inject(Router);
 
   private portfolioService = inject(PortfolioService);
 
@@ -83,6 +86,18 @@ export class TransactionService {
         });
       }
     });
+  }
+
+  createTransaction() {
+    this.router.navigate(['investment', 'transactions', 'create']);
+  }
+
+  editTransaction(transactionId: string) {
+    this.router.navigate(['investment', 'transactions', 'edit', transactionId]);
+  }
+
+  listTransactions() {
+    this.router.navigate(['investment', 'transactions']);
   }
 
   openAddDialog() {

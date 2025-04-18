@@ -16,6 +16,7 @@ import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { TransactionService } from '../../service/transaction.service';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
   allocations: PortfolioAllocationType[];
@@ -56,13 +57,13 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
 })
 export class PortfolioRegisterTableComponent {
 
-  private router = inject(Router);
-
   private sourceService = inject(SourceService);
 
   private portfolioService = inject(PortfolioService);
 
   private quoteService = inject(QuoteService);
+
+  private transactionService = inject(TransactionService);
 
   private fb = inject(FormBuilder);
 
@@ -162,8 +163,9 @@ export class PortfolioRegisterTableComponent {
   deletePortfolio(portfolioId: string) {
     this.portfolioService.removePortfolio(portfolioId);
   }
+  
   addTransaction() {
-    this.router.navigateByUrl('/investment/transactions/new')
+    this.transactionService.createTransaction();
   }
 
   fillToHundredPercent(index: number) {

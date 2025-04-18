@@ -75,27 +75,15 @@ export class InvestmentTransactionsControlComponent implements OnInit {
   }
 
   addTransaction() {
-    this.router.navigate(['investment', 'transactions', 'create']);
+    this.transactionService.createTransaction();
   }
 
-  editTransaction(ticker: string) {
-
+  editTransaction(transaction: InvestmentTransactionType) {
+    this.transactionService.editTransaction(transaction.id);
   }
 
   onDeleteItem(transactionId: string) {
     this.transactionService.deleteTransaction(transactionId);
-  }
-
-  onClickItem(transaction: InvestmentTransactionType) {
-    this.router.navigate(['investment', 'transactions', 'edit', transaction.id])
-    /*
-    this.transactionService.openDialog({
-      newTransaction: false,
-      title: 'Editar Transação',
-      transaction,
-      portfolios: []
-    })
-    */
   }
 
   onSaveTransaction(transaction: InvestmentTransactionFormResult) {
@@ -127,10 +115,10 @@ export class InvestmentTransactionsControlComponent implements OnInit {
     this.transactionService.saveTransaction(t);
     this.portfolioService.processAllocations(t.ticker, transaction.quote, allocations);
     this.quoteService.addPendding(t.ticker);
-    this.router.navigate(['investment', 'transactions'])
+    this.transactionService.listTransactions();
   }
 
   onCancelTransactionForm() {
-    this.router.navigate(['investment', 'transactions'])
+    this.transactionService.listTransactions();
   }
 }
