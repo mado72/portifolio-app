@@ -5,7 +5,7 @@ import { addDays, addMonths, addYears, endOfDay, format, getDaysInMonth, getMont
 import { it as locale } from 'date-fns/locale';
 import { getZonedDate } from "../model/functions.model";
 
-export const PTBR_FORMATS = {
+export const PTBR_FORMATS : MatDateFormats = {
     parse: {
         dateInput: 'dd/MM/yyyy',
     },
@@ -15,6 +15,7 @@ export const PTBR_FORMATS = {
         dateA11yLabel: 'LL',
         monthYearA11yLabel: 'MMMM yyyy',
     },
+    
 };
 
 export const DATE_FNS_FORMATS: MatDateFormats = {
@@ -29,7 +30,7 @@ export const DATE_FNS_FORMATS: MatDateFormats = {
     },
 };
 
-export function provideAppDateAdapter(format: MatDateFormats = DATE_FNS_FORMATS): Provider[] {
+export function provideAppDateAdapter(format: MatDateFormats = PTBR_FORMATS): Provider[] {
     return [
         { provide: DateAdapter, useClass: AppDateAdapter },
         { provide: MAT_DATE_FORMATS, useValue: format },

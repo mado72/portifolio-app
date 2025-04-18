@@ -1,4 +1,4 @@
-import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
+import { Router } from '@angular/router';
 import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith } from 'rxjs';
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
@@ -16,10 +17,8 @@ import { InvestmentTransactionType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
-import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
-import { Router } from '@angular/router';
 
 export type IntestmentTransactionFormData = ReturnType<InvestmentTransactionFormComponent["formValue"]> | null
 
@@ -43,9 +42,6 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
     MatBadgeModule,
     InvestmentTypePipe,
     SelectOnFocusDirective
-  ],
-  providers: [
-    provideAppDateAdapter()
   ],
   templateUrl: './investment-transaction-form.component.html',
   styleUrl: './investment-transaction-form.component.scss'

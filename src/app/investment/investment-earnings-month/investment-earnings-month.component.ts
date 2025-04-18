@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, OnInit, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, LOCALE_ID, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { Income } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { InvestmentEarningsTableComponent } from '../investment-earnings-table/investment-earnings-table.component';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 
 const MONTH_FORMATS = {
@@ -39,7 +40,8 @@ const MONTH_FORMATS = {
   ],
   encapsulation: ViewEncapsulation.None,
   providers: [
-    provideAppDateAdapter(MONTH_FORMATS),
+    provideNativeDateAdapter(MONTH_FORMATS),
+    { provide: LOCALE_ID, useValue: 'pt'},
   ],
   templateUrl: './investment-earnings-month.component.html',
   styleUrl: './investment-earnings-month.component.scss',
