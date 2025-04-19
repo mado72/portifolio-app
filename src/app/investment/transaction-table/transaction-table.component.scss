@@ -1,6 +1,6 @@
 mat-cell.mat-column-quantity,
 mat-cell.mat-column-quote,
-mat-cell.mat-column-brokerage,
+mat-cell.mat-column-fees,
 mat-cell.mat-column-date {
     justify-content: end;
 }
@@ -30,7 +30,7 @@ mat-cell.mat-column-type {
 
 .mat-column-date,
 .mat-column-quote,
-.mat-column-brokerage {
+.mat-column-fees {
     width: 9%;
 }
 

@@ -16,6 +16,7 @@ export type PortfolioChangeType = {
     percPlanned: number;
     quantity: number;
     marketValue?: number;
+    transactionId: string;
   }[];
 };
 
@@ -23,8 +24,11 @@ export type PortfolioChangeType = {
   providedIn: 'root'
 })
 export class PortfolioService {
+  getPortfolio(portfolioId: string) {
+    return this.portfolios()[portfolioId];
+  }
 
-  processAllocations(ticker: string, quote: number, allocations: Record<string, number>) {
+  processAllocations(ticker: string, transactionId: string, quote: number, allocations: Record<string, number>) {
     Object.entries(allocations)
       .filter(([_, qty]) => qty > 0)
       .forEach(([portId, qty]) => {
@@ -38,7 +42,8 @@ export class PortfolioService {
                 ticker,
                 percPlanned: 0,
                 quantity: qty,
-                marketValue: qty * quote
+                marketValue: qty * quote,
+                transactionId
               }
             ]
           };
@@ -92,11 +97,12 @@ export class PortfolioService {
       allocations: Object.values(portfolio.allocations),
       total: {
         ...portfolio.total,
-        percAllocation: this.quoteService.exchange(portfolio.total.marketValue, portfolio.currency, this.sourceService.currencyDefault()).value
-          / this.total().marketValue
+        percAllocation: this.quoteService.exchange(
+          portfolio.total.marketValue, 
+          portfolio.currency, 
+          this.sourceService.currencyDefault()).value / this.total().marketValue
       },
     } as PortfolioAllocationsArrayItemType)));
-
 
   constructor() { }
 
@@ -215,7 +221,6 @@ export class PortfolioService {
         const asset = this.sourceService.assetSource()[ticker];
         const manualQuote = asset?.manualQuote && !!marketValue;
 
-
         if (updatedAllocations[ticker] && quantity === 0) {
           delete updatedAllocations[ticker];
         }
@@ -263,7 +268,8 @@ export class PortfolioService {
             percAllocation: 0,
             percPlanned,
             quantity,
-            manualQuote: !!asset.manualQuote
+            manualQuote: !!asset.manualQuote,
+            transactionId: changes.allocations?.find(allocation => allocation.ticker === ticker)?.transactionId as string // TODO: Validar se é o mesmo ativo
           };
         }
 
@@ -323,7 +329,8 @@ export class PortfolioService {
             allocations: result.allocations && Object.values(result.allocations).map(allocation => ({
               ticker: allocation.ticker,
               percPlanned: allocation.percPlanned,
-              quantity: allocation.quantity
+              quantity: allocation.quantity,
+              transactionId: allocation.transactionId
             }))
           });
         }

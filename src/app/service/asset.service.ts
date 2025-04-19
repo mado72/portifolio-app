@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { AssetEnum, AssetQuoteType, TrendType } from '../model/source.model';
@@ -20,6 +20,8 @@ export class AssetService {
   private quoteService = inject(QuoteService);
 
   private investimentService = inject(InvestmentService);
+
+  assets = computed(() => this.sourceService.assetSource())
 
   constructor() { }
 

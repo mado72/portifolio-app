@@ -12,11 +12,11 @@ import { AccountTypeEnum, Currency, CurrencyType, Scheduled, TransactionEnum } f
 import { parseDateYYYYMMDD } from '../model/functions.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import {
-  AssetEnum, AssetQuoteType, AssetSourceDataType, BalanceSourceDataType, BalanceType,
-  IncomeSourceDataType, IncomeType,
-  InvestmentTransactionSourceDataType, InvestmentTransactionType, PortfolioAllocationType,
-  PortfolioRecord, PortfolioSourceDataType, PortfolioType, ScheduledsSourceDataType,
-  ScheduledStatemetType, TransactionSourceDataType, TransactionType
+  AssetEnum, AssetQuoteType, AssetSourceDataType as AssetSourceRawType, BalanceSourceDataType as BalanceSourceRawType, BalanceType,
+  IncomeSourceDataType as IncomeSourceRawType, IncomeType,
+  InvestmentTransactionSourceRawType as InvestmentTransactionSourceRawType, InvestmentTransactionType, PortfolioAllocationType,
+  PortfolioRecord, PortfolioSourceRawType as PortfolioSourceRawType, PortfolioType, ScheduledsSourceDataType as ScheduledsSourceRawType,
+  ScheduledStatemetType, TransactionSourceRawType as TransactionSourceRawType, TransactionType
 } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
@@ -26,14 +26,14 @@ import { getMarketPlaceCode } from './quote.service';
 export class SourceService {
 
   private dataSource = {
-    asset: signal<Record<string, AssetSourceDataType>>(this.assetSourceToRecord(assetSourceData.data)),
-    balance: signal<Record<string, BalanceSourceDataType>>(this.balanceToRecord(balanceSource.data)),
-    income: signal<Record<string, IncomeSourceDataType>>(this.incomeSourceToRecord(incomeSource.data.map(item => {
+    asset: signal<Record<string, AssetSourceRawType>>(this.assetSourceToRecord(assetSourceData.data)),
+    balance: signal<Record<string, BalanceSourceRawType>>(this.balanceToRecord(balanceSource.data)),
+    income: signal<Record<string, IncomeSourceRawType>>(this.incomeSourceToRecord(incomeSource.data.map(item => {
       return { ...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
     }))),
-    investment: signal<Record<string, InvestmentTransactionSourceDataType>>(this.investmentSourceToRecord(investmentTransactionsSource.data)),
+    investment: signal<Record<string, InvestmentTransactionType>>(this.investmentSourceToRecord(investmentTransactionsSource.data)),
     cashflow: signal<Record<string, TransactionType>>(this.cashSourceToRecord(cashflowTransactionSource.data)), // FIXME forçando data para o mês corrente
-    portfolio: signal<Record<string, PortfolioSourceDataType>>(this.portfolioSourceToRecord(portfolioSource.data)),
+    portfolio: signal<Record<string, PortfolioSourceRawType>>(this.portfolioSourceToRecord(portfolioSource.data)),
     scheduled: signal<Record<string, ScheduledStatemetType>>(this.scheduledSourceToRecord(scheduledSource.data))
   };
 
@@ -80,19 +80,7 @@ export class SourceService {
     return acc;
   }, {} as Record<string, IncomeType>));
 
-  readonly investmentSource = computed(() => Object.entries(this.dataSource.investment()).reduce((acc, [key, item]) => {
-    acc[key] = {
-      ...item,
-      date: parseISO(item.date),
-      value: {
-        value: item.value.value,
-        currency: Currency[item.value.currency as CurrencyType]
-      },
-      type: InvestmentEnum[item.type as keyof typeof InvestmentEnum],
-      status: TransactionStatus[item.status as keyof typeof TransactionStatus]
-    }
-    return acc;
-  }, {} as Record<string, InvestmentTransactionType>));
+  readonly investmentSource = computed(() => this.dataSource.investment());
 
   readonly cashflowSource = computed(() => this.dataSource.cashflow());
 
@@ -112,7 +100,7 @@ export class SourceService {
           performance: NaN
         },
         allocations: item.allocations.reduce((allocAcc, alloc) => {
-          const ticker = getMarketPlaceCode(alloc);
+          const ticker = alloc.ticker;
           const initialPrice = (alloc.initialValue || alloc.marketValue);
           const averagePrice = initialPrice / alloc.quantity;
           allocAcc[ticker] = {
@@ -222,35 +210,44 @@ export class SourceService {
     window.URL.revokeObjectURL(url);
   }
 
-  protected assetSourceToRecord(data: AssetSourceDataType[]) {
+  protected assetSourceToRecord(data: AssetSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[getMarketPlaceCode(item)] = item;
       return acc;
-    }, {} as Record<string, AssetSourceDataType>)
+    }, {} as Record<string, AssetSourceRawType>)
   };
 
-  protected balanceToRecord(data: BalanceSourceDataType[]) {
+  protected balanceToRecord(data: BalanceSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id as string] = item;
       return acc;
-    }, {} as Record<string, BalanceSourceDataType>)
+    }, {} as Record<string, BalanceSourceRawType>)
   }
 
-  protected incomeSourceToRecord(data: IncomeSourceDataType[]) {
+  protected incomeSourceToRecord(data: IncomeSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id] = item;
       return acc;
-    }, {} as Record<string, IncomeSourceDataType>)
+    }, {} as Record<string, IncomeSourceRawType>)
   }
 
-  protected investmentSourceToRecord(data: InvestmentTransactionSourceDataType[]) {
+  protected investmentSourceToRecord(data: InvestmentTransactionSourceRawType[]): Record<string, InvestmentTransactionType> {
     return data.reduce((acc, item) => {
-      acc[item.id] = item;
+      acc[item.id] = {
+        ...item,
+        date: parseISO(item.date),
+        value: {
+          value: item.value.value,
+          currency: Currency[item.value.currency as CurrencyType]
+        },
+        type: InvestmentEnum[item.type as keyof typeof InvestmentEnum],
+        status: TransactionStatus[item.status as keyof typeof TransactionStatus]
+      }
       return acc;
-    }, {} as Record<string, InvestmentTransactionSourceDataType>)
+    }, {} as Record<string, InvestmentTransactionType>);
   }
 
-  protected cashSourceToRecord(data: TransactionSourceDataType[]) {
+  protected cashSourceToRecord(data: TransactionSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id as string] = {
         ...item,
@@ -268,14 +265,14 @@ export class SourceService {
     }, {} as Record<string, TransactionType>)
   }
 
-  protected portfolioSourceToRecord(data: PortfolioSourceDataType[]) {
+  protected portfolioSourceToRecord(data: PortfolioSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id] = item;
       return acc;
-    }, {} as Record<string, PortfolioSourceDataType>)
+    }, {} as Record<string, PortfolioSourceRawType>)
   }
 
-  protected scheduledSourceToRecord(data: ScheduledsSourceDataType[]) {
+  protected scheduledSourceToRecord(data: ScheduledsSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id as string] = {
         ...item,
@@ -295,7 +292,7 @@ export class SourceService {
   }
 
   // asset ------------------------
-  assetToSource(items: AssetQuoteType[]): AssetSourceDataType[] {
+  assetToSource(items: AssetQuoteType[]): AssetSourceRawType[] {
     return items.map(item => ({
       ...item,
       lastUpdate: formatISO(item.lastUpdate || new Date())
@@ -329,7 +326,7 @@ export class SourceService {
   }
 
   // balance ------------------
-  balanceToSource(items: BalanceType[]): BalanceSourceDataType[] {
+  balanceToSource(items: BalanceType[]): BalanceSourceRawType[] {
     return items.map(item => ({
       ...item,
       balance: item.balance.value,
@@ -364,7 +361,7 @@ export class SourceService {
   }
 
   // income ---------------------
-  incomeToSource(items: IncomeType[]) : IncomeSourceDataType[] {
+  incomeToSource(items: IncomeType[]) : IncomeSourceRawType[] {
     return items.map(item => ({
       ...item,
       date: format(item.date, 'yyyy-MM-dd')
@@ -404,7 +401,7 @@ export class SourceService {
 
   // investment -----------------
 
-  updateInvestmentToSource(items: InvestmentTransactionType[]) : InvestmentTransactionSourceDataType[]{
+  updateInvestmentToSource(items: InvestmentTransactionType[]) : InvestmentTransactionSourceRawType[]{
     return items.map(item => ({
       ...item,
       date: formatISO(item.date)
@@ -441,7 +438,7 @@ export class SourceService {
 
   // cashflow ----------------------------
 
-  cashflowTransactionTypeToSource(changes: TransactionType[]): TransactionSourceDataType[] {
+  cashflowTransactionTypeToSource(changes: TransactionType[]): TransactionSourceRawType[] {
     return changes.map(item => ({
       ...item,
       date: format(item.date, 'yyyy-MM-dd'),
@@ -484,7 +481,7 @@ export class SourceService {
   }
 
   // portfolio ------------------------
-  portfolioToSource(items: PortfolioType[]): PortfolioSourceDataType[] {
+  portfolioToSource(items: PortfolioType[]): PortfolioSourceRawType[] {
     return items.map(item => ({
       ...item,
       allocations: Object.values(item.allocations)
@@ -522,7 +519,7 @@ export class SourceService {
 
   // scheduledTransaction --------------
 
-  scheduledTransactionToSource(items: ScheduledStatemetType[]): ScheduledsSourceDataType[] {
+  scheduledTransactionToSource(items: ScheduledStatemetType[]): ScheduledsSourceRawType[] {
     return items.map(item=>({
       ...item,
       scheduled: {

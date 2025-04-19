@@ -84,7 +84,7 @@
             </mat-cell>
             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>
-        <ng-container matColumnDef="brokerage">
+        <ng-container matColumnDef="fees">
             <mat-header-cell *matHeaderCellDef> 
                 <span class="d-sm-inline d-lg-none">
                     Corrtgm.
@@ -94,7 +94,7 @@
                 </span>            
             </mat-header-cell>
             <mat-cell *matCellDef="let row">
-                {{ row.brokerage | number: '1.2-2'}}
+                {{ row.fees | number: '1.2-2'}}
             </mat-cell>
             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>

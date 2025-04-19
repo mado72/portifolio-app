@@ -53,7 +53,6 @@ describe('PortfolioAllocationDialogComponent', () => {
   });
 
   it('should print ok', ()=> {
-    console.log('ok');
     expect(1).not.toBe(0);
   })
 

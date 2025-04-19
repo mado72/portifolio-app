@@ -8,44 +8,44 @@
             "class": "Ativos",
             "allocations": [
                 {
-                    "code": "WMB",
+                    "ticker": "NYSE:WMB",
                     "quantity": 100,
-                    "marketPlace": "NYSE",
                     "initialValue": 5050,
                     "marketValue": 5050,
                     "performance": 5.2,
                     "percAllocation": 10,
-                    "percPlanned": 12
+                    "percPlanned": 12,
+                    "transactionId": "9c23e10b-6704-4008-b563-28d45e733675"
                 },
                 {
-                    "code": "ETFA",
+                    "ticker": "NYSE:ETFA",
                     "quantity": 300,
-                    "marketPlace": "NYSE",
                     "initialValue": 22590,
                     "marketValue": 22590,
                     "performance": 4.1,
                     "percAllocation": 12,
-                    "percPlanned": 14
+                    "percPlanned": 14,
+                    "transactionId": "1846b3a1-4faf-4135-a13a-3fb9f1be7523"
                 },
                 {
-                    "code": "PFE",
+                    "ticker": "NYSE:PFE",
                     "quantity": 200,
-                    "marketPlace": "NYSE",
                     "initialValue": 5310,
                     "marketValue": 5310,
                     "performance": 4.7,
                     "percAllocation": 9,
-                    "percPlanned": 11
+                    "percPlanned": 11,
+                    "transactionId": "616233d6-c561-41b5-a944-94d5a65e4205"
                 },
                 {
-                    "code": "ETFC",
+                    "ticker": "NYSE:ETFC",
                     "quantity": 280,
-                    "marketPlace": "NYSE",
                     "initialValue": 25400,
                     "marketValue": 25400,
                     "performance": 4.2,
                     "percAllocation": 12,
-                    "percPlanned": 14
+                    "percPlanned": 14,
+                    "transactionId": "6df7cdae-bdc5-45c5-911b-733fec45d412"
                 }
             ]
         },
@@ -57,34 +57,34 @@
             "class": "Ativos 2",
             "allocations": [
                 {
-                    "code": "STKB",
+                    "ticker": "NASDAQ:STKB",
                     "quantity": 200,
-                    "marketPlace": "NASDAQ",
                     "initialValue": 4150,
                     "marketValue": 4150,
                     "performance": 3.8,
                     "percAllocation": 8,
-                    "percPlanned": 10
+                    "percPlanned": 10,
+                    "transactionId": "ded8dd1c-8bcf-4f2f-9b0f-6f57f280b90c"
                 },
                 {
-                    "code": "STKF",
+                    "ticker": "NASDAQ:STKF",
                     "quantity": 130,
-                    "marketPlace": "NASDAQ",
                     "initialValue": 7826,
                     "marketValue": 7826,
                     "performance": 6.1,
                     "percAllocation": 11,
-                    "percPlanned": 13
+                    "percPlanned": 13,
+                    "transactionId": "32278fda-78c6-440e-b7f9-c491e54e80d9"
                 },
                 {
-                    "code": "REFB",
+                    "ticker": "NASDAQ:REFB",
                     "quantity": 500,
-                    "marketPlace": "NASDAQ",
                     "initialValue": 55150,
                     "marketValue": 55150,
                     "performance": 5.5,
                     "percAllocation": 14,
-                    "percPlanned": 16
+                    "percPlanned": 16,
+                    "transactionId": "81854d95-0da1-4810-a708-dcafbfefb06a"
                 }
             ]
         },
@@ -96,24 +96,24 @@
             "class": "Ativos",
             "allocations": [
                 {
-                    "code": "BND1",
+                    "ticker": "IEX:BND1",
                     "quantity": 50,
-                    "marketPlace": "IEX",
                     "initialValue": 50000,
                     "marketValue": 50000,
                     "performance": 2.5,
                     "percAllocation": 15,
-                    "percPlanned": 18
+                    "percPlanned": 18,
+                    "transactionId": "ae275ff7-6a2e-445b-a296-b5065a8d1189"
                 },
                 {
-                    "code": "BND3",
+                    "ticker": "IEX:BND3",
                     "quantity": 90,
-                    "marketPlace": "IEX",
                     "initialValue": 85500,
                     "marketValue": 85500,
                     "performance": 3.3,
                     "percAllocation": 18,
-                    "percPlanned": 20
+                    "percPlanned": 20,
+                    "transactionId": "b6ac3560-113a-4123-856c-372cf0de3dda"
                 }
             ]
         },
@@ -125,24 +125,24 @@
             "class": "Ativos",
             "allocations": [
                 {
-                    "code": "BTC",
+                    "ticker": "CRYPTO:BTC",
                     "quantity": 1.5,
-                    "marketPlace": "CRYPTO",
                     "initialValue": 67500,
                     "marketValue": 67500,
                     "performance": 10.2,
                     "percAllocation": 20,
-                    "percPlanned": 22
+                    "percPlanned": 22,
+                    "transactionId": "9bdda6e0-ec32-409c-a432-39feb4b60ed8"
                 },
                 {
-                    "code": "LTC",
+                    "ticker": "CRYPTO:LTC",
                     "quantity": 5,
-                    "marketPlace": "CRYPTO",
                     "initialValue": 900,
                     "marketValue": 900,
                     "performance": 6.8,
                     "percAllocation": 10,
-                    "percPlanned": 12
+                    "percPlanned": 12,
+                    "transactionId": "692bde27-0652-4077-b240-a0e7493ed910"
                 }
             ]
         },
@@ -154,24 +154,24 @@
             "class": "Ativos",
             "allocations": [
                 {
-                    "code": "VALE3",
+                    "ticker": "BVMF:VALE3",
                     "quantity": 22,
-                    "marketPlace": "BVMF",
                     "initialValue": 1278.52,
                     "marketValue": 1278.52,
                     "performance": 4.9,
                     "percAllocation": 16,
-                    "percPlanned": 18
+                    "percPlanned": 18,
+                    "transactionId": "0d6737f5-72bf-45b0-a8fd-fcd022039493"
                 },
                 {
-                    "code": "PETR3",
+                    "ticker": "BVMF:PETR3",
                     "quantity": 32,
-                    "marketPlace": "BVMF",
                     "initialValue": 1278.52,
                     "marketValue": 1278.52,
                     "performance": 4.9,
                     "percAllocation": 16,
-                    "percPlanned": 18
+                    "percPlanned": 18,
+                    "transactionId": "d0724cb7-ced6-4626-a287-48f490660fc0"
                 }
             ]
         }

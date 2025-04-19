@@ -25,7 +25,7 @@ const dataMock = {
     },
     type: "EXPENSE", 
     status: "COMPLETED", 
-    brokerage: undefined 
+    fees: undefined 
   }
 }
 

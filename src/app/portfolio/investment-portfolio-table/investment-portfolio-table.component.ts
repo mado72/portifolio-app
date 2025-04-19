@@ -122,7 +122,8 @@ export class InvestmentPortfolioTableComponent {
                 ticker: data.ticker,
                 quantity: result.quantity,
                 percPlanned: result.percent,
-                marketValue: result.marketValue
+                marketValue: result.marketValue,
+                transactionId: '', // FIXME: this is should be the transaction id
               }]
             }
   

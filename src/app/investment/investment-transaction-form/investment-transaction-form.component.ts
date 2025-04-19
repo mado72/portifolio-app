@@ -79,7 +79,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
         id: portfolio.id,
         name: portfolio.name,
         qty: Object.values(portfolio.allocations)
-          .filter(allocation => allocation.ticker === this.ticker())
+          .filter(allocation => this.data()?.id && allocation.transactionId === this.data()?.id)
           .map(allocation => allocation.quantity)
           .reduce((tot, vl) => tot += vl, 0)
       })))
@@ -99,7 +99,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     quote: [0, [Validators.required, Validators.min(0)]],
     amount: [0, [Validators.required, Validators.min(0)]],
     type: ['', Validators.required],
-    brokerage: [0, [Validators.min(0)]],
+    fees: [0, [Validators.min(0)]],
     allocations: this.fb.array([] as { id: string, qty: number, name: string }[])
   }, {
     validators: [isAllAllocationsDoneValidator("quantity", "allocations")],
@@ -278,7 +278,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
           currency: this.assetSelected()?.quote.currency as Currency,
           value: formData.amount as number,
         },
-        brokerage: formData.brokerage || undefined,
+        fees: formData.fees || undefined,
         allocations
       }
       this.onSubmit.emit(transaction);

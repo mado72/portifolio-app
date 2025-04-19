@@ -13,5 +13,5 @@ Todo list:
  - [x] Passar o nome do portfolio para o formulário de transaction
  - [ ] Filtrar por classe de portfolio
  - [ ] Filtrar transações por ticker, tipo e banco
- - [ ] Acrescentar banco na lista de transações
+ - [x] Acrescentar banco na lista de transações
  - [x] Acrescentar classe em portfolio

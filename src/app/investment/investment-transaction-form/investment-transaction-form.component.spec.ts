@@ -6,6 +6,7 @@ import { QuoteService } from '../../service/quote.service';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideNativeDateAdapter } from '@angular/material/core';
 
 class MyService {
   getAllBalances () {}
@@ -21,6 +22,7 @@ describe('InvestmentTransactionFormComponent', () => {
       imports: [InvestmentTransactionFormComponent],
       providers: [
         provideAnimationsAsync(),
+        provideNativeDateAdapter(),
         { provide: PortfolioService, useClass: MyService },
         { provide: SourceService, useClass: MyService },
         { provide: QuoteService, useClass: MyService },

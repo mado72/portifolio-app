@@ -56,12 +56,7 @@ export class QuoteService implements OnDestroy {
   updateTrigger = new Subject<Record<Ticker, AssetQuoteType>>();
   private subscription = this.updateTrigger.pipe(
     throttleTime(1 * 60 * 1000),
-    switchMap(request => this.remoteQuotesService.updateQuotes(request).pipe(
-      tap(response=>{
-        console.log(Object.keys(response))
-      })
-    )))
-    .subscribe(response=> {
+    switchMap(request => this.remoteQuotesService.updateQuotes(request))).subscribe(_=> {
       this.lastUpdate.set(new Date());
       this.quotePendding.set(new Set());
     })
@@ -71,13 +66,15 @@ export class QuoteService implements OnDestroy {
     effect(() => {
       const lastUpdate = this.lastUpdate();
       const assets = this.sourceService.assetSource();
-      const pendding = this.quotePendding();
-      this.effectPendingAssetsLastUpdate(pendding, assets, lastUpdate);
+      const pending = this.quotePendding();
+      this.effectPendingAssetsLastUpdate(pending, assets, lastUpdate);
     })
   }
 
-  private effectPendingAssetsLastUpdate(pendding: Set<string>, assets: Record<string, AssetQuoteType>, lastUpdate: Date) {
-    const request = Array.from(pendding)
+  private effectPendingAssetsLastUpdate(pending: Set<string>, assets: Record<string, AssetQuoteType>, lastUpdate: Date) {
+    if (!pending) return;
+
+    const request = Array.from(pending)
       .concat(Object.values(assets)
         .filter(asset => Math.abs(differenceInMinutes(lastUpdate, asset.lastUpdate)) > 10)
         .map(asset => asset.ticker))

@@ -102,7 +102,7 @@ export class TransactionDialogComponent implements OnInit {
         currency: this.fb.control(this.data.transaction.value.currency, [Validators.required])
       }),
       type: this.fb.control(this.data.transaction.type, [Validators.required]),
-      brokerage: this.fb.control(this.data.transaction.brokerage, []),
+      fees: this.fb.control(this.data.transaction.fees, []),
     }),
     portfolios: this.fb.array([], [])
   });
@@ -199,8 +199,8 @@ export class TransactionDialogComponent implements OnInit {
     return this.transactionForm.get('transaction.type') as FormControl<InvestmentEnum>;
   }
 
-  get brokerage() {
-    return this.transactionForm.get('transaction.brokerage') as FormControl<number | undefined>;
+  get fees() {
+    return this.transactionForm.get('transaction.fees') as FormControl<number | undefined>;
   }
 
   get assetSelected() {

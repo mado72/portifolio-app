@@ -35,13 +35,14 @@ export class TransactionTableComponent {
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
-  readonly displayedColumns = ["ticker", "date", "type", "quantity", "quote", "value", "status", "account", "brokerage", "actions"];
+  readonly displayedColumns = ["ticker", "date", "type", "quantity", "quote", "value", "status", "account", "fees", "actions"];
 
   @Output() onDeleteItem = new EventEmitter<string>();
 
   @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
 
   dataSource = computed(() => {
+    debugger;
     return this.transactionService.investmentTransactions().sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
   });
 
