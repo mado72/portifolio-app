@@ -24,33 +24,6 @@ export type PortfolioChangeType = {
   providedIn: 'root'
 })
 export class PortfolioService {
-  getPortfolio(portfolioId: string) {
-    return this.portfolios()[portfolioId];
-  }
-
-  processAllocations(ticker: string, transactionId: string, quote: number, allocations: Record<string, number>) {
-    Object.entries(allocations)
-      .filter(([_, qty]) => qty > 0)
-      .forEach(([portId, qty]) => {
-        const portfolio = this.portfolios()[portId];
-        if (!!portfolio) {
-          const changes: PortfolioChangeType = {
-            ...portfolio,
-            allocations: [
-              ...Object.values(portfolio.allocations),
-              {
-                ticker,
-                percPlanned: 0,
-                quantity: qty,
-                marketValue: qty * quote,
-                transactionId
-              }
-            ]
-          };
-          this.updatePortfolio(portId, changes);
-        }
-      })
-  }
 
   private sourceService = inject(SourceService);
 
@@ -342,6 +315,34 @@ export class PortfolioService {
   portfoliosOfAsset(asset: AssetQuoteType): PortfolioType[] {
     return this.getAllPortfolios()
       .filter(portfolio => portfolio.allocations[getMarketPlaceCode(asset)]?.quantity > 0)
+  }
+
+  getPortfolio(portfolioId: string) {
+    return this.portfolios()[portfolioId];
+  }
+
+  processAllocations(ticker: string, transactionId: string, quote: number, allocations: Record<string, number>) {
+    Object.entries(allocations)
+      .filter(([_, qty]) => qty > 0)
+      .forEach(([portId, qty]) => {
+        const portfolio = this.portfolios()[portId];
+        if (!!portfolio) {
+          const changes: PortfolioChangeType = {
+            ...portfolio,
+            allocations: [
+              ...Object.values(portfolio.allocations),
+              {
+                ticker,
+                percPlanned: 0,
+                quantity: qty,
+                marketValue: qty * quote,
+                transactionId
+              }
+            ]
+          };
+          this.updatePortfolio(portId, changes);
+        }
+      })
   }
 
 }

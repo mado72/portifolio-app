@@ -42,7 +42,6 @@ export class TransactionTableComponent {
   @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
 
   dataSource = computed(() => {
-    debugger;
     return this.transactionService.investmentTransactions().sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
   });
 
