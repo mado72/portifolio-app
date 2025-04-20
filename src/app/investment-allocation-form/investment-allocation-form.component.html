@@ -1,0 +1,26 @@
+<ng-container [formGroup]="allocationForm">
+    <ng-container formArrayName="allocations">
+        @for (control of getAllocationsControls(); track $index; let idx = $index) {
+            <ng-container [formGroupName]="idx">
+                <mat-form-field class="full-width">
+                    <mat-label>
+                        {{getAllocationName(idx)}}
+                    </mat-label>
+                    <div>
+                        <input matInput type="number" formControlName="qty" appSelectOnFocus class="text-end" min="0">
+                    </div>
+                    <mat-hint>
+                        @if(badgeValue(getAllocationId(idx))) { Quantidade alocada: {{badgeValue(getAllocationId(idx))}} }
+                    </mat-hint>
+                </mat-form-field>
+            </ng-container>
+        }
+    </ng-container>
+</ng-container>
+<pre>
+value: {{allocationForm.value | json}}
+---------------
+input: 
+  quantity: {{quantity()}}
+  allocations: {{allocations() | json}}
+</pre>
