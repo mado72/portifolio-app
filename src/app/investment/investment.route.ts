@@ -20,10 +20,6 @@ export const investmentRoutes: Routes = [
         loadComponent: () => import('./earnings-year-sheet/earnings-year-sheet.component').then(mod => mod.EarningsYearSheetComponent)
     },
     {
-        path: 'earnings-month',
-        loadComponent: () => import('./investment-earnings-month/investment-earnings-month.component').then(mod => mod.InvestmentEarningsMonthComponent)
-    },
-    {
         path: 'transactions',
         children: [
             {
