@@ -64,6 +64,7 @@ export class QuoteService implements OnDestroy {
   readonly exchanges = computed(() => this.remoteQuotesService.exchanges());
   constructor() {
     effect(() => {
+      if (!this.sourceService.dataIsLoaded()) return;
       const lastUpdate = this.lastUpdate();
       const assets = this.sourceService.assetSource();
       const pending = this.quotePendding();

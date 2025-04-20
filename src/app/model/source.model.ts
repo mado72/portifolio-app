@@ -161,12 +161,16 @@ export type SummarizedDataType = {
 }
 
 export type PortfolioAllocationSourceRawType = SummarizedDataType & {
-    ticker: string;
+    ticker: Ticker;
     quantity: number;
-    transactionId: string;
-    averagePrice?: number;
-    quote?: CurrencyValue;
+    transactions: string[];
 }
+
+export type PortfolioAllocationType = Required<PortfolioAllocationSourceRawType> & Required<SummarizedDataType> & {
+    ticker: string;
+}
+
+export type PortfolioAllocationRecord = Record<string, PortfolioAllocationType>;
 
 export type PortfolioSourceRawType = {
     id: string;
@@ -176,12 +180,6 @@ export type PortfolioSourceRawType = {
     percPlanned: number;
     allocations: PortfolioAllocationSourceRawType[];
 }
-
-export type PortfolioAllocationType = Required<PortfolioAllocationSourceRawType & AssetQuoteType> & Required<SummarizedDataType> & {
-    ticker: string;
-}
-
-export type PortfolioAllocationRecord = Record<string, PortfolioAllocationType>;
 
 export type PortfolioType = Omit<PortfolioSourceRawType, "allocations" | "currency"> & {
     currency: Currency;

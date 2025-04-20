@@ -1,12 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { DecimalPipe, PercentPipe } from '@angular/common';
+import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, computed, effect, inject, input } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ExchangeStructureType } from '../../model/investment.model';
@@ -14,9 +13,9 @@ import { PortfolioAllocationType, PortfolioType, SummarizedDataType } from '../.
 import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
+import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
-import { TransactionService } from '../../service/transaction.service';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
   allocations: PortfolioAllocationType[];
@@ -43,6 +42,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
     ReactiveFormsModule,
     InvestmentPortfolioTableComponent,
     ExchangeComponent,
+    JsonPipe
 ],
   animations: [
     trigger('detailExpand', [

@@ -116,10 +116,10 @@
                 <span></span>
             </td>
             <td class="td-cell column-marketValue">
-                <app-exchange [exchange]="total().marketValue" [display]="exchangeView()" [hideIcon]="true"/>1
+                <app-exchange [exchange]="total().marketValue" [display]="exchangeView()" [hideIcon]="true"/>
             </td>
             <td class="td-cell column-profit">
-                <app-exchange [exchange]="total().profit" [display]="exchangeView()" [hideIcon]="true"/>1
+                <app-exchange [exchange]="total().profit" [display]="exchangeView()" [hideIcon]="true"/>
             </td>
             <td class="td-cell column-performance">
                 <span></span>
@@ -132,8 +132,12 @@
 </table>
 
 
-<!-- <code>
+<code>
     <pre>
 formSliders: {{formSliders.value | json}}
+
+-------------------
+
+{{ total() | json }}
     </pre>
-</code> -->
+</code>

@@ -56,6 +56,7 @@ export class RemoteQuotesService {
   readonly lastUpdate = signal<{ old?: Date, value: Date }>({ value: new Date() });
 
   readonly quotesRequests = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) return of({});
     const assets = this.sourceService.assetSource();
     return this.prepareRequestsToUpdateQuotes(Object.keys(assets));
   });
@@ -67,12 +68,14 @@ export class RemoteQuotesService {
     })
   ).subscribe(assets => {
     this.updateQuotes(this.assetsQuoted()).subscribe();
-    this.updateExchanges();
+    this.updateExchanges().subscribe();
   });
 
   constructor() {
     this.updateQuotes(this.sourceService.assetSource()).subscribe();
-    this.updateExchanges();
+    this.updateExchanges().subscribe(()=> {
+      this.sourceService.loadInitialData();
+    });
     effect(() => {
       const diffLastUpdate = differenceInSeconds(this.lastUpdate().value, this.lastUpdate().old as Date);
       if (diffLastUpdate > 0) {
@@ -112,7 +115,8 @@ export class RemoteQuotesService {
   }
 
   updateExchanges() {
-    this.coinService.getExchanges().subscribe(exchanges => this.exchanges.set(exchanges));
+    return this.coinService.getExchanges().pipe(
+      tap(exchanges => this.exchanges.set(exchanges)));
   }
 
   destroy() {

@@ -1,22 +1,17 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { format, formatISO, parseISO, setDayOfYear } from 'date-fns';
+import { format, formatISO, parseISO } from 'date-fns';
 import { v4 as uuid } from 'uuid';
-import assetSourceData from '../../data/assets.json';
-import balanceSource from '../../data/balance.json';
-import cashflowTransactionSource from '../../data/cashflow-transaction.json';
-import incomeSource from '../../data/earnings.json';
-import investmentTransactionsSource from '../../data/investment-transactions.json';
-import portfolioSource from '../../data/portfolio.json';
-import scheduledSource from '../../data/scheduled-account-transaction.json';
+import initialData from '../../data/data.json';
 import { AccountTypeEnum, Currency, CurrencyType, Scheduled, TransactionEnum } from '../model/domain.model';
 import { parseDateYYYYMMDD } from '../model/functions.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import {
   AssetEnum, AssetQuoteType, AssetSourceDataType as AssetSourceRawType, BalanceSourceDataType as BalanceSourceRawType, BalanceType,
   IncomeSourceDataType as IncomeSourceRawType, IncomeType,
-  InvestmentTransactionSourceRawType as InvestmentTransactionSourceRawType, InvestmentTransactionType, PortfolioAllocationType,
-  PortfolioRecord, PortfolioSourceRawType as PortfolioSourceRawType, PortfolioType, ScheduledsSourceDataType as ScheduledsSourceRawType,
-  ScheduledStatemetType, TransactionSourceRawType as TransactionSourceRawType, TransactionType
+  InvestmentTransactionSourceRawType, InvestmentTransactionType,
+  PortfolioSourceRawType, PortfolioType, ScheduledsSourceDataType as ScheduledsSourceRawType,
+  ScheduledStatemetType,
+  TransactionSourceRawType, TransactionType
 } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
 
@@ -25,16 +20,14 @@ import { getMarketPlaceCode } from './quote.service';
 })
 export class SourceService {
 
-  private dataSource = {
-    asset: signal<Record<string, AssetSourceRawType>>(this.assetSourceToRecord(assetSourceData.data)),
-    balance: signal<Record<string, BalanceSourceRawType>>(this.balanceToRecord(balanceSource.data)),
-    income: signal<Record<string, IncomeSourceRawType>>(this.incomeSourceToRecord(incomeSource.data.map(item => {
-      return { ...item, date: format(setDayOfYear(new Date(), Math.random() * 365), 'yyyy-MM-dd') }; // FIXME: Forçando datas aleatórias
-    }))),
-    investment: signal<Record<string, InvestmentTransactionType>>(this.investmentSourceToRecord(investmentTransactionsSource.data)),
-    cashflow: signal<Record<string, TransactionType>>(this.cashSourceToRecord(cashflowTransactionSource.data)), // FIXME forçando data para o mês corrente
-    portfolio: signal<Record<string, PortfolioSourceRawType>>(this.portfolioSourceToRecord(portfolioSource.data)),
-    scheduled: signal<Record<string, ScheduledStatemetType>>(this.scheduledSourceToRecord(scheduledSource.data))
+  dataSource = {
+    asset: signal<Record<string, AssetSourceRawType>>({}),
+    balance: signal<Record<string, BalanceSourceRawType>>({}),
+    income: signal<Record<string, IncomeSourceRawType>>({}),
+    investment: signal<Record<string, InvestmentTransactionType>>({}),
+    cashflow: signal<Record<string, TransactionType>>({}), // FIXME forçando data para o mês corrente
+    portfolio: signal<Record<string, PortfolioSourceRawType>>({}),
+    scheduled: signal<Record<string, ScheduledStatemetType>>({})
   };
 
   readonly currencyDefault = signal<Currency>(Currency.BRL);
@@ -84,54 +77,16 @@ export class SourceService {
 
   readonly cashflowSource = computed(() => this.dataSource.cashflow());
 
-  readonly portfolioSource = computed<PortfolioRecord>(() => {
-    const asset = this.dataSource.asset();
-    const entries = Object.entries(this.dataSource.portfolio()).reduce((acc, [key, item]) => {
-      acc[key] =
-      {
-        ...item,
-        currency: Currency[item.currency as keyof typeof Currency],
-        total: {
-          initialValue: NaN,
-          marketValue: NaN,
-          percPlanned: NaN,
-          percAllocation: NaN,
-          profit: NaN,
-          performance: NaN
-        },
-        allocations: item.allocations.reduce((allocAcc, alloc) => {
-          const ticker = alloc.ticker;
-          const initialPrice = (alloc.initialValue || alloc.marketValue);
-          const averagePrice = initialPrice / alloc.quantity;
-          allocAcc[ticker] = {
-            ...asset[ticker],
-            ...alloc,
-            ticker,
-            initialPrice,
-            averagePrice,
-            quote: {
-              value: NaN,
-              currency: Currency[alloc.quote?.currency as CurrencyType] || Currency.USD
-            },
-            profit: alloc.profit || alloc.marketValue - initialPrice,
-            performance: alloc.performance || (alloc.marketValue - initialPrice) / initialPrice,
-            percAllocation: alloc.percAllocation || 0,
-            trend: "unchanged",
-            manualQuote: !!asset[ticker]?.manualQuote,
-            lastUpdate: new Date(asset[ticker]?.lastUpdate),
-            type: AssetEnum[asset[ticker]?.type as keyof typeof AssetEnum]
-          };
-          return allocAcc;
-        }, {} as Record<string, PortfolioAllocationType>)
-      };
-      return acc;
-    }, {} as Record<string, PortfolioType>);
-    return entries;
-  });
-
   readonly scheduledSource = computed(() => this.dataSource.scheduled())
 
-  constructor() { }
+  readonly dataIsLoaded = signal(false);
+
+  constructor() {}
+
+  loadInitialData() {
+    this.loadData(initialData);
+    this.dataIsLoaded.set(true);
+  }
 
   /**
    * Handles the file selection event and loads the selected JSON file into the data source.
@@ -150,13 +105,7 @@ export class SourceService {
         // Parse JSON and set data
         try {
           const jsonData = JSON.parse(e.target.result);
-          this.dataSource.asset.set(this.assetSourceToRecord(jsonData.asset));
-          this.dataSource.balance.set(this.balanceToRecord(jsonData.balance));
-          this.dataSource.income.set(this.incomeSourceToRecord(jsonData.income));
-          this.dataSource.investment.set(this.investmentSourceToRecord(jsonData.investment));
-          this.dataSource.cashflow.set(this.cashSourceToRecord(jsonData.cashflow));
-          this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
-          this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
+          this.loadData(jsonData);
           alert('Dados carregados com sucesso!');
         } catch (error) {
           alert('Erro ao carregar o arquivo JSON.');
@@ -164,6 +113,16 @@ export class SourceService {
       };
       reader.readAsText(file);
     }
+  }
+
+  private loadData(jsonData: any) {
+    this.dataSource.asset.set(this.assetSourceToRecord(jsonData.asset));
+    this.dataSource.balance.set(this.balanceToRecord(jsonData.balance));
+    this.dataSource.income.set(this.incomeSourceToRecord(jsonData.income));
+    this.dataSource.investment.set(this.investmentSourceToRecord(jsonData.investment));
+    this.dataSource.cashflow.set(this.cashSourceToRecord(jsonData.cashflow));
+    this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
+    this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
   }
 
   emptyAllData() {

@@ -77,7 +77,14 @@ export class InvestmentTransactionsControlComponent implements OnInit {
 
   onSaveTransaction(transaction: InvestmentTransactionFormResult) {
     this.formData.set(null);
-    this.transactionService.saveTransaction(transaction).subscribe(()=>{
+
+    const allocationsMap = transaction.allocations.reduce((acc, allocation) => {
+      acc[allocation.id] = allocation.qty;
+      return acc;
+    }, {} as { [id: string]: number });
+    delete (transaction as any).allocations;
+
+    this.transactionService.saveTransaction(transaction, allocationsMap).subscribe(()=>{
       this.transactionService.listTransactions();
     });
   }

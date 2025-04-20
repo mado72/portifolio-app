@@ -33,15 +33,20 @@ export class TransactionService {
 
   readonly allocationByTransactions = computed(() => {
     return this.portfolioService.portfolioAllocation().reduce((acc, portfolio) => {
-      Object.values(portfolio.allocations).forEach(({ quantity, transactionId }) => {
-        if (!acc[transactionId]) {
-          acc[transactionId] = [];
+      Object.values(portfolio.allocations).forEach(({ quantity, transactions }) => {
+        if (transactions) {
+          transactions.forEach(transactionId => {
+            if (!acc[transactionId]) {
+              acc[transactionId] = [];
+            } else {
+              acc[transactionId].push({
+                portfolioId: portfolio.id,
+                portfolioName: portfolio.name,
+                quantity
+              });
+            }
+          })
         }
-        acc[transactionId].push({
-          portfolioId: portfolio.id,
-          portfolioName: portfolio.name,
-          quantity
-        });
       });
       return acc;
     }, {} as {[transactionId: string]:{portfolioId: string, portfolioName: string, quantity: number}[]});
@@ -50,7 +55,7 @@ export class TransactionService {
   constructor() { }
 
   createTransactionAllocations() {
-    return Object.values(this.sourceService.portfolioSource()).map(portfolio => {
+    return Object.values(this.portfolioService.portfolios()).map(portfolio => {
       return {
         id: portfolio.id,
         name: portfolio.name,
@@ -92,7 +97,7 @@ export class TransactionService {
       this.sourceService.updateInvestmentTransaction([transaction]);
     }
     else {
-      this.sourceService.addInvestmentTransaction(transaction);
+      transaction = this.sourceService.addInvestmentTransaction(transaction);
     }
     if (allocations) {
       this.portfolioService.processAllocations(transaction.ticker, transaction.id, transaction.quote, allocations);
@@ -134,11 +139,11 @@ export class TransactionService {
           // Adjust portfolio allocations
           alloc[item.id] = {
             ...(alloc[item.id] || item),
+            transactionId: result.transaction.id,
             allocations: [...(alloc[item.id]?.allocations || []), {
               ticker: result.transaction.ticker,
               percPlanned: 0,
-              quantity: item.quantity * (result.transaction.type === InvestmentEnum.BUY ? 1 : -1),
-              transactionId: result.transaction.id, // TODO: check if this is correct
+              quantity: item.quantity * (result.transaction.type === InvestmentEnum.BUY ? 1 : -1)
             }]
           };
 

@@ -11,6 +11,7 @@ import { Currency } from '../../model/domain.model';
 import { PortfolioType } from '../../model/source.model';
 import { SourceService } from '../../service/source.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { PortfolioService } from '../../service/portfolio-service';
 
 export type DialogDataType = {
   title: string;
@@ -38,6 +39,8 @@ export class PortfolioRegisterDialogComponent {
 
   readonly sourceService = inject(SourceService);
 
+  readonly portfolioService = inject(PortfolioService);
+
   readonly data = inject<DialogDataType>(MAT_DIALOG_DATA);
 
   readonly dialogRef = inject(MatDialogRef<PortfolioRegisterDialogComponent>);
@@ -45,7 +48,7 @@ export class PortfolioRegisterDialogComponent {
   private fb = inject(FormBuilder);
 
   classes = computed(() => 
-    Object.values(this.sourceService.portfolioSource())
+    Object.values(this.portfolioService.portfolios())
       .filter(portfolio => !!portfolio.class)
       .reduce((acc, portfolio) => {
         acc.add(portfolio.class);

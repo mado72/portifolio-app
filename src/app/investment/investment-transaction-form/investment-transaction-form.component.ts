@@ -79,7 +79,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
         id: portfolio.id,
         name: portfolio.name,
         qty: Object.values(portfolio.allocations)
-          .filter(allocation => this.data()?.id && allocation.transactionId === this.data()?.id)
+          .filter(allocation => this.data()?.id && allocation.transactions.includes(this.data()?.id as string))
           .map(allocation => allocation.quantity)
           .reduce((tot, vl) => tot += vl, 0)
       })))

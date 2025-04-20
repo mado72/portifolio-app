@@ -122,7 +122,7 @@ export class EarningsYearSheetComponent implements OnInit {
 
     earnings = earnings.concat(
       this.portfoliosAssets()
-        .map(asset => getMarketPlaceCode(asset))
+        .map(asset => asset.ticker)
         .filter(ticker=>!earningsTicker.has(ticker))
         .map(ticker=>({
           ticker,
@@ -178,7 +178,7 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private filterByPortfolioAssets(earnings: { date: Date; id: string; ticker: string; amount: number; type: IncomeEnum; }[]) {
     const portfolioAssets = this.portfoliosAssets()
-      .map(asset => getMarketPlaceCode(asset));
+      .map(asset => asset.ticker);
     earnings = earnings.filter(earning => portfolioAssets.includes(earning.ticker));
     return earnings;
   }

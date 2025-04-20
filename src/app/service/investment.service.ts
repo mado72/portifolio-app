@@ -3,9 +3,9 @@ import { getYear, setYear } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import { Income, IncomeEnum } from '../model/investment.model';
 import { AssetEnum, AssetQuoteRecord, AssetQuoteType, fnTrend, IncomeType } from '../model/source.model';
+import { PortfolioService } from './portfolio-service';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
-import { Currency } from '../model/domain.model';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +13,8 @@ import { Currency } from '../model/domain.model';
 export class InvestmentService {
 
   private sourceService = inject(SourceService);
+
+  private portfolioService = inject(PortfolioService);
 
   private quoteService = inject(QuoteService);
 
@@ -69,7 +71,7 @@ export class InvestmentService {
 
   deleteAsset({ marketPlace, code }: { marketPlace: string; code: string; }) {
     const ticker = getMarketPlaceCode({marketPlace, code});
-    const portfoliosChanges = Object.values(this.sourceService.portfolioSource())
+    const portfoliosChanges = Object.values(this.portfolioService.portfolios())
       .filter(portfolio => 
         Object.keys(portfolio.allocations).includes(ticker))
       .map(portfolio => {

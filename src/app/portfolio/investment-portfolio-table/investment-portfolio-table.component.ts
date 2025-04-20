@@ -84,10 +84,15 @@ export class InvestmentPortfolioTableComponent {
   }
 
   private convertAllocation(allocation: PortfolioAllocationType)  {
+    const asset = this.investmentService.assertsSignal()[allocation.ticker];
     return {
       ...allocation,
-      ...this.quoteService.enhanceExchangeInfo(allocation, allocation.quote.currency, ["initialValue", "marketValue", "profit", "averagePrice"]),
-      quote: this.quoteService.enhanceExchangeInfo(allocation.quote, allocation.quote.currency, ["value"]).value
+      ...this.quoteService.enhanceExchangeInfo(allocation, asset.quote.currency, ["initialValue", "marketValue", "profit"]),
+      name: asset.name,
+      type: asset.type,
+      trend: asset.trend,
+      quote: this.quoteService.enhanceExchangeInfo(asset.quote, asset.quote.currency, ["value"]).value,
+      averagePrice: this.quoteService.enhanceExchangeInfo({value: allocation.marketValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
     };
   }
 
