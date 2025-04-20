@@ -60,8 +60,6 @@ export class PortfolioService {
         }
         const initialValue = alloc.initialValue;
         const currentValue = quotes[ticker]?.quote.value * alloc.quantity || alloc.marketValue;
-        delete (alloc as any).initialPrice; // FIXME: Remove initialPrice from allocation
-        delete (alloc as any).quote; // FIXME: Remove lastUpdate from allocation
 
         const transactions = (alloc.transactions || []).concat(
           alloc?.transactions || []).filter((item, index, self) => {
