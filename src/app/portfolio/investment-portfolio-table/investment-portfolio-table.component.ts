@@ -99,7 +99,7 @@ export class InvestmentPortfolioTableComponent {
       type: asset.type,
       trend: asset.trend,
       quote: this.quoteService.enhanceExchangeInfo(asset.quote, asset.quote.currency, ["value"]).value,
-      averagePrice: this.quoteService.enhanceExchangeInfo({value: allocation.data.marketValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
+      averagePrice: this.quoteService.enhanceExchangeInfo({value: allocation.data.initialValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
     };
   }
 
@@ -110,7 +110,6 @@ export class InvestmentPortfolioTableComponent {
       ticker: row.ticker,
       asset,
       portfolio: this.portfolioName(),
-      quantity: row.quantity,
       percent: row.percPlanned,
       currency: asset.quote.currency,
       manualQuote: asset.manualQuote === true,
@@ -124,20 +123,20 @@ export class InvestmentPortfolioTableComponent {
 
         if (!! portfolio?.id) {
           if (result.remove) {
-            const allocation = {...portfolio.allocations[data.ticker].data, quantity: 0};
-            // this.portfolioService.updatePortfolio(portfolio.id, {transaction: [allocation]}) // FIXME: Corrigir aqui.
+            // Remove asset transactions of portfolio
+            portfolio.allocations[data.ticker].data.transactions = [];
+            this.portfolioService.updatePortfolio(portfolio.id, portfolio);
           }
           else {
-            const changes = {
-              allocations: [{
-                ticker: data.ticker,
-                quantity: result.quantity,
-                percPlanned: result.percent,
-                marketValue: result.marketValue,
-              }]
+            portfolio.allocations[data.ticker].data.percPlanned = result.percent;
+            this.portfolioService.updatePortfolio(portfolio.id, {...portfolio});
+
+            if (data.asset.manualQuote && result.marketValue) {
+              const asset = {...data.asset};
+              asset.quote.value = result.marketValue / portfolio.allocations[data.ticker].quantity;
+
+              this.quoteService.updateQuoteAsset(asset);
             }
-  
-            // this.portfolioService.updatePortfolio(portfolio.id, changes) // FIXME: Corrigir aqui
           }
         }
       }

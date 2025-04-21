@@ -7,25 +7,6 @@
     <mat-dialog-content>
         <div class="d-flex flex-column">
             <mat-form-field>
-                <mat-label>Quantidade</mat-label>
-                <input type="number" matInput step="1" formControlName="quantity" min="0" required>
-                @if (quantity.hasError('required')) {
-                <mat-error>
-                    Campo obrigatório
-                </mat-error>
-                }
-                @if (quantity.hasError('min')) {
-                <mat-error>
-                    Quantidade inválida. Deve ser maior que 0.
-                </mat-error>
-                }
-            </mat-form-field>
-            <div class="d-flex" class="btn-add-container">
-                <button type="button" mat-button (click)="addQuantity(1000)">+ 1000</button>
-                <button type="button" mat-button (click)="addQuantity(100)">+ 100</button>
-                <button type="button" mat-button (click)="addQuantity(10)">+ 10</button>
-            </div>
-            <mat-form-field>
                 <mat-label>Percentagem Planejada</mat-label>
                 <input type="number" matInput step="0.1" formControlName="percent" min="0" required class="text-end">
                 @if (percent.touched && percent.invalid) {
@@ -35,18 +16,19 @@
                 </mat-error>
                 }
             </mat-form-field>
-            @if (this.data.manualQuote) {
-            <mat-form-field>
-                <mat-label>Patrimônio Atual</mat-label>
-                <span matTextPrefix>{{data.currency}}</span>
-                <input type="number" matInput step="0.01" formControlName="marketValue" min="0" class="text-end">
-            </mat-form-field>
-            @if (marketValue.touched && marketValue.invalid) {
-            <mat-error>
-                @if (percent.hasError('required')) {Campo obrigatório}
-                @if (percent.hasError('min')) {Valor inválido. Deve ser maior que 0.}
-            </mat-error>
-            }
+            @if (this.data.manualQuote)
+            {
+                <mat-form-field>
+                    <mat-label>Patrimônio Atual</mat-label>
+                    <span matTextPrefix>{{data.currency}}</span>
+                    <input type="number" matInput step="0.01" formControlName="marketValue" min="0" class="text-end">
+                </mat-form-field>
+                @if (marketValue.touched && marketValue.invalid) {
+                <mat-error>
+                    @if (percent.hasError('required')) {Campo obrigatório}
+                    @if (percent.hasError('min')) {Valor inválido. Deve ser maior que 0.}
+                </mat-error>
+                }
             }
         </div>
     </mat-dialog-content>

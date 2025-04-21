@@ -12,7 +12,6 @@ export type PorfolioAllocationDataType = {
   portfolio: string,
   ticker: string,
   asset: AssetQuoteType,
-  quantity: number,
   percent: number,
   currency: Currency,
   marketValue?: number,
@@ -41,7 +40,6 @@ export class PortfolioAllocationDialogComponent {
   private fb = inject(FormBuilder);
 
   readonly allocationForm = this.fb.group({
-    quantity: this.fb.control(this.data.quantity, [Validators.required, Validators.min(0)]),
     percent: this.fb.control(this.data.percent, [Validators.required, Validators.min(0)]),
     marketValue: this.fb.control(this.data.marketValue),
   })
@@ -58,14 +56,6 @@ export class PortfolioAllocationDialogComponent {
 
   submitForm() {
     this.dialogRef.close(this.formData);
-  }
-
-  addQuantity(value: number) {
-    this.quantity.setValue(this.quantity.value + value);
-  }
-
-  get quantity() {
-    return this.allocationForm.get('quantity') as FormControl;
   }
 
   get percent() {
