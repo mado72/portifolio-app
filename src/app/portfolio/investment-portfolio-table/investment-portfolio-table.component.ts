@@ -3,7 +3,7 @@ import { Component, computed, inject, input, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { PortfolioAllocationType, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
+import { PortfolioAllocation, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
@@ -12,7 +12,13 @@ import { ExchangeComponent } from "../../utils/component/exchange/exchange.compo
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
 
-type DatasourceInputType = PortfolioAllocationType & {ticker: string, name: string, trend: TrendType};
+class DatasourceInputType extends PortfolioAllocation {
+  get ticker() {
+    return this.data.ticker;
+  }
+  name!: string;
+  trend!: TrendType;
+};
 
 @Component({
   selector: 'app-investment-portfolio-table',
@@ -83,16 +89,17 @@ export class InvestmentPortfolioTableComponent {
     ;
   }
 
-  private convertAllocation(allocation: PortfolioAllocationType)  {
-    const asset = this.investmentService.assertsSignal()[allocation.ticker];
+  private convertAllocation(allocation: PortfolioAllocation)  {
+    const asset = this.investmentService.assertsSignal()[allocation.data.ticker];
     return {
-      ...allocation,
-      ...this.quoteService.enhanceExchangeInfo(allocation, asset.quote.currency, ["initialValue", "marketValue", "profit"]),
+      ...allocation.data,
+      ...this.quoteService.enhanceExchangeInfo(allocation.data, asset.quote.currency, ["initialValue", "marketValue", "profit"]),
+      quantity: allocation.quantity,
       name: asset.name,
       type: asset.type,
       trend: asset.trend,
       quote: this.quoteService.enhanceExchangeInfo(asset.quote, asset.quote.currency, ["value"]).value,
-      averagePrice: this.quoteService.enhanceExchangeInfo({value: allocation.marketValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
+      averagePrice: this.quoteService.enhanceExchangeInfo({value: allocation.data.marketValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
     };
   }
 
@@ -117,9 +124,8 @@ export class InvestmentPortfolioTableComponent {
 
         if (!! portfolio?.id) {
           if (result.remove) {
-            const allocation = {...portfolio.allocations[data.ticker]};
-            allocation.quantity = 0;
-            this.portfolioService.updatePortfolio(portfolio.id, {allocations: [allocation]})
+            const allocation = {...portfolio.allocations[data.ticker].data, quantity: 0};
+            // this.portfolioService.updatePortfolio(portfolio.id, {transaction: [allocation]}) // FIXME: Corrigir aqui.
           }
           else {
             const changes = {
@@ -128,11 +134,10 @@ export class InvestmentPortfolioTableComponent {
                 quantity: result.quantity,
                 percPlanned: result.percent,
                 marketValue: result.marketValue,
-                transactionId: '', // FIXME: this is should be the transaction id
               }]
             }
   
-            this.portfolioService.updatePortfolio(portfolio.id, changes)
+            // this.portfolioService.updatePortfolio(portfolio.id, changes) // FIXME: Corrigir aqui
           }
         }
       }

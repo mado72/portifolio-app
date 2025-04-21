@@ -162,7 +162,7 @@ export class TransactionDialogComponent implements OnInit {
     return this.portfolioService.getAllPortfolios().map(portfolio=>({
       portfolio: {...portfolio},
       quantity: Object.values(portfolio.allocations)
-        .filter(item=>ticker && ticker === item.ticker)
+        .filter(item=>ticker && ticker === item.data.ticker)
         .reduce((acc, vl) => acc + (vl?.quantity || 0), 0)
     }))
   }

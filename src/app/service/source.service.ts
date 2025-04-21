@@ -443,7 +443,7 @@ export class SourceService {
   portfolioToSource(items: PortfolioType[]): PortfolioSourceRawType[] {
     return items.map(item => ({
       ...item,
-      allocations: Object.values(item.allocations)
+      allocations: Object.values(item.allocations).map(allocation => allocation.data)
     }))
   }
 

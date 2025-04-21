@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { TransactionDialogComponent, TransactionDialogType } from '../investment/transaction-dialog/transaction-dialog.component';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
-import { InvestmentTransactionType } from '../model/source.model';
+import { InvestmentTransactionType, PortfolioType } from '../model/source.model';
 import { AssetService } from './asset.service';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
 import { QuoteService } from './quote.service';
@@ -33,23 +33,20 @@ export class TransactionService {
 
   readonly allocationByTransactions = computed(() => {
     return this.portfolioService.portfolioAllocation().reduce((acc, portfolio) => {
-      Object.values(portfolio.allocations).forEach(({ quantity, transactions }) => {
-        if (transactions) {
-          transactions.forEach(transactionId => {
-            if (!acc[transactionId]) {
-              acc[transactionId] = [];
-            } else {
-              acc[transactionId].push({
-                portfolioId: portfolio.id,
-                portfolioName: portfolio.name,
-                quantity
-              });
-            }
-          })
-        }
+      Object.values(portfolio.allocations).forEach(({ data }) => {
+        data.transactions.forEach(({id, quantity}) => {
+          if (!acc[id]) {
+            acc[id] = [];
+          }
+          acc[id].push({
+            portfolioId: portfolio.id,
+            portfolioName: portfolio.name,
+            quantity
+          });
+        })
       });
       return acc;
-    }, {} as {[transactionId: string]:{portfolioId: string, portfolioName: string, quantity: number}[]});
+    }, {} as { [transactionId: string]: { portfolioId: string, portfolioName: string, quantity: number }[] });
   })
 
   constructor() { }
@@ -85,9 +82,9 @@ export class TransactionService {
       }
       else {
         this.quoteService.addPendding(transaction.ticker);
+        this.persistTransaction(transaction, allocations);
         subscriber.next(transaction);
         subscriber.complete();
-        this.persistTransaction(transaction, allocations);
       }
     })
   }
@@ -137,15 +134,15 @@ export class TransactionService {
           ) return alloc;
 
           // Adjust portfolio allocations
-          alloc[item.id] = {
-            ...(alloc[item.id] || item),
-            transactionId: result.transaction.id,
-            allocations: [...(alloc[item.id]?.allocations || []), {
-              ticker: result.transaction.ticker,
-              percPlanned: 0,
-              quantity: item.quantity * (result.transaction.type === InvestmentEnum.BUY ? 1 : -1)
-            }]
-          };
+          // alloc[item.id] = { // FIXME: Corrigir aqui
+          //   ...(alloc[item.id] || item),
+          //   transactionId: result.transaction.id,
+          //   allocations: [...(alloc[item.id]?.transaction || []), {
+          //     ticker: result.transaction.ticker,
+          //     percPlanned: 0,
+          //     quantity: item.quantity * (result.transaction.type === InvestmentEnum.BUY ? 1 : -1)
+          //   }]
+          // };
 
           return alloc;
         }, {} as Record<string, PortfolioChangeType & { id: string }>);
@@ -187,4 +184,20 @@ export class TransactionService {
       portfolios: []
     });
   }
+
+  computeAllocationsOfTransaction(portfolios: PortfolioType[], quantity: number, transactionId?: string): Record<string, { id: string; name: string; qty: number; allocated: number; }> {
+    return portfolios.map(portfolio => ({
+        id: portfolio.id,
+        name: portfolio.name,
+        allocated: Object.values(portfolio.allocations)
+          .map(allocation => allocation.quantity)
+          .reduce((tot, vl) => tot += vl, 0),
+        qty: quantity
+      }))
+      .reduce((acc, portfolio) => {
+        acc[portfolio.id] = portfolio;
+        return acc;
+      }, {} as Record<string, { id: string; name: string; qty: number; allocated: number; }>);
+  }
+
 }

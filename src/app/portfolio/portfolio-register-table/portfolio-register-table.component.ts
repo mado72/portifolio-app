@@ -9,7 +9,7 @@ import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ExchangeStructureType } from '../../model/investment.model';
-import { PortfolioAllocationType, PortfolioType, SummarizedDataType } from '../../model/source.model';
+import { PortfolioAllocation, PortfolioType, SummarizedDataType } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
@@ -18,7 +18,7 @@ import { ExchangeComponent } from "../../utils/component/exchange/exchange.compo
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
-  allocations: PortfolioAllocationType[];
+  allocations: PortfolioAllocation[];
   percAllocation: number;
   total: Omit<SummarizedDataType, "initialValue" | "marketValue" | "profit"> & {
     initialValue: ExchangeStructureType;

@@ -15,7 +15,7 @@
                 </mat-tab>
                 <mat-tab label="Alocações" class="w-75 text-center">
                     <div class="form-fields flex-direction">
-                        <ng-container [ngTemplateOutlet]="allocation"/>
+                        <ng-container [ngTemplateOutlet]="allocation" [ngTemplateOutletContext]="{form: transactionForm}"/>
                     </div>
                 </mat-tab>
             </mat-tab-group>
@@ -35,7 +35,7 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <ng-container [ngTemplateOutlet]="allocation"/>
+                            <ng-container [ngTemplateOutlet]="allocation" [ngTemplateOutletContext]="{form: transactionForm}"/>
                         </div>
                     </div>
                 </div>
@@ -45,10 +45,13 @@
             </div>
         </div>
     </form>
+<pre>
+{{formValue() | json}}
+</pre>
 </div>
 
 <ng-template #actions>
-    <button mat-stroked-button color="primary" type="submit" [disabled]="!transactionForm.valid">
+    <button mat-stroked-button color="primary" type="submit" [disabled]="!transactionForm.valid || !allocationsIsValid">
         Salvar
     </button>
     <button mat-button color="secondary" type="button" (click)="onCancelRequest()">
@@ -62,7 +65,7 @@
         <mat-form-field class="full-width">
             <mat-label>MarketPlace</mat-label>
             <mat-select formControlName="marketPlace">
-                @for (place of marketPlaces(); track $index) {
+                @for (place of marketPlaces; track $index) {
                     <mat-option [value]="place">{{ place }}</mat-option>
                 }
             </mat-select>
@@ -142,24 +145,13 @@
     </ng-container>
 </ng-template>
 
-<ng-template #allocation>
-    <ng-container [formGroup]="transactionForm">
-        <ng-container formArrayName="allocations">
-            @for (allocation of allocationValue() ; track $index; let idx = $index) {
-                <ng-container [formGroupName]="idx">
-                    <mat-form-field class="full-width">
-                        <mat-label>
-                            {{allocation.name}}
-                        </mat-label>
-                        <div>
-                            <input matInput type="number" formControlName="qty" appSelectOnFocus class="text-end" min="0">
-                        </div>
-                        <mat-hint>
-                            @if(badgeValue(allocation.id)) { Quantidade alocada: {{badgeValue(allocation.id)}} }
-                        </mat-hint>
-                    </mat-form-field>
-                </ng-container>
-            }
-        </ng-container>
-    </ng-container>
+<ng-template #allocation let-form="form">
+    <app-investment-allocation-form
+        [quantity]="transactionForm.get('quantity')?.value || null"
+        [allocations]="allocations()"
+        (formDataChanged)="setInputAllocations($event)"
+        (formIsValid)="setInputAllocationsIsValid($event)"
+        ></app-investment-allocation-form>
+        {{ allocationsIsValid }}
 </ng-template>
+

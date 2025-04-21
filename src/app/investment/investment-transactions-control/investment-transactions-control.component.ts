@@ -32,6 +32,7 @@ export class InvestmentTransactionsControlComponent implements OnInit {
     switch (action) {
       case 'create':
         this.formData.set({
+          quantity: 0,
           allocations: this.transactionService.createTransactionAllocations()
         });
         break;
@@ -47,14 +48,17 @@ export class InvestmentTransactionsControlComponent implements OnInit {
           }
           
           const [marketPlace, code] = transaction?.ticker.split(':') || [undefined, undefined];
+          const allTransactions = this.transactionService.allocationByTransactions();
+          const currentTransaction = allTransactions[transactionId];
           this.formData.set({
             ...transaction,
             marketPlace,
             code,
-            allocations: this.transactionService.allocationByTransactions()[transactionId]?.map(allocation=>({
+            allocations: currentTransaction?.map(allocation=>({
               id: allocation.portfolioId,
               name: allocation.portfolioName,
-              qty: allocation.quantity
+              qty: allocation.quantity,
+              hash: ''
             })) || [],
           });
         }

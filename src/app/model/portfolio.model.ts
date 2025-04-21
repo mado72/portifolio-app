@@ -1,4 +1,4 @@
-import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocationType, SummarizedDataType } from "./source.model";
+import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocation, SummarizedDataType } from "./source.model";
 
 const INITIAL_TOTAL: Required<SummarizedDataType> = {
     initialValue: 0,

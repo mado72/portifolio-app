@@ -1,5 +1,5 @@
-import { NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
+import { JsonPipe, NgTemplateOutlet } from '@angular/common';
+import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, Signal, signal } from '@angular/core';
 import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
@@ -9,12 +9,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith } from 'rxjs';
+import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '../../investment-allocation-form/investment-allocation-form.component';
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
+import { TransactionService } from '../../service/transaction.service';
 import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 
@@ -28,6 +30,7 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
   selector: 'app-investment-transaction-form',
   standalone: true,
   imports: [
+    InvestmentAllocationFormComponent,
     ReactiveFormsModule,
     MatButtonModule,
     MatTabsModule,
@@ -39,6 +42,7 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
     NgTemplateOutlet,
     InvestmentTypePipe,
     SelectOnFocusDirective,
+    JsonPipe
   ],
   templateUrl: './investment-transaction-form.component.html',
   styleUrl: './investment-transaction-form.component.scss'
@@ -47,9 +51,11 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   private quoteService = inject(QuoteService);
 
+  private balanceService = inject(BalanceService);
+
   private portfolioService = inject(PortfolioService);
 
-  private balanceService = inject(BalanceService);
+  private transactionService = inject(TransactionService);
 
   private fb = inject(FormBuilder);
 
@@ -57,60 +63,47 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   @Output() onCancel = new EventEmitter<void>();
 
-  currencies = ['BRL', 'USD', 'EUR']; // Moedas disponíveis
+  currencies = Object.values(Currency); // Moedas disponíveis
 
   transactionTypes = Object.keys(InvestmentEnum); // Tipos de transação
 
   assets = this.quoteService.quotes;
 
-  marketPlaces = computed(() => Object.keys(MarketPlaceEnum));
+  marketPlaces = Object.keys(MarketPlaceEnum);
 
   ticker = signal<string | null>(null);
 
-  data = input<IntestmentTransactionFormData>({});
+  data = input<IntestmentTransactionFormData>({
+    quantity: 0,
+    allocations: []
+  });
 
+  quantity = signal(this.data()?.quantity || 0);
+    
   accountName = signal('');
 
   accounts = computed(()=>this.balanceService.getAccounts());
 
-  allocations = computed(() =>
-    Object.values(this.portfolioService.getAllPortfolios()
-      .map(portfolio => ({
-        id: portfolio.id,
-        name: portfolio.name,
-        qty: Object.values(portfolio.allocations)
-          .filter(allocation => this.data()?.id && allocation.transactions.includes(this.data()?.id as string))
-          .map(allocation => allocation.quantity)
-          .reduce((tot, vl) => tot += vl, 0)
-      })))
-      .reduce((acc, portfolio)=>{
-        acc[portfolio.id] = portfolio;
-        return acc;
-      }, {} as Record<string, {id: string, name: string, qty: number}>)
-    )
+  allocations = computed(()=>this.transactionService.computeAllocationsOfTransaction(
+    Object.values(this.portfolioService.portfolios()),
+    this.data()?.quantity || 0,
+    this.data()?.id || undefined));
+
+  inputAllocations: InvestmentAllocationField[] = [];
+  allocationsIsValid = true;
 
   transactionForm = this.fb.group({
     id: [''],
     marketPlace: ['', Validators.required],
     code: ['', Validators.required],
     date: [null as unknown as Date, Validators.required],
-    accountId: ['', Validators.required, isAccountMatchedValidator(this.accounts())],
+    accountId: ['', Validators.required, isAccountMatchedValidator(this.accounts)],
     quantity: [0, [Validators.required, Validators.min(1)]],
     quote: [0, [Validators.required, Validators.min(0)]],
     amount: [0, [Validators.required, Validators.min(0)]],
     type: ['', Validators.required],
-    fees: [0, [Validators.min(0)]],
-    allocations: this.fb.array([] as { id: string, qty: number, name: string }[])
-  }, {
-    validators: [isAllAllocationsDoneValidator("quantity", "allocations")],
+    fees: [0, [Validators.min(0)]]
   });
-
-  get allocationArray() {
-    return this.transactionForm.get("allocations") as FormArray<FormGroup<{ 
-      id: FormControl<string | null>, 
-      qty: FormControl<number | null>, 
-      name: FormControl<string | null> }>>;
-  }
 
   optionsCode = computed(() => {
     const ticker = this.ticker();
@@ -130,7 +123,6 @@ export class InvestmentTransactionFormComponent implements OnInit {
   })
 
   constructor() {
-    this.initializeAllocationControls();
     const marketPlace = this.data()?.marketPlace
     const code = this.data()?.code
     if (marketPlace && code) {
@@ -138,11 +130,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
       this.transactionForm.get('code')?.setValue(code);
       this.ticker.set(getMarketPlaceCode({ marketPlace, code }));
     }
-
-    effect(() => {
-      this.allocationArray.patchValue(Object.values(this.allocations()));
-    })
-
+    
     effect(() => {
       const assetSelected = this.assetSelected();
       const ticker = this.ticker();
@@ -175,21 +163,25 @@ export class InvestmentTransactionFormComponent implements OnInit {
     }
   }
 
+  setInputAllocations(inputAllocations: InvestmentAllocationField[]) {
+    this.inputAllocations = inputAllocations;
+  }
+  
+  setInputAllocationsIsValid(valid: boolean) {
+    this.allocationsIsValid = valid;
+  }
+
   formValue() {
-    return this.transactionForm.value;
+    const formValue = this.transactionForm.value;
+    return {
+      ...formValue, 
+      allocations: this.inputAllocations
+    };
   }
 
   badgeValue(allocationId: string ) {
     const portfolio = this.allocations()[allocationId];
     return portfolio?.qty || 0;
-  }
-
-  allocationValue() {
-    return this.transactionForm.get('allocations')?.value as {
-      id  : string;
-      name: string;
-      qty : number;
-    }[];
   }
 
   listenMarketplaceAndCodeToFillTickerValue() {
@@ -224,28 +216,21 @@ export class InvestmentTransactionFormComponent implements OnInit {
     const quoteField = this.transactionForm.get("quote") as FormControl<number>;
     const amountField = this.transactionForm.get("amount") as FormControl<number>;
 
+    quantityField.valueChanges.pipe(startWith(quantityField.value)).subscribe(()=>{
+      this.quantity.set(quantityField.value)
+    })
+
     combineLatest([
       quantityField.valueChanges.pipe(startWith(quantityField.value)),
       quoteField.valueChanges.pipe(startWith(quoteField.value))
     ]).pipe(
       distinctUntilChanged()
-    ).subscribe(([quantity, quote]) => {
-      amountField.setValue(Number((quantity * quote).toPrecision(6)))
+    ).subscribe(() => {
+      amountField.setValue(Number((quantityField.value * quoteField.value).toPrecision(6)), { emitEvent: false });
     })
-  }
 
-  initializeAllocationControls() {
-    this.allocationArray.clear();
-    Object.values(this.allocations()).forEach((alloc) => {
-      this.allocationArray.push(this.createAllocationItem(alloc.id, alloc.name, alloc.qty));
-    })
-  }
-
-  createAllocationItem(id: string, name: string, qty: number) {
-    return this.fb.group({
-      id: this.fb.control<string>(id),
-      name: this.fb.control<string>(name),
-      qty: this.fb.control<number>(qty, [Validators.required, Validators.min(0)])
+    amountField.valueChanges.subscribe((amount) => {
+      quoteField.setValue(Number((amount / quantityField.value).toPrecision(6)), { emitEvent: false });
     });
   }
 
@@ -259,10 +244,9 @@ export class InvestmentTransactionFormComponent implements OnInit {
   }
 
   onSubmitRequest() {
-    if (this.transactionForm.valid) {
+    if (this.transactionForm.valid && this.allocationsIsValid) {
       const formData = this.transactionForm.value;
-      this.allocationArray.errors
-      const allocations = this.allocationArray.value
+      const allocations = this.inputAllocations
         .filter(item => item.id && item.qty)
         .map(item => ({ ...item as { id: string, qty: number; name: string } }));
       const transaction: InvestmentTransactionFormResult = {
@@ -296,11 +280,11 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
 }
 
-function isAccountMatchedValidator(accounts: { account: string, id: string }[]): AsyncValidatorFn {
+function isAccountMatchedValidator(accounts: Signal<{ account: string, id: string }[]>): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
     return new Observable<ValidationErrors | null>(subscriber => {
       const value = control.value as string;
-      if (!accounts.find(account => account.id === value)) {
+      if (!accounts().find(account => account.id === value)) {
         subscriber.next({ "accountNotFound": { value } });
       }
       else {
@@ -310,37 +294,3 @@ function isAccountMatchedValidator(accounts: { account: string, id: string }[]):
     })
   }
 }
-
-function isAllAllocationsDoneValidator(quantityControlName: string, allocationControlName: string) {
-  return (group: AbstractControl): ValidationErrors | null => {
-    const quantityField = group.get(quantityControlName) as FormControl<number>;
-    const allocationField = group.get(allocationControlName) as FormArray<FormGroup<{ id: FormControl<string>; qty: FormControl<number> }>>;
-
-    if (!quantityField || !allocationField || !(allocationField instanceof FormArray)) {
-      return {
-        "invalidSetup": {
-          quantityControlName,
-          allocationControlName
-        }
-      }
-    }
-
-    if (quantityField.errors || allocationField.errors) {
-      return { "cantValidate": true }
-    }
-
-    const quantity = quantityField.value as number;
-    const total = (allocationField.value).reduce((acc, vl) => acc += vl.qty || 0, 0);
-
-    if (quantity != total) {
-      return {
-        "notMatched": {
-          quantity,
-          total
-        }
-      }
-    }
-    return null;
-  }
-}
-

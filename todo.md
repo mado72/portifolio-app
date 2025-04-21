@@ -15,3 +15,4 @@ Todo list:
  - [ ] Filtrar transações por ticker, tipo e banco
  - [x] Acrescentar banco na lista de transações
  - [x] Acrescentar classe em portfolio
+ - [x] Calcular initial value entre transações diferentes.
