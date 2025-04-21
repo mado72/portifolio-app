@@ -39,6 +39,8 @@ export class QuoteService implements OnDestroy {
   private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
 
   readonly quotes = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) return {};
+    
     return Object.entries(this.sourceService.assetSource()).reduce((acc, [ticker, asset]) => {
       acc[ticker] = {
         ...asset,

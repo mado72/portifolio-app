@@ -51,6 +51,8 @@ export class PortfolioService {
     }, { ...INITIAL_TOTAL }))
 
   readonly portfolios = computed<PortfolioRecord>(() => {
+    if (!this.sourceService.dataIsLoaded()) return {};
+    
     const assets = this.sourceService.assetSource();
     if (!Object.keys(assets).length) {
       return {};
@@ -294,7 +296,7 @@ export class PortfolioService {
 
       const quote = !!asset.manualQuote
         ? { value: investmentTransaction.quote, currency: asset.quote.currency }
-        : this.quoteService.quotes()[investmentTransaction.ticker]?.quote;
+        : asset.quote;
 
       if (!quote) {
         throw new Error(`Quote of asset ${asset.ticker} not found`);
@@ -359,13 +361,13 @@ export class PortfolioService {
       const allocation = portfolio.allocations[investmentTransaction.ticker];
       this.computeAllocationDataValues(allocation, quote);
 
-      this.sourceService.updatePortfolio([portfolio]);
-
       if (!!asset.manualQuote) {
         asset.quote.value = investmentTransaction.quote;
         this.quoteService.updateQuoteAsset({ ...asset, quote: { ...asset.quote, value: investmentTransaction.quote } })
       }
     }
+
+    this.sourceService.updatePortfolio([portfolio]);
   }
 
   private computeAllocationDataValues(allocation: PortfolioAllocation, quote: CurrencyValue) {
