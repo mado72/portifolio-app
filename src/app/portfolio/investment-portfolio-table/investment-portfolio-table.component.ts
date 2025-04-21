@@ -3,7 +3,7 @@ import { Component, computed, inject, input, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
-import { PortfolioAllocation, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
+import { InvestmentTransactionType, PortfolioAllocation, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
@@ -11,6 +11,7 @@ import { SourceService } from '../../service/source.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
+import { TransactionService } from '../../service/transaction.service';
 
 class DatasourceInputType extends PortfolioAllocation {
   get ticker() {
@@ -43,6 +44,8 @@ export class InvestmentPortfolioTableComponent {
   private quoteService = inject(QuoteService);
 
   private portfolioService = inject(PortfolioService);
+
+  private transactionService = inject(TransactionService);
 
   private dialog = inject(MatDialog);
 
@@ -106,14 +109,18 @@ export class InvestmentPortfolioTableComponent {
   selectRow(row: ReturnType<InvestmentPortfolioTableComponent["convertAllocation"]>) {
     const asset = this.investmentService.assertsSignal()[row.ticker];
 
-    const data: PorfolioAllocationDataType = {
+    const investmentTransactions = this.transactionService.investmentTransactions();
+    const transactions = row.transactions.map(({id})=>investmentTransactions[id]);
+
+    const data: PorfolioAllocationDataType & { transactions: InvestmentTransactionType[]} = {
       ticker: row.ticker,
       asset,
       portfolio: this.portfolioName(),
       percent: row.percPlanned,
       currency: asset.quote.currency,
       manualQuote: asset.manualQuote === true,
-      marketValue: row.marketValue?.original.value || 0
+      marketValue: row.marketValue?.original.value || 0,
+      transactions
     }
     const dialogRef = this.dialog.open(PortfolioAllocationDialogComponent, { data });
 

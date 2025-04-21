@@ -39,8 +39,7 @@ export class InvestmentTransactionsControlComponent implements OnInit {
       case 'edit':
         const transactionId = this.activatedRoute.snapshot.paramMap.get("id");
         if (transactionId) {
-          const transaction = this.transactionService.investmentTransactions()
-            .find(transaction => transaction.id === transactionId);
+          const transaction = this.transactionService.investmentTransactions()[transactionId];
 
           if (!transaction) {
             this.formData.set(null);

@@ -28,7 +28,7 @@ export class TransactionService {
   private dialog = inject(MatDialog);
 
   investmentTransactions = computed(() => {
-    return Object.values(this.sourceService.investmentSource());
+    return this.sourceService.investmentSource();
   })
 
   readonly allocationByTransactions = computed(() => {

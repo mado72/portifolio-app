@@ -42,7 +42,7 @@ export class TransactionTableComponent {
   @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
 
   dataSource = computed(() => {
-    return this.transactionService.investmentTransactions().sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
+    return Object.values(this.transactionService.investmentTransactions()).sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
   });
 
   readonly accounts = computed(() => this.balanceService.getAllBalances())

@@ -59,7 +59,7 @@ describe('InvestmentTransactionsControlComponent', () => {
 
     // Configure mock return values
     transactionServiceMock.createTransactionAllocations.and.returnValue(mockAllocations);
-    transactionServiceMock.investmentTransactions.and.returnValue([mockTransaction]);
+    transactionServiceMock.investmentTransactions.and.returnValue({[mockTransaction.id]: mockTransaction});
     transactionServiceMock.allocationByTransactions.and.returnValue(mockAllocationsByTransaction);
     transactionServiceMock.saveTransaction.and.returnValue(of({} as InvestmentTransactionType));
 
