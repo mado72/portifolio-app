@@ -88,6 +88,18 @@ export const InvestmentEnumDesc : Record<InvestmentEnumType, string> = {
     "OTHER": 'Outros',
 }
 
+export const InvestmentEnumFactor : Record<InvestmentEnum, number> = {
+    BUY: 1,
+    DIVIDENDS: 1,
+    IOE_RETURN: 1,
+    OTHER: 0,
+    REDEMPTION: 1,
+    RENT_RETURN: 1,
+    SELL: -1,
+    SUBSCRIPTION: -1,
+    TRANSFER: 0
+}
+
 export enum TransactionStatus {
     PROGRAMING = 'PROGRAMING',
     PENDING = 'PENDING',
