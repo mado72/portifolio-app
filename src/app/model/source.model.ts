@@ -165,13 +165,10 @@ export type PortfolioAllocationSourceRawType = SummarizedDataType & {
     transactions: {id: string; quantity: number}[];
 }
 
-type PortfolioAllocationStructureType = Required<PortfolioAllocationSourceRawType> & Required<SummarizedDataType>;
+export type PortfolioAllocationStructureType = Required<PortfolioAllocationSourceRawType> & Required<SummarizedDataType & {quantity: number}>;
 
 export class PortfolioAllocation {
     data!: PortfolioAllocationStructureType;
-    get quantity () {
-        return this.data.transactions.reduce((acc, {quantity})=>acc+=quantity,0)
-    }
     
     constructor(data: PortfolioAllocationStructureType) {
         this.data = {...data,
@@ -183,6 +180,10 @@ export class PortfolioAllocation {
 }
 
 export type PortfolioAllocationRecord = Record<string, PortfolioAllocation>;
+
+export type PortfolioAllocationsArrayItemType = Omit<PortfolioType, "allocations"> & {
+    allocations: PortfolioAllocation[];
+}
 
 export type PortfolioSourceRawType = {
     id: string;
@@ -200,10 +201,6 @@ export type PortfolioType = Omit<PortfolioSourceRawType, "allocations" | "curren
 };
 
 export type PortfolioRecord = Record<string, PortfolioType>;
-
-export type PortfolioAllocationsArrayItemType = Omit<PortfolioType, "allocations"> & {
-    allocations: PortfolioAllocation[];
-}
 
 export type ScheduledsSourceDataType = {
     id?: string;
