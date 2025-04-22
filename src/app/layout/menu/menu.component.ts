@@ -2,7 +2,7 @@ import { DecimalPipe } from '@angular/common';
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Currency } from '../../model/domain.model';
-import { QuoteService } from '../../service/quote.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { SourceService } from '../../service/source.service';
 import { CurrencyChoiceDirective } from '../../utils/directive/currency-choice.directive';
 import { DownloadDataDirective } from '../../utils/directive/download-data.directive';
@@ -27,18 +27,18 @@ export class MenuComponent {
 
   private sourceService = inject(SourceService);
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   currencies = Object.values(Currency);
 
   exchanges = computed(()=> {
-    const exchanges = this.quoteService.exchanges();
+    const exchanges = this.exchangeService.exchanges();
     if (!exchanges || Object.keys(exchanges).length === 0) return [];
 
-    const currencyDefault = this.sourceService.currencyDefault();
+    const currencyDefault = this.exchangeService.currencyDefault();
 
     return Object.keys(exchanges[currencyDefault]).map(from=>({
-      symbol: this.quoteService.currencyToSymbol(from),
+      symbol: this.exchangeService.currencyToSymbol(from),
       currency: Currency[from as keyof typeof Currency],
       factor: exchanges[from as keyof typeof Currency][currencyDefault]
     }))

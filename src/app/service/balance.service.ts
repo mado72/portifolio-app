@@ -9,6 +9,7 @@ import { TransactionStatus } from '../model/investment.model';
 import { BalanceType, ScheduledStatemetType, TransactionType } from '../model/source.model';
 import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
+import { ExchangeService } from './exchange.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class BalanceService {
 
   private sourceService = inject(SourceService);
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   private dialog = inject(MatDialog);
 
@@ -70,7 +71,7 @@ export class BalanceService {
    */
   getBalancesByCurrencyExchange(balances: BalanceType[], currency: Currency): AccountBalanceExchange[] {
     return balances.map(item => {
-      const quoteFactor = this.quoteService.getExchangeQuote(item.balance.currency, currency);
+      const quoteFactor = this.exchangeService.getExchangeQuote(item.balance.currency, currency);
       return {
         ...item,
         exchange: {
@@ -189,7 +190,7 @@ export class BalanceService {
     return scheduledTransactions
       .filter(item => areIntervalsOverlapping(dateRange, fnIntervalScheduled(item)))
       .flatMap(item => {
-        const quoteFactor = this.quoteService.getExchangeQuote(item.amount.currency, currency);
+        const quoteFactor = this.exchangeService.getExchangeQuote(item.amount.currency, currency);
         const scheduledRange = interval(
           max([item.scheduled.startDate, setDate(dateRange.start, getZonedDate(item.scheduled.startDate))]),
           min([item.scheduled.endDate || endOfYear(new Date()), dateRange.end]));
@@ -259,7 +260,7 @@ export class BalanceService {
           type: AccountTypeEnum.CHECKING,
           balance: {
             price: 0,
-            currency: this.sourceService.currencyDefault()
+            currency: this.exchangeService.currencyDefault()
           },
           date: new Date()
         }

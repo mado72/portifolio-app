@@ -1,6 +1,6 @@
 import { computed, Directive, effect, ElementRef, HostListener, inject, input } from '@angular/core';
 import { Currency } from '../../model/domain.model';
-import { SourceService } from '../../service/source.service';
+import { ExchangeService } from '../../service/exchange.service';
 
 @Directive({
   selector: '[appCurrencyChoice]',
@@ -10,14 +10,14 @@ export class CurrencyChoiceDirective {
 
   private el = inject(ElementRef);
 
-  private sourceService = inject(SourceService);
+  private exchangeService = inject(ExchangeService);
 
-  appCurrencyChoice = input<Currency | keyof typeof Currency>(this.sourceService.currencyDefault());
+  appCurrencyChoice = input<Currency | keyof typeof Currency>(this.exchangeService.currencyDefault());
 
-  active = computed(() => this.appCurrencyChoice() === this.sourceService.currencyDefault());
+  active = computed(() => this.appCurrencyChoice() === this.exchangeService.currencyDefault());
 
   @HostListener("click", ['$event']) onClick($event: MouseEvent) {
-    this.sourceService.currencyDefault.set(Currency[this.appCurrencyChoice()]);
+    this.exchangeService.currencyDefault.set(Currency[this.appCurrencyChoice()]);
   }
 
   constructor() {

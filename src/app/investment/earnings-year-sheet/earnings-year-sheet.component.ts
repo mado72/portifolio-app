@@ -13,6 +13,7 @@ import { getMarketPlaceCode } from '../../service/quote.service';
 import { provideAppDateAdapter } from '../../utils/app-date-adapter.adapter';
 import { EarningsEntryDialogComponent } from '../earnings-entry-dialog/earnings-entry-dialog.component';
 import { EarningsFilterComponent, EarningsFilterType } from '../earnings-filter/earnings-filter.component';
+import { AssetService } from '../../service/asset.service';
 
 
 const YEAR_FORMATS = {
@@ -70,6 +71,8 @@ export class EarningsYearSheetComponent implements OnInit {
 
   private investmentService = inject(InvestmentService);
 
+  private assetService = inject(AssetService);
+
   private portfolioService = inject(PortfolioService);
 
   private changeDetectorRef = inject(ChangeDetectorRef);
@@ -86,7 +89,7 @@ export class EarningsYearSheetComponent implements OnInit {
 
   queue = signal<EarningEntry[]>([]);
 
-  asset = this.investmentService.assertsSignal();
+  assets = this.assetService.assets;
 
   readonly displayedColumns = ['ticker', 'acronym', ...this.months.map((_, idx) => `vl${idx}`)];
 
@@ -184,7 +187,7 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   private filterByTypeReference(earnings: { date: Date; id: string; ticker: string; amount: number; type: IncomeEnum; }[]) {
-    const assets = Object.entries(this.investmentService.assertsSignal())
+    const assets = Object.entries(this.assets)
       .filter(([_, asset]) => asset.type === this.filter().typeReference)
       .map(([ticker, _]) => ticker);
     return earnings.filter(earning => assets.includes(earning.ticker));
@@ -200,7 +203,7 @@ export class EarningsYearSheetComponent implements OnInit {
   earningToRow(earning: Income) {
     return {
       ticker: earning?.ticker,
-      description: this.asset[earning?.ticker]?.name || '',
+      description: this.assets()[earning?.ticker]?.name || '',
       acronymEarn: EARNING_ACRONYM[earning?.type] || EARNING_ACRONYM[IncomeEnum.DIVIDENDS],
       rowspan: 1,
       entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))

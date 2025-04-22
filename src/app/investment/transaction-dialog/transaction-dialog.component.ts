@@ -15,10 +15,10 @@ import { AccountTypeEnum } from '../../model/domain.model';
 import { divide } from '../../model/functions.model';
 import { InvestmentEnum } from '../../model/investment.model';
 import { AssetQuoteType, InvestmentTransactionType, PortfolioType } from '../../model/source.model';
+import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
-import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
-import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
+import { getMarketPlaceCode } from '../../service/quote.service';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 
 const PagesArray = new Array(5).fill(0).map((_,i)=>i);
@@ -64,9 +64,7 @@ export class TransactionDialogComponent implements OnInit {
 
   readonly data = inject<TransactionDialogType>(MAT_DIALOG_DATA);
   
-  private investmentService = inject(InvestmentService);
-
-  private quoteService = inject(QuoteService);
+  private assetService = inject(AssetService);
 
   private portfolioService = inject(PortfolioService);
 
@@ -77,7 +75,7 @@ export class TransactionDialogComponent implements OnInit {
   page : number = 0;
 
   assets = computed(() => {
-    return Object.values(this.investmentService.assertsSignal()).reduce((acc, asset)=>{
+    return Object.values(this.assetService.assets()).reduce((acc, asset)=>{
       acc[getMarketPlaceCode(asset)] = asset;
       return acc;
     }, {} as {[key: string]:AssetQuoteType});
@@ -118,20 +116,20 @@ export class TransactionDialogComponent implements OnInit {
 
   ngOnInit(): void {
     const ticker = this.data.newTransaction? undefined : this.data.transaction.ticker;
-    const quotes = this.quoteService.quotes() || {};
+    const assets = this.assetService.assets();
     if (!!ticker) {
       // FIXME: Não está preenchendo corretamente o formulário. Quando dividir a alocação, deve gerar várias transações. Adicionar o portfolio de destino.
       this.ticker.disable();
-      const quoteTicker = quotes[ticker];
-      if (quoteTicker) {
-        this.quote.setValue(quoteTicker.quote.value);
+      const asset = assets[ticker];
+      if (asset) {
+        this.quote.setValue(asset.quote.value);
       }
     }
     else {
       this.ticker.valueChanges.subscribe(ticker=>{
-        const quoteTicker = quotes[ticker];
-        if (quoteTicker) {
-          this.quote.setValue(quoteTicker.quote.value);
+        const asset = assets[ticker];
+        if (asset) {
+          this.quote.setValue(asset.quote.value);
         }
       })
     }

@@ -4,7 +4,9 @@ import { Currency, CurrencyType, CurrencyValue } from '../model/domain.model';
 import { ExchangeStructureType } from '../model/investment.model';
 import { AssetQuoteType, PortfolioAllocation, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType, SummarizedDataType } from '../model/source.model';
 import { PortfolioRegisterDialogComponent } from '../portfolio/portfolio-register-dialog/portfolio-register-dialog.component';
-import { getMarketPlaceCode, QuoteService } from './quote.service';
+import { AssetService } from './asset.service';
+import { ExchangeService } from './exchange.service';
+import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
 
 const INITIAL_TOTAL = {
@@ -40,11 +42,13 @@ export class PortfolioService {
 
   private dialog = inject(MatDialog);
 
-  private quoteService = inject(QuoteService);
+  private assetService = inject(AssetService);
+
+  private exchangeService = inject(ExchangeService);
 
   readonly total = computed(() => this.getAllPortfolios()
     .reduce((acc, portfolio) => {
-      const currencyDefault = this.sourceService.currencyDefault();
+      const currencyDefault = this.exchangeService.currencyDefault();
 
       // Summarize each portfolio to get general results
       return this.computePortfolioResultsSummarized(acc, portfolio.total, portfolio.currency, currencyDefault);
@@ -60,7 +64,7 @@ export class PortfolioService {
 
     const entries = Object.entries(this.sourceService.dataSource.portfolio()).reduce((acc, [key, item]) => {
 
-      const currencyDefault = this.sourceService.currencyDefault();
+      const currencyDefault = this.exchangeService.currencyDefault();
 
       const allocations = item.allocations.reduce((allocAcc, allocSource) => {
         const alloc = new PortfolioAllocation({
@@ -108,7 +112,7 @@ export class PortfolioService {
         alloc.data.percAllocation = alloc.data.marketValue / portfolio.total.marketValue;
       });
 
-      this.summarize({ currency: this.sourceService.currencyDefault(), total: acc }, { ...portfolio });
+      this.summarize({ currency: this.exchangeService.currencyDefault(), total: acc }, { ...portfolio });
       return acc;
     },
       { ...INITIAL_TOTAL } as Required<SummarizedDataType>);
@@ -126,10 +130,10 @@ export class PortfolioService {
       allocations: Object.values(portfolio.allocations),
       total: {
         ...portfolio.total,
-        percAllocation: this.quoteService.exchange(
+        percAllocation: this.exchangeService.exchange(
           portfolio.total.marketValue,
           portfolio.currency,
-          this.sourceService.currencyDefault()).value / this.total().marketValue
+          this.exchangeService.currencyDefault()).value / this.total().marketValue
       },
     } as PortfolioAllocationsArrayItemType)));
 
@@ -139,9 +143,9 @@ export class PortfolioService {
     acc: Required<SummarizedDataType>, item: Required<SummarizedDataType>,
     itemCurrency: Currency, currencyDefault: Currency) {
 
-    acc.initialValue += this.quoteService.exchange(item.initialValue, itemCurrency, currencyDefault).value;
-    acc.marketValue += this.quoteService.exchange(item.marketValue, itemCurrency, currencyDefault).value;
-    acc.profit += this.quoteService.exchange(item.profit, itemCurrency, currencyDefault).value;
+    acc.initialValue += this.exchangeService.exchange(item.initialValue, itemCurrency, currencyDefault).value;
+    acc.marketValue += this.exchangeService.exchange(item.marketValue, itemCurrency, currencyDefault).value;
+    acc.profit += this.exchangeService.exchange(item.profit, itemCurrency, currencyDefault).value;
     acc.performance += item.performance;
     acc.percAllocation += item.percAllocation;
     acc.percPlanned += item.percPlanned;
@@ -149,11 +153,11 @@ export class PortfolioService {
   }
 
   private summarize(acc: { currency: Currency, total: Required<SummarizedDataType> }, alloc: { currency: Currency, total: Required<SummarizedDataType> }) {
-    acc.total.initialValue += this.quoteService.exchange(alloc.total.initialValue, alloc.currency, acc.currency).value;
-    acc.total.marketValue += this.quoteService.exchange(alloc.total.marketValue, alloc.currency, acc.currency).value;
-    acc.total.profit += this.quoteService.exchange(alloc.total.profit, alloc.currency, acc.currency).value;
-    acc.total.performance += this.quoteService.exchange(alloc.total.performance, alloc.currency, acc.currency).value;
-    acc.total.percPlanned += this.quoteService.exchange(alloc.total.percPlanned, alloc.currency, acc.currency).value;
+    acc.total.initialValue += this.exchangeService.exchange(alloc.total.initialValue, alloc.currency, acc.currency).value;
+    acc.total.marketValue += this.exchangeService.exchange(alloc.total.marketValue, alloc.currency, acc.currency).value;
+    acc.total.profit += this.exchangeService.exchange(alloc.total.profit, alloc.currency, acc.currency).value;
+    acc.total.performance += this.exchangeService.exchange(alloc.total.performance, alloc.currency, acc.currency).value;
+    acc.total.percPlanned += this.exchangeService.exchange(alloc.total.percPlanned, alloc.currency, acc.currency).value;
   }
 
   getPortfolioById(id: string) {
@@ -177,13 +181,13 @@ export class PortfolioService {
   summarizeByClass(portfolios: PortfolioType[]) {
     let total: CurrencyValue = {
       value: 0,
-      currency: this.sourceService.currencyDefault()
+      currency: this.exchangeService.currencyDefault()
     };
     const consolidation = Object.values(portfolios
       .map(portfolio => {
         const result = {
           ...portfolio,
-          value: { ...this.quoteService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["marketValue"]).marketValue },
+          value: { ...this.exchangeService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["marketValue"]).marketValue },
           percAlloc: 0
         };
         return result
@@ -363,7 +367,7 @@ export class PortfolioService {
 
       if (!!asset.manualQuote) {
         asset.quote.value = investmentTransaction.quote;
-        this.quoteService.updateQuoteAsset({ ...asset, quote: { ...asset.quote, value: investmentTransaction.quote } })
+        this.assetService.updateAsset(asset);
       }
     }
 

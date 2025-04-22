@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, effect, inject, Input, signal } from '@angular/core';
 import { Currency, CurrencyValue, toCurrencyCode } from '../../model/domain.model';
-import { SourceService } from '../../service/source.service';
+import { ExchangeService } from '../../service/exchange.service';
 
 @Component({
   selector: 'app-currency',
@@ -12,16 +12,16 @@ import { SourceService } from '../../service/source.service';
 })
 export class CurrencyComponent {
 
-  private sourceService = inject(SourceService);
+  private exchangeService = inject(ExchangeService);
 
   protected value$ = signal<CurrencyValue>({
     value: 0,
-    currency: this.sourceService.currencyDefault()
+    currency: this.exchangeService.currencyDefault()
   });
 
   constructor() {
     effect(()=> {
-      this.currency = this.sourceService.currencyDefault();
+      this.currency = this.exchangeService.currencyDefault();
     }, {allowSignalWrites: true})
   }
 

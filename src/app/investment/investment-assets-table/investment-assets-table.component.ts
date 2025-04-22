@@ -7,11 +7,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleCheck, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { AssetQuoteType } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
-import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
+import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { AssetCodePipe } from '../../utils/pipe/asset-code.pipe';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
-import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TrendComponent } from '../../utils/trend/trend.component';
 
 @Component({
@@ -35,14 +34,12 @@ export class InvestmentAssetsTableComponent implements OnInit {
 
   private assetService = inject(AssetService);
 
-  private investimentService = inject(InvestmentService);
-
   private portfolioService = inject(PortfolioService);
 
   editable = input<boolean>(false);
 
   datasource = computed(() => {
-    const assets = Object.values(this.investimentService.assertsSignal())
+    const assets = Object.values(this.assetService.assets())
       .map(asset => ({
         ...asset,
         deletable: this.editable() && (this.portfolioService.portfoliosOfAsset(asset)?.length || 0) < 1

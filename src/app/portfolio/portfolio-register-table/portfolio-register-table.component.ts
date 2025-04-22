@@ -16,6 +16,7 @@ import { SourceService } from '../../service/source.service';
 import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
+import { ExchangeService } from '../../service/exchange.service';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
   allocations: PortfolioAllocation[];
@@ -61,7 +62,7 @@ export class PortfolioRegisterTableComponent {
 
   private portfolioService = inject(PortfolioService);
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   private transactionService = inject(TransactionService);
 
@@ -75,18 +76,18 @@ export class PortfolioRegisterTableComponent {
 
   detailDisplayedColumns = ['id', 'description'];
 
-  currency = computed(() => this.sourceService.currencyDefault());
+  currency = computed(() => this.exchangeService.currencyDefault());
 
-  total = computed(() => this.quoteService.enhanceExchangeInfo(this.portfolioService.total(), this.sourceService.currencyDefault(), ["marketValue", "profit"]));
+  total = computed(() => this.exchangeService.enhanceExchangeInfo(this.portfolioService.total(), this.exchangeService.currencyDefault(), ["marketValue", "profit"]));
 
-  exchangeView = computed(() => this.quoteService.exchangeView())
+  exchangeView = computed(() => this.exchangeService.exchangeView())
 
   portfolios = computed(() => this.portfolioService.portfolioAllocation()
     .map(portfolio => ({
       ...portfolio,
       total: {
         ...portfolio.total,
-        ...this.quoteService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["initialValue", "marketValue", "profit"])
+        ...this.exchangeService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["initialValue", "marketValue", "profit"])
       }
     } as DatasourceMasterType)));
 
@@ -147,7 +148,7 @@ export class PortfolioRegisterTableComponent {
       title: 'Adicionar carteira',
       portfolioInfo: {
         name: '',
-        currency: this.sourceService.currencyDefault(),
+        currency: this.exchangeService.currencyDefault(),
         percPlanned: 0,
       }
     });

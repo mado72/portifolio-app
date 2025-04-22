@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Scheduled, TransactionEnum } from '../model/domain.model';
 import { SourceService } from './source.service';
 import { ScheduledTransactionDialogComponent } from '../cashflow/scheduled-transaction-dialog/scheduled-transaction-dialog.component';
+import { ExchangeService } from './exchange.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,8 @@ export class CashflowService {
   private dialog = inject(MatDialog);
 
   private sourceService = inject(SourceService);
+
+  private exchangeService = inject(ExchangeService);
 
   openScheduledDialog(title: string, scheduled: ScheduledStatemetType) {
     const dialogRef: MatDialogRef<ScheduledTransactionDialogComponent, ScheduledStatemetType> = 
@@ -49,7 +52,7 @@ export class CashflowService {
         endDate: undefined
       },
       amount: {
-        currency: this.sourceService.currencyDefault(),
+        currency: this.exchangeService.currencyDefault(),
         value: 0
       }
     });

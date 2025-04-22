@@ -6,8 +6,8 @@ import { TransactionDialogComponent, TransactionDialogType } from '../investment
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import { InvestmentTransactionType, PortfolioType } from '../model/source.model';
 import { AssetService } from './asset.service';
+import { ExchangeService } from './exchange.service';
 import { PortfolioChangeType, PortfolioService } from './portfolio-service';
-import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 
 @Injectable({
@@ -23,7 +23,7 @@ export class TransactionService {
 
   private sourceService = inject(SourceService);
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   private dialog = inject(MatDialog);
 
@@ -75,13 +75,11 @@ export class TransactionService {
           }
           transaction.value.currency = asset.quote.currency;
           this.persistTransaction(transaction, allocations);
-          this.quoteService.addPendding(transaction.ticker);
           subscriber.next(transaction);
           subscriber.complete();
         })
       }
       else {
-        this.quoteService.addPendding(transaction.ticker);
         this.persistTransaction(transaction, allocations);
         subscriber.next(transaction);
         subscriber.complete();
@@ -177,7 +175,7 @@ export class TransactionService {
         accountId: '',
         quantity: 0,
         quote: NaN,
-        value: { value: 0, currency: this.sourceService.currencyDefault() },
+        value: { value: 0, currency: this.exchangeService.currencyDefault() },
         type: InvestmentEnum.BUY,
         status: TransactionStatus.COMPLETED
       },

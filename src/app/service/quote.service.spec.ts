@@ -53,7 +53,7 @@ describe('QuoteService', () => {
       } as Record<string, AssetQuoteType>;
       const updateQuotesSpy = spyOn(TestBed.inject(RemoteQuotesService), 'updateQuotes').and.returnValue(of({}));
       const setLastUpdateSpy = spyOn(service.lastUpdate, 'set');
-      const setQuotePenddingSpy = spyOn(service.quotePendding, 'set');
+      const setQuotePenddingSpy = spyOn(service.penddingToQuote, 'set');
 
       service['updateTrigger'].next(request);
 
@@ -80,7 +80,7 @@ describe('QuoteService', () => {
 
         const updateQuotesSpy = spyOn(TestBed.inject(RemoteQuotesService), 'updateQuotes').and.returnValue(of({quote1: "value1"  as unknown as QuoteResponse}));
         spyOn(service.lastUpdate, 'set');
-        spyOn(service.quotePendding, 'set');
+        spyOn(service.penddingToQuote, 'set');
 
         console.log(new Date());
         
@@ -121,7 +121,7 @@ describe('QuoteService', () => {
 
       spyOn(TestBed.inject(RemoteQuotesService), 'updateQuotes').and.returnValue(of({}));
       const setLastUpdateSpy = spyOn(service.lastUpdate, 'set');
-      const setQuotePenddingSpy = spyOn(service.quotePendding, 'set');
+      const setQuotePenddingSpy = spyOn(service.penddingToQuote, 'set');
 
       service['updateTrigger'].next(request);
 
@@ -205,12 +205,12 @@ describe('QuoteService', () => {
 
       const remoteQuote = { price: 150, currency: Currency.USD };
       spyOn(service['remoteQuotesService'], 'getRemoteQuote').and.returnValue(of(remoteQuote as unknown as QuoteResponse));
-      spyOn(service.quotePendding, 'update');
+      spyOn(service.penddingToQuote, 'update');
 
       service.updateQuoteAsset(asset);
 
       expect(service['remoteQuotesService'].getRemoteQuote).toHaveBeenCalledWith('NYSE', 'AAPL');
-      expect(service.quotePendding.update).toHaveBeenCalledWith(jasmine.any(Function));
+      expect(service.penddingToQuote.update).toHaveBeenCalledWith(jasmine.any(Function));
     });
 
     it('should update quote asset with source service if manual', () => {
@@ -278,7 +278,7 @@ describe('QuoteService', () => {
     it('should add a ticker to quotePendding when addPendding is called', () => {
       const ticker = 'ticker1';
       spyOn(service["sourceService"], "assetSource").and.returnValue({ticker1: {}} as unknown as AssetQuoteRecord)
-      const quotePenddingSpy = spyOn(service["quotePendding"], "update");
+      const quotePenddingSpy = spyOn(service["penddingToQuote"], "update");
       const updateTriggerSpy = spyOn(service["updateTrigger"], "next");
       service.addPendding(ticker);
 

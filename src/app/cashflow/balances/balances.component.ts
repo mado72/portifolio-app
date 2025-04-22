@@ -6,8 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { AccountBalanceExchange, AccountTypeEnum } from '../../model/domain.model';
 import { BalanceType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
-import { QuoteService } from '../../service/quote.service';
-import { SourceService } from '../../service/source.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
@@ -29,13 +28,11 @@ type AccountBalanceExchangeSelectable = ReturnType<BalancesComponent["convertBal
 })
 export class BalancesComponent implements OnInit {
 
-  private sourceService = inject(SourceService);
-
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   private balanceService = inject(BalanceService);
 
-  currency = computed(()=> this.sourceService.currencyDefault());
+  currency = computed(()=> this.exchangeService.currencyDefault());
 
   editable = input<boolean>(false);
 
@@ -59,7 +56,7 @@ export class BalancesComponent implements OnInit {
   convertBalance(item: BalanceType) {
     return {
       ...item,
-      balance: this.quoteService.enhanceExchangeInfo(item.balance, item.balance.currency, ["value"]).value,
+      balance: this.exchangeService.enhanceExchangeInfo(item.balance, item.balance.currency, ["value"]).value,
       selected: this.selects().includes(item.id as string)
     }
   }

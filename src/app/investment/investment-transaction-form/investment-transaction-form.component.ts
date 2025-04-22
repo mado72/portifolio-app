@@ -1,6 +1,6 @@
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, Signal, signal } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -13,9 +13,10 @@ import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '..
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentTransactionType } from '../../model/source.model';
+import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
-import { getMarketPlaceCode, QuoteService } from '../../service/quote.service';
+import { getMarketPlaceCode } from '../../service/quote.service';
 import { TransactionService } from '../../service/transaction.service';
 import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
@@ -49,13 +50,13 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
 })
 export class InvestmentTransactionFormComponent implements OnInit {
 
-  private quoteService = inject(QuoteService);
-
   private balanceService = inject(BalanceService);
 
   private portfolioService = inject(PortfolioService);
 
   private transactionService = inject(TransactionService);
+
+  private assetService = inject(AssetService);
 
   private fb = inject(FormBuilder);
 
@@ -67,7 +68,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   transactionTypes = Object.keys(InvestmentEnum); // Tipos de transação
 
-  assets = this.quoteService.quotes;
+  assets = this.assetService.assets;
 
   marketPlaces = Object.keys(MarketPlaceEnum);
 
@@ -139,14 +140,8 @@ export class InvestmentTransactionFormComponent implements OnInit {
           this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
         }
         else if (ticker && ticker.includes(':')) {
-          const [marketPlace, code] = ticker.split(':');
-          if (!!code) {
-            this.quoteService.getRemoteQuote(ticker).subscribe(price => {
-              if (!!price) {
-                this.transactionForm.get('quote')?.setValue(price);
-              }
-            })
-          }
+          const asset = this.assets()[ticker];
+          this.transactionForm.get('quote')?.setValue(asset.quote.value);
         }
       }
     })

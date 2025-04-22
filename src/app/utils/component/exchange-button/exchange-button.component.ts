@@ -1,7 +1,7 @@
 import { Component, computed, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { QuoteService } from '../../../service/quote.service';
+import { ExchangeService } from '../../../service/exchange.service';
 
 @Component({
   selector: 'app-exchange-button',
@@ -15,12 +15,12 @@ import { QuoteService } from '../../../service/quote.service';
 })
 export class ExchangeButtonComponent {
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
-  exchangeView = computed(()=> this.quoteService.exchangeView());
+  exchangeView = computed(()=> this.exchangeService.exchangeView());
   
   toggleViewExchange() {
-    this.quoteService.toggleExchangeView();
+    this.exchangeService.toggleExchangeView();
   }
 
 }

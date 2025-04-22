@@ -12,6 +12,7 @@ import { PortfolioType } from '../../model/source.model';
 import { SourceService } from '../../service/source.service';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { PortfolioService } from '../../service/portfolio-service';
+import { ExchangeService } from '../../service/exchange.service';
 
 export type DialogDataType = {
   title: string;
@@ -37,7 +38,7 @@ export type DialogDataType = {
 })
 export class PortfolioRegisterDialogComponent {
 
-  readonly sourceService = inject(SourceService);
+  readonly exchangeService = inject(ExchangeService);
 
   readonly portfolioService = inject(PortfolioService);
 
@@ -59,7 +60,7 @@ export class PortfolioRegisterDialogComponent {
     name: this.fb.control(this.data.portfolio.name || '', [Validators.required, Validators.minLength(2)]),
     class: this.fb.control(this.data.portfolio.class || '', [Validators.required]),
     percPlanned: this.fb.control(this.data.portfolio.percPlanned || 0, [Validators.required, Validators.min(0), Validators.max(100)]),
-    currency: this.fb.control(this.data.portfolio.currency || this.sourceService.currencyDefault(), [Validators.required]),
+    currency: this.fb.control(this.data.portfolio.currency || this.exchangeService.currencyDefault(), [Validators.required]),
   });
 
   readonly currenciesTypes = Object.keys(Currency);

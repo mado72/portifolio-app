@@ -8,7 +8,7 @@ import { v4 as uuid } from 'uuid';
 import { CurrencyValue, ForecastDateItem, isTransactionDeposit, isTransactionExpense, TransactionEnum } from '../../model/domain.model';
 import { TransactionStatus } from '../../model/investment.model';
 import { BalanceService } from '../../service/balance.service';
-import { SourceService } from '../../service/source.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
 import { TransactionTypePipe } from '../../utils/pipe/transaction-type.pipe';
@@ -36,7 +36,7 @@ export class FinancialForecastComponent implements OnInit {
 
   private balanceService = inject(BalanceService);
 
-  private sourceService = inject(SourceService);
+  private exchangeService = inject(ExchangeService);
 
   onCheckboxChange = new EventEmitter<boolean>();
 
@@ -55,7 +55,7 @@ export class FinancialForecastComponent implements OnInit {
    *          representing the forecasted financial data for the current month.
    */
   balanceSource = computed(() => 
-    this.balanceService.getCurrentMonthForecast(this.sourceService.currencyDefault())
+    this.balanceService.getCurrentMonthForecast(this.exchangeService.currencyDefault())
       .filter(transaction=>transaction.type !== TransactionEnum.TRANSFER)
       .sort((a,b)=>differenceInDays(a.date,b.date))
       .reduce((acc, vl)=> {

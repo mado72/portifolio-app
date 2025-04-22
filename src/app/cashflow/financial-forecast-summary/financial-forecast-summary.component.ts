@@ -2,7 +2,7 @@ import { Component, computed, inject, input } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { AccountTypeEnum } from '../../model/domain.model';
 import { BalanceService } from '../../service/balance.service';
-import { SourceService } from '../../service/source.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
 @Component({
@@ -17,20 +17,20 @@ import { CurrencyComponent } from '../../utils/currency/currency.component';
 })
 export class FinancialForecastSummaryComponent {
 
-  private sourceService = inject(SourceService);
+  private exchangeService = inject(ExchangeService);
 
   private balanceService = inject(BalanceService);
 
   caption = input<string>('');
 
-  currency = this.sourceService.currencyDefault();
+  currency = this.exchangeService.currencyDefault();
 
   initialBalance = computed(() => this.balanceService.getBalancesSummarized(
     Object.values(this.balanceService.getAllBalances()),
-    this.sourceService.currencyDefault(),
+    this.exchangeService.currencyDefault(),
     [AccountTypeEnum.INVESTMENT, AccountTypeEnum.LOAN]));
 
-  forecastSummary = computed(() => this.balanceService.getForecastSummary(this.sourceService.currencyDefault()))
+  forecastSummary = computed(() => this.balanceService.getForecastSummary(this.exchangeService.currencyDefault()))
 
   cashflowResult = computed(() => this.forecastSummary().reduce((acc, entry) => acc + entry.amount, 0));
 

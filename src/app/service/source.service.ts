@@ -11,9 +11,11 @@ import {
   InvestmentTransactionSourceRawType, InvestmentTransactionType,
   PortfolioSourceRawType, PortfolioType, ScheduledsSourceDataType as ScheduledsSourceRawType,
   ScheduledStatemetType,
+  Ticker,
   TransactionSourceRawType, TransactionType
 } from '../model/source.model';
 import { getMarketPlaceCode } from './quote.service';
+import { Subject, throttleTime, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -31,8 +33,6 @@ export class SourceService {
     portfolio: signal<Record<string, PortfolioSourceRawType>>({}),
     scheduled: signal<Record<string, ScheduledStatemetType>>({})
   };
-
-  readonly currencyDefault = signal<Currency>(Currency.BRL);
 
   readonly assetSource = computed(() => {
     if (!this.dataIsLoaded()) return {};

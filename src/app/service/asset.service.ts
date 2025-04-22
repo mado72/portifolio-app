@@ -1,12 +1,11 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { getMarketPlaceCode, QuoteService } from './quote.service';
-import { AssetEnum, AssetQuoteType, TrendType } from '../model/source.model';
+import { concatMap, map, of, Subject, tap } from 'rxjs';
 import { AssetDialogComponent } from '../assets/asset-dialog/asset-dialog.component';
-import { Currency } from '../model/domain.model';
-import { InvestmentService } from './investment.service';
+import { AssetEnum, AssetQuoteType, Ticker, TrendType } from '../model/source.model';
+import { ExchangeService } from './exchange.service';
+import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
-import { concatMap, lastValueFrom, map, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -19,11 +18,34 @@ export class AssetService {
 
   private quoteService = inject(QuoteService);
 
-  private investimentService = inject(InvestmentService);
+  private exchangeService = inject(ExchangeService);
 
-  assets = computed(() => this.sourceService.assetSource())
+  deletedAsset$ = new Subject<Ticker>();
 
-  constructor() { }
+  assets = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) return {};
+
+    return this.sourceService.assetSource();
+  })
+
+  constructor() { 
+    this.quoteService.updateQuotes$.subscribe(assets=>{
+      this.sourceService.updateAsset(Object.values(assets))
+    })
+
+    this.updateAllAssets();
+  }
+  
+  // Force to update all assets
+  updateAllAssets() {
+    const assetsMap = Object.entries(this.assets())
+      .filter(([_, asset]) => !asset.manualQuote)
+      .reduce((acc, [ticker, asset]) => {
+        acc[ticker] = asset;
+        return acc;
+      }, {} as Record<Ticker, AssetQuoteType>);
+    this.quoteService.addAssetsToUpdate(assetsMap);
+  }
 
   openDialog(title: string, asset: AssetQuoteType, newAsset: boolean = false) {
     return this.dialog.open(AssetDialogComponent, {
@@ -43,7 +65,7 @@ export class AssetService {
         return dialogRef.afterClosed().pipe(
           tap((result: AssetQuoteType) => {
             if (result) {
-              this.saveAsset(result, true);
+              this.addAsset(result);
             }
           }))
       })
@@ -63,7 +85,7 @@ export class AssetService {
       lastUpdate: new Date(),
       controlByQty: true,
       quote: {
-        currency: this.sourceService.currencyDefault(),
+        currency: this.exchangeService.currencyDefault(),
         value: 0
       },
       trend: "unchanged" as TrendType
@@ -94,27 +116,28 @@ export class AssetService {
 
     dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
       if (result) {
-        this.saveAsset(result, false);
+        this.updateAsset(result);
       }
     });
   }
 
-  protected saveAsset(asset: AssetQuoteType, newAsset: boolean) {
-    const ticker = getMarketPlaceCode(asset);
-    asset = {
-      ...this.quoteService.quotes()[ticker],
-      ...asset
-    };
-    if (newAsset) {
-      this.investimentService.addAsset(asset);
-    } else {
-      this.investimentService.updateAsset(ticker, asset);
-    }
+  addAsset(asset: AssetQuoteType) {
+    this.sourceService.addAsset(asset);
+    this.requestUpdateQuote(asset);
   }
 
-  deleteAsset(ticker: string) {
-    const [marketPlace, code] = ticker.split(':')
-    this.investimentService.deleteAsset({ marketPlace, code });
+  updateAsset(asset: AssetQuoteType) {
+    this.sourceService.updateAsset([asset]);
+    this.requestUpdateQuote(asset);
+  }
+  
+  deleteAsset(ticker: Ticker) {
+    this.deletedAsset$.next(ticker);
+    this.sourceService.deleteAsset(ticker);
+  }
+  
+  requestUpdateQuote(asset: AssetQuoteType) {
+    this.quoteService.addAssetToUpdate(asset);
   }
 
 }

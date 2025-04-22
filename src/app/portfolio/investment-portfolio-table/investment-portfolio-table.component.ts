@@ -4,14 +4,14 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { Currency } from '../../model/domain.model';
 import { InvestmentTransactionType, PortfolioAllocation, PortfolioType, SummarizedDataType, TrendType } from '../../model/source.model';
+import { AssetService } from '../../service/asset.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
-import { QuoteService } from '../../service/quote.service';
-import { SourceService } from '../../service/source.service';
+import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { PorfolioAllocationDataType, PortfolioAllocationDialogComponent } from '../portfolio-allocation-dialog/portfolio-allocation-dialog.component';
-import { TransactionService } from '../../service/transaction.service';
 
 class DatasourceInputType extends PortfolioAllocation {
   get ticker() {
@@ -37,25 +37,25 @@ class DatasourceInputType extends PortfolioAllocation {
 })
 export class InvestmentPortfolioTableComponent {
 
-  private sourceService = inject(SourceService);
-
   private investmentService = inject(InvestmentService);
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   private portfolioService = inject(PortfolioService);
 
   private transactionService = inject(TransactionService);
 
+  private assetService = inject(AssetService);
+
   private dialog = inject(MatDialog);
 
   readonly displayedColumns: string[] = ['name', 'code', 'type', 'quote', 'quantity', 'averagePrice', 'marketValue', 'profit', 'percPlanned', 'percAllocation'];
 
-  exchangeView = computed(() => this.quoteService.exchangeView());
+  exchangeView = computed(() => this.exchangeService.exchangeView());
 
   editable = input<boolean>(false);
 
-  currency = input<Currency>(this.sourceService.currencyDefault());
+  currency = input<Currency>(this.exchangeService.currencyDefault());
 
   source!: Signal<Record<string,DatasourceInputType>>;
 
@@ -77,7 +77,7 @@ export class InvestmentPortfolioTableComponent {
     const portfolio = this.portfolio();
     if (!portfolio) return null;
 
-    return this.quoteService.enhanceExchangeInfo(
+    return this.exchangeService.enhanceExchangeInfo(
       portfolio.total as SummarizedDataType, portfolio.currency as Currency, 
       ["marketValue", "profit"])
   });
@@ -93,21 +93,21 @@ export class InvestmentPortfolioTableComponent {
   }
 
   private convertAllocation(allocation: PortfolioAllocation)  {
-    const asset = this.investmentService.assertsSignal()[allocation.data.ticker];
+    const asset = this.assetService.assets()[allocation.data.ticker];
     return {
       ...allocation.data,
-      ...this.quoteService.enhanceExchangeInfo(allocation.data, asset.quote.currency, ["initialValue", "marketValue", "profit"]),
+      ...this.exchangeService.enhanceExchangeInfo(allocation.data, asset.quote.currency, ["initialValue", "marketValue", "profit"]),
       quantity: allocation.quantity,
       name: asset.name,
       type: asset.type,
       trend: asset.trend,
-      quote: this.quoteService.enhanceExchangeInfo(asset.quote, asset.quote.currency, ["value"]).value,
-      averagePrice: this.quoteService.enhanceExchangeInfo({value: allocation.data.initialValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
+      quote: this.exchangeService.enhanceExchangeInfo(asset.quote, asset.quote.currency, ["value"]).value,
+      averagePrice: this.exchangeService.enhanceExchangeInfo({value: allocation.data.initialValue / allocation.quantity}, asset.quote.currency, ["value"]).value,
     };
   }
 
   selectRow(row: ReturnType<InvestmentPortfolioTableComponent["convertAllocation"]>) {
-    const asset = this.investmentService.assertsSignal()[row.ticker];
+    const asset = this.assetService.assets()[row.ticker];
 
     const investmentTransactions = this.transactionService.investmentTransactions();
     const transactions = row.transactions.map(({id})=>investmentTransactions[id]);
@@ -141,8 +141,7 @@ export class InvestmentPortfolioTableComponent {
             if (data.asset.manualQuote && result.marketValue) {
               const asset = {...data.asset};
               asset.quote.value = result.marketValue / portfolio.allocations[data.ticker].quantity;
-
-              this.quoteService.updateQuoteAsset(asset);
+              this.assetService.requestUpdateQuote(asset);
             }
           }
         }

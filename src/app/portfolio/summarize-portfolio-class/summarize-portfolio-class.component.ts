@@ -7,6 +7,7 @@ import { PortfolioService } from '../../service/portfolio-service';
 import { SourceService } from '../../service/source.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { QuoteService } from '../../service/quote.service';
+import { ExchangeService } from '../../service/exchange.service';
 
 @Component({
   selector: 'app-summarize-portfolio-class',
@@ -24,13 +25,13 @@ export class SummarizePortfolioClassComponent {
 
   private sourceService = inject(SourceService);
 
-  private quoteService = inject(QuoteService);
+  private exchangeService = inject(ExchangeService);
 
   private portfolioService = inject(PortfolioService);
 
   readonly faExchange = faExchange;
 
-  currency = computed(()=>this.sourceService.currencyDefault());
+  currency = computed(()=>this.exchangeService.currencyDefault());
 
   summarySignal = computed(()=>
     this.portfolioService.summarizeByClass(
@@ -39,7 +40,7 @@ export class SummarizePortfolioClassComponent {
   datasource = computed(()=>this.summarySignal().items || []);
 
   total = computed(()=>({
-    ...this.quoteService.enhanceExchangeInfo(this.summarySignal().total, this.currency(), ["value"]).value
+    ...this.exchangeService.enhanceExchangeInfo(this.summarySignal().total, this.currency(), ["value"]).value
   }));
 
   totalPercPlanned = computed(()=>this.datasource().reduce((acc,vl)=>acc+=vl.percPlanned,0));
