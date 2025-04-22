@@ -1,21 +1,22 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Currency, CurrencyType, CurrencyValue } from '../model/domain.model';
-import { ExchangeStructureType } from '../model/investment.model';
-import { AssetQuoteType, PortfolioAllocation, PortfolioAllocationsArrayItemType, PortfolioRecord, PortfolioType, SummarizedDataType } from '../model/source.model';
+import { Currency, CurrencyType, CurrencyValue, isTransactionDeposit } from '../model/domain.model';
+import { ExchangeStructureType, InvestmentEnumFactor } from '../model/investment.model';
+import { AssetQuoteType, PortfolioAllocation, PortfolioAllocationsArrayItemType, PortfolioAllocationSourceRawType, PortfolioAllocationStructureType, PortfolioRecord, PortfolioSourceRawType, PortfolioType, SummarizedDataType, Ticker } from '../model/source.model';
 import { PortfolioRegisterDialogComponent } from '../portfolio/portfolio-register-dialog/portfolio-register-dialog.component';
 import { AssetService } from './asset.service';
 import { ExchangeService } from './exchange.service';
 import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
+import { TransactionService } from './transaction.service';
 
-const INITIAL_TOTAL = {
+const INITIAL_TOTAL = Object.freeze({
   initialValue: 0,
   marketValue: 0,
   percPlanned: 0,
   profit: 0,
   performance: 0
-} as Required<SummarizedDataType>;
+} as Required<SummarizedDataType>);
 
 export type PortfolioAllocationChangeType = {
   ticker: string;
@@ -27,6 +28,7 @@ export type PortfolioChangeType = {
   name?: string;
   percPlanned?: number;
   currency?: Currency;
+  class?: string;
   transaction?: {
     id: string;
     quantity: number;
@@ -46,84 +48,65 @@ export class PortfolioService {
 
   private exchangeService = inject(ExchangeService);
 
-  readonly total = computed(() => this.getAllPortfolios()
+  // ---- Signals -------------------------------------------
+
+  /**
+   * A computed property that calculates the total summary of all portfolios.
+   * It iterates through all portfolio objects, converting their totals to the default currency
+   * and accumulating the results into a single summary object.
+   *
+   * @readonly
+   * @returns An object representing the summarized total of all portfolios in the default currency.
+   */
+  readonly total = computed(() => Object.values(this.portfolios())
     .reduce((acc, portfolio) => {
       const currencyDefault = this.exchangeService.currencyDefault();
 
-      // Summarize each portfolio to get general results
-      return this.computePortfolioResultsSummarized(acc, portfolio.total, portfolio.currency, currencyDefault);
+      // Summarizes portfolios capital
+      return this.summarize(
+        { currency: currencyDefault, result: acc}, 
+        { currency: portfolio.currency, item: portfolio.total});
     }, { ...INITIAL_TOTAL }))
 
+
+  /**
+   * A computed property that generates a record of portfolios by processing raw portfolio data
+   * and mapping it to a structured format. It depends on the data being loaded and the availability
+   * of assets from the source service.
+   *
+   * @readonly
+   * @returns {PortfolioRecord} A record of portfolios where each key is the portfolio ID and the value
+   * is the parsed portfolio data. Returns an empty object if data is not loaded or no assets are found.
+   */
   readonly portfolios = computed<PortfolioRecord>(() => {
+    // Waits for data loaded
     if (!this.sourceService.dataIsLoaded()) return {};
-    
+
     const assets = this.sourceService.assetSource();
+
+    // No assets found
     if (!Object.keys(assets).length) {
       return {};
     }
 
-    const entries = Object.entries(this.sourceService.dataSource.portfolio()).reduce((acc, [key, item]) => {
-
-      const currencyDefault = this.exchangeService.currencyDefault();
-
-      const allocations = item.allocations.reduce((allocAcc, allocSource) => {
-        const alloc = new PortfolioAllocation({
-          ...allocSource,
-          percAllocation: allocSource.percAllocation || 0,
-          profit: allocSource.profit || 0,
-          performance: allocSource.performance || 0
-        })
-        const asset = assets[alloc.data.ticker];
-        if (!asset) {
-          console.warn(`Asset not found: ${alloc.data.ticker}`);
-          alert(`Asset not found: ${alloc.data.ticker}`);
-          return allocAcc;
-        }
-
-        allocAcc[alloc.data.ticker] = this.computeAllocationDataValues(alloc, asset.quote);
-        return allocAcc;
-      }, {} as Record<string, PortfolioAllocation>);
-
-      const currency = Currency[item.currency as keyof typeof Currency];
-
-      let total = {...INITIAL_TOTAL};
-      Object.values(allocations).forEach(allocation=>
-        this.computePortfolioResultsSummarized(total, allocation.data, currency, currencyDefault));
-
-      const portfolio: PortfolioType = {
-        ...item,
-        currency,
-        allocations,
-        total
-      }
-
-      acc[key] = portfolio;
-      return acc;
-    }, {} as Record<string, PortfolioType>);
-
-    const total = Object.values(entries).reduce((acc, portfolio) => {
-      portfolio.total = Object.values(portfolio.allocations).reduce((accPort, alloc) => {
-        const assetCurrency = this.sourceService.assetSource()[alloc.data.ticker]?.quote?.currency || portfolio.currency;
-        this.summarize({ currency: portfolio.currency, total: accPort }, { currency: assetCurrency, total: alloc.data });
-        return accPort;
-      }, { ...INITIAL_TOTAL } as Required<SummarizedDataType>);
-
-      Object.values(portfolio.allocations).forEach(alloc => {
-        alloc.data.percAllocation = alloc.data.marketValue / portfolio.total.marketValue;
-      });
-
-      this.summarize({ currency: this.exchangeService.currencyDefault(), total: acc }, { ...portfolio });
-      return acc;
-    },
-      { ...INITIAL_TOTAL } as Required<SummarizedDataType>);
-
-    Object.values(entries).forEach(portfolio => {
-      portfolio.total.percAllocation = portfolio.total.marketValue / total.marketValue;
-    });
-
-    return entries
+    const portfoliosMap = Object.values(this.sourceService.dataSource.portfolio())
+      .reduce((rec, raw)=>{
+        rec[raw.id] = this.parsePortfolioSourceRawType(raw, assets);
+        return rec;
+      }, {} as PortfolioRecord)
+    
+    return portfoliosMap;
   });
 
+  /**
+   * A computed property that transforms the portfolio data into an array of portfolio allocation items.
+   * Each portfolio item includes its allocations as an array and calculates the percentage allocation
+   * of the portfolio's total market value relative to the overall market value.
+   *
+   * @readonly
+   * @returns {PortfolioAllocationsArrayItemType[]} An array of portfolio allocation items, where each item
+   * contains the portfolio data, its allocations as an array, and the calculated percentage allocation.
+   */
   readonly portfolioAllocation = computed(() =>
     this.getAllPortfolios().map(portfolio => ({
       ...portfolio,
@@ -139,25 +122,146 @@ export class PortfolioService {
 
   constructor() { }
 
-  private computePortfolioResultsSummarized(
-    acc: Required<SummarizedDataType>, item: Required<SummarizedDataType>,
-    itemCurrency: Currency, currencyDefault: Currency) {
+  /**
+   * Summarizes allocation transactions for a given portfolio allocation source.
+   *
+   * This method calculates the initial value, market value, profit, performance, 
+   * and planned percentage of a portfolio allocation based on its transactions 
+   * and associated asset data.
+   *
+   * @param alloc - The portfolio allocation source containing transaction data 
+   *                and planned percentage information.
+   * 
+   * @returns An object summarizing the allocation, including:
+   *          - `initialValue`: The total initial value of the allocation.
+   *          - `marketValue`: The current market value of the allocation.
+   *          - `profit`: The profit calculated as the difference between 
+   *            market value and initial value.
+   *          - `performance`: The performance ratio calculated as profit 
+   *            divided by initial value.
+   *          - `percPlanned`: The planned percentage of the allocation.
+   */
+  private summarizeAllocationTransactions(alloc: PortfolioAllocationSourceRawType) {
+    const asset = this.sourceService.assetSource()[alloc.ticker];
+    
+    const transactions = this.sourceService.investmentSource();
+    
+    /**
+     * Represents a summarized allocation object that aggregates transaction data
+     * to calculate total quantities, initial values, and market values.
+     */
+    const allocationSummarized = {
+      ...alloc.transactions.reduce((acc, t) => {
+        const transaction = transactions[t.id];
 
-    acc.initialValue += this.exchangeService.exchange(item.initialValue, itemCurrency, currencyDefault).value;
-    acc.marketValue += this.exchangeService.exchange(item.marketValue, itemCurrency, currencyDefault).value;
-    acc.profit += this.exchangeService.exchange(item.profit, itemCurrency, currencyDefault).value;
-    acc.performance += item.performance;
-    acc.percAllocation += item.percAllocation;
-    acc.percPlanned += item.percPlanned;
-    return acc;
+        // If transaction not found in delete operation
+        if (!transaction) {
+          return acc;
+        }
+        const factor = InvestmentEnumFactor[transaction.type];
+
+        const quantity = factor * t.quantity;
+        const transactionValue = quantity * transaction.value.value / transaction.quantity;
+
+        acc.quantity += quantity;
+        acc.initialValue += transactionValue;
+
+        // If the factor < 0, then market value is immutable
+        acc.marketValue += factor > 0 ? quantity * asset.quote.value : transactionValue;
+
+        return acc;
+      }, { ...INITIAL_TOTAL, quantity: 0 })
+    };
+
+    allocationSummarized.profit = allocationSummarized.marketValue - allocationSummarized.initialValue;
+    allocationSummarized.performance = allocationSummarized.profit / allocationSummarized.initialValue;
+    allocationSummarized.percPlanned = alloc.percPlanned;
+    return allocationSummarized;
   }
 
-  private summarize(acc: { currency: Currency, total: Required<SummarizedDataType> }, alloc: { currency: Currency, total: Required<SummarizedDataType> }) {
-    acc.total.initialValue += this.exchangeService.exchange(alloc.total.initialValue, alloc.currency, acc.currency).value;
-    acc.total.marketValue += this.exchangeService.exchange(alloc.total.marketValue, alloc.currency, acc.currency).value;
-    acc.total.profit += this.exchangeService.exchange(alloc.total.profit, alloc.currency, acc.currency).value;
-    acc.total.performance += this.exchangeService.exchange(alloc.total.performance, alloc.currency, acc.currency).value;
-    acc.total.percPlanned += this.exchangeService.exchange(alloc.total.percPlanned, alloc.currency, acc.currency).value;
+  /**
+   * Parses raw portfolio source data and constructs a structured portfolio object.
+   *
+   * @param raw - The raw portfolio source data of type `PortfolioSourceRawType`.
+   * @param assets - A record mapping asset tickers to their corresponding `AssetQuoteType` data.
+   * 
+   * @returns A structured portfolio object of type `PortfolioType` containing:
+   * - The portfolio's currency.
+   * - A summarized map of portfolio allocations keyed by ticker symbol.
+   * - The total portfolio values.
+   *
+   * @remarks
+   * - The function processes raw allocation data to create a summarized map of allocations.
+   * - It calculates the total portfolio values by aggregating data from individual allocations.
+   * - The percentage share of each allocation in the portfolio is computed based on market value.
+   */
+  private parsePortfolioSourceRawType(raw: PortfolioSourceRawType, assets: Record<string, AssetQuoteType>) {
+    const portfolioCurrency = Currency[raw.currency as keyof typeof Currency];
+
+    /**
+     * Creates a summarized map of portfolio allocations keyed by ticker symbol.
+     *
+     * This map is generated by iterating over the raw allocation data, summarizing
+     * the allocation transactions for each ticker, and constructing a new
+     * `PortfolioAllocation` instance for each ticker. The resulting map contains
+     * the ticker as the key and the corresponding `PortfolioAllocation` object as
+     * the value.
+     */
+    const allocSummarizedMap = raw.allocations.reduce((allocMap, allocRaw)=>{
+      const allocData = {
+        ticker: allocRaw.ticker,
+        ...this.summarizeAllocationTransactions(allocRaw),
+        transactions: allocRaw.transactions
+      };
+      allocMap[allocRaw.ticker] = new PortfolioAllocation(allocData);
+      return allocMap;
+    }, {} as Record<Ticker, Required<PortfolioAllocation>>);
+
+    let portfolioTotal = { ...INITIAL_TOTAL };
+    Object.values(allocSummarizedMap).forEach(alloc=>{
+      this.summarize(
+        {currency: portfolioCurrency, result: portfolioTotal},
+        {currency: assets[alloc.data.ticker].quote.currency, item: alloc.data}
+      )
+    });
+
+    // Calculates the percentage share of the allocation in the portfolio
+    Object.values(allocSummarizedMap).forEach(alloc => {
+      alloc.data.percAllocation = alloc.data.marketValue / portfolioTotal.marketValue;
+    })
+
+    const portfolio: PortfolioType = {
+      ...raw,
+      currency: portfolioCurrency,
+      allocations: allocSummarizedMap,
+      total: portfolioTotal
+    }
+
+    return portfolio;
+  }
+
+
+  /**
+   * Summarizes financial data by aggregating values from a source object into an accumulator object.
+   *
+   * @param acc - The accumulator object containing the target currency and the aggregated result.
+   * @param acc.currency - The target currency for the aggregation.
+   * @param acc.result - The aggregated financial data.
+   * @param source - The source object containing the currency and financial data to be aggregated.
+   * @param source.currency - The currency of the source financial data.
+   * @param source.item - The financial data to be aggregated.
+   * @returns The updated aggregated financial data in the accumulator.
+   */
+  private summarize(
+    acc: { currency: Currency, result: Required<SummarizedDataType> },
+    source: { currency: Currency, item: Required<SummarizedDataType> }) {
+
+    acc.result.initialValue += this.exchangeService.exchange(source.item.initialValue, source.currency, acc.currency).value;
+    acc.result.marketValue += this.exchangeService.exchange(source.item.marketValue, source.currency, acc.currency).value;
+    acc.result.profit += this.exchangeService.exchange(source.item.profit, source.currency, acc.currency).value;
+    acc.result.performance += this.exchangeService.exchange(source.item.performance, source.currency, acc.currency).value;
+    acc.result.percPlanned += this.exchangeService.exchange(source.item.percPlanned, source.currency, acc.currency).value;
+    return acc.result;
   }
 
   getPortfolioById(id: string) {
@@ -238,15 +342,7 @@ export class PortfolioService {
       percPlanned,
       currency: Currency[currency],
       class: '',
-      allocations: {},
-      total: {
-        initialValue: 0,
-        marketValue: 0,
-        percPlanned: 0,
-        percAllocation: 0,
-        profit: 0,
-        performance: 0
-      }
+      allocations: []
     })
   }
 
@@ -275,14 +371,26 @@ export class PortfolioService {
   }
 
   updatePortfolio(portfolioId: string, changes: PortfolioChangeType) {
-    const portfolio = { ...this.portfolios()[portfolioId] };
+    const portfolio = this.portfolios()[portfolioId];
     if (!portfolio) {
       throw new Error(`Portfolio not found: ${portfolioId}`);
     }
+    
+    const portfolioRaw : PortfolioSourceRawType = { 
+      ...portfolio,
+      allocations: Object.values(portfolio.allocations).map(alloc=>({
+        ...alloc.data
+      }))
+    };
+    const allocationMap = portfolioRaw.allocations.reduce((acc, alloc)=>{
+      acc[alloc.ticker] = alloc;
+      return acc;
+    }, {} as Record<Ticker, PortfolioAllocationSourceRawType>)
 
-    if (changes.name) portfolio.name = changes.name;
-    if (changes.currency) portfolio.currency = Currency[changes.currency];
-    if (changes.percPlanned) portfolio.percPlanned = changes.percPlanned;
+    if (changes.name) portfolioRaw.name = changes.name;
+    if (changes.currency) portfolioRaw.currency = Currency[changes.currency];
+    if (changes.percPlanned) portfolioRaw.percPlanned = changes.percPlanned;
+    if (changes.class) portfolioRaw.class = changes.class;
 
     if (!!changes.transaction) {
       const chgTransaction = changes.transaction;
@@ -309,38 +417,25 @@ export class PortfolioService {
       const ticker = investmentTransaction.ticker;
 
       // Update allocations
-      const allocationFound = portfolio.allocations[ticker];
+      const allocationFound = allocationMap[ticker];
       let transactionFound: { id: string, quantity: number } | undefined;
 
       // Map context transactions
       const mapTransactions = new Map<string, { id: string, quantity: number }>();
       mapTransactions.set(chgTransaction.id, { ...chgTransaction });
       if (!!allocationFound) {
-        allocationFound.data.transactions.forEach(t => mapTransactions.set(t.id, t));
+        allocationFound.transactions.forEach(t => mapTransactions.set(t.id, t));
       }
 
-      if (!!allocationFound && (transactionFound = allocationFound.data.transactions.find(t => t.id === chgTransaction.id))) {
-        // Update existing allocation with new transaction and rebalance initial value among transactions.
-
-        const allocation = new PortfolioAllocation(allocationFound.data);
-        transactionFound.quantity = chgTransaction.quantity;
-
-        // Compute initial value based on registered quote in transaction
-        const initialValue = investmentTransaction.quote * chgTransaction.quantity;
-
-        // Compute market value based on actual quotation
-        const marketValue = quote.value * chgTransaction.quantity;
-
-        // Update the allocation initial value and market value of the allocation with weighted average
-        allocation.data = {
-          ...allocation.data,
-          initialValue,
-          marketValue,
-          profit: marketValue - initialValue,
-          performance: (marketValue - initialValue) / initialValue
+      if (!!allocationFound) {
+        if ((transactionFound = allocationFound.transactions.find(t => t.id === chgTransaction.id))) {
+          // Update existing transaction quantity.
+          transactionFound.quantity = chgTransaction.quantity;
         }
-
-        portfolio.allocations[investmentTransaction.ticker] = allocation;
+        else {
+          // Add transaction to allocation found
+          allocationFound.transactions.push({...chgTransaction});
+        }
       }
       else {
         // Add new allocation and transaction to portfolio
@@ -348,7 +443,7 @@ export class PortfolioService {
         const marketValue = chgTransaction.quantity * quote.value;
         const percAllocation = marketValue / (portfolio.total.marketValue + marketValue);
 
-        const allocation = new PortfolioAllocation({
+        const allocation : PortfolioAllocationSourceRawType = {
           ticker,
           initialValue,
           marketValue,
@@ -357,13 +452,9 @@ export class PortfolioService {
           performance: (marketValue - initialValue) / initialValue,
           profit: marketValue - initialValue,
           transactions: Array.from(mapTransactions.values())
-        })
-        mapTransactions.values
-        portfolio.allocations[investmentTransaction.ticker] = allocation;
+        }
+        portfolioRaw.allocations.push(allocation);
       }
-
-      const allocation = portfolio.allocations[investmentTransaction.ticker];
-      this.computeAllocationDataValues(allocation, quote);
 
       if (!!asset.manualQuote) {
         asset.quote.value = investmentTransaction.quote;
@@ -371,34 +462,7 @@ export class PortfolioService {
       }
     }
 
-    this.sourceService.updatePortfolio([portfolio]);
-  }
-
-  private computeAllocationDataValues(allocation: PortfolioAllocation, quote: CurrencyValue) {
-    const consolidation = allocation.data.transactions.reduce((acc, { id, quantity }) => {
-      const investmentTransaction = this.sourceService.investmentSource()[id];
-      const initialValue = investmentTransaction.value.value * quantity / investmentTransaction.quantity;
-      const marketValue = quote.value * quantity;
-      const profit = marketValue - initialValue;
-      const performance = profit / initialValue;
-      acc.initialValue += initialValue;
-      acc.marketValue += marketValue;
-      acc.profit += profit;
-      acc.performance += performance;
-      return acc;
-    }, {
-      ...INITIAL_TOTAL,
-      // Mantains originals values
-      percPlanned: allocation.data.percPlanned,
-      percAllocation: allocation.data.percAllocation
-    });
-
-    // Updates the consolidation into allocation data
-    allocation.data = {
-      ...allocation.data,
-      ...consolidation
-    };
-    return allocation;
+    this.sourceService.updatePortfolio([portfolioRaw]);
   }
 
   openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number } }) {
@@ -429,7 +493,8 @@ export class PortfolioService {
           this.updatePortfolio(portfolio.id, {
             name: result.name,
             currency: result.currency,
-            percPlanned: result.percPlanned
+            percPlanned: result.percPlanned,
+            class: result.class
           });
         }
       }
@@ -439,7 +504,7 @@ export class PortfolioService {
 
   portfoliosOfAsset(asset: AssetQuoteType): PortfolioType[] {
     return this.getAllPortfolios()
-      .filter(portfolio => portfolio.allocations[getMarketPlaceCode(asset)]?.quantity > 0)
+      .filter(portfolio => portfolio.allocations[getMarketPlaceCode(asset)]?.data.transactions.reduce((acc, t) => acc += t.quantity, 0) > 0)
   }
 
   getPortfolio(portfolioId: string) {

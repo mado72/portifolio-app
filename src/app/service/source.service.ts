@@ -106,6 +106,7 @@ export class SourceService {
   constructor() { }
 
   loadInitialData() {
+    this.dataIsLoaded.set(false);
     this.loadData(initialData);
     this.dataIsLoaded.set(true);
   }
@@ -462,14 +463,14 @@ export class SourceService {
   }
 
   // portfolio ------------------------
-  portfolioToSource(items: PortfolioType[]): PortfolioSourceRawType[] {
+  portfolioToSource(items: PortfolioSourceRawType[]): PortfolioSourceRawType[] {
     return items.map(item => ({
       ...item,
-      allocations: Object.values(item.allocations).map(allocation => allocation.data)
+      allocations: Object.values(item.allocations)
     }))
   }
 
-  addPortfolio(item: PortfolioType) {
+  addPortfolio(item: PortfolioSourceRawType) {
     const added = this.portfolioSourceToRecord(
       this.portfolioToSource([item]).map(item => ({ ...item, id: uuid() }))
     );
@@ -481,7 +482,7 @@ export class SourceService {
     return Object.values(added)[0]
   }
 
-  updatePortfolio(changes: PortfolioType[]) {
+  updatePortfolio(changes: PortfolioSourceRawType[]) {
     const updated = this.portfolioSourceToRecord(this.portfolioToSource(changes));
     this.dataSource.portfolio.update(portfolios => ({
       ...portfolios,
