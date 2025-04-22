@@ -1,11 +1,9 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { InvestmentTransactionType, PortfolioType } from '../model/source.model';
+import { InvestmentTransactionType } from '../model/source.model';
 import { AssetService } from './asset.service';
-import { ExchangeService } from './exchange.service';
-import { PortfolioChangeType, PortfolioService } from './portfolio-service';
+import { PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
 
 @Injectable({
@@ -20,10 +18,6 @@ export class TransactionService {
   private assetService = inject(AssetService);
 
   private sourceService = inject(SourceService);
-
-  private exchangeService = inject(ExchangeService);
-
-  private dialog = inject(MatDialog);
 
   investmentTransactions = computed(() => {
     return this.sourceService.investmentSource();
@@ -111,21 +105,6 @@ export class TransactionService {
 
   listTransactions() {
     this.router.navigate(['investment', 'transactions']);
-  }
-
-  computeAllocationsOfTransaction(portfolios: PortfolioType[], quantity: number, transactionId?: string): Record<string, { id: string; name: string; qty: number; allocated: number; }> {
-    return portfolios.map(portfolio => ({
-        id: portfolio.id,
-        name: portfolio.name,
-        allocated: Object.values(portfolio.allocations)
-          .map(allocation => allocation.quantity)
-          .reduce((tot, vl) => tot += vl, 0),
-        qty: quantity
-      }))
-      .reduce((acc, portfolio) => {
-        acc[portfolio.id] = portfolio;
-        return acc;
-      }, {} as Record<string, { id: string; name: string; qty: number; allocated: number; }>);
   }
 
 }

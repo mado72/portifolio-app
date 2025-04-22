@@ -12,7 +12,7 @@ import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWit
 import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '../../investment-allocation-form/investment-allocation-form.component';
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
-import { InvestmentTransactionType } from '../../model/source.model';
+import { InvestmentTransactionType, PortfolioType } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
@@ -80,15 +80,19 @@ export class InvestmentTransactionFormComponent implements OnInit {
   });
 
   quantity = signal(this.data()?.quantity || 0);
-    
+
   accountName = signal('');
 
-  accounts = computed(()=>this.balanceService.getAccounts());
+  accounts = computed(() => this.balanceService.getAccounts());
 
-  allocations = computed(()=>this.transactionService.computeAllocationsOfTransaction(
-    Object.values(this.portfolioService.portfolios()),
-    this.data()?.quantity || 0,
-    this.data()?.id || undefined));
+  allocations = computed(() => {
+    const ticker = this.ticker();
+    if (!ticker) return {} as ReturnType<InvestmentTransactionFormComponent["computeAllocationsOfTransaction"]>;
+    return this.computeAllocationsOfTransaction(
+      Object.values(this.portfolioService.portfolios()),
+      this.data()?.quantity || 0,
+      this.data()?.id || undefined)
+  });
 
   inputAllocations: InvestmentAllocationField[] = [];
   allocationsIsValid = true;
@@ -106,10 +110,14 @@ export class InvestmentTransactionFormComponent implements OnInit {
     fees: [0, [Validators.min(0)]]
   });
 
+  marketPlace = signal<string | null>(null);
+
   optionsCode = computed(() => {
-    const ticker = this.ticker();
-    if (!ticker) return [];
-    return Object.entries(this.assets()).filter(([key, _]) => key.startsWith(ticker)).map(([_, asset]) => asset.code);
+    const marketPlace = this.marketPlace();
+    if (!marketPlace) return [];
+    return Object.entries(this.assets())
+      .filter(([key, _]) => key.startsWith(`${marketPlace}:`))
+      .map(([_, asset]) => asset.code);
   });
 
   optionsAccount = computed(() => {
@@ -131,22 +139,16 @@ export class InvestmentTransactionFormComponent implements OnInit {
       this.transactionForm.get('code')?.setValue(code);
       this.ticker.set(getMarketPlaceCode({ marketPlace, code }));
     }
-    
+
     effect(() => {
       const assetSelected = this.assetSelected();
-      const ticker = this.ticker();
-      if (!this.data()?.quote) {
-        if (assetSelected) {
-          this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
-        }
-        else if (ticker && ticker.includes(':')) {
-          const asset = this.assets()[ticker];
-          this.transactionForm.get('quote')?.setValue(asset.quote.value);
-        }
+      const tickerIsFilled = /.+:.+/.test(this.ticker() as string);
+      if (assetSelected && tickerIsFilled && !this.data()?.quote) {
+        this.transactionForm.get('quote')?.setValue(assetSelected.quote.value);
       }
     })
 
-    this.listenMarketplaceAndCodeToFillTickerValue();
+    this.listenMarketplaceAndCode();
     this.listenAccountIdToFillAccountName();
     this.listenQuantityAndQuoteToFillAmountValue();
   }
@@ -158,10 +160,29 @@ export class InvestmentTransactionFormComponent implements OnInit {
     }
   }
 
+  private computeAllocationsOfTransaction(portfolios: PortfolioType[], quantity: number, transactionId?: string):
+    Record<string, { id: string; name: string; qty: number; allocated: number; }> {
+
+    const ticker = this.ticker() || '';
+
+    return portfolios.map(portfolio => {
+      const allocation = portfolio.allocations[ticker];
+      const allocated =  allocation?.data.quantity || 0;
+      return {
+        id: portfolio.id,
+        name: portfolio.name,
+        allocated,
+        qty: allocation?.data.transactions.find(({id})=>id === transactionId)?.quantity || 0
+      }
+    }).reduce((acc, portfolio) => {
+        acc[portfolio.id] = portfolio;
+        return acc;
+      }, {} as Record<string, { id: string; name: string; qty: number; allocated: number; }>);
+  }
   setInputAllocations(inputAllocations: InvestmentAllocationField[]) {
     this.inputAllocations = inputAllocations;
   }
-  
+
   setInputAllocationsIsValid(valid: boolean) {
     this.allocationsIsValid = valid;
   }
@@ -169,32 +190,45 @@ export class InvestmentTransactionFormComponent implements OnInit {
   formValue() {
     const formValue = this.transactionForm.value;
     return {
-      ...formValue, 
+      ...formValue,
       allocations: this.inputAllocations
     };
   }
 
-  badgeValue(allocationId: string ) {
+  badgeValue(allocationId: string) {
     const portfolio = this.allocations()[allocationId];
-    return portfolio?.qty || 0;
+    return portfolio?.allocated || 0;
   }
 
-  listenMarketplaceAndCodeToFillTickerValue() {
+  listenMarketplaceAndCode() {
     const marketPlaceField = this.transactionForm.get("marketPlace") as FormControl<string>;
     const codeField = this.transactionForm.get("code") as FormControl<string>;
 
+    const listenMarketPlaceChanges$ = marketPlaceField.valueChanges.pipe(
+      startWith(marketPlaceField.value)
+    );
+
+    listenMarketPlaceChanges$.subscribe(value => {
+      this.marketPlace.set(value);
+    })
+
     combineLatest({
-      marketPlace: marketPlaceField.valueChanges.pipe(
-        startWith(marketPlaceField.value)
-      ),
+      marketPlace: listenMarketPlaceChanges$,
       code: codeField.valueChanges.pipe(
         startWith(codeField.value)
       )
     }).pipe(
       debounceTime(1000),
       distinctUntilChanged()
-    ).subscribe((ticker) => this.ticker.set(getMarketPlaceCode(ticker))
-    );
+    ).subscribe(() => {
+      const [marketPlace, code] = [marketPlaceField.value, codeField.value];
+      if (code) {
+        const ticker = getMarketPlaceCode({ marketPlace, code });
+        this.ticker.set(ticker);
+        const asset = this.assets()[ticker];
+        this.transactionForm.get('quote')?.setValue(asset.quote.value);
+      }
+    });
   }
 
   listenAccountIdToFillAccountName() {
@@ -211,7 +245,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     const quoteField = this.transactionForm.get("quote") as FormControl<number>;
     const amountField = this.transactionForm.get("amount") as FormControl<number>;
 
-    quantityField.valueChanges.pipe(startWith(quantityField.value)).subscribe(()=>{
+    quantityField.valueChanges.pipe(startWith(quantityField.value)).subscribe(() => {
       this.quantity.set(quantityField.value)
     })
 
