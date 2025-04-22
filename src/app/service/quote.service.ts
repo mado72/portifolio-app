@@ -1,6 +1,6 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime, map, Observable, of, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
+import { debounceTime, interval, map, Observable, of, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { QuoteResponse } from '../model/remote-quote.model';
 import { AssetQuoteRecord, AssetQuoteType, Ticker } from '../model/source.model';
@@ -23,27 +23,46 @@ export class QuoteService {
   readonly lastUpdate = signal<Date>(new Date(0));
 
   // Observable para recuperar as cotações remotas
-  private requestQuotes$ = this.remoteQuotesService.updateQuotes(this.penddingToQuote()).pipe(
-    map(response=>{
-      return this.processResponseToAssets(response);
-    }))
+  private requestQuotes$ = of({}).pipe(
+    switchMap(() => {
+      const request = this.penddingToQuote();
+      return this.remoteQuotesService.updateQuotes(request).pipe(
+        map(response => {
+          return this.processResponseToAssets(request, response);
+        }),
+        tap(() => {
+          this.lastUpdate.set(new Date());
+          this.penddingToQuote.set({});
+        })
+      )
+
+    }),
+
+    // Compartilha o resultado entre múltiplos assinantes
+    shareReplay(1)
+  )
+
+  private timerRequestQuote$ = interval(1 * 60 * 1000).pipe(
+    switchMap(() => this.requestQuotes$),
+    takeUntilDestroyed(this.destroyRef)
+  ).subscribe();
 
   updateTrigger = new Subject<void>();
-  
+
   // Observable principal que gerencia as atualizações
   updateQuotes$ = this.updateTrigger.pipe(
     // Aguarda 1 minuto de inatividade
     debounceTime(1 * 60 * 1000),
-    
+
     // Obtém os ativos pendentes no momento da execução
     switchMap(() => {
       const pendingAssets = this.penddingToQuote();
-      
+
       // Se não houver ativos pendentes, retorna um objeto vazio
       if (Object.keys(pendingAssets).length === 0) {
-        return of({} as {[ticker: Ticker]: AssetQuoteType});
+        return of({} as { [ticker: Ticker]: AssetQuoteType });
       }
-      
+
       // Chama o serviço remoto com os ativos pendentes
       return this.requestQuotes$.pipe(
         tap(() => {
@@ -54,10 +73,7 @@ export class QuoteService {
         })
       );
     }),
-    
-    // Compartilha o resultado entre múltiplos assinantes
-    shareReplay(1),
-    
+
     // Gerencia o ciclo de vida da assinatura
     takeUntilDestroyed(this.destroyRef)
   );
@@ -67,8 +83,9 @@ export class QuoteService {
     this.updateQuotes$.pipe(startWith({})).subscribe();
   }
 
-  private processResponseToAssets(response: Record<string, QuoteResponse>) {
-    const request = this.penddingToQuote();
+  private processResponseToAssets(request: AssetQuoteRecord, response: Record<string, QuoteResponse>) {
+    if (Object.keys(request).length === 0) return {} as AssetQuoteRecord;
+
     return Object.entries(response).reduce((acc, [ticker, quote]) => {
       const original = request[ticker];
       const initialPrice = original.initialPrice || quote.price;
@@ -90,59 +107,54 @@ export class QuoteService {
   }
 
   addAssetToUpdate(asset: AssetQuoteType) {
-    if (! asset.manualQuote) {
+    if (!asset.manualQuote) {
       console.warn(`Asset ${asset.ticker} is not quotable.`);
       return;
     }
-    
+
     // Adiciona o novo ativo
     this.penddingToQuote.update(pending => ({
       ...pending,
       [asset.ticker]: asset
     }));
-    
+
     // Dispara o trigger para iniciar o processo de debounce
     this.updateTrigger.next();
   }
-  
+
   /**
    * Adiciona múltiplos ativos à lista de pendentes
    */
   addAssetsToUpdate(assetsMap: AssetQuoteRecord): void {
     const assetsQuotable = Object.entries(assetsMap)
-      .filter(([_, asset])=>asset.manualQuote === true)
+      .filter(([_, asset]) => !asset.manualQuote)
       .reduce((acc, [ticker, asset]) => {
         acc[ticker] = asset;
         return acc;
       }, {} as AssetQuoteRecord)
-    
+
     if (Object.keys(assetsQuotable).length === 0) return;
 
     this.penddingToQuote.update(pending => ({
       ...pending,
       ...assetsQuotable
     }));
-    
+
     // Dispara o trigger para iniciar o processo de debounce
     this.updateTrigger.next();
   }
-  
+
   /**
    * Força uma atualização imediata (ignora o debounce)
    */
-  forceUpdate(): Observable<{[ticker: Ticker]: AssetQuoteType}> {
+  forceUpdate(): Observable<{ [ticker: Ticker]: AssetQuoteType }> {
     const pendingAssets = this.penddingToQuote();
-    
+
     if (Object.keys(pendingAssets).length === 0) {
       return of({});
     }
-    
-    return this.requestQuotes$.pipe(
-      tap(() => {
-        this.lastUpdate.set(new Date());
-        this.penddingToQuote.set({});
-      })
-    );
+
+    return this.requestQuotes$;
   }
 
   getRemoteAssetInfo(ticker: Ticker) {
