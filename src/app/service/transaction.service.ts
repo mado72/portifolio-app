@@ -5,6 +5,7 @@ import { InvestmentTransactionType } from '../model/source.model';
 import { AssetService } from './asset.service';
 import { PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
+import { TransactionStatus } from '../model/investment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -66,12 +67,14 @@ export class TransactionService {
             return;
           }
           transaction.value.currency = asset.quote.currency;
+          transaction.status = TransactionStatus.COMPLETED;
           this.persistTransaction(transaction, allocations);
           subscriber.next(transaction);
           subscriber.complete();
         })
       }
       else {
+        transaction.status = TransactionStatus.COMPLETED;
         this.persistTransaction(transaction, allocations);
         subscriber.next(transaction);
         subscriber.complete();
