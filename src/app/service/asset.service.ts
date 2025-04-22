@@ -1,4 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog } from '@angular/material/dialog';
 import { concatMap, map, of, Subject, tap } from 'rxjs';
 import { AssetDialogComponent } from '../assets/asset-dialog/asset-dialog.component';
@@ -28,12 +29,23 @@ export class AssetService {
     return this.sourceService.assetSource();
   })
 
+  dataIsLoaded = toObservable(this.sourceService.dataIsLoaded).subscribe((isLoaded)=>{
+    if (isLoaded) {
+      this.quoteService.addAssetsToUpdate(this.assets());
+      this.quoteService.forceUpdate().subscribe(assets=>{
+        const changes = Object.values(assets);
+        if (changes.length) {
+          this.sourceService.updateAsset(changes);
+        }
+      });
+    }
+  })
+
   constructor() { 
     this.quoteService.updateQuotes$.subscribe(assets=>{
+      if (Object.keys(assets).length === 0) return;
       this.sourceService.updateAsset(Object.values(assets))
     })
-
-    this.updateAllAssets();
   }
   
   // Force to update all assets
