@@ -1,15 +1,13 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { of } from 'rxjs';
-import { TransactionDialogComponent, TransactionDialogType } from '../investment/transaction-dialog/transaction-dialog.component';
 import { Currency } from '../model/domain.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import { AssetQuoteType, InvestmentTransactionType, PortfolioType } from '../model/source.model';
 import { AssetService } from './asset.service';
 import { PortfolioService } from './portfolio-service';
-import { QuoteService } from './quote.service';
 import { SourceService } from './source.service';
 import { TransactionService } from './transaction.service';
 
@@ -19,11 +17,8 @@ describe('TransactionService', () => {
   let dialogMock: jasmine.SpyObj<MatDialog>;
   let routerMock: jasmine.SpyObj<Router>;
   let portfolioServiceMock: jasmine.SpyObj<PortfolioService>;
-  let sourceServiceMock: jasmine.SpyObj<SourceService>;
-  let quoteServiceMock: jasmine.SpyObj<QuoteService>;
-  let dialogRefMock: jasmine.SpyObj<MatDialogRef<TransactionDialogComponent, any>>;
-  let assetService: AssetService;
   let assetServiceMock: jasmine.SpyObj<AssetService>;
+  let sourceServiceMock: jasmine.SpyObj<SourceService>;
 
   // Mock data
   const mockTransaction: InvestmentTransactionType = {
@@ -78,49 +73,43 @@ describe('TransactionService', () => {
 
     dialogMock = jasmine.createSpyObj('MatDialog', ['open']);
     routerMock = jasmine.createSpyObj('Router', ['navigate']);
+
     portfolioServiceMock = jasmine.createSpyObj('PortfolioService', [
       'portfolioAllocation',
       'processAllocations',
-      'getAllPortfolios',
-      'updatePortfolio'
+      'portfolios'
     ]);
 
     sourceServiceMock = jasmine.createSpyObj('SourceService', [
       'investmentSource',
-      'portfolioSource',
       'updateInvestmentTransaction',
       'addInvestmentTransaction',
       'deleteInvestmentTransaction',
-      'currencyDefault'
     ]);
-    quoteServiceMock = jasmine.createSpyObj('QuoteService', ['addPendding']);
-    dialogRefMock = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+
+    assetServiceMock = jasmine.createSpyObj('AssetService', [
+      'newDialog'
+    ])
 
     // Configure mock return values
     portfolioServiceMock.portfolioAllocation.and.returnValue([]);
     portfolioServiceMock.getAllPortfolios.and.returnValue(mockPortfolios);
     sourceServiceMock.investmentSource.and.returnValue({ 'transaction-1': mockTransaction });
-    sourceServiceMock.portfolioSource.and.returnValue({
+    portfolioServiceMock.portfolios.and.returnValue({
       'portfolio-1': { id: 'portfolio-1', name: 'Portfolio 1' } as PortfolioType,
       'portfolio-2': { id: 'portfolio-2', name: 'Portfolio 2' } as PortfolioType
     });
-    sourceServiceMock.currencyDefault.and.returnValue(Currency.USD);
-    dialogMock.open.and.returnValue(dialogRefMock);
-    dialogRefMock.afterClosed.and.returnValue(of(null));
 
     TestBed.configureTestingModule({
       providers: [
         TransactionService,
-        { provide: MatDialog, useValue: dialogMock },
         { provide: Router, useValue: routerMock },
         { provide: PortfolioService, useValue: portfolioServiceMock },
         { provide: AssetService, useClass: MockAssetService },
         { provide: SourceService, useValue: sourceServiceMock },
-        { provide: QuoteService, useValue: quoteServiceMock }
       ]
     });
 
-    assetService = TestBed.inject(AssetService);
     service = TestBed.inject(TransactionService);
   });
 
@@ -153,7 +142,6 @@ describe('TransactionService', () => {
       
       // Assert
       expect(result).toEqual(mockTransaction);
-      expect(quoteServiceMock.addPendding).toHaveBeenCalledWith('NYSE:AAPL');
       expect((service as any).persistTransaction).toHaveBeenCalledWith(mockTransaction, undefined);
     });
 
@@ -162,7 +150,7 @@ describe('TransactionService', () => {
       // Arrange
       
       // Mock that asset is added after dialog is closed
-      const newDialog = spyOn(assetService, 'newDialog').and.callFake(() => {
+      const newDialog = assetServiceMock.newDialog.and.callFake(() => {
         assets$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
         return of({ 'NYSE:AAPL': mockAsset } as any);
       });
@@ -177,14 +165,14 @@ describe('TransactionService', () => {
       // Assert
       expect(newDialog).toHaveBeenCalledWith('NYSE:AAPL');
       expect(result).toEqual(mockTransaction);
-      expect(quoteServiceMock.addPendding).toHaveBeenCalledWith('NYSE:AAPL');
       expect((service as any).persistTransaction).toHaveBeenCalledWith(mockTransaction, undefined);
     });
 
     // Test 3: should throw an error if the asset is not found after opening the dialog
     it('should throw an error if the asset is not found after opening the dialog', () => {
       // Arrange
-      const newDialog = spyOn(assetService, 'newDialog').and.returnValue(of({} as any));
+
+      const newDialog = assetServiceMock.newDialog.and.returnValue(of({} as any));
       
       // Mock that asset is still not available after dialog is closed
       spyOn(service as any, 'persistTransaction');
@@ -217,7 +205,6 @@ describe('TransactionService', () => {
       
       // Assert
       expect(result).toEqual(mockTransaction);
-      expect(quoteServiceMock.addPendding).toHaveBeenCalledWith('NYSE:AAPL');
       expect((service as any).persistTransaction).toHaveBeenCalledWith(mockTransaction, allocations);
     });
 
@@ -249,7 +236,6 @@ describe('TransactionService', () => {
       expect(assetServiceSpy.newDialog).toHaveBeenCalledWith('NYSE:AAPL');
       expect(result).toEqual(transactionWithoutCurrency);
       expect(transactionWithoutCurrency.value.currency).toBe('EUR');
-      expect(quoteServiceMock.addPendding).toHaveBeenCalledWith('NYSE:AAPL');
       expect((service as any).persistTransaction).toHaveBeenCalledWith(transactionWithoutCurrency, undefined);
     });
   });
@@ -303,79 +289,6 @@ describe('TransactionService', () => {
     });
   });
 
-  describe('openDialog', () => {
-    it('should open dialog with correct data', () => {
-      // Arrange
-      const dialogData: TransactionDialogType = {
-        newTransaction: true,
-        title: 'Test Dialog',
-        transaction: mockTransaction,
-        portfolios: mockAllocations
-      };
-      
-      // Act
-      service.openDialog(dialogData);
-      
-      // Assert
-      expect(dialogMock.open).toHaveBeenCalledWith(TransactionDialogComponent, {
-        data: dialogData
-      });
-    });
-
-    it('should save transaction and update portfolios when dialog is closed with result', () => {
-      // Arrange
-      const dialogData: TransactionDialogType = {
-        newTransaction: true,
-        title: 'Test Dialog',
-        transaction: mockTransaction,
-        portfolios: []
-      };
-      
-      const dialogResult: TransactionDialogType = {
-        newTransaction: true,
-        title: 'Test Dialog',
-        transaction: { ...mockTransaction, quantity: 15 },
-        portfolios: [
-          { id: 'portfolio-1', name: 'Portfolio 1', quantity: 10 },
-          { id: 'portfolio-2', name: 'Portfolio 2', quantity: 5 }
-        ]
-      };
-      
-      dialogRefMock.afterClosed.and.returnValue(of(dialogResult));
-      spyOn(service, 'saveTransaction').and.returnValue(of(mockTransaction));
-      
-      // Act
-      service.openDialog(dialogData);
-      
-      // Assert
-      expect(service.saveTransaction).toHaveBeenCalledWith({
-        ...mockTransaction,
-        ...dialogResult.transaction
-      });
-      expect(portfolioServiceMock.updatePortfolio).toHaveBeenCalledTimes(2);
-    });
-
-    it('should not update anything when dialog is closed without result', () => {
-      // Arrange
-      const dialogData: TransactionDialogType = {
-        newTransaction: true,
-        title: 'Test Dialog',
-        transaction: mockTransaction,
-        portfolios: []
-      };
-      
-      dialogRefMock.afterClosed.and.returnValue(of(null));
-      spyOn(service, 'saveTransaction');
-      
-      // Act
-      service.openDialog(dialogData);
-      
-      // Assert
-      expect(service.saveTransaction).not.toHaveBeenCalled();
-      expect(portfolioServiceMock.updatePortfolio).not.toHaveBeenCalled();
-    });
-  });
-
   describe('navigation methods', () => {
     it('should navigate to create transaction page', () => {
       // Act
@@ -402,31 +315,4 @@ describe('TransactionService', () => {
     });
   });
 
-  describe('openAddDialog', () => {
-    it('should open dialog with correct default data', () => {
-      // Arrange
-      spyOn(service, 'openDialog');
-      
-      // Act
-      service.openAddDialog();
-      
-      // Assert
-      expect(service.openDialog).toHaveBeenCalledWith({
-        newTransaction: true,
-        title: 'Adicionar Transação',
-        transaction: {
-          id: '',
-          ticker: '',
-          date: jasmine.any(Date),
-          accountId: '',
-          quantity: 0,
-          quote: NaN,
-          value: { value: 0, currency: Currency.USD },
-          type: InvestmentEnum.BUY,
-          status: TransactionStatus.COMPLETED
-        },
-        portfolios: []
-      });
-    });
-  });
 });

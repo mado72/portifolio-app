@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InvestmentTransactionFormComponent } from './investment-transaction-form.component';
-import { SourceService } from '../../service/source.service';
-import { QuoteService } from '../../service/quote.service';
+import { provideNativeDateAdapter } from '@angular/material/core';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideNativeDateAdapter } from '@angular/material/core';
+import { InvestmentTransactionFormComponent } from './investment-transaction-form.component';
+import { ExchangeService } from '../../service/exchange.service';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 class MyService {
   getAllBalances () {}
@@ -16,17 +17,35 @@ class MyService {
 describe('InvestmentTransactionFormComponent', () => {
   let component: InvestmentTransactionFormComponent;
   let fixture: ComponentFixture<InvestmentTransactionFormComponent>;
+  let exchangeServiceMock: jasmine.SpyObj<ExchangeService>;
+  let balanceServiceMock: jasmine.SpyObj<BalanceService>;
+  let portfolioServiceMock: jasmine.SpyObj<PortfolioService>;
+  let assetServiceMock: jasmine.SpyObj<AssetService>;
 
   beforeEach(async () => {
+    exchangeServiceMock = jasmine.createSpyObj(ExchangeService, [
+      'exchanges'
+    ])
+    balanceServiceMock = jasmine.createSpyObj(BalanceService,[
+      'getAccounts'
+    ]);
+    portfolioServiceMock = jasmine.createSpyObj(PortfolioService,[
+      'portfolios'
+    ]);
+    assetServiceMock = jasmine.createSpyObj(AssetService,[
+      'assets'
+    ]);
+
     await TestBed.configureTestingModule({
       imports: [InvestmentTransactionFormComponent],
       providers: [
         provideAnimationsAsync(),
         provideNativeDateAdapter(),
-        { provide: PortfolioService, useClass: MyService },
-        { provide: SourceService, useClass: MyService },
-        { provide: QuoteService, useClass: MyService },
-        { provide: BalanceService, useClass: MyService },
+        provideHttpClientTesting(),
+        { provide: ExchangeService, use: exchangeServiceMock},
+        { provide: BalanceService, use: balanceServiceMock},
+        { provide: PortfolioService, use: portfolioServiceMock},
+        { provide: AssetService, use: assetServiceMock},
       ]
     })
     .compileComponents();

@@ -1,8 +1,8 @@
-import { Component, ElementRef, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { Currency } from '../../model/domain.model';
-import { SourceService } from '../../service/source.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { CurrencyChoiceDirective } from './currency-choice.directive';
 
 // Componente de teste para hospedar a diretiva
@@ -26,15 +26,15 @@ class TestComponent {
 
 describe('CurrencyChoiceDirective', () => {
   let fixture: ComponentFixture<TestComponent>;
-  let sourceServiceMock: jasmine.SpyObj<SourceService>;
+  let exchangeServiceMock: jasmine.SpyObj<ExchangeService>;
   let currencyDefaultSpy: jasmine.Spy;
   let currencySignal: any;
   
   beforeEach(async () => {
     currencySignal = signal(Currency.USD);
     
-    // Criar mock para o SourceService
-    sourceServiceMock = jasmine.createSpyObj('SourceService', [], {
+    // Criar mock para o ExchangeService
+    exchangeServiceMock = jasmine.createSpyObj('ExchangeService', [], {
       get currencyDefault() {
         return currencySignal;
       },
@@ -47,7 +47,7 @@ describe('CurrencyChoiceDirective', () => {
     await TestBed.configureTestingModule({
       imports: [TestComponent, CurrencyChoiceDirective],
       providers: [
-        { provide: SourceService, useValue: sourceServiceMock }
+        { provide: ExchangeService, useValue: exchangeServiceMock }
       ]
     }).compileComponents();
     
@@ -75,7 +75,7 @@ describe('CurrencyChoiceDirective', () => {
   });
   
   it('should call sourceService.currencyDefault.set when clicked', () => {
-    spyOn(sourceServiceMock["currencyDefault"], "set");
+    spyOn(exchangeServiceMock["currencyDefault"], "set");
     const buttons = fixture.debugElement.queryAll(By.directive(CurrencyChoiceDirective));
     
     // Clicar no segundo botão (EUR)
@@ -83,14 +83,14 @@ describe('CurrencyChoiceDirective', () => {
     fixture.detectChanges();
     
     // Verificar se o método set foi chamado com Currency.EUR
-    expect(sourceServiceMock.currencyDefault.set).toHaveBeenCalledWith(Currency.EUR);
+    expect(exchangeServiceMock.currencyDefault.set).toHaveBeenCalledWith(Currency.EUR);
     
     // Clicar no terceiro botão (BRL)
     buttons[2].nativeElement.click();
     fixture.detectChanges();
     
     // Verificar se o método set foi chamado com Currency.BRL
-    expect(sourceServiceMock.currencyDefault.set).toHaveBeenCalledWith(Currency.BRL);
+    expect(exchangeServiceMock.currencyDefault.set).toHaveBeenCalledWith(Currency.BRL);
   });
   
   it('should update active-currency class when currency changes', () => {
@@ -112,7 +112,7 @@ describe('CurrencyChoiceDirective', () => {
   });
   
   it('should handle string input for currency', () => {
-    spyOn(sourceServiceMock["currencyDefault"], "set");
+    spyOn(exchangeServiceMock["currencyDefault"], "set");
     const buttons = fixture.debugElement.queryAll(By.directive(CurrencyChoiceDirective));
     
     // Clicar no botão com string 'BRL'
@@ -120,7 +120,7 @@ describe('CurrencyChoiceDirective', () => {
     fixture.detectChanges();
     
     // Verificar se o método set foi chamado com Currency.BRL
-    expect(sourceServiceMock.currencyDefault.set).toHaveBeenCalledWith(Currency.BRL);
+    expect(exchangeServiceMock.currencyDefault.set).toHaveBeenCalledWith(Currency.BRL);
   });
   
   it('should correctly compute active state', () => {
