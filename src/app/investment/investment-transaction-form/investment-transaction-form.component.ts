@@ -1,6 +1,6 @@
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, Signal, signal } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormControl, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -19,6 +19,7 @@ import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
+import { validateIf, watchField } from '../../utils/validator/custom.validator';
 
 export type IntestmentTransactionFormData = ReturnType<InvestmentTransactionFormComponent["formValue"]> | null
 
@@ -71,6 +72,10 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   ticker = signal<string | null>(null);
 
+  transactionType = signal<InvestmentEnum | null>(null);
+
+  disabled = signal<string[]>([]);
+
   data = input<IntestmentTransactionFormData>({
     quantity: 0,
     allocations: []
@@ -84,7 +89,10 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   allocations = computed(() => {
     const ticker = this.ticker();
-    if (!ticker) return {} as ReturnType<InvestmentTransactionFormComponent["computeAllocationsOfTransaction"]>;
+    if (!ticker || ![InvestmentEnum.BUY, InvestmentEnum.SELL].includes(this.transactionType() as InvestmentEnum)) {
+      return {} as ReturnType<InvestmentTransactionFormComponent["computeAllocationsOfTransaction"]>;
+    }
+
     return this.computeAllocationsOfTransaction(
       Object.values(this.portfolioService.portfolios()),
       this.data()?.quantity || 0,
@@ -98,12 +106,20 @@ export class InvestmentTransactionFormComponent implements OnInit {
     id: [''],
     marketPlace: ['', Validators.required],
     code: ['', Validators.required],
-    date: [null as unknown as Date, Validators.required],
+    date: [new Date(), Validators.required],
     accountId: ['', Validators.required, isAccountMatchedValidator(this.accounts)],
-    quantity: [0, [Validators.required, Validators.min(1)]],
-    quote: [0, [Validators.required, Validators.min(0)]],
+    quantity: [0, [validateIf(
+      'type',
+      (type: InvestmentEnum) => [InvestmentEnum.BUY, InvestmentEnum.SELL].includes(type),
+      [Validators.required, Validators.min(1)]
+    )]],
+    quote: [0, [validateIf(
+      'type',
+      (type: InvestmentEnum) => [InvestmentEnum.BUY, InvestmentEnum.SELL].includes(type),
+      [Validators.required, Validators.min(1)]
+    )]],
     amount: [0, [Validators.required, Validators.min(0)]],
-    type: ['', Validators.required],
+    type: [InvestmentEnum.BUY, [Validators.required, watchField()]],
     fees: [0, [Validators.min(0)]]
   });
 
@@ -148,6 +164,9 @@ export class InvestmentTransactionFormComponent implements OnInit {
     this.listenMarketplaceAndCode();
     this.listenAccountIdToFillAccountName();
     this.listenQuantityAndQuoteToFillAmountValue();
+    this.listenTypeField();
+    this.transactionTypeEnableFields();
+    this.transactionType.set(this.transactionForm.get('type')?.value || null);
   }
 
   ngOnInit(): void {
@@ -164,17 +183,17 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
     return portfolios.map(portfolio => {
       const allocation = portfolio.allocations[ticker];
-      const allocated =  allocation?.data.quantity || 0;
+      const allocated = allocation?.data.quantity || 0;
       return {
         id: portfolio.id,
         name: portfolio.name,
         allocated,
-        qty: allocation?.data.transactions.find(({id})=>id === transactionId)?.quantity || 0
+        qty: allocation?.data.transactions.find(({ id }) => id === transactionId)?.quantity || 0
       }
     }).reduce((acc, portfolio) => {
-        acc[portfolio.id] = portfolio;
-        return acc;
-      }, {} as Record<string, { id: string; name: string; qty: number; allocated: number; }>);
+      acc[portfolio.id] = portfolio;
+      return acc;
+    }, {} as Record<string, { id: string; name: string; qty: number; allocated: number; }>);
   }
   setInputAllocations(inputAllocations: InvestmentAllocationField[]) {
     this.inputAllocations = inputAllocations;
@@ -197,7 +216,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     return portfolio?.allocated || 0;
   }
 
-  listenMarketplaceAndCode() {
+  private listenMarketplaceAndCode() {
     const marketPlaceField = this.transactionForm.get("marketPlace") as FormControl<string>;
     const codeField = this.transactionForm.get("code") as FormControl<string>;
 
@@ -228,7 +247,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     });
   }
 
-  listenAccountIdToFillAccountName() {
+  private listenAccountIdToFillAccountName() {
     const accountIdField = this.transactionForm.get("accountId") as FormControl;
     accountIdField.valueChanges.pipe(
       startWith(accountIdField.value),
@@ -237,7 +256,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     ).subscribe(accountName => this.accountName.set(accountName));
   }
 
-  listenQuantityAndQuoteToFillAmountValue() {
+  private listenQuantityAndQuoteToFillAmountValue() {
     const quantityField = this.transactionForm.get("quantity") as FormControl<number>;
     const quoteField = this.transactionForm.get("quote") as FormControl<number>;
     const amountField = this.transactionForm.get("amount") as FormControl<number>;
@@ -258,6 +277,29 @@ export class InvestmentTransactionFormComponent implements OnInit {
     amountField.valueChanges.subscribe((amount) => {
       quoteField.setValue(Number((amount / quantityField.value).toPrecision(6)), { emitEvent: false });
     });
+  }
+
+  private listenTypeField() {
+    const typeField = this.transactionForm.get('type');
+    typeField?.valueChanges.subscribe(value => {
+      this.transactionType.set(value);
+      this.transactionTypeEnableFields();
+    })
+  }
+
+  private transactionTypeEnableFields() {
+    const quantityField = this.transactionForm.get('quantity') as FormControl;
+    const quoteField = this.transactionForm.get('quote') as FormControl;
+    const typeField = this.transactionForm.get('type');
+
+    if ([InvestmentEnum.BUY, InvestmentEnum.SELL].includes(typeField?.value as InvestmentEnum)) {
+      quantityField.enable();
+      quoteField.enable();
+    }
+    else {
+      quantityField.disable();
+      quoteField.disable();
+    }
   }
 
   accountNameDisplay = (id: string): string => this.balanceService.getAccounts()

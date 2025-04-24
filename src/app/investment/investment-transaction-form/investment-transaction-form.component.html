@@ -139,7 +139,7 @@
         </mat-form-field>
     
         <mat-form-field class="full-width">
-            <mat-label>Comissão</mat-label>
+            <mat-label>Taxas</mat-label>
             <input matInput type="number" formControlName="fees" class="text-end" appSelectOnFocus>
         </mat-form-field>
     </ng-container>
@@ -147,7 +147,7 @@
 
 <ng-template #allocation let-form="form">
     <app-investment-allocation-form
-        [quantity]="transactionForm.get('quantity')?.value || null"
+        [quantity]="transactionForm.get('quantity')?.value || 0"
         [allocations]="allocations()"
         (formDataChanged)="setInputAllocations($event)"
         (formIsValid)="setInputAllocationsIsValid($event)"

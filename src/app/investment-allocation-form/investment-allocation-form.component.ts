@@ -122,7 +122,7 @@ function isAllAllocationsDoneValidator(
 
     const quantity = quantityValue();
 
-    if (!quantity || !allocationField || !(allocationField instanceof FormArray)) {
+    if (!allocationField || !(allocationField instanceof FormArray)) {
       return {
         "invalidSetup": {
           "quantityValue": !quantity,
