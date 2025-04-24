@@ -17,7 +17,6 @@ import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode } from '../../service/quote.service';
-import { TransactionService } from '../../service/transaction.service';
 import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 
@@ -53,8 +52,6 @@ export class InvestmentTransactionFormComponent implements OnInit {
   private balanceService = inject(BalanceService);
 
   private portfolioService = inject(PortfolioService);
-
-  private transactionService = inject(TransactionService);
 
   private assetService = inject(AssetService);
 

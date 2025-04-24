@@ -5,9 +5,8 @@ import { environment } from '../../environments/environment.prod';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 import { Currency } from '../model/domain.model';
-
-const BATCH_SIZE = 5;
-const INTERVAL_MS = 500;
+import { Ticker } from '../model/source.model';
+import { endOfDay, format } from 'date-fns';
 
 const COIN_USD_CODES: Record<Currency, string> = {
   USD: '',
@@ -26,9 +25,6 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
   constructor() { }
 
   price(tickers: string[]): Observable<Record<string, QuoteResponse>> {
-    // if (tickers.length === 1) {
-    //   return this.priceWithMultipleRequests(tickers);
-    // }
     return this.priceWithSingleRequest(tickers);
   }
 
@@ -90,6 +86,20 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
       change: response.regularMarketChange,
       changePercent: response.regularMarketChangePercent
     } as QuoteResponse;
+  }
+
+  getHistorical(tickers: Ticker[], startDate: Date, endDate: Date): Observable<Record<string, ChartResultArray>> {
+    let yahooTickers = tickers.reduce((acc, ticker) => {
+      acc.push(ticker);
+      return acc;
+    }, [] as string[]).join(',')
+
+    const startDateStr = format(endOfDay(new Date(startDate)), 'yyyt-MM-dd');
+    const endDateStr = format(endOfDay(new Date(endDate)), 'yyyy-MM-dd');
+
+    const params = new HttpParams().append('ticker', yahooTickers)
+    const url = `${environment.apiBaseUrl}/yahoo/historical/${startDateStr}/${endDateStr}`;
+    return this.http.get<Record<string, ChartResultArray>>(url, { params });
   }
 }
 
@@ -202,4 +212,175 @@ export type YahooQuoteResponse = {
   pageViewGrowthWeekly?: number; // Since 2021-11-11 (#326)
   openInterest?: number; // SOHO (#248)
   beta?: number;
+}
+
+export interface ChartResultObject {
+  [key: string]: unknown;
+  meta: ChartMeta;
+  timestamp?: Array<number>;
+  events?: ChartEventsObject;
+  indicators: ChartIndicatorsObject;
+}
+
+export interface ChartResultArray {
+  meta: ChartMeta;
+  events?: ChartEventsArray;
+  quotes: Array<ChartResultArrayQuote>;
+}
+
+export interface ChartResultArrayQuote {
+  [key: string]: unknown;
+  // date: Date;
+  high: number | null;
+  low: number | null;
+  open: number | null;
+  close: number | null;
+  volume: number | null;
+  adjclose?: number | null;
+}
+
+export interface ChartMeta {
+  [key: string]: unknown;
+  currency: string; // "USD"
+  symbol: string; // "AAPL",
+  exchangeName: string; // "NMS",
+  instrumentType: string; // "EQUITY",
+  fiftyTwoWeekHigh?: number; // 226.8
+  fiftyTwoWeekLow?: number; // 223.324
+  firstTradeDate: Date | null; // new Date(345479400 * 1000); null in e.g. "APS.AX"
+  fullExchangeName?: string; // "NasdaqGS",
+  regularMarketTime: Date; // new Date(1637355602 * 1000),
+  gmtoffset: number; // -18000,
+  hasPrePostMarketData?: boolean;
+  timezone: string; /// "EST",
+  exchangeTimezoneName: string; // "America/New_York",
+  regularMarketPrice: number; // 160.55,
+  chartPreviousClose?: number; // 79.75; missing in e.g. "APS.AX"
+  previousClose?: number; // 1137.06
+  regularMarketDayHigh?: number; // 226.8
+  regularMarketDayLow?: number; // 223.324
+  regularMarketVolume?: number; // 33638504
+  longName?: string; // "Apple Inc.",
+  shortName?: string; // "Apple Inc."
+  scale?: number; // 3,
+  priceHint: number; // 2,
+  currentTradingPeriod: {
+    [key: string]: unknown;
+    pre: ChartMetaTradingPeriod;
+    regular: ChartMetaTradingPeriod;
+    post: ChartMetaTradingPeriod;
+  };
+  tradingPeriods?: ChartMetaTradingPeriods | ChartMetaTradingPeriod[][];
+  dataGranularity: string; // "1d",
+  range: string; // "",
+  validRanges: Array<string>; // ["1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max"]
+}
+
+export interface ChartMetaTradingPeriod {
+  [key: string]: unknown;
+  timezone: string; // "EST",
+  start: Date; // new Date(1637355600 * 1000),
+  end: Date; // new Date(1637370000 * 10000),
+  gmtoffset: number; // -18000
+}
+
+export interface ChartMetaTradingPeriods {
+  [key: string]: unknown;
+  pre?: Array<Array<ChartMetaTradingPeriod>>;
+  post?: Array<Array<ChartMetaTradingPeriod>>;
+  regular?: Array<Array<ChartMetaTradingPeriod>>;
+}
+
+export interface ChartEventsObject {
+  [key: string]: unknown;
+  dividends?: ChartEventDividends;
+  splits?: ChartEventSplits;
+}
+
+export interface ChartEventsArray {
+  [key: string]: unknown;
+  dividends?: Array<ChartEventDividend>;
+  splits?: Array<ChartEventSplit>;
+}
+
+export interface ChartEventDividends {
+  [key: string]: ChartEventDividend;
+}
+
+export interface ChartEventDividend {
+  [key: string]: unknown;
+  amount: number;
+  date: Date;
+}
+
+export interface ChartEventSplits {
+  [key: string]: ChartEventSplit;
+}
+
+export interface ChartEventSplit {
+  [key: string]: unknown;
+  date: Date; // new Date(1598880600 * 1000)
+  numerator: number; // 4
+  denominator: number; // 1
+  splitRatio: string; // "4:1"
+}
+
+export interface ChartIndicatorsObject {
+  [key: string]: unknown;
+  quote: Array<ChartIndicatorQuote>;
+  adjclose?: Array<ChartIndicatorAdjclose>;
+}
+
+export interface ChartIndicatorQuote {
+  [key: string]: unknown;
+  high: Array<number | null>;
+  low: Array<number | null>;
+  open: Array<number | null>;
+  close: Array<number | null>;
+  volume: Array<number | null>;
+}
+
+export interface ChartIndicatorAdjclose {
+  [key: string]: unknown;
+  adjclose?: Array<number | null>; // Missing in e.g. "APS.AX"
+}
+
+export interface ChartOptions {
+  period1: Date | string | number;
+  period2?: Date | string | number;
+  useYfid?: boolean; // true
+  interval?:
+    | "1m"
+    | "2m"
+    | "5m"
+    | "15m"
+    | "30m"
+    | "60m"
+    | "90m"
+    | "1h"
+    | "1d"
+    | "5d"
+    | "1wk"
+    | "1mo"
+    | "3mo";
+  includePrePost?: boolean; // true
+  events?: string; // 'history',
+  lang?: string; // "en-US"
+  return?: "array" | "object";
+}
+
+const queryOptionsDefaults: Omit<ChartOptions, "period1"> = {
+  useYfid: true,
+  interval: "1d",
+  includePrePost: true,
+  events: "div|split|earn",
+  lang: "en-US",
+  return: "array",
+};
+
+export interface ChartOptionsWithReturnArray extends ChartOptions {
+  return?: "array";
+}
+export interface ChartOptionsWithReturnObject extends ChartOptions {
+  return: "object";
 }

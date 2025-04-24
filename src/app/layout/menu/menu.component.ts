@@ -3,7 +3,6 @@ import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Currency } from '../../model/domain.model';
 import { ExchangeService } from '../../service/exchange.service';
-import { SourceService } from '../../service/source.service';
 import { CurrencyChoiceDirective } from '../../utils/directive/currency-choice.directive';
 import { DownloadDataDirective } from '../../utils/directive/download-data.directive';
 import { EmptyDataDirective } from '../../utils/directive/empty-data.directive';
@@ -23,9 +22,11 @@ import { UploadDataDirective } from '../../utils/directive/upload-data.directive
   templateUrl: './menu.component.html',
   styleUrl: './menu.component.scss'
 })
+/**
+ * The `MenuComponent` class is responsible for managing the behavior and state of a menu in the application.
+ * It provides functionality for toggling the menu, handling submenus, and displaying exchange rate information.
+ */
 export class MenuComponent {
-
-  private sourceService = inject(SourceService);
 
   private exchangeService = inject(ExchangeService);
 

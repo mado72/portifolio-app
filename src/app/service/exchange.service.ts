@@ -1,9 +1,18 @@
 import { computed, inject, Injectable, LOCALE_ID, signal } from '@angular/core';
 import { ExchangeStructureType, ExchangeView } from '../model/investment.model';
 import { RemoteQuotesService } from './remote-quotes.service';
-import { SourceService } from './source.service';
 import { CurrencyPipe } from '@angular/common';
 import { Currency, CurrencyType } from '../model/domain.model';
+
+const ExchangeServiceFactory = (remoteQuotesService: RemoteQuotesService) => {
+  return new ExchangeService(remoteQuotesService);
+}
+
+export const provideExchangeService = () => ({
+  provide: ExchangeService,
+  useFactory: ExchangeServiceFactory,
+  deps: [RemoteQuotesService]
+})
 
 export type ExchangeReq = {
   from: CurrencyType,
@@ -19,10 +28,6 @@ export type ExchangeType = ExchangeReq & {
 })
 export class ExchangeService {
 
-  private sourceService = inject(SourceService);
-
-  private remoteQuotesService = inject(RemoteQuotesService);
-
   readonly exchangeView = signal<ExchangeView>("original");
 
   private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
@@ -31,7 +36,7 @@ export class ExchangeService {
 
   readonly exchanges = computed(() => this.remoteQuotesService.exchanges());
 
-  constructor() { }
+  constructor(private remoteQuotesService: RemoteQuotesService) { }
 
   toggleExchangeView() {
     this.exchangeView.update(exchangeView => (exchangeView === "original" ? "exchanged" : "original"));
@@ -74,5 +79,5 @@ export class ExchangeService {
     return result;
   }
 
-
 }
+

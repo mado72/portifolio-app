@@ -1,9 +1,8 @@
 import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
-import { map } from 'rxjs';
 import { Income, IncomeDesc, IncomeEnum } from '../../model/investment.model';
-import { InvestmentService } from '../../service/investment.service';
+import { AssetService } from '../../service/asset.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 
 
@@ -20,7 +19,7 @@ import { CurrencyComponent } from '../../utils/currency/currency.component';
 })
 export class InvestmentEarningsTableComponent {
 
-  private investmentService = inject(InvestmentService);
+  private assetService = inject(AssetService);
 
   @Input() selectable = false;
 
@@ -35,7 +34,7 @@ export class InvestmentEarningsTableComponent {
   }
   public set dataSource(earnings: Income[]) {
     this._dataSource = earnings.map(earning => {
-        const asserts = this.investmentService.assertsSignal();
+        const asserts = this.assetService.assets();
         return {
           ...earning,
           currency: asserts[earning.ticker].quote.currency,

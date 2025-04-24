@@ -7,6 +7,7 @@ import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
+import { provideExchangeService } from './service/exchange.service';
 
 registerLocaleData(localePt);
 
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes, withComponentInputBinding()), 
     provideAnimationsAsync(),
-    provideHttpClient()
+    provideHttpClient(),
+    provideExchangeService()
   ]
 };
