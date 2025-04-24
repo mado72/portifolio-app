@@ -14,6 +14,62 @@ import { ExchangeService } from './exchange.service';
 @Injectable({
   providedIn: 'root'
 })
+/**
+ * The `BalanceService` class provides methods for managing account balances, 
+ * transactions, and financial forecasts. It interacts with various services 
+ * to retrieve, calculate, and manipulate financial data, including balances, 
+ * currency exchanges, and scheduled transactions.
+ *
+ * ### Features:
+ * - Retrieve all account balances and account details.
+ * - Calculate balance quotations in a specified currency.
+ * - Summarize balances, excluding specific account types.
+ * - Generate and retrieve forecasted income and expenses for a given period.
+ * - Add, update, and delete accounts and transactions.
+ * - Manage dialog interactions for creating and editing accounts.
+ *
+ * ### Methods:
+ * - `getAllBalances`: Retrieves all account balances.
+ * - `getAccounts`: Retrieves account details including account name and ID.
+ * - `getBalancesByCurrencyExchange`: Calculates balances in a specified currency.
+ * - `getBalancesSummarized`: Summarizes balances, excluding specific account types.
+ * - `getForecastSummary`: Provides a summary of forecasted income and expenses grouped by periods.
+ * - `generateForecastTransactions`: Generates forecasted transactions for a given period.
+ * - `getForecastTransactions`: Retrieves forecasted transactions for a given period.
+ * - `getCurrentMonthForecast`: Retrieves forecasted transactions for the current month.
+ * - `addAccount`: Adds a new account.
+ * - `updateAccount`: Updates an existing account.
+ * - `newAccount`: Opens a dialog to create a new account.
+ * - `editAccount`: Opens a dialog to edit an existing account.
+ * - `deleteAccount`: Deletes an account by ID.
+ * - `addTransaction`: Adds a new transaction.
+ * - `updateTransaction`: Updates an existing transaction.
+ *
+ * ### Dependencies:
+ * - `SourceService`: Provides data sources for balances, transactions, and schedules.
+ * - `ExchangeService`: Handles currency exchange rates and calculations.
+ * - `MatDialog`: Manages dialog interactions for account creation and editing.
+ *
+ * ### Example Usage:
+ * ```typescript
+ * const balanceService = new BalanceService();
+ * 
+ * // Retrieve all balances
+ * balanceService.getAllBalances().subscribe(balances => console.log(balances));
+ * 
+ * // Get summarized balance in USD excluding savings accounts
+ * const totalBalance = balanceService.getBalancesSummarized(Currency.USD, [AccountTypeEnum.SAVINGS]);
+ * console.log(totalBalance);
+ * 
+ * // Add a new account
+ * balanceService.addAccount({
+ *   accountName: 'New Account',
+ *   type: AccountTypeEnum.CHECKING,
+ *   balance: { price: 1000, currency: Currency.USD },
+ *   date: new Date()
+ * });
+ * ```
+ */
 export class BalanceService {
 
   private sourceService = inject(SourceService);
