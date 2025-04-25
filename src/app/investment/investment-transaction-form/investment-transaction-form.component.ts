@@ -9,7 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
 import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith } from 'rxjs';
-import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '../../investment-allocation-form/investment-allocation-form.component';
+import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '../investment-allocation-form/investment-allocation-form.component';
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentTransactionType, PortfolioType } from '../../model/source.model';
@@ -242,7 +242,16 @@ export class InvestmentTransactionFormComponent implements OnInit {
         const ticker = getMarketPlaceCode({ marketPlace, code });
         this.ticker.set(ticker);
         const asset = this.assets()[ticker];
-        this.transactionForm.get('quote')?.setValue(asset.quote.value);
+        if (asset) {
+          this.transactionForm.get('quote')?.setValue(asset.quote.value);
+          return;
+        }
+        
+        this.assetService.newDialog(ticker).subscribe(asset => {
+          if (asset) {
+            this.transactionForm.get('quote')?.setValue(asset.quote.value);
+          }
+        })
       }
     });
   }

@@ -3,7 +3,7 @@ import { Component, effect, EventEmitter, inject, input, Output, Signal } from '
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { SelectOnFocusDirective } from '../utils/directive/select-on-focus.directive';
+import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 
 export type InvestmentAllocationField = {
   id: string,
@@ -108,7 +108,7 @@ export class InvestmentAllocationFormComponent {
   }
 
   badgeValue(idx: number) {
-    return this.allocations()[idx].allocated;
+    return this.allocations()[idx]?.allocated;
   }
 }
 
