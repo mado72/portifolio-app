@@ -9,13 +9,25 @@
         <router-outlet />
     </div>
 </div>
-<pre>
-{{ portfolios() | json }}
-
--------------------
-{{ transactions() | json }}
-
--------------------
-{{ assets() | json }}
-
-</pre>
+<div class="d-flex">
+    <div>
+        portfolios
+        <pre>{{ portfolios() | json }}</pre>
+    </div>
+    <div class="ms-3">
+        transactions
+        <pre>{{ transactions() | json }}</pre>
+    </div>
+    <div class="ms-3">
+        ativos
+        <pre>{{ assets() | json }}</pre>
+    </div>
+    <div>
+        accounts
+        <pre>{{ balances() | json }}</pre>
+    </div>
+    <div class="ms-3">
+        source
+        <pre>{{ source() | json }}</pre>
+    </div>
+</div>

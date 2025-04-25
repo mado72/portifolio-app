@@ -32,16 +32,17 @@
       <div class="text-danger w-50 ps-3 error">
         {{ error }}
       </div>
-      } @if (parsed) {
-      <div class="w-50 ps-3">
-        <h5>Analisado</h5>
-        <pre class="parsed">{{ parsed | json }}</pre>
-      </div>
       }
     </div>
     <button mat-stroked-button (click)="import()" [disabled]="form.invalid">
       Importar
     </button>
+    @if (parsed) {
+    <div class="w-100 ps-3">
+      <h5>Analisado</h5>
+      <ng-template [ngTemplateOutlet]="TableParsed" [ngTemplateOutletContext]="{ parsed: parsed }"></ng-template>
+    </div>
+    }
   </div>
   <div class="card-body">
     <pre>
@@ -59,3 +60,32 @@
     </pre>
   </div>
 </div>
+
+<ng-template #TableParsed let-parsed="parsed">
+  <table class="table table-bordered table-striped w-100">
+    <thead>
+      <tr>
+        <th>Portfolio</th>
+        <th>Asset</th>
+        <th>Quantity</th>
+        <th>Currency</th>
+        <th>Initial</th>
+        <th>Cotação</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of parsed; track $index) {
+      <tr>
+        <td>{{ item.portfolio }}</td>
+        <td>{{ item.asset }}</td>
+        <td>{{ item.quantity }}</td>
+        <td>{{ item.currency }}</td>
+        <td>{{ item.value }}</td>
+        <td>{{ item.value / item.quantity }}</td>
+        <td>{{ item.date }}</td>
+      </tr>
+      }
+    </tbody>
+  </table>
+</ng-template>

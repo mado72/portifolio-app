@@ -1,13 +1,10 @@
 import { DecimalPipe, PercentPipe } from '@angular/common';
-import { Component, computed, inject, input } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { faExchange } from '@fortawesome/free-solid-svg-icons';
-import { Currency } from '../../model/domain.model';
-import { PortfolioService } from '../../service/portfolio-service';
-import { SourceService } from '../../service/source.service';
-import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
-import { QuoteService } from '../../service/quote.service';
 import { ExchangeService } from '../../service/exchange.service';
+import { PortfolioService } from '../../service/portfolio-service';
+import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 
 @Component({
   selector: 'app-summarize-portfolio-class',
@@ -22,8 +19,6 @@ import { ExchangeService } from '../../service/exchange.service';
   styleUrl: './summarize-portfolio-class.component.scss'
 })
 export class SummarizePortfolioClassComponent {
-
-  private sourceService = inject(SourceService);
 
   private exchangeService = inject(ExchangeService);
 

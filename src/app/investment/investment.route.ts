@@ -10,7 +10,7 @@ export const investmentRoutes: Routes = [
     },
     {
         path: 'portfolio',
-        loadComponent: () => import('../portfolio/portfolio-register-table/portfolio-register-table.component').then(mod => mod.PortfolioRegisterTableComponent),
+        loadComponent: () => import('../portfolio/portfolio-register/portfolio-register.component').then(mod => mod.PortfolioRegisterComponent),
         data: {
             editable: true
         }

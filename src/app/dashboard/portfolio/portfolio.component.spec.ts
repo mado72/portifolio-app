@@ -7,8 +7,8 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { QuoteService } from '../../service/quote.service';
 import { BalancesComponent } from '../../cashflow/balances/balances.component';
 import { FinancialForecastSummaryComponent } from '../../cashflow/financial-forecast-summary/financial-forecast-summary.component';
-import { PortfolioRegisterTableComponent } from '../../portfolio/portfolio-register-table/portfolio-register-table.component';
 import { SummarizePortfolioClassComponent } from '../../portfolio/summarize-portfolio-class/summarize-portfolio-class.component';
+import { PortfolioRegisterComponent } from '../../portfolio/portfolio-register/portfolio-register.component';
 
 class MyService {
   getAllocationSummary = () => ([]);
@@ -34,7 +34,7 @@ describe('PortfolioComponent', () => {
       imports: [PortfolioComponent,
         BalancesComponent,
         FinancialForecastSummaryComponent,
-        PortfolioRegisterTableComponent,
+        PortfolioRegisterComponent,
         SummarizePortfolioClassComponent        
       ],
       providers: [

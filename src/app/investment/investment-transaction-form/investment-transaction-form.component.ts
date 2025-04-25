@@ -130,7 +130,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     if (!marketPlace) return [];
     return Object.entries(this.assets())
       .filter(([key, _]) => key.startsWith(`${marketPlace}:`))
-      .map(([_, asset]) => asset.code);
+      .map(([_, asset]) => asset.ticker.replace(`${marketPlace}:`, ''));
   });
 
   optionsAccount = computed(() => {

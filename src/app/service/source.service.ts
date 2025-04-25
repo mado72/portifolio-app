@@ -1,5 +1,5 @@
 import { computed, Injectable, signal } from '@angular/core';
-import { format, formatISO, parseISO } from 'date-fns';
+import { endOfDay, format, formatISO, parseISO } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import initialData from '../../data/data.json';
 import { AccountTypeEnum, Currency, CurrencyType, Scheduled, TransactionEnum } from '../model/domain.model';
@@ -9,13 +9,12 @@ import {
   AssetEnum, AssetQuoteType, AssetSourceDataType as AssetSourceRawType, BalanceSourceDataType as BalanceSourceRawType, BalanceType,
   IncomeSourceDataType as IncomeSourceRawType, IncomeType,
   InvestmentTransactionSourceRawType, InvestmentTransactionType,
-  PortfolioSourceRawType, PortfolioType, ScheduledsSourceDataType as ScheduledsSourceRawType,
+  PortfolioSourceRawType,
+  ScheduledsSourceDataType as ScheduledsSourceRawType,
   ScheduledStatemetType,
   Ticker,
   TransactionSourceRawType, TransactionType
 } from '../model/source.model';
-import { getMarketPlaceCode } from './quote.service';
-import { Subject, throttleTime, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -37,6 +36,10 @@ export class SourceService {
   readonly assetSource = computed(() => {
     if (!this.dataIsLoaded()) return {};
     return Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
+      if (ticker === 'undefined') {
+        console.error('Ticker is undefined', item);
+        throw new Error('Ticker is undefined');
+      };
       const quote = {
         value: item.quote.value,
         currency: Currency[item.quote.currency as CurrencyType]
@@ -192,96 +195,46 @@ export class SourceService {
     window.URL.revokeObjectURL(url);
   }
 
+  // asset ------------------------
+
   protected assetSourceToRecord(data: AssetSourceRawType[]) {
     return data.reduce((acc, item) => {
-      acc[getMarketPlaceCode(item)] = item;
+      acc[item.ticker] = item;
       return acc;
     }, {} as Record<string, AssetSourceRawType>)
   };
 
-  protected balanceToRecord(data: BalanceSourceRawType[]) {
-    return data.reduce((acc, item) => {
-      acc[item.id as string] = item;
-      return acc;
-    }, {} as Record<string, BalanceSourceRawType>)
-  }
-
-  protected incomeSourceToRecord(data: IncomeSourceRawType[]) {
-    return data.reduce((acc, item) => {
-      acc[item.id] = item;
-      return acc;
-    }, {} as Record<string, IncomeSourceRawType>)
-  }
-
-  protected investmentSourceToRecord(data: InvestmentTransactionSourceRawType[]): Record<string, InvestmentTransactionType> {
-    return data.reduce((acc, item) => {
-      acc[item.id] = {
-        ...item,
-        date: parseISO(item.date),
-        value: {
-          value: item.value.value,
-          currency: Currency[item.value.currency as CurrencyType]
-        },
-        type: InvestmentEnum[item.type as keyof typeof InvestmentEnum],
-        status: TransactionStatus[item.status as keyof typeof TransactionStatus]
-      }
-      return acc;
-    }, {} as Record<string, InvestmentTransactionType>);
-  }
-
-  protected cashSourceToRecord(data: TransactionSourceRawType[]) {
-    return data.reduce((acc, item) => {
-      acc[item.id as string] = {
-        ...item,
-        date: parseDateYYYYMMDD(item.date),
-        scheduledRef: item.scheduled_ref,
-        originAccountId: item.account_id,
-        type: TransactionEnum[item.type as keyof typeof TransactionEnum],
-        value: {
-          value: item.amount,
-          currency: Currency[item.currency as keyof typeof Currency]
-        },
-        status: TransactionStatus[item.status as keyof typeof TransactionStatus]
-      };
-      return acc;
-    }, {} as Record<string, TransactionType>)
-  }
-
-  protected portfolioSourceToRecord(data: PortfolioSourceRawType[]) {
-    return data.reduce((acc, item) => {
-      acc[item.id] = item;
-      return acc;
-    }, {} as Record<string, PortfolioSourceRawType>)
-  }
-
-  protected scheduledSourceToRecord(data: ScheduledsSourceRawType[]) {
-    return data.reduce((acc, item) => {
-      acc[item.id as string] = {
-        ...item,
-        amount: {
-          currency: Currency[item.amount.currency as keyof typeof Currency],
-          value: item.amount.value
-        },
-        type: TransactionEnum[item.type as keyof typeof TransactionEnum],
-        scheduled: {
-          type: Scheduled[item.scheduled.type as keyof typeof Scheduled],
-          startDate: parseDateYYYYMMDD(item.scheduled.startDate),
-          endDate: item.scheduled.endDate ? parseDateYYYYMMDD(item.scheduled.endDate) : undefined
-        }
-      };
-      return acc;
-    }, {} as Record<string, ScheduledStatemetType>)
-  }
-
-  // asset ------------------------
   assetToSource(items: AssetQuoteType[]): AssetSourceRawType[] {
-    return items.map(item => ({
-      ...item,
-      lastUpdate: formatISO(item.lastUpdate || new Date())
-    }));
+    return items.map(item => {
+      const { ticker, name, type, quote, initialPrice, lastUpdate, controlByQty, trend, manualQuote } = item;
+      return {
+        ticker,
+        name,
+        type: AssetEnum[type as keyof typeof AssetEnum],
+        quote: {
+          value: quote.value,
+          currency: Currency[quote.currency as CurrencyType]
+        },
+        initialPrice,
+        lastUpdate: formatISO(lastUpdate),
+        controlByQty,
+        trend,
+        manualQuote
+      } as AssetSourceRawType;
+    });
   }
 
   addAsset(asset: AssetQuoteType) {
+    if (!asset.ticker) {
+      throw new Error('Ticker is required');
+    }
+    asset = {
+      ...asset,
+      lastUpdate: asset.lastUpdate || new Date(),
+      manualQuote: asset.manualQuote || false,
+      controlByQty: asset.controlByQty || true,
+      trend: asset.trend || 'unchanged'
+    }
     const added = this.assetSourceToRecord(this.assetToSource([asset]).map(item => ({ ...item, id: uuid() })));
     this.dataSource.asset.update(assets => ({
       ...assets,
@@ -308,13 +261,26 @@ export class SourceService {
   }
 
   // balance ------------------
+
+  protected balanceToRecord(data: BalanceSourceRawType[]) {
+    return data.reduce((acc, item) => {
+      acc[item.id as string] = item;
+      return acc;
+    }, {} as Record<string, BalanceSourceRawType>)
+  }
+
   balanceToSource(items: BalanceType[]): BalanceSourceRawType[] {
-    return items.map(item => ({
-      ...item,
-      balance: item.balance.value,
-      currency: item.balance.currency,
-      date: formatISO(new Date())
-    }));
+    return items.map(item => {
+      const { id, accountName, balance, date, type } = item;
+      return {
+        id,
+        accountName,
+        balance: balance.value,
+        date: format(date, 'yyyy-MM-dd'),
+        type: AccountTypeEnum[type as keyof typeof AccountTypeEnum],
+        currency: Currency[balance.currency as CurrencyType]
+      } as BalanceSourceRawType;
+    });
   }
 
   addBalance(item: BalanceType) {
@@ -343,11 +309,25 @@ export class SourceService {
   }
 
   // income ---------------------
+
+  protected incomeSourceToRecord(data: IncomeSourceRawType[]) {
+    return data.reduce((acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    }, {} as Record<string, IncomeSourceRawType>)
+  }
+
   incomeToSource(items: IncomeType[]): IncomeSourceRawType[] {
-    return items.map(item => ({
-      ...item,
-      date: format(item.date, 'yyyy-MM-dd')
-    }))
+    return items.map(item => {
+      const { id, ticker, date, type, amount } = item;
+      return {
+        id,
+        ticker,
+        date: format(endOfDay(date), 'yyyy-MM-dd'),
+        type: type,
+        amount: amount
+      } as IncomeSourceRawType;
+    })
   }
 
   addIncome(item: IncomeType) {
@@ -383,11 +363,41 @@ export class SourceService {
 
   // investment -----------------
 
+  protected investmentSourceToRecord(data: InvestmentTransactionSourceRawType[]): Record<string, InvestmentTransactionType> {
+    return data.reduce((acc, item) => {
+      acc[item.id] = {
+        ...item,
+        date: parseISO(item.date),
+        value: {
+          value: item.value.value,
+          currency: Currency[item.value.currency as CurrencyType]
+        },
+        type: InvestmentEnum[item.type as keyof typeof InvestmentEnum],
+        status: TransactionStatus[item.status as keyof typeof TransactionStatus]
+      }
+      return acc;
+    }, {} as Record<string, InvestmentTransactionType>);
+  }
+
   updateInvestmentToSource(items: InvestmentTransactionType[]): InvestmentTransactionSourceRawType[] {
-    return items.map(item => ({
-      ...item,
-      date: formatISO(item.date)
-    }))
+    return items.map(item => {
+      const { id, ticker, date, accountId, quantity, quote, value, type, status, fees } = item;
+      return {
+        id,
+        ticker,
+        date: format(endOfDay(date), 'yyyy-MM-dd'),
+        accountId,
+        quantity,
+        quote,
+        value: {
+          currency: Currency[value.currency as CurrencyType],
+          value: value.value
+        },
+        type: InvestmentEnum[type as keyof typeof InvestmentEnum],
+        status: TransactionStatus[status as keyof typeof TransactionStatus],
+        fees
+      } as InvestmentTransactionSourceRawType;
+    })
   }
 
   addInvestmentTransaction(item: InvestmentTransactionType) {
@@ -420,15 +430,39 @@ export class SourceService {
 
   // cashflow ----------------------------
 
+  protected cashSourceToRecord(data: TransactionSourceRawType[]) {
+    return data.reduce((acc, item) => {
+      acc[item.id as string] = {
+        ...item,
+        date: parseDateYYYYMMDD(item.date),
+        scheduledRef: item.scheduled_ref,
+        originAccountId: item.account_id,
+        type: TransactionEnum[item.type as keyof typeof TransactionEnum],
+        value: {
+          value: item.amount,
+          currency: Currency[item.currency as keyof typeof Currency]
+        },
+        status: TransactionStatus[item.status as keyof typeof TransactionStatus]
+      };
+      return acc;
+    }, {} as Record<string, TransactionType>)
+  }
+
   cashflowTransactionTypeToSource(changes: TransactionType[]): TransactionSourceRawType[] {
-    return changes.map(item => ({
-      ...item,
-      date: format(item.date, 'yyyy-MM-dd'),
-      scheduled_ref: item.scheduledRef,
-      account_id: item.originAccountId,
-      amount: item.value.value,
-      currency: item.value.currency as string
-    }))
+    return changes.map(item => {
+      const { id, type, description, date, value, scheduledRef, originAccountId } = item;
+      return {
+        id,
+        type: TransactionEnum[type as keyof typeof TransactionEnum],
+        description,
+        date: format(endOfDay(date), 'yyyy-MM-dd'),
+        currency: Currency[value.currency as CurrencyType],
+        amount: value.value,
+        account_id: originAccountId,
+        status: TransactionStatus.PENDING,
+        scheduled_ref: scheduledRef
+      } as TransactionSourceRawType;
+    })
   }
 
   addCashflowTransaction(item: TransactionType) {
@@ -463,11 +497,26 @@ export class SourceService {
   }
 
   // portfolio ------------------------
+
+  protected portfolioSourceToRecord(data: PortfolioSourceRawType[]) {
+    return data.reduce((acc, item) => {
+      acc[item.id] = item;
+      return acc;
+    }, {} as Record<string, PortfolioSourceRawType>)
+  }
+
   portfolioToSource(items: PortfolioSourceRawType[]): PortfolioSourceRawType[] {
-    return items.map(item => ({
-      ...item,
-      allocations: Object.values(item.allocations)
-    }))
+    return items.map(item => {
+      const { id, name, currency, classify, percPlanned, allocations } = item;
+      return {
+        id,
+        name,
+        currency: Currency[currency as CurrencyType],
+        classify,
+        percPlanned,
+        allocations: Object.values(allocations)
+      } as PortfolioSourceRawType;
+    })
   }
 
   addPortfolio(item: PortfolioSourceRawType) {
@@ -501,15 +550,43 @@ export class SourceService {
 
   // scheduledTransaction --------------
 
+  protected scheduledSourceToRecord(data: ScheduledsSourceRawType[]) {
+    return data.reduce((acc, item) => {
+      acc[item.id as string] = {
+        ...item,
+        amount: {
+          currency: Currency[item.amount.currency as keyof typeof Currency],
+          value: item.amount.value
+        },
+        type: TransactionEnum[item.type as keyof typeof TransactionEnum],
+        scheduled: {
+          type: Scheduled[item.scheduled.type as keyof typeof Scheduled],
+          startDate: parseDateYYYYMMDD(item.scheduled.startDate),
+          endDate: item.scheduled.endDate ? parseDateYYYYMMDD(item.scheduled.endDate) : undefined
+        }
+      };
+      return acc;
+    }, {} as Record<string, ScheduledStatemetType>)
+  }
+
   scheduledTransactionToSource(items: ScheduledStatemetType[]): ScheduledsSourceRawType[] {
-    return items.map(item => ({
-      ...item,
-      scheduled: {
-        ...item.scheduled,
-        startDate: format(item.scheduled.startDate, 'yyyy-MM-dd'),
-        endDate: item.scheduled.endDate ? format(item.scheduled.endDate, 'yyyy-MM-dd') : undefined
-      }
-    }))
+    return items.map(item => {
+      const { id, type, description, amount, scheduled } = item;
+      return {
+        id,
+        type: TransactionEnum[type as keyof typeof TransactionEnum],
+        description,
+        amount: {
+          currency: Currency[amount.currency as CurrencyType],
+          value: amount.value
+        },
+        scheduled: {
+          type: Scheduled[scheduled.type as keyof typeof Scheduled],
+          startDate: format(scheduled.startDate, 'yyyy-MM-dd'),
+          endDate: scheduled.endDate ? format(scheduled.endDate, 'yyyy-MM-dd') : undefined
+        }
+      } as ScheduledsSourceRawType;
+    })
   }
 
   addScheduledTransaction(item: ScheduledStatemetType) {

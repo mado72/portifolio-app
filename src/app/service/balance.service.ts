@@ -1,6 +1,6 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { addYears, areIntervalsOverlapping, endOfMonth, endOfYear, getDate, getTime, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
+import { addYears, areIntervalsOverlapping, endOfDay, endOfMonth, endOfYear, getDate, getTime, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
 import { map } from 'rxjs';
 import { BalanceDialogComponent } from '../cashflow/balance-dialog/balance-dialog.component';
 import { AccountBalanceExchange, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../model/domain.model';
@@ -297,6 +297,7 @@ export class BalanceService {
   }
 
   addAccount(account: BalanceType) {
+    account.date = endOfDay(new Date());
     return this.sourceService.addBalance(account);
   }
 

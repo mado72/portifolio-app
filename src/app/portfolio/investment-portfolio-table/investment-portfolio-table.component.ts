@@ -1,4 +1,4 @@
-import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
+import { DecimalPipe, PercentPipe } from '@angular/common';
 import { Component, computed, inject, input, Signal } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
@@ -28,7 +28,6 @@ class DatasourceInputType extends PortfolioAllocation {
     DecimalPipe,
     PercentPipe,
     AssetTypePipe,
-    JsonPipe,
     ExchangeComponent
 ],
   templateUrl: './investment-portfolio-table.component.html',

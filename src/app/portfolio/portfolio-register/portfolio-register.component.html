@@ -1,0 +1,16 @@
+@if(editable()) {
+<div class="d-flex mb-3">
+    <button mat-button type="button" (click)="addPortfolio()">Adicionar Carteira</button>
+    <button mat-button type="button" (click)="addTransaction()">Adicionar Transação</button>
+</div>
+}
+<app-portfolio-register-table
+    [currency]="currency()"
+    [portfolios]="portfolios()"
+    [editable]="editable()"
+    [exchangeView]="exchangeView()"
+    [total]="total()"
+    (deletePortfolioRequest)="deletePortfolio($event)"
+    (editPorfolioRequest)="editPortfolio($event)"
+    (portfolioAllocationChanged)="updatePortfolio($event)"
+></app-portfolio-register-table>

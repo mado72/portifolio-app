@@ -75,14 +75,34 @@ export class AssetService {
         const dialogRef = this.openDialog('Novo ativo', data, true);
 
         return dialogRef.afterClosed().pipe(
-          tap((result: AssetQuoteType) => {
+          tap((result) => {
             if (result) {
+              result = {...result, ticker: `${getMarketPlaceCode(result)}`};
+              result.lastUpdate = new Date();
+              delete result.marketPlace;
+              delete result.code;
               this.addAsset(result);
             }
           }))
       })
     )
   }
+
+  editDialog(asset: AssetQuoteType) {
+    const ticker = asset.ticker
+    const dialogRef = this.openDialog(`Editando Ativo ${ticker}`, asset, false);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        result.lastUpdate = new Date();
+        result = {...result, ticker: `${getMarketPlaceCode(result)}`};
+        delete result.marketPlace;
+        delete result.code;
+        this.updateAsset(result);
+      }
+    });
+  }
+
 
   protected getInitialData(ticker?: string) {
     const [marketPlace, code] = ticker && ticker.includes(':') ? ticker.split(':') : [ticker, ''];
@@ -120,17 +140,6 @@ export class AssetService {
       }
     }
     return of(data);
-  }
-
-  editDialog(asset: AssetQuoteType) {
-    const ticker = getMarketPlaceCode(asset);
-    const dialogRef = this.openDialog(`Editando Ativo ${ticker}`, asset, false);
-
-    dialogRef.afterClosed().subscribe((result: AssetQuoteType) => {
-      if (result) {
-        this.updateAsset(result);
-      }
-    });
   }
 
   addAsset(asset: AssetQuoteType) {

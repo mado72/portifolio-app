@@ -18,8 +18,7 @@ export type DataSourceType = {
 }
 
 export type AssetSourceDataType = {
-    code: string;
-    marketPlace: string;
+    ticker: string;
     controlByQty: boolean;
     quote: {
         value: number;
@@ -61,7 +60,7 @@ export const AssetDesc: Record<`${AssetEnum}`, string> = {
     OTHER: 'Outro'
 }
 
-export type AssetQuoteType = Omit<AssetSourceDataType, "quote" | "type" | "lastUpdate"> & {
+export type AssetQuoteType = Omit<AssetSourceDataType, "code" | "marketPlace" | "quote" | "type" | "lastUpdate"> & {
     ticker: string;
     initialPrice: number;
     lastUpdate: Date;

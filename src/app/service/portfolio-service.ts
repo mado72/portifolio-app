@@ -62,10 +62,15 @@ export class PortfolioService {
     .reduce((acc, portfolio) => {
       const currencyDefault = this.exchangeService.currencyDefault();
 
-      // Summarizes portfolios capital
-      return this.summarize(
-        { currency: currencyDefault, result: acc}, 
-        { currency: portfolio.currency, item: portfolio.total});
+      // Summarizes portfolio total
+      const summarized = this.summarize(
+        { currency: currencyDefault, result: acc },
+        { currency: portfolio.currency, item: portfolio.total });
+      
+      // Summarizes portfolios percentual planned
+      summarized.percPlanned += portfolio.percPlanned;
+      
+      return summarized;
     }, { ...INITIAL_TOTAL }))
 
 
@@ -82,12 +87,14 @@ export class PortfolioService {
     // Waits for data loaded
     if (!this.sourceService.dataIsLoaded()) return {};
 
-    const assets = this.sourceService.assetSource();
-
+    const portfolios = this.sourceService.dataSource.portfolio();
+    
     // No assets found
-    if (!Object.keys(assets).length) {
+    if (!Object.keys(portfolios).length) {
       return {};
     }
+    
+    const assets = this.sourceService.assetSource();
 
     const portfoliosMap = Object.values(this.sourceService.dataSource.portfolio())
       .reduce((rec, raw)=>{
@@ -161,19 +168,20 @@ export class PortfolioService {
         const factor = InvestmentEnumFactor[transaction.type];
 
         const quantity = factor * t.quantity;
-        const transactionValue = quantity * transaction.value.value / transaction.quantity;
+        const transactionValue = quantity * transaction.value.value;
 
         acc.quantity += quantity;
         acc.initialValue += transactionValue;
 
+        const marketValue = factor > 0 ? quantity * asset.quote.value : transactionValue;
         // If the factor < 0, then market value is immutable
-        acc.marketValue += factor > 0 ? quantity * asset.quote.value : transactionValue;
+        acc.marketValue += marketValue;
+        acc.profit += marketValue - transactionValue;
 
         return acc;
       }, { ...INITIAL_TOTAL, quantity: 0 })
     };
 
-    allocationSummarized.profit = allocationSummarized.marketValue - allocationSummarized.initialValue;
     allocationSummarized.performance = allocationSummarized.profit / allocationSummarized.initialValue;
     allocationSummarized.percPlanned = alloc.percPlanned;
     return allocationSummarized;
@@ -221,7 +229,7 @@ export class PortfolioService {
     Object.values(allocSummarizedMap).forEach(alloc=>{
       this.summarize(
         {currency: portfolioCurrency, result: portfolioTotal},
-        {currency: assets[alloc.data.ticker].quote.currency, item: alloc.data}
+        {currency: assets[alloc.data.ticker]?.quote.currency || portfolio.currency, item: alloc.data}
       )
     });
 
@@ -336,7 +344,7 @@ export class PortfolioService {
   }
 
   addPortfolio({ name, currency, percPlanned, classify }: { name: string; currency: CurrencyType; percPlanned: number; classify: string}) {
-    this.sourceService.addPortfolio({
+    return this.sourceService.addPortfolio({
       id: '',
       name,
       percPlanned,
@@ -504,7 +512,7 @@ export class PortfolioService {
 
   portfoliosOfAsset(asset: AssetQuoteType): PortfolioType[] {
     return this.getAllPortfolios()
-      .filter(portfolio => portfolio.allocations[getMarketPlaceCode(asset)]?.data.transactions.reduce((acc, t) => acc += t.quantity, 0) > 0)
+      .filter(portfolio => portfolio.allocations[asset.ticker]?.data.transactions.reduce((acc, t) => acc += t.quantity, 0) > 0)
   }
 
   getPortfolio(portfolioId: string) {

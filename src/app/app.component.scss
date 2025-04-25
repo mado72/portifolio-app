@@ -10,3 +10,9 @@
     top: 10px;
     z-index: 20000;
 }
+
+pre {
+    max-height: 300px;
+    overflow: auto;
+    background-color: #f8f9fa;
+}

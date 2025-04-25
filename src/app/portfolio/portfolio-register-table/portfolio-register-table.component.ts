@@ -1,6 +1,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { DecimalPipe, JsonPipe, PercentPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, effect, inject, input } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, effect, EventEmitter, inject, input, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -8,16 +8,13 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatTableModule } from '@angular/material/table';
 import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
-import { ExchangeStructureType } from '../../model/investment.model';
+import { Currency } from '../../model/domain.model';
+import { ExchangeStructureType, ExchangeView } from '../../model/investment.model';
 import { PortfolioAllocation, PortfolioType, SummarizedDataType } from '../../model/source.model';
-import { ExchangeService } from '../../service/exchange.service';
-import { PortfolioService } from '../../service/portfolio-service';
-import { SourceService } from '../../service/source.service';
-import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
 
-type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
+export type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
   allocations: PortfolioAllocation[];
   percAllocation: number;
   total: Omit<SummarizedDataType, "initialValue" | "marketValue" | "profit"> & {
@@ -27,11 +24,19 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
   }
 }
 
+export type PortfolioRegisterTotalType = {
+  initialValue: ExchangeStructureType;
+  marketValue: ExchangeStructureType;
+  percPlanned: number;
+  percAllocation: number;
+  profit: ExchangeStructureType;
+  performance: number;
+}
+
 @Component({
   selector: 'app-portfolio-register-table',
   standalone: true,
   imports: [
-    MatTableModule,
     MatButtonModule,
     MatIconModule,
     MatIconModule,
@@ -41,8 +46,7 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
     DecimalPipe,
     ReactiveFormsModule,
     InvestmentPortfolioTableComponent,
-    ExchangeComponent,
-    JsonPipe
+    ExchangeComponent
 ],
   animations: [
     trigger('detailExpand', [
@@ -57,14 +61,6 @@ type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation"
 })
 export class PortfolioRegisterTableComponent {
 
-  private sourceService = inject(SourceService);
-
-  private portfolioService = inject(PortfolioService);
-
-  private exchangeService = inject(ExchangeService);
-
-  private transactionService = inject(TransactionService);
-
   private fb = inject(FormBuilder);
 
   readonly iconClose = faChevronRight;
@@ -75,31 +71,42 @@ export class PortfolioRegisterTableComponent {
 
   detailDisplayedColumns = ['id', 'description'];
 
-  currency = computed(() => this.exchangeService.currencyDefault());
+  currency = input<Currency | null>(null);
+  
+  total = input<PortfolioRegisterTotalType | null>(null);
 
-  total = computed(() => this.exchangeService.enhanceExchangeInfo(this.portfolioService.total(), this.exchangeService.currencyDefault(), ["marketValue", "profit"]));
+  exchangeView = input<ExchangeView | null>(null);
 
-  exchangeView = computed(() => this.exchangeService.exchangeView())
-
-  portfolios = computed(() => this.portfolioService.portfolioAllocation()
-    .map(portfolio => ({
-      ...portfolio,
-      total: {
-        ...portfolio.total,
-        ...this.exchangeService.enhanceExchangeInfo(portfolio.total, portfolio.currency, ["initialValue", "marketValue", "profit"])
-      }
-    } as DatasourceMasterType)));
-
-  expandedElement: DatasourceMasterType | null = null;
+  portfolios = input<DatasourceMasterType[]>([]);
 
   editable = input<boolean>(false);
 
-  formSliders = this.fb.group({
-    sliders: this.fb.array([]),
-  });
+  @Output() portfolioAllocationChanged = new EventEmitter<DatasourceMasterType>();
+  @Output() editPorfolioRequest = new EventEmitter<DatasourceMasterType>();
+  @Output() deletePortfolioRequest = new EventEmitter<DatasourceMasterType>();
 
+  expandedElement: DatasourceMasterType | null = null;
+
+  expanded: string[] = [];
+
+  formSliders = computed(() => this.fb.group({
+    sliders: this.fb.array(this.portfolios().map(portfolio => this.buildSlider(portfolio.percPlanned))),
+  }));
+
+  getSliderControlValue(index: number): number | null {
+    return this.slidersControl.at(index)?.value;
+  }
+
+  sliderCreated(index: number): boolean {
+    return this.slidersControl.at(index)?.value !== null;
+  }
+  
+  sliderControl(index: number): FormControl<number | null> {
+    return this.slidersControl.at(index) as FormControl<number | null>;
+  }
+  
   get slidersControl() {
-    return this.formSliders.get('sliders') as FormArray<FormControl<number | null>>;
+    return this.formSliders().get('sliders') as FormArray<FormControl<number | null>>;
   }
 
   changeDetectRef = inject(ChangeDetectorRef);
@@ -116,19 +123,21 @@ export class PortfolioRegisterTableComponent {
     })
   }
 
+  buildSlider(percPlanned: number): FormControl<number | null> {
+    return this.fb.control(percPlanned as number);
+  }
+
   updateSlider(index: number, value: number): void {
     const portfolio = this.portfolios()[index];
     if (portfolio.percPlanned !== value) {
       portfolio.percPlanned = value;
-      this.portfolioService.updatePortfolio(portfolio.id, { ...portfolio });
+      this.portfolioAllocationChanged.emit(portfolio);
     }
   }
 
   trackBy(_: number, item: DatasourceMasterType) {
     return item.id;
   }
-
-  expanded: string[] = [];
 
   isExpanded(portfolio: DatasourceMasterType) {
     return this.expanded.includes(portfolio.id);
@@ -142,40 +151,13 @@ export class PortfolioRegisterTableComponent {
     }
   }
 
-  addPortfolio() {
-    this.portfolioService.openPortfolioDialog({
-      title: 'Adicionar carteira',
-      portfolioInfo: {
-        name: '',
-        currency: this.exchangeService.currencyDefault(),
-        classify: '',
-        percPlanned: 0,
-      }
-    });
-  }
-
-  editPortfolio(portfolioId: string) {
-    this.portfolioService.openPortfolioDialog({
-      title: 'Editar carteira',
-      portfolioInfo: portfolioId
-    });
-  }
-
-  deletePortfolio(portfolioId: string) {
-    this.portfolioService.removePortfolio(portfolioId);
-  }
-  
-  addTransaction() {
-    this.transactionService.createTransaction();
-  }
-
-  fillToHundredPercent(index: number) {
-    const total = this.portfolios().filter((_, idx) => idx !== index).reduce((acc, p) => acc + p.percPlanned, 0);
-    const portfolio = this.portfolios()[index]
+  fillToHundredPercent(portfolio: DatasourceMasterType) {
     if (!portfolio) return;
+    const index = this.portfolios().findIndex((item) => item.id === portfolio.id);
+    const total = this.portfolios().filter((_,idx) =>idx !== index).reduce((acc, p) => acc + p.percPlanned, 0);
     portfolio.percPlanned = 100 - total;
     this.slidersControl.at(index).setValue(portfolio.percPlanned);
-    this.portfolioService.updatePortfolio(portfolio.id, { ...portfolio });
+    this.portfolioAllocationChanged.emit(portfolio);
   }
 
 }

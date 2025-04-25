@@ -1,19 +1,19 @@
-import { JsonPipe } from '@angular/common';
+import { JsonPipe, NgTemplateOutlet } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { PortfolioService } from '../../service/portfolio-service';
-import { AssetService } from '../../service/asset.service';
-import { AssetEnum, PortfolioType } from '../../model/source.model';
+import { concat, debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { Currency } from '../../model/domain.model';
-import { TransactionService } from '../../service/transaction.service';
 import { InvestmentEnum, TransactionStatus } from '../../model/investment.model';
-import { isAccountMatchedValidator } from '../../utils/validator/custom.validator';
+import { PortfolioType } from '../../model/source.model';
+import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { startWith, debounceTime, distinctUntilChanged } from 'rxjs';
+import { PortfolioService } from '../../service/portfolio-service';
+import { TransactionService } from '../../service/transaction.service';
+import { isAccountMatchedValidator } from '../../utils/validator/custom.validator';
 
 type ImportType = {
   portfolio: string;
@@ -33,6 +33,7 @@ type ImportType = {
     MatFormFieldModule,
     MatButtonModule,
     MatAutocompleteModule,
+    NgTemplateOutlet,
     JsonPipe
   ],
   templateUrl: './massive-import.component.html',
@@ -69,7 +70,7 @@ export class MassiveImportComponent {
     accountId: ['', Validators.required, isAccountMatchedValidator(this.accounts)]
   });
 
-  parsed: any;
+  parsed: ImportType[] | null = null;
   
   error: string[] | null = null;
 
@@ -117,9 +118,10 @@ export class MassiveImportComponent {
       portfolio: string;
     }>;
 
-    const portfoliosMap : ImportPortfolioData = this.parsed.reduce((acc: ImportPortfolioData, item: ImportType) => {
+    const portfoliosMap : ImportPortfolioData = (this.parsed || []).reduce((acc: ImportPortfolioData, item: ImportType) => {
       const portfolio = acc[item.portfolio] || {
         portfolio: item.portfolio,
+        currency: item.currency,
         assets: [],
         total: {
           quantity: 0,
@@ -142,9 +144,7 @@ export class MassiveImportComponent {
       return acc;
     }, {} as Record<string, PortfolioType>);
 
-    const assets = this.assetService.assets();
-
-    Object.values(portfoliosMap).forEach((item) => {
+    const observables = Object.values(portfoliosMap).flatMap((item) => {
       let portfolio = Object.values(porfolios).find((port) => port.name === item.portfolio);
       if (!portfolio) {
         const raw = this.portolioService.addPortfolio({ name: item.portfolio, percPlanned: 0, currency: item.currency, classify: '' });
@@ -154,8 +154,8 @@ export class MassiveImportComponent {
         throw new Error('Portfolio not found or created');
       }
 
-      Object.values(item.assets).forEach((asset) => {
-        this.transactionService.saveTransaction({
+      return Object.values(item.assets).map((asset) => {
+        return this.transactionService.saveTransaction({
           ticker: asset.asset,
           value: {
             currency: item.currency,
@@ -171,9 +171,11 @@ export class MassiveImportComponent {
 
         }, {
           [portfolio.id]: asset.quantity
-        }).subscribe();
+        });
       });
     });
+
+    concat(...observables).subscribe();
   }
 
   analyse(data: any) {
@@ -182,7 +184,7 @@ export class MassiveImportComponent {
 
     if (!Array.isArray(json)) {
       this.error.push('O JSON não é um array');
-      return;
+      return null;
     }
 
     json.forEach((item: any, index) => {
@@ -209,7 +211,7 @@ export class MassiveImportComponent {
       item.portfolio = item.portfolio.trim();
       item.asset = item.asset.trim();
       item.currency = item.currency.trim().toUpperCase();
-
+      
       if (!this.isImportType(item)) {
         this.error?.push(`Item no índice ${index} não é um objeto ImportType válido`);
         return;
@@ -219,6 +221,7 @@ export class MassiveImportComponent {
     if (this.error.length > 0) {
       throw new Error(this.error.join('\n'));
     }
+
     return json as ImportType[];
   }
 

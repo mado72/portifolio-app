@@ -55,8 +55,8 @@ export class AssetDialogComponent implements AfterViewInit {
 
   formAsset = this.fb.group({
     name: this.fb.control(this.data.asset?.name, [Validators.required]),
-    marketPlace: this.fb.control(this.data.asset?.marketPlace, [Validators.required]),
-    code: this.fb.control(this.data.asset?.code, [Validators.required]),
+    marketPlace: this.fb.control(this.data.asset?.ticker.replace(/:.*$/,''), [Validators.required]),
+    code: this.fb.control(this.data.asset?.ticker.replace(/^.*:/,''), [Validators.required]),
     type: this.fb.control(this.data.asset?.type, [Validators.required]),
     quote: this.fb.group({
       value: this.fb.control(this.data.asset?.quote.value, []),
