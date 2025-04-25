@@ -9,6 +9,8 @@ import { TransactionService } from '../../service/transaction.service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
+import { ExchangeService } from '../../service/exchange.service';
+import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
 
 
 @Component({
@@ -22,7 +24,7 @@ import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe'
     MatButtonModule,
     InvestmentTypePipe,
     TransactionStatusPipe,
-    CurrencyComponent
+    ExchangeComponent
   ],
   templateUrl: './transaction-table.component.html',
   styleUrl: './transaction-table.component.scss'
@@ -35,6 +37,8 @@ export class TransactionTableComponent {
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
+  private exchangeService = inject(ExchangeService);
+
   readonly displayedColumns = ["ticker", "date", "type", "quantity", "quote", "value", "status", "account", "fees", "actions"];
 
   @Output() onDeleteItem = new EventEmitter<string>();
@@ -42,7 +46,12 @@ export class TransactionTableComponent {
   @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
 
   dataSource = computed(() => {
-    return Object.values(this.transactionService.investmentTransactions()).sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
+    return Object.values(this.transactionService.investmentTransactions())
+      .map(t=>({
+        ...t,
+        ...this.exchangeService.enhanceExchangeInfo(t.value, t.value.currency, ['value'])
+      }))
+      .sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
   });
 
   readonly accounts = computed(() => this.balanceService.getAllBalances())

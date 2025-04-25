@@ -10,13 +10,12 @@ import { FaIconComponent } from '@fortawesome/angular-fontawesome';
 import { faChevronDown, faChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { ExchangeStructureType } from '../../model/investment.model';
 import { PortfolioAllocation, PortfolioType, SummarizedDataType } from '../../model/source.model';
+import { ExchangeService } from '../../service/exchange.service';
 import { PortfolioService } from '../../service/portfolio-service';
-import { QuoteService } from '../../service/quote.service';
 import { SourceService } from '../../service/source.service';
 import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from "../../utils/component/exchange/exchange.component";
 import { InvestmentPortfolioTableComponent } from '../investment-portfolio-table/investment-portfolio-table.component';
-import { ExchangeService } from '../../service/exchange.service';
 
 type DatasourceMasterType = Omit<PortfolioType, "allocations" | "percAllocation" | "total"> & {
   allocations: PortfolioAllocation[];

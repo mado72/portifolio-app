@@ -11,6 +11,7 @@ export enum MarketPlaceEnum {
     NASDAQ = 'NASDAQ',
     NYSE = 'NYSE',
     CRYPTO = 'CRYPTO',
+    BOND = 'BOND', // Treasury Bonds
     COIN = 'COIN',
     IEX = 'IEX',
     FOREX = 'FOREX',

@@ -107,6 +107,10 @@ export class QuoteService {
   }
 
   addAssetToUpdate(asset: AssetQuoteType) {
+    if (! asset) {
+      return;
+    }
+    
     if (!asset.manualQuote) {
       console.warn(`Asset ${asset.ticker} is not quotable.`);
       return;

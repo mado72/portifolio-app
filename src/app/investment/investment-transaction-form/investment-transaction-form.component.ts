@@ -1,6 +1,6 @@
 import { JsonPipe, NgTemplateOutlet } from '@angular/common';
-import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, Signal, signal } from '@angular/core';
-import { AbstractControl, AsyncValidatorFn, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { Component, computed, effect, EventEmitter, inject, input, OnInit, Output, signal } from '@angular/core';
+import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -8,8 +8,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTabsModule } from '@angular/material/tabs';
-import { combineLatest, debounceTime, distinctUntilChanged, Observable, startWith } from 'rxjs';
-import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '../investment-allocation-form/investment-allocation-form.component';
+import { combineLatest, debounceTime, distinctUntilChanged, startWith } from 'rxjs';
 import { Currency } from '../../model/domain.model';
 import { InvestmentEnum, MarketPlaceEnum, TransactionStatus } from '../../model/investment.model';
 import { InvestmentTransactionType, PortfolioType } from '../../model/source.model';
@@ -19,7 +18,8 @@ import { PortfolioService } from '../../service/portfolio-service';
 import { getMarketPlaceCode } from '../../service/quote.service';
 import { SelectOnFocusDirective } from '../../utils/directive/select-on-focus.directive';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
-import { validateIf, watchField } from '../../utils/validator/custom.validator';
+import { isAccountMatchedValidator, validateIf, watchField } from '../../utils/validator/custom.validator';
+import { InvestmentAllocationField, InvestmentAllocationFormComponent } from '../investment-allocation-form/investment-allocation-form.component';
 
 export type IntestmentTransactionFormData = ReturnType<InvestmentTransactionFormComponent["formValue"]> | null
 
@@ -111,12 +111,12 @@ export class InvestmentTransactionFormComponent implements OnInit {
     quantity: [0, [validateIf(
       'type',
       (type: InvestmentEnum) => [InvestmentEnum.BUY, InvestmentEnum.SELL].includes(type),
-      [Validators.required, Validators.min(1)]
+      [Validators.required, Validators.min(0.0000001)]
     )]],
     quote: [0, [validateIf(
       'type',
       (type: InvestmentEnum) => [InvestmentEnum.BUY, InvestmentEnum.SELL].includes(type),
-      [Validators.required, Validators.min(1)]
+      [Validators.required, Validators.min(0.0000001)]
     )]],
     amount: [0, [Validators.required, Validators.min(0)]],
     type: [InvestmentEnum.BUY, [Validators.required, watchField()]],
@@ -355,19 +355,4 @@ export class InvestmentTransactionFormComponent implements OnInit {
     field.setValue(field.value + value);
   }
 
-}
-
-function isAccountMatchedValidator(accounts: Signal<{ account: string, id: string }[]>): AsyncValidatorFn {
-  return (control: AbstractControl): Observable<ValidationErrors | null> => {
-    return new Observable<ValidationErrors | null>(subscriber => {
-      const value = control.value as string;
-      if (!accounts().find(account => account.id === value)) {
-        subscriber.next({ "accountNotFound": { value } });
-      }
-      else {
-        subscriber.next(null);
-      }
-      subscriber.complete();
-    })
-  }
 }

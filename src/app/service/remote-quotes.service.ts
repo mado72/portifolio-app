@@ -25,6 +25,7 @@ export class RemoteQuotesService {
     [MarketPlaceEnum.BVMF, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.NASDAQ, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.NYSE, this.yahooRemoteQuotesService],
+    [MarketPlaceEnum.BOND, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.CRYPTO, this.mockRemoteQuotesService],
     [MarketPlaceEnum.COIN, this.immutableRemoteQuotesService],
     [MarketPlaceEnum.BRTD, this.yahooRemoteQuotesService]

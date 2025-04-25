@@ -66,7 +66,7 @@
         <ng-container matColumnDef="value">
             <mat-header-cell *matHeaderCellDef> Valor </mat-header-cell>
             <mat-cell *matCellDef="let row">
-                <app-currency [value]="row.value"/>
+                <app-exchange [exchange]="row.value"/>
             </mat-cell>
             <mat-footer-cell *matFooterCellDef></mat-footer-cell>
         </ng-container>

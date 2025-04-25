@@ -13,33 +13,3 @@ mat-cell.mat-column-type {
     min-width: 600px;
     overflow-x: auto;
 }
-
-.mat-mdc-header-cell,
-.mat-mdc-cell {
-    width: 10%;
-}
-
-.mat-column-ticker {
-    width: 21%;
-}
-
-.mat-column-value,
-.mat-column-account {
-    width: 15%;
-}
-
-.mat-column-date,
-.mat-column-quote,
-.mat-column-fees {
-    width: 9%;
-}
-
-.mat-column-type,
-.mat-column-quantity {
-    width: 6.75%;
-}
-
-.mat-column-status,
-.mat-column-actions {
-    width: 8.75%;
-}

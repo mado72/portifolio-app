@@ -7,6 +7,10 @@ export const routes: Routes = [
         redirectTo: '/dashboard',
     },
     {
+        path: 'massive',
+        loadComponent: () => import('./investment/massive-import/massive-import.component').then(mod => mod.MassiveImportComponent),
+    },
+    {
         path: 'dashboard',
         loadComponent: () => import('./dashboard/portfolio/portfolio.component').then(mod => mod.PortfolioComponent),
     },
@@ -17,5 +21,9 @@ export const routes: Routes = [
     {
         path: 'cashflow',
         loadChildren: () => import('./cashflow/cashflow.route').then(mod => mod.cashflowRoutes),
+    },
+    {
+        path: 'profitability',
+        loadChildren: () => import('./profitability/profitability.route').then(mod => mod.profitabilityRoutes),
     }
 ];

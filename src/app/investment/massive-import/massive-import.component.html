@@ -1,0 +1,61 @@
+<div class="card">
+  <div class="card-header">
+    <h3 class="card-title">Importação de dados</h3>
+  </div>
+  <div class="card-body">
+    <div class="d-flex flex-column" [formGroup]="form" class="w-50">
+      <mat-form-field class="full-width">
+        <mat-label>Conta</mat-label>
+        <input matInput formControlName="accountId" appSelectOnFocus [matAutocomplete]="autoAccount" />
+        <mat-autocomplete autoActiveFirstOption #autoAccount="matAutocomplete" [displayWith]="accountNameDisplay">
+          @for(option of optionsAccount(); track option) {
+          <mat-option [value]="option.id">{{ option.account }}</mat-option>
+          }
+          <!-- Opções de auto completar -->
+        </mat-autocomplete>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Entre com os dados para importar</mat-label>
+        <textarea matInput formControlName="data" class="data" placeholder='[
+            &#123;
+                portfolio: "B3",
+                asset: "BVMFEGIE3",
+                quantity: "30",
+                currency: "BRL",
+                initial: "1220,1",
+                date: "2024-12-29",
+            &#125;,
+            ...
+        ]' rows="8" cols="80"></textarea>
+      </mat-form-field>
+      @if (error) {
+      <div class="text-danger w-50 ps-3 error">
+        {{ error }}
+      </div>
+      } @if (parsed) {
+      <div class="w-50 ps-3">
+        <h5>Analisado</h5>
+        <pre class="parsed">{{ parsed | json }}</pre>
+      </div>
+      }
+    </div>
+    <button mat-stroked-button (click)="import()" [disabled]="form.invalid">
+      Importar
+    </button>
+  </div>
+  <div class="card-body">
+    <pre>
+[
+    &#123;
+        portfolio: "B3",
+        asset: "BVMFEGIE3",
+        quantity: "30",
+        currency: "BRL",
+        initial: "1220,1",
+        date: "2024-12-29",
+    &#125;,
+    ...
+]
+    </pre>
+  </div>
+</div>
