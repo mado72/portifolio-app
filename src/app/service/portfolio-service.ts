@@ -298,30 +298,30 @@ export class PortfolioService {
       })
       .reduce((acc, portfolio) => {
 
-        if (!acc[portfolio.class]) {
-          acc[portfolio.class] = { ...portfolio }
+        if (!acc[portfolio.classify]) {
+          acc[portfolio.classify] = { ...portfolio }
         }
         else {
-          acc[portfolio.class] = {
-            ...acc[portfolio.class],
+          acc[portfolio.classify] = {
+            ...acc[portfolio.classify],
             value: {
-              ...acc[portfolio.class],
+              ...acc[portfolio.classify],
               original: {
-                ...acc[portfolio.class].value.original,
-                value: acc[portfolio.class].value.original.value + portfolio.value.original.value
+                ...acc[portfolio.classify].value.original,
+                value: acc[portfolio.classify].value.original.value + portfolio.value.original.value
               },
               exchanged: {
-                ...acc[portfolio.class].value.exchanged,
-                value: acc[portfolio.class].value.exchanged.value + portfolio.value.exchanged.value
+                ...acc[portfolio.classify].value.exchanged,
+                value: acc[portfolio.classify].value.exchanged.value + portfolio.value.exchanged.value
               }
             },
-            percPlanned: acc[portfolio.class].percPlanned + portfolio.percPlanned
+            percPlanned: acc[portfolio.classify].percPlanned + portfolio.percPlanned
           }
         }
         total.value += portfolio.value.exchanged.value;
         return acc;
       }, {} as Record<string, {
-        class: string,
+        classify: string,
         value: ExchangeStructureType,
         percPlanned: number,
         percAlloc: number
@@ -335,13 +335,13 @@ export class PortfolioService {
     return { items, total };
   }
 
-  addPortfolio({ name, currency, percPlanned }: { name: string; currency: CurrencyType; percPlanned: number; }) {
+  addPortfolio({ name, currency, percPlanned, classify }: { name: string; currency: CurrencyType; percPlanned: number; classify: string}) {
     this.sourceService.addPortfolio({
       id: '',
       name,
       percPlanned,
       currency: Currency[currency],
-      class: '',
+      classify,
       allocations: []
     })
   }
@@ -390,7 +390,7 @@ export class PortfolioService {
     if (changes.name) portfolioRaw.name = changes.name;
     if (changes.currency) portfolioRaw.currency = Currency[changes.currency];
     if (changes.percPlanned) portfolioRaw.percPlanned = changes.percPlanned;
-    if (changes.class) portfolioRaw.class = changes.class;
+    if (changes.class) portfolioRaw.classify = changes.class;
 
     if (!!changes.transaction) {
       const chgTransaction = changes.transaction;
@@ -465,7 +465,7 @@ export class PortfolioService {
     this.sourceService.updatePortfolio([portfolioRaw]);
   }
 
-  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number } }) {
+  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number, classify: string } }) {
     let portfolio: PortfolioType;
     if (typeof portfolioInfo === 'string') {
       portfolio = this.getPortfolioById(portfolioInfo as string);
@@ -494,7 +494,7 @@ export class PortfolioService {
             name: result.name,
             currency: result.currency,
             percPlanned: result.percPlanned,
-            class: result.class
+            class: result.classify
           });
         }
       }

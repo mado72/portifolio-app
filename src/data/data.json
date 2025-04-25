@@ -1,1 +1,100 @@
-{"asset":[{"name":"JPMorgan","marketPlace":"NYSE","code":"JPM","type":"STOCK","quote":{"value":228.99,"currency":"USD"},"controlByQty":true,"manualQuote":null,"lastUpdate":"2025-04-22T04:50:19-03:00","id":"e621369b-dbd1-4051-80ed-e45777a3aa6e","ticker":"NYSE:JPM","initialPrice":227.5786,"trend":"up"},{"name":"Pfizer, Inc.","marketPlace":"NYSE","code":"PFE","type":"STOCK","quote":{"value":22.04,"currency":"USD"},"controlByQty":true,"manualQuote":null,"lastUpdate":"2025-04-22T04:50:19-03:00","id":"03e1d99a-cf92-4d58-b6f7-23e506ef5856","ticker":"NYSE:PFE","initialPrice":21.975,"trend":"up"}],"balance":[{"id":"a1b3623f-edee-4115-9ad9-45d65871de13","accountName":"Nomad","type":"CHECKING","balance":0,"currency":"USD","date":"2025-04-19T23:31:15-03:00"}],"income":[],"investment":[{"accountId":"a1b3623f-edee-4115-9ad9-45d65871de13","date":"2025-04-01T03:00:00.000Z","id":"f38508ae-89d3-4d91-a8e5-de93cbfcd91d","quantity":10,"quote":200,"status":"PENDING","ticker":"NYSE:JPM","type":"BUY","value":{"value":2000,"currency":"USD"}},{"accountId":"a1b3623f-edee-4115-9ad9-45d65871de13","date":"2025-04-21T03:00:00.000Z","id":"ac5a9ce8-85d5-462c-8006-d31d65bcbc06","quantity":5,"quote":228.99,"status":"PENDING","ticker":"NYSE:JPM","type":"SELL","value":{"value":1144.95,"currency":"USD"}}],"cashflow":[],"portfolio":[{"id":"8c60e042-503f-4b8b-9088-0155bc1641be","name":"US Stocks","percPlanned":10,"currency":"USD","class":"","allocations":[{"ticker":"NYSE:JPM","initialValue":1144.95,"marketValue":1144.95,"percPlanned":0,"percAllocation":0.3333333,"performance":0,"profit":0,"transactions":[{"id":"ac5a9ce8-85d5-462c-8006-d31d65bcbc06","quantity":5},{"id":"f38508ae-89d3-4d91-a8e5-de93cbfcd91d","quantity":10}]}],"total":{"initialValue":2000,"marketValue":2289.9,"percPlanned":0,"profit":289.9,"performance":0.14495}}],"scheduled":[]}
+{
+  "asset": [
+    {
+      "name": "JPMorgan",
+      "marketPlace": "NYSE",
+      "code": "JPM",
+      "type": "STOCK",
+      "quote": { "value": 228.99, "currency": "USD" },
+      "controlByQty": true,
+      "manualQuote": null,
+      "lastUpdate": "2025-04-22T04:50:19-03:00",
+      "id": "e621369b-dbd1-4051-80ed-e45777a3aa6e",
+      "ticker": "NYSE:JPM",
+      "initialPrice": 227.5786,
+      "trend": "up"
+    },
+    {
+      "name": "Pfizer, Inc.",
+      "marketPlace": "NYSE",
+      "code": "PFE",
+      "type": "STOCK",
+      "quote": { "value": 22.04, "currency": "USD" },
+      "controlByQty": true,
+      "manualQuote": null,
+      "lastUpdate": "2025-04-22T04:50:19-03:00",
+      "id": "03e1d99a-cf92-4d58-b6f7-23e506ef5856",
+      "ticker": "NYSE:PFE",
+      "initialPrice": 21.975,
+      "trend": "up"
+    }
+  ],
+  "balance": [
+    {
+      "id": "a1b3623f-edee-4115-9ad9-45d65871de13",
+      "accountName": "Nomad",
+      "type": "CHECKING",
+      "balance": 0,
+      "currency": "USD",
+      "date": "2025-04-19T23:31:15-03:00"
+    }
+  ],
+  "income": [],
+  "investment": [
+    {
+      "accountId": "a1b3623f-edee-4115-9ad9-45d65871de13",
+      "date": "2025-04-01T03:00:00.000Z",
+      "id": "f38508ae-89d3-4d91-a8e5-de93cbfcd91d",
+      "quantity": 10,
+      "quote": 200,
+      "status": "PENDING",
+      "ticker": "NYSE:JPM",
+      "type": "BUY",
+      "value": { "value": 2000, "currency": "USD" }
+    },
+    {
+      "accountId": "a1b3623f-edee-4115-9ad9-45d65871de13",
+      "date": "2025-04-21T03:00:00.000Z",
+      "id": "ac5a9ce8-85d5-462c-8006-d31d65bcbc06",
+      "quantity": 5,
+      "quote": 228.99,
+      "status": "PENDING",
+      "ticker": "NYSE:JPM",
+      "type": "SELL",
+      "value": { "value": 1144.95, "currency": "USD" }
+    }
+  ],
+  "cashflow": [],
+  "portfolio": [
+    {
+      "id": "8c60e042-503f-4b8b-9088-0155bc1641be",
+      "name": "US Stocks",
+      "percPlanned": 10,
+      "currency": "USD",
+      "classify": "Internacional",
+      "allocations": [
+        {
+          "ticker": "NYSE:JPM",
+          "initialValue": 1144.95,
+          "marketValue": 1144.95,
+          "percPlanned": 0,
+          "percAllocation": 0.3333333,
+          "performance": 0,
+          "profit": 0,
+          "transactions": [
+            { "id": "ac5a9ce8-85d5-462c-8006-d31d65bcbc06", "quantity": 5 },
+            { "id": "f38508ae-89d3-4d91-a8e5-de93cbfcd91d", "quantity": 10 }
+          ]
+        }
+      ],
+      "total": {
+        "initialValue": 2000,
+        "marketValue": 2289.9,
+        "percPlanned": 0,
+        "profit": 289.9,
+        "performance": 0.14495
+      }
+    }
+  ],
+  "scheduled": []
+}

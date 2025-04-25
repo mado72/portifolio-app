@@ -189,7 +189,7 @@ export type PortfolioSourceRawType = {
     id: string;
     name: string;
     currency: string;
-    class: string;
+    classify: string;
     percPlanned: number;
     allocations: PortfolioAllocationSourceRawType[];
 }

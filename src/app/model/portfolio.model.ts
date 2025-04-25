@@ -1,6 +1,6 @@
 import { AssetQuoteRecord, PortfolioAllocationRecord, PortfolioAllocation, SummarizedDataType } from "./source.model";
 
-const INITIAL_TOTAL: Required<SummarizedDataType> = {
+export const INITIAL_TOTAL: Required<SummarizedDataType> = {
     initialValue: 0,
     marketValue: 0,
     percPlanned: 0,

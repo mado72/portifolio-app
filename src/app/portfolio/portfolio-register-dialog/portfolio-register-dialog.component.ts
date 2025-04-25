@@ -50,15 +50,15 @@ export class PortfolioRegisterDialogComponent {
 
   classes = computed(() => 
     Object.values(this.portfolioService.portfolios())
-      .filter(portfolio => !!portfolio.class)
+      .filter(portfolio => !!portfolio.classify)
       .reduce((acc, portfolio) => {
-        acc.add(portfolio.class);
+        acc.add(portfolio.classify);
         return acc;
       }, new Set()));
 
   readonly formPortfolio = this.fb.group({
     name: this.fb.control(this.data.portfolio.name || '', [Validators.required, Validators.minLength(2)]),
-    class: this.fb.control(this.data.portfolio.class || '', [Validators.required]),
+    classify: this.fb.control(this.data.portfolio.classify || '', [Validators.required]),
     percPlanned: this.fb.control(this.data.portfolio.percPlanned || 0, [Validators.required, Validators.min(0), Validators.max(100)]),
     currency: this.fb.control(this.data.portfolio.currency || this.exchangeService.currencyDefault(), [Validators.required]),
   });
