@@ -8,7 +8,7 @@ export const routes: Routes = [
     },
     {
         path: 'massive',
-        loadComponent: () => import('./investment/massive-import/massive-import.component').then(mod => mod.MassiveImportComponent),
+        loadComponent: () => import('./portfolio/massive-import/massive-import.component').then(mod => mod.MassiveImportComponent),
     },
     {
         path: 'dashboard',

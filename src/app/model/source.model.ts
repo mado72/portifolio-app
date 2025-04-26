@@ -55,7 +55,7 @@ export const AssetDesc: Record<`${AssetEnum}`, string> = {
     BOND: 'Fundo',
     ETF: 'ETF',
     CRYPTO: 'Crypto',
-    REAL_ESTATE: 'FI',
+    REAL_ESTATE: 'FII/RE',
     CURRENCY: 'Moeda',
     OTHER: 'Outro'
 }

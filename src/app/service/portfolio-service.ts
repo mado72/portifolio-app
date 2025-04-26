@@ -414,7 +414,7 @@ export class PortfolioService {
         throw new Error(`Asset ${investmentTransaction.ticker} not found`)
       }
 
-      const quote = !!asset.manualQuote
+      const quote = !asset.manualQuote
         ? { value: investmentTransaction.quote, currency: asset.quote.currency }
         : asset.quote;
 
@@ -425,7 +425,7 @@ export class PortfolioService {
       const ticker = investmentTransaction.ticker;
 
       // Update allocations
-      const allocationFound = allocationMap[ticker];
+      let allocationFound = allocationMap[ticker];
       let transactionFound: { id: string, quantity: number } | undefined;
 
       // Map context transactions
@@ -435,7 +435,21 @@ export class PortfolioService {
         allocationFound.transactions.forEach(t => mapTransactions.set(t.id, t));
       }
 
+      const initialValue = investmentTransaction.value.value * Math.pow(chgTransaction.quantity, 2) / investmentTransaction.quantity;
+      const marketValue = chgTransaction.quantity * quote.value;
+      const percAllocation = marketValue / (portfolio.total.marketValue + marketValue);
+
       if (!!allocationFound) {
+        // Update existing allocation
+
+        // Update allocation values in allocation found
+        allocationFound.percPlanned = changes.percPlanned || 0;
+        allocationFound.initialValue = initialValue;
+        allocationFound.marketValue = marketValue;
+        allocationFound.percAllocation = percAllocation;
+        allocationFound.performance = (marketValue - initialValue) / initialValue;
+        allocationFound.profit = marketValue - initialValue;
+
         if ((transactionFound = allocationFound.transactions.find(t => t.id === chgTransaction.id))) {
           // Update existing transaction quantity.
           transactionFound.quantity = chgTransaction.quantity;
@@ -447,10 +461,6 @@ export class PortfolioService {
       }
       else {
         // Add new allocation and transaction to portfolio
-        const initialValue = investmentTransaction.value.value * chgTransaction.quantity / investmentTransaction.quantity;
-        const marketValue = chgTransaction.quantity * quote.value;
-        const percAllocation = marketValue / (portfolio.total.marketValue + marketValue);
-
         const allocation : PortfolioAllocationSourceRawType = {
           ticker,
           initialValue,
@@ -464,7 +474,7 @@ export class PortfolioService {
         portfolioRaw.allocations.push(allocation);
       }
 
-      if (!!asset.manualQuote) {
+      if (!!asset.manualQuote && !asset.quote.value || asset.lastUpdate < investmentTransaction.date) {
         asset.quote.value = investmentTransaction.quote;
         this.assetService.updateAsset(asset);
       }

@@ -2,9 +2,9 @@
   <div class="card-header">
     <h3 class="card-title">Importação de dados</h3>
   </div>
-  <div class="card-body">
-    <div class="d-flex flex-column" [formGroup]="form" class="w-50">
-      <mat-form-field class="full-width">
+  <div class="card-body w-100">
+    <div class="d-flex flex-column" [formGroup]="form" class="flex-grow-1">
+      <mat-form-field>
         <mat-label>Conta</mat-label>
         <input matInput formControlName="accountId" appSelectOnFocus [matAutocomplete]="autoAccount" />
         <mat-autocomplete autoActiveFirstOption #autoAccount="matAutocomplete" [displayWith]="accountNameDisplay">
@@ -14,20 +14,23 @@
           <!-- Opções de auto completar -->
         </mat-autocomplete>
       </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Entre com os dados para importar</mat-label>
-        <textarea matInput formControlName="data" class="data" placeholder='[
-            &#123;
-                portfolio: "B3",
-                asset: "BVMFEGIE3",
-                quantity: "30",
-                currency: "BRL",
-                initial: "1220,1",
-                date: "2024-12-29",
-            &#125;,
-            ...
-        ]' rows="8" cols="80"></textarea>
-      </mat-form-field>
+      <div class="w-100">
+        <mat-form-field appearance="outline" class="w-50">
+          <mat-label>Entre com os dados para importar</mat-label>
+          <textarea matInput formControlName="data" class="data" placeholder='[
+              &#123;
+                  portfolio: "B3",
+                  asset: "BVMFEGIE3",
+                  quantity: "30",
+                  currency: "BRL",
+                  initial: "1220,1",
+                  date: "2024-12-29",
+              &#125;,
+              ...
+          ]' rows="8" cols="80"></textarea>
+        </mat-form-field>
+      </div>
+
       @if (error) {
       <div class="text-danger w-50 ps-3 error">
         {{ error }}

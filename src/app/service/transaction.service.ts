@@ -59,13 +59,20 @@ export class TransactionService {
       const ticker = transaction.ticker;
       let asset = this.assetService.assets()[ticker];
       if (!asset) {
-        this.assetService.newDialog(ticker).subscribe(() => {
-          asset = this.assetService.assets()[ticker];
+        this.assetService.newDialog(ticker).subscribe((raw) => {
+          if (!raw) {
+            subscriber.error(new Error('Asset not found'));
+            subscriber.complete();
+            return;
+          }
+
+          asset = this.assetService.assets()[raw.ticker];
           if (!asset) {
             subscriber.error(new Error('Asset not found'));
             subscriber.complete();
             return;
           }
+          transaction.ticker = asset.ticker;
           transaction.value.currency = asset.quote.currency;
           transaction.status = TransactionStatus.COMPLETED;
           this.persistTransaction(transaction, allocations);

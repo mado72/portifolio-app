@@ -7,6 +7,7 @@ import { AssetEnum, AssetQuoteType, Ticker, TrendType } from '../model/source.mo
 import { ExchangeService } from './exchange.service';
 import { getMarketPlaceCode, QuoteService } from './quote.service';
 import { SourceService } from './source.service';
+import { MarketPlaceEnum } from '../model/investment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -75,14 +76,20 @@ export class AssetService {
         const dialogRef = this.openDialog('Novo ativo', data, true);
 
         return dialogRef.afterClosed().pipe(
-          tap((result) => {
+          map((result) => {
             if (result) {
               result = {...result, ticker: `${getMarketPlaceCode(result)}`};
               result.lastUpdate = new Date();
+              const marketPlace = MarketPlaceEnum[result.ticker.split(':')[0] as keyof typeof MarketPlaceEnum];
+              if (marketPlace === MarketPlaceEnum.OTHER) {
+                result.manualQuote = true;
+              }
               delete result.marketPlace;
               delete result.code;
-              this.addAsset(result);
+
+              return this.addAsset(result);              
             }
+            return null;
           }))
       })
     )
@@ -102,7 +109,6 @@ export class AssetService {
       }
     });
   }
-
 
   protected getInitialData(ticker?: string) {
     const [marketPlace, code] = ticker && ticker.includes(':') ? ticker.split(':') : [ticker, ''];
@@ -143,8 +149,9 @@ export class AssetService {
   }
 
   addAsset(asset: AssetQuoteType) {
-    this.sourceService.addAsset(asset);
+    const added = this.sourceService.addAsset(asset);
     this.requestUpdateQuote(asset);
+    return asset;
   }
 
   updateAsset(asset: AssetQuoteType) {

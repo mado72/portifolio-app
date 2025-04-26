@@ -67,6 +67,15 @@ export class AssetDialogComponent implements AfterViewInit {
   });
 
   constructor() {
+    this.marketPlace.valueChanges.subscribe(v=>{
+      if (v === MarketPlaceEnum.OTHER) {
+        this.manualQuote.setValue(true, { emitEvent: false });
+        this.manualQuote.disable();
+      }
+      else {
+        this.manualQuote.enable();
+      }
+    })
     this.code.valueChanges.subscribe(v=>{
       this.code.setValue(v.toLocaleUpperCase(), { emitEvent: false });
     });
