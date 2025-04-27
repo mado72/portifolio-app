@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { InvestmentService } from '../../service/investment.service';
-import { provideAssetServiceMock, provideInvestmentServiceMock, providePortfolioServiceMock } from '../../service/service-mock.spec';
+import { portfoliosMock$, provideAssetServiceMock, provideInvestmentServiceMock, providePortfolioServiceMock } from '../../service/service-mock.spec';
 import { EarningsYearSheetComponent } from './earnings-year-sheet.component';
 
 describe('EarningsYearSheetComponent', () => {
@@ -23,6 +23,8 @@ describe('EarningsYearSheetComponent', () => {
       ]
     })
     .compileComponents();
+
+    portfoliosMock$.set({});
 
     investmentService = TestBed.inject(InvestmentService) as jasmine.SpyObj<InvestmentService>;
     investmentService.findIncomesBetween.and.returnValue(findIncomesBetweenResult());

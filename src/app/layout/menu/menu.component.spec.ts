@@ -8,14 +8,19 @@ import { Currency } from '../../model/domain.model';
 import { ExchangeService } from '../../service/exchange.service';
 import { MenuComponent } from './menu.component';
 
-const EXCHANGES = signal<any>({
+const EXCHANGES = {
   USD: { EUR: 0.85 },
   EUR: { USD: 1.18 }
-});
+};
+const exchanges$ = signal<any>(EXCHANGES);
 
-export class ExchangeServiceMock { 
-  exchanges = EXCHANGES;
-  currencyDefault = signal(Currency.USD);
+const currencyDefault = signal<Currency>(Currency.USD);
+const exchangeView = signal("original");
+
+export class ExchangeServiceMock {
+  exchanges = exchanges$;
+  currencyDefault = currencyDefault;
+  exchangeView = exchangeView;
   currencyToSymbol = (arg: any) => '' + arg;
   test = () => 'My test';
 }
@@ -23,7 +28,7 @@ export class ExchangeServiceMock {
 export function provideExchangeServiceMock() {
   return [
     { provide: ExchangeService, useClass: ExchangeServiceMock },
-    { provide: EXCHANGES, use: EXCHANGES }
+    { provide: exchanges$, use: exchanges$ }
   ]
 }
 
@@ -34,11 +39,18 @@ describe('MenuComponent', () => {
 
   beforeEach(async () => {
     exchangeServiceMock = jasmine.createSpyObj('ExchangeService', [
-      'exchanges',
-      'currencyDefault',
       'currencyToSymbol'
-    ])
-    exchangeServiceMock.exchanges.and.returnValue = EXCHANGES;
+    ], {
+      currencyDefault: currencyDefault,
+      exchangeView: exchangeView,
+      exchanges: exchanges$,
+    })
+
+    currencyDefault.set(Currency.USD);
+    exchangeView.set("original");
+    exchanges$.set(EXCHANGES);
+
+    // exchangeServiceMock.exchanges.and.returnValue = EXCHANGES;
 
     await TestBed.configureTestingModule({
       imports: [MenuComponent],
@@ -49,7 +61,7 @@ describe('MenuComponent', () => {
         provideExchangeServiceMock()
       ]
     })
-    .compileComponents();
+      .compileComponents();
 
     fixture = TestBed.createComponent(MenuComponent);
     component = fixture.componentInstance;
@@ -93,7 +105,7 @@ describe('MenuComponent', () => {
   });
 
   it('should compute exchanges correctly', () => {
-    exchangeServiceMock.currencyDefault.and.returnValue(Currency.USD);
+    currencyDefault.set(Currency.USD);
     exchangeServiceMock.currencyToSymbol.and.callFake((currency) => `${currency}`);
 
     const exchanges = component.exchanges();
@@ -105,7 +117,7 @@ describe('MenuComponent', () => {
 
   it('should return empty exchanges when no data is available', () => {
     const exchangeService = TestBed.inject(ExchangeService);
-    (exchangeService.exchanges as unknown as WritableSignal<Record<string,any>>).set({});
+    (exchangeService.exchanges as unknown as WritableSignal<Record<string, any>>).set({});
     const exchanges = component.exchanges();
     expect(exchanges).toEqual([]);
   });

@@ -42,7 +42,6 @@ describe('ExchangeButtonComponent', () => {
     })
     .compileComponents();
 
-    debugger;
     const remoteQuotesService = TestBed.inject(RemoteQuotesService);
     console.log(remoteQuotesService.exchanges)
 
@@ -61,7 +60,6 @@ describe('ExchangeButtonComponent', () => {
   });
 
   it('should call toggleExchangeView from ExchangeService when toggleViewExchange is invoked', () => {
-    debugger;
     component.toggleViewExchange();
     expect(exchangeServiceMock.toggleExchangeView).toHaveBeenCalled();
   });

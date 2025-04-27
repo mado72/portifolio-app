@@ -137,7 +137,6 @@ describe('InvestmentTransactionsControlComponent', () => {
       formDataSignal.set(null); // Reset form data
 
       // Act
-      debugger;
       component.ngOnInit();
 
       // Assert
@@ -151,7 +150,6 @@ describe('InvestmentTransactionsControlComponent', () => {
       activatedRouteMock.snapshot.paramMap.get.and.returnValue(null);
 
       // Act
-      debugger;
       component.ngOnInit();
 
       // Assert

@@ -33,7 +33,7 @@
 
       @if (error) {
       <div class="text-danger w-50 ps-3 error">
-        {{ error }}
+        @for(e of error; track $index){ <pre>{{ error }}</pre> }
       </div>
       }
     </div>

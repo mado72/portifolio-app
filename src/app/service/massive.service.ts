@@ -5,6 +5,7 @@ import { Currency } from '../model/domain.model';
 import { PortfolioType } from '../model/source.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import { concat } from 'rxjs';
+import { groupBy } from '../model/functions.model';
 
 
 export type ImportType = {
@@ -116,25 +117,40 @@ export class MassiveService {
       error: []
     };
 
-    result.parsed = data.split('\n').reduce((acc, line: string) => {
+    // result.parsed = 
+    const report = data.split('\n').reduce((acc, line: string, index) => {
       const [portfolio, asset, quantity, currency, value, date] = line.split('\t');
       if (portfolio && asset && quantity && value && currency && date) {
-        const item = {
-          portfolio: portfolio.trim(),
-          asset: asset.trim(),
-          quantity: Number(quantity.replace(/,/, '.')),
-          value: Number(value.replace(/,/, '.')),
-          currency: currency.trim().toUpperCase(),
-          date: new Date(date).toISOString().split('T')[0]
-        };
-        if (!this.isImportType(item) || isNaN(item.value) || isNaN(item.quantity)) {
-          result.error.push(`Linha "${line}" não é um objeto ImportType válido`);
+        try {
+          const item = {
+            portfolio: portfolio.trim(),
+            asset: asset.trim(),
+            quantity: Number(quantity.replace(/,/, '.')),
+            value: Number(value.replace(/,/, '.')),
+            currency: currency.trim().toUpperCase(),
+            date: new Date(date).toISOString().split('T')[0]
+          };
+          if (!this.isImportType(item) || isNaN(item.value) || isNaN(item.quantity)) {
+            result.error.push(`Linha "${line}" não é um objeto ImportType válido`);
+            return acc;
+          }
+          acc[index] = {item, error: undefined};
+        } catch (error) {
+          if (error instanceof Error) {
+            acc[index] = {item: undefined, error: error.message};
+          }
+          else {
+            acc[index] = {item: undefined, error: error as string};
+          }
           return acc;
         }
-        acc.push(item);
       }
       return acc;
-    }, [] as ImportType[]);    
+    }, {} as Record<number, {item?: ImportType, error?: string}>);
+
+    const mapReport = groupBy(Object.entries(report), ([, {error}]) => !!error);
+    result.error = mapReport.get(true)?.map(([line, {error}]) => `Linha "${line}" ${error}`) || [];
+    result.parsed = mapReport.get(false)?.map(([line, {item}]) => item as ImportType) || [];
 
     return result;
   }
