@@ -9,14 +9,14 @@
             <th class="column-name d-none d-lg-flex">Ativo</th>
             <th class="column-code">Código</th>
             <th class="column-type d-none d-lg-flex">Tipo</th>
-            <th class="column-quantity">
-              <span class="text-truncate d-none d-lg-flex">Quantidade</span>
-              <span class="text-truncate d-flex d-lg-none" title="Quantidade">Qtd.</span>
-            </th>
             <th class="column-quote">Cotação</th>
             <th class="column-averagePrice d-none d-lg-flex" >
               <span class="text-truncate d-none d-lg-flex">Preço Médio</span>
               <span class="text-truncate d-flex d-lg-none" title="Preço Médio">PM</span>
+            </th>
+            <th class="column-quantity">
+              <span class="text-truncate d-none d-lg-flex">Quantidade</span>
+              <span class="text-truncate d-flex d-lg-none" title="Quantidade">Qtd.</span>
             </th>
             <th class="column-marketValue" >
               <div>
@@ -46,14 +46,14 @@
           <td class="column-name d-none d-lg-flex">{{row.name}}</td>
           <td class="column-code">{{row.ticker}}</td>
           <td class="column-type d-none d-lg-flex">{{row.type | assetType }}</td>
-          <td class="column-quantity">
-            {{row.quantity}}
-          </td>
           <td class="column-quote">
             <app-exchange [exchange]="row.quote" [display]="exchangeView()" [hideIcon]="true"/>
           </td>
           <td class="column-averagePrice d-none d-lg-flex" >
             <app-exchange [exchange]="row.averagePrice" [display]="exchangeView()" [hideIcon]="true"/>
+          </td>
+          <td class="column-quantity">
+            {{row.quantity}}
           </td>
           <td class="column-marketValue" >
             <app-exchange [exchange]="row.marketValue" [display]="exchangeView()" [hideIcon]="true"/>

@@ -69,6 +69,7 @@ export class InvestmentPortfolioTableComponent {
 
     return Object.values(portfolio.allocations || {})
       .map(allocation=> this.convertAllocation(allocation))
+      .sort((a, b) => a.name.localeCompare(b.name))
   });
 
   total = computed(() => {

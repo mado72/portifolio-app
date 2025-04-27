@@ -35,6 +35,7 @@ tr, td {
 .column-quote {
     width: 13%; // Cotação
     text-align: end;
+    justify-content: end !important;
 }
 
 .column-quantity {
@@ -71,3 +72,41 @@ tr, td {
     flex-grow: 1;
     flex-shrink: 1;
 }
+
+.exch-currency, 
+.exch-value {
+  white-space: nowrap;
+}
+
+/* Ajustes para responsividade em telas menores */
+@media (max-width: 992px) {
+    .column-code {
+      width: 15%;
+    }
+    
+    .column-quantity {
+      width: 10%;
+    }
+    
+    .column-quote {
+      width: 15%;
+    }
+    
+    .column-marketValue {
+      width: 15%;
+    }
+    
+    .column-profit {
+      width: 15%;
+    }
+    
+    .column-percPlanned,
+    .column-percAllocation {
+      width: 10%;
+    }
+  }
+  
+  /* Garantir que o rodapé da tabela mantenha o alinhamento */
+  tfoot th {
+    white-space: nowrap;
+  }

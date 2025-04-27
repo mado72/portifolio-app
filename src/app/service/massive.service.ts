@@ -193,7 +193,7 @@ export class MassiveService {
           ticker: asset.asset,
           value: {
             currency: item.currency,
-            value: asset.value / asset.quantity
+            value: asset.value
           },
           quantity: asset.quantity,
           date: asset.date,

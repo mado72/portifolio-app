@@ -168,7 +168,7 @@ export class PortfolioService {
         const factor = InvestmentEnumFactor[transaction.type];
 
         const quantity = factor * t.quantity;
-        const transactionValue = quantity * transaction.value.value;
+        const transactionValue = quantity * transaction.value.value / transaction.quantity;
 
         acc.quantity += quantity;
         acc.initialValue += transactionValue;
@@ -267,7 +267,7 @@ export class PortfolioService {
     acc.result.initialValue += this.exchangeService.exchange(source.item.initialValue, source.currency, acc.currency).value;
     acc.result.marketValue += this.exchangeService.exchange(source.item.marketValue, source.currency, acc.currency).value;
     acc.result.profit += this.exchangeService.exchange(source.item.profit, source.currency, acc.currency).value;
-    acc.result.performance += this.exchangeService.exchange(source.item.performance, source.currency, acc.currency).value;
+    acc.result.performance = acc.result.initialValue ? acc.result.profit / acc.result.initialValue: 0;
     acc.result.percPlanned += this.exchangeService.exchange(source.item.percPlanned, source.currency, acc.currency).value;
     return acc.result;
   }
@@ -426,7 +426,7 @@ export class PortfolioService {
 
       // Update allocations
       let allocationFound = allocationMap[ticker];
-      let transactionFound: { id: string, quantity: number } | undefined;
+      let transactionAllocFound: { id: string, quantity: number } | undefined;
 
       // Map context transactions
       const mapTransactions = new Map<string, { id: string, quantity: number }>();
@@ -435,7 +435,7 @@ export class PortfolioService {
         allocationFound.transactions.forEach(t => mapTransactions.set(t.id, t));
       }
 
-      const initialValue = investmentTransaction.value.value * Math.pow(chgTransaction.quantity, 2) / investmentTransaction.quantity;
+      const initialValue = investmentTransaction.value.value * chgTransaction.quantity / investmentTransaction.quantity;
       const marketValue = chgTransaction.quantity * quote.value;
       const percAllocation = marketValue / (portfolio.total.marketValue + marketValue);
 
@@ -450,9 +450,9 @@ export class PortfolioService {
         allocationFound.performance = (marketValue - initialValue) / initialValue;
         allocationFound.profit = marketValue - initialValue;
 
-        if ((transactionFound = allocationFound.transactions.find(t => t.id === chgTransaction.id))) {
+        if ((transactionAllocFound = allocationFound.transactions.find(t => t.id === chgTransaction.id))) {
           // Update existing transaction quantity.
-          transactionFound.quantity = chgTransaction.quantity;
+          transactionAllocFound.quantity = chgTransaction.quantity;
         }
         else {
           // Add transaction to allocation found
