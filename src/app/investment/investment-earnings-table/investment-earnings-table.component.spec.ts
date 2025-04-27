@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InvestmentEarningsTableComponent } from './investment-earnings-table.component';
+import { Currency } from '../../model/domain.model';
+import { IncomeEnum } from '../../model/investment.model';
 import { InvestmentService } from '../../service/investment.service';
-import { Income, IncomeEnum } from '../../model/investment.model';
-import { AssetService } from '../../service/asset.service';
+import { assetsMock$, provideAssetServiceMock } from '../../service/service-mock.spec';
+import { InvestmentEarningsTableComponent } from './investment-earnings-table.component';
 
 class MyService {
 
@@ -17,6 +18,7 @@ describe('InvestmentEarningsTableComponent', () => {
     await TestBed.configureTestingModule({
       imports: [InvestmentEarningsTableComponent],
       providers: [
+        provideAssetServiceMock(),
         { provide: InvestmentService, useClass: MyService}
       ]
     })
@@ -37,20 +39,15 @@ describe('InvestmentEarningsTableComponent', () => {
       TSLA: { quote: { currency: 'USD' }, name: 'Tesla Inc.' }
     };
 
-    const mockEarnings: Income[] = [
-      { id: '1', ticker: 'AAPL', type: IncomeEnum.DIVIDENDS, date: new Date('2023-01-01'), amount: 100 },
-      { id: '2', ticker: 'TSLA', type: IncomeEnum.DIVIDENDS, date: new Date('2023-02-01'), amount: 200 }
+    const mockEarnings = [
+      { id: '1', ticker: 'AAPL', type: IncomeEnum.DIVIDENDS, date: new Date('2023-01-01'), amount: 100, currency: Currency.USD, description: 'Apple Inc.' },
+      { id: '2', ticker: 'TSLA', type: IncomeEnum.DIVIDENDS, date: new Date('2023-02-01'), amount: 200, currency: Currency.USD, description: 'Tesla Inc.' }
     ];
 
-    const assetServiceMock = jasmine.createSpyObj('AssetService', ['assets']);
-    assetServiceMock.assets.and.returnValue(mockAssets);
-
-    TestBed.overrideProvider(AssetService, { useValue: assetServiceMock });
+    assetsMock$.set(mockAssets as any);
 
     component.dataSource = mockEarnings;
 
     expect(component.dataSource).toEqual(mockEarnings);
-
-    expect(assetServiceMock.assets).toHaveBeenCalled();
   });
 });

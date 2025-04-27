@@ -103,6 +103,7 @@ describe('InvestmentTransactionsControlComponent', () => {
       // Assert
       expect(transactionServiceMock.createTransactionAllocations).toHaveBeenCalled();
       expect(component.formData()).toEqual({
+        quantity: 0,
         allocations: mockAllocations
       });
     });
@@ -215,13 +216,13 @@ describe('InvestmentTransactionsControlComponent', () => {
         fees: 5.99,
         allocations: mockAllocations
       };
-
+    
       // Act
       component.onSaveTransaction(mockFormResult);
 
       // Assert
       expect(component.formData()).toBeNull();
-      expect(transactionServiceMock.saveTransaction).toHaveBeenCalledWith(mockFormResult);
+      expect(transactionServiceMock.saveTransaction).toHaveBeenCalledWith(mockFormResult, {"portfolio-1": 5, "portfolio-2": 5});
       expect(transactionServiceMock.listTransactions).toHaveBeenCalled();
     });
   });

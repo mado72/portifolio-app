@@ -7,6 +7,8 @@ import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 import { Currency } from '../model/domain.model';
 import { Ticker } from '../model/source.model';
 import { endOfDay, format } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
+import { formatDateYYYYMMDD } from '../model/functions.model';
 
 const COIN_USD_CODES: Record<Currency, string> = {
   USD: '',
@@ -94,8 +96,8 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
       return acc;
     }, [] as string[]).join(',')
 
-    const startDateStr = format(endOfDay(new Date(startDate)), 'yyyt-MM-dd');
-    const endDateStr = format(endOfDay(new Date(endDate)), 'yyyy-MM-dd');
+    const startDateStr = formatDateYYYYMMDD(startDate);
+    const endDateStr = formatDateYYYYMMDD(endDate);
 
     const params = new HttpParams().append('ticker', yahooTickers)
     const url = `${environment.apiBaseUrl}/yahoo/historical/${startDateStr}/${endDateStr}`;

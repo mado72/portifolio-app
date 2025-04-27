@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 import { ReactiveFormsModule } from '@angular/forms';
 import { Currency } from '../../model/domain.model';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 class MyService {
 
@@ -36,6 +37,7 @@ describe('PortfolioRegisterDialogComponent', () => {
       ],
       providers: [
         provideAnimationsAsync(),
+        provideExchangeServiceMock(),
         { provide: MatDialogRef, useValue: dialogMock },
         { provide: MAT_DIALOG_DATA, useValue: dataMock }
       ]

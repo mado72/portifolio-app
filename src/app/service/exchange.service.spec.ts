@@ -1,8 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ExchangeService } from './exchange.service';
 import { Currency, CurrencyType } from '../model/domain.model';
-import { SourceService } from './source.service';
+import { ExchangeService } from './exchange.service';
 import { RemoteQuotesService } from './remote-quotes.service';
 
 describe('ExchangeService', () => {
@@ -17,10 +16,10 @@ describe('ExchangeService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        { provide: RemoteQuotesService, use: remoteQuotesServiceMock },
+        { provide: RemoteQuotesService, useFactory: ()=> remoteQuotesServiceMock },
       ]
     });
-    
+
     service = TestBed.inject(ExchangeService);
   });
 
@@ -42,7 +41,8 @@ describe('ExchangeService', () => {
       USD: { EUR: 0.85 },
       EUR: { USD: 1.18 }
     } as Record<CurrencyType, Record<CurrencyType, number>>;
-    spyOn(service['remoteQuotesService'], 'exchanges').and.returnValue(exchanges);
+
+    remoteQuotesServiceMock.exchanges.and.returnValue(exchanges);
 
     expect(service.getExchangeQuote(Currency.USD, Currency.EUR)).toBe(0.85);
     expect(service.getExchangeQuote(Currency.EUR, Currency.USD)).toBe(1.18);

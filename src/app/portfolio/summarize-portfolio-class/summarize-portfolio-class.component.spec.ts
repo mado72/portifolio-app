@@ -1,9 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SummarizePortfolioClassComponent } from './summarize-portfolio-class.component';
-import { QuoteService } from '../../service/quote.service';
 import { PortfolioService } from '../../service/portfolio-service';
+import { QuoteService } from '../../service/quote.service';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 import { SourceService } from '../../service/source.service';
+import { SummarizePortfolioClassComponent } from './summarize-portfolio-class.component';
 
 class MyService {
   portfolios = () => ({})
@@ -22,6 +23,7 @@ describe('SummarizePortfolioClassComponent', () => {
         {provide: QuoteService, useClass: MyService},
         {provide: SourceService, useClass: MyService},
         {provide: PortfolioService, useClass: MyService},
+        provideExchangeServiceMock(),
       ]
     })
     .compileComponents();

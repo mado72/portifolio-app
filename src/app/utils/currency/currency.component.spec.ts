@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CurrencyComponent } from './currency.component';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 describe('CurrencyComponent', () => {
   let component: CurrencyComponent;
@@ -8,7 +9,10 @@ describe('CurrencyComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CurrencyComponent]
+      imports: [CurrencyComponent],
+      providers: [
+        provideExchangeServiceMock()
+      ]
     })
     .compileComponents();
 

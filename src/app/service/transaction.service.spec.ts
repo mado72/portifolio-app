@@ -1,4 +1,3 @@
-import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
@@ -7,7 +6,7 @@ import { Currency } from '../model/domain.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import { AssetQuoteType, InvestmentTransactionType, PortfolioType } from '../model/source.model';
 import { AssetService } from './asset.service';
-import { PortfolioService } from './portfolio-service';
+import { assetServiceMock, assetsMock$, portfolioServiceMock, provideAssetServiceMock, providePortfolioServiceMock } from './service-mock.spec';
 import { SourceService } from './source.service';
 import { TransactionService } from './transaction.service';
 
@@ -16,8 +15,6 @@ describe('TransactionService', () => {
   let service: TransactionService;
   let dialogMock: jasmine.SpyObj<MatDialog>;
   let routerMock: jasmine.SpyObj<Router>;
-  let portfolioServiceMock: jasmine.SpyObj<PortfolioService>;
-  let assetServiceMock: jasmine.SpyObj<AssetService>;
   let sourceServiceMock: jasmine.SpyObj<SourceService>;
 
   // Mock data
@@ -52,33 +49,18 @@ describe('TransactionService', () => {
     { id: 'portfolio-2', name: 'Portfolio 2', quantity: 5 }
   ];
 
-  const assets$ = signal({});
-
-  class MockAssetService {
-
-    get assets (){
-      return (() => (assets$())) as any;
-    }
-    set assets(assets: Record<string, AssetQuoteType>) {
-      assets$.set(assets);
-    }
-    newDialog(asset: AssetQuoteType) {
-      return of(asset);
-    }
-  }
-
   beforeEach(() => {
-    assets$.set({});
+    assetsMock$.set({});
     // Create spy objects for services
 
     dialogMock = jasmine.createSpyObj('MatDialog', ['open']);
     routerMock = jasmine.createSpyObj('Router', ['navigate']);
 
-    portfolioServiceMock = jasmine.createSpyObj('PortfolioService', [
-      'portfolioAllocation',
-      'processAllocations',
-      'portfolios'
-    ]);
+    // portfolioServiceMock = jasmine.createSpyObj('PortfolioService', [
+    //   'portfolioAllocation',
+    //   'processAllocations',
+    //   'portfolios'
+    // ]);
 
     sourceServiceMock = jasmine.createSpyObj('SourceService', [
       'investmentSource',
@@ -87,25 +69,25 @@ describe('TransactionService', () => {
       'deleteInvestmentTransaction',
     ]);
 
-    assetServiceMock = jasmine.createSpyObj('AssetService', [
-      'newDialog'
-    ])
+    // assetServiceMock = jasmine.createSpyObj('AssetService', [
+    //   'newDialog'
+    // ])
 
     // Configure mock return values
     portfolioServiceMock.portfolioAllocation.and.returnValue([]);
     portfolioServiceMock.getAllPortfolios.and.returnValue(mockPortfolios);
     sourceServiceMock.investmentSource.and.returnValue({ 'transaction-1': mockTransaction });
-    portfolioServiceMock.portfolios.and.returnValue({
+    (portfolioServiceMock.portfolios as any).set({
       'portfolio-1': { id: 'portfolio-1', name: 'Portfolio 1' } as PortfolioType,
       'portfolio-2': { id: 'portfolio-2', name: 'Portfolio 2' } as PortfolioType
     });
 
     TestBed.configureTestingModule({
       providers: [
+        providePortfolioServiceMock(),
+        provideAssetServiceMock(),
         TransactionService,
         { provide: Router, useValue: routerMock },
-        { provide: PortfolioService, useValue: portfolioServiceMock },
-        { provide: AssetService, useClass: MockAssetService },
         { provide: SourceService, useValue: sourceServiceMock },
       ]
     });
@@ -131,7 +113,7 @@ describe('TransactionService', () => {
     // Test 1: should save a transaction when the asset exists
     it('should save a transaction when the asset exists', () => {
       // Arrange
-      assets$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
+      assetsMock$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
       spyOn(service as any, 'persistTransaction');
       
       // Act
@@ -148,11 +130,15 @@ describe('TransactionService', () => {
     // Test 2: should open a new dialog and save a transaction when the asset does not exist
     it('should open a new dialog and save a transaction when the asset does not exist', () => {
       // Arrange
-      
+      assetsMock$.set({});
+
+      const newDialogOriginal = assetServiceMock.newDialog;
+
       // Mock that asset is added after dialog is closed
       const newDialog = assetServiceMock.newDialog.and.callFake(() => {
-        assets$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
-        return of({ 'NYSE:AAPL': mockAsset } as any);
+        assetsMock$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
+        newDialogOriginal.and.callThrough();
+        return of(mockAsset as any);
       });
       spyOn(service as any, 'persistTransaction');
       
@@ -192,7 +178,7 @@ describe('TransactionService', () => {
     // Test 4: should save a transaction and process allocations
     it('should save a transaction and process allocations', () => {
       // Arrange
-      assets$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
+      assetsMock$.set({ 'NYSE:AAPL': mockAsset } as unknown as Record<string, AssetQuoteType>);
 
       const allocations = { 'portfolio-1': 5, 'portfolio-2': 5 };
       spyOn(service as any, 'persistTransaction');
@@ -215,11 +201,10 @@ describe('TransactionService', () => {
       const updatedAssets = { 'NYSE:AAPL': { ...mockAsset, quote: { value: 210.50, currency: 'EUR' } } } as unknown as Record<string, AssetQuoteType>;
 
       spyOn(service as any, 'persistTransaction');
-      assets$.set({});
-
-      const assetServiceSpy = TestBed.inject(AssetService);
-      spyOn(assetServiceSpy, 'newDialog').and.callFake(() => {
-        assets$.set(updatedAssets);
+      
+      const assetServiceSpy = TestBed.inject(AssetService) as jasmine.SpyObj<AssetService>;
+      assetServiceSpy.newDialog.and.callFake(() => {
+        assetsMock$.set(updatedAssets);
         return of(updatedAssets['NYSE:AAPL']);
       });
       

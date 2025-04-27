@@ -56,8 +56,7 @@ export class InvestmentTransactionsControlComponent implements OnInit {
             allocations: currentTransaction?.map(allocation=>({
               id: allocation.portfolioId,
               name: allocation.portfolioName,
-              qty: allocation.quantity,
-              hash: ''
+              qty: allocation.quantity
             })) || [],
           });
         }

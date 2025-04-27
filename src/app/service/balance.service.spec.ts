@@ -1,7 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 
 import { BalanceService } from './balance.service';
-import { QuoteService } from './quote.service';
+import { SourceService } from './source.service';
+import { provideExchangeServiceMock } from './service-mock.spec';
 
 class MyService {
 
@@ -9,11 +10,15 @@ class MyService {
 
 describe('BalanceService', () => {
   let service: BalanceService;
+  let sourceServiceMock: jasmine.SpyObj<SourceService> = jasmine.createSpyObj('SourceService', [
+    'balanceSource', 'scheduledSource', 'cashflowSource', 'addBalance', 'updateBalance', 
+    'deleteBalance', 'addCashflowTransaction', 'updateCashflowTransaction'], {});
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: QuoteService, useClass: MyService }
+        provideExchangeServiceMock(),
+        { provide: SourceService, useFactory: () => sourceServiceMock },
       ]
     });
     service = TestBed.inject(BalanceService);

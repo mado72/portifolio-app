@@ -4,6 +4,7 @@ import { HeaderComponent } from './header.component';
 import { provideRouter } from '@angular/router';
 import { MenuComponent } from '../menu/menu.component';
 import { QuoteService } from '../../service/quote.service';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 class MyService {
   exchanges = () => ({});
@@ -18,7 +19,7 @@ describe('HeaderComponent', () => {
       imports: [HeaderComponent, MenuComponent],
       providers: [
         provideRouter([]),
-        { provide: QuoteService, useClass: MyService }
+        provideExchangeServiceMock(),
       ]
     })
     .compileComponents();

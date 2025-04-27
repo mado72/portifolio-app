@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FinancialForecastComponent } from './financial-forecast.component';
 import { BalanceService } from '../../service/balance.service';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
+import { FinancialForecastComponent } from './financial-forecast.component';
 
 class MyService {
   getCurrentMonthForecast = () => ([]);
@@ -19,6 +20,7 @@ describe('FinancialForecastComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FinancialForecastComponent],
       providers: [
+        provideExchangeServiceMock(),
         {provide: BalanceService, useClass: MyService}
       ]
     })

@@ -1,29 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EarningsYearSheetComponent } from './earnings-year-sheet.component';
-import { InvestmentService } from '../../service/investment.service';
-import { PortfolioService } from '../../service/portfolio-service';
+import { signal } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { InvestmentService } from '../../service/investment.service';
+import { provideAssetServiceMock, provideInvestmentServiceMock, providePortfolioServiceMock } from '../../service/service-mock.spec';
+import { EarningsYearSheetComponent } from './earnings-year-sheet.component';
 
-class MyService {
-  assertsSignal = () => ({});
-  findIncomesBetween = () => ([]);
-  portfolios = () => ({});
-}
 describe('EarningsYearSheetComponent', () => {
   let component: EarningsYearSheetComponent;
   let fixture: ComponentFixture<EarningsYearSheetComponent>;
+  let investmentService: jasmine.SpyObj<InvestmentService>;
+  let findIncomesBetweenResult = signal([]);
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EarningsYearSheetComponent],
       providers: [
-        {provide: InvestmentService, useClass: MyService },
-        {provide: PortfolioService, useClass: MyService },
+        provideAssetServiceMock(),
+        providePortfolioServiceMock(),
+        provideInvestmentServiceMock(),
         provideAnimationsAsync()
       ]
     })
     .compileComponents();
+
+    investmentService = TestBed.inject(InvestmentService) as jasmine.SpyObj<InvestmentService>;
+    investmentService.findIncomesBetween.and.returnValue(findIncomesBetweenResult());
 
     fixture = TestBed.createComponent(EarningsYearSheetComponent);
     component = fixture.componentInstance;

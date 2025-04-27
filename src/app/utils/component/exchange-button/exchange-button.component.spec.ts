@@ -1,11 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { ExchangeService } from '../../../service/exchange.service';
 import { RemoteQuotesService } from '../../../service/remote-quotes.service';
 import { ExchangeButtonComponent } from './exchange-button.component';
-import { provideHttpClient } from '@angular/common/http';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
-import { provideExchangeServiceMock } from '../../../layout/menu/menu.component.spec';
+import { ExchangeView } from '../../../model/investment.model';
 
 class MyService {
   exchangeView = () => "original";
@@ -17,7 +18,8 @@ describe('ExchangeButtonComponent', () => {
   let fixture: ComponentFixture<ExchangeButtonComponent>;
   let remoteQuotesServiceMock: jasmine.SpyObj<RemoteQuotesService>;
   let exchangeServiceMock: jasmine.SpyObj<ExchangeService>;
-
+  let exchangeView = signal<ExchangeView>("original");
+  
   beforeEach(async () => {
     remoteQuotesServiceMock = jasmine.createSpyObj('RemoteQuotesServiceMock', [
       'exchanges'
@@ -26,14 +28,16 @@ describe('ExchangeButtonComponent', () => {
       'exchanges',
       'exchangeView',
       'toggleExchangeView'
-    ])
+    ]);
+    exchangeServiceMock.exchangeView.and.returnValue(exchangeView());
+
     await TestBed.configureTestingModule({
       imports: [ExchangeButtonComponent],
       providers: [
         provideHttpClient(),
         provideHttpClientTesting(),
-        provideExchangeServiceMock(),
         { provide: RemoteQuotesService, use: remoteQuotesServiceMock },
+        { provide: ExchangeService, useFactory: () => exchangeServiceMock },
       ]
     })
     .compileComponents();

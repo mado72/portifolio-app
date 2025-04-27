@@ -47,7 +47,7 @@ export class QuoteService {
     takeUntilDestroyed(this.destroyRef)
   ).subscribe();
 
-  updateTrigger = new Subject<void>();
+  private updateTrigger = new Subject<void>();
 
   // Observable principal que gerencia as atualizações
   updateQuotes$ = this.updateTrigger.pipe(

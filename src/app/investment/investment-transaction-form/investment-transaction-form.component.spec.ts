@@ -1,15 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { AssetService } from '../../service/asset.service';
 import { BalanceService } from '../../service/balance.service';
-import { PortfolioService } from '../../service/portfolio-service';
+import { provideAssetServiceMock, provideExchangeServiceMock, providePortfolioServiceMock } from '../../service/service-mock.spec';
 import { InvestmentTransactionFormComponent } from './investment-transaction-form.component';
-import { ExchangeService } from '../../service/exchange.service';
-import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-class MyService {
+class BalanceServiceMock {
   getAllBalances () {}
   getAccounts = () => []
   getAllPortfolios = () => []
@@ -17,24 +16,17 @@ class MyService {
 describe('InvestmentTransactionFormComponent', () => {
   let component: InvestmentTransactionFormComponent;
   let fixture: ComponentFixture<InvestmentTransactionFormComponent>;
-  let exchangeServiceMock: jasmine.SpyObj<ExchangeService>;
   let balanceServiceMock: jasmine.SpyObj<BalanceService>;
-  let portfolioServiceMock: jasmine.SpyObj<PortfolioService>;
-  let assetServiceMock: jasmine.SpyObj<AssetService>;
+  let accounts = signal([]);
 
   beforeEach(async () => {
-    exchangeServiceMock = jasmine.createSpyObj(ExchangeService, [
-      'exchanges'
-    ])
-    balanceServiceMock = jasmine.createSpyObj(BalanceService,[
+    provideExchangeServiceMock(),
+    providePortfolioServiceMock(),
+    provideAssetServiceMock(),
+    balanceServiceMock = jasmine.createSpyObj(BalanceServiceMock,[
       'getAccounts'
     ]);
-    portfolioServiceMock = jasmine.createSpyObj(PortfolioService,[
-      'portfolios'
-    ]);
-    assetServiceMock = jasmine.createSpyObj(AssetService,[
-      'assets'
-    ]);
+    balanceServiceMock.getAccounts.and.returnValue(accounts());
 
     await TestBed.configureTestingModule({
       imports: [InvestmentTransactionFormComponent],
@@ -42,10 +34,9 @@ describe('InvestmentTransactionFormComponent', () => {
         provideAnimationsAsync(),
         provideNativeDateAdapter(),
         provideHttpClientTesting(),
-        { provide: ExchangeService, use: exchangeServiceMock},
-        { provide: BalanceService, use: balanceServiceMock},
-        { provide: PortfolioService, use: portfolioServiceMock},
-        { provide: AssetService, use: assetServiceMock},
+        providePortfolioServiceMock(),
+        provideAssetServiceMock(),
+        { provide: BalanceService, useFactory: () => balanceServiceMock },
       ]
     })
     .compileComponents();

@@ -4,6 +4,7 @@ import { InvestmentPortfolioTableComponent } from './investment-portfolio-table.
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { QuoteService } from '../../service/quote.service';
+import { provideAssetServiceMock, provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 class MyService {
 
@@ -17,6 +18,8 @@ describe('InvestmentPortfolioTableComponent', () => {
     await TestBed.configureTestingModule({
       imports: [InvestmentPortfolioTableComponent],
       providers: [
+        provideExchangeServiceMock(),
+        provideAssetServiceMock(),
         {provide: InvestmentService, useClass: MyService },
         {provide: PortfolioService, useClass: MyService },
         {provide: QuoteService, useClass: MyService },

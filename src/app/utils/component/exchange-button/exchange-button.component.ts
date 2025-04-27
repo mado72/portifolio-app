@@ -31,7 +31,10 @@ export class ExchangeButtonComponent {
 
   private exchangeService = inject(ExchangeService);
 
-  exchangeView = computed(()=> this.exchangeService.exchangeView());
+  exchangeView = computed(()=> {
+    debugger;
+    return this.exchangeService.exchangeView()
+  });
   
   toggleViewExchange() {
     this.exchangeService.toggleExchangeView();

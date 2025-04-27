@@ -1,5 +1,5 @@
-import { Interval, eachDayOfInterval, eachMonthOfInterval, eachQuarterOfInterval, eachWeekOfInterval, eachYearOfInterval, getDay, isWithinInterval, setDate, setDay } from "date-fns";
-import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
+import { Interval, eachDayOfInterval, eachMonthOfInterval, eachQuarterOfInterval, eachWeekOfInterval, eachYearOfInterval, format, getDay, isWithinInterval, setDate, setDay } from "date-fns";
+import { formatInTimeZone, toZonedTime } from "date-fns-tz";
 import { Scheduled } from "./domain.model";
 
 /**
@@ -117,11 +117,18 @@ export function getScheduleDates(scheduledRange: Interval, dateRange: Interval, 
     return dates.filter(date => isWithinInterval(date, dateRange));
 }
 
+export function formatDateYYYYMMDD(date: Date | string) {
+    if (typeof date === 'string') {
+        date = parseDateYYYYMMDD(date as string);
+    }
+    return format(toZonedTime(date as Date, 'UTC'), 'yyyy-MM-dd');
+}
+
 export function parseDateYYYYMMDD(source: string) {
     // const [year, month, day] = source.split('-').map(Number);
     // // Create a date using UTC
     // return new Date(Date.UTC(year, month - 1, day));
-    const utcDate = fromZonedTime(`${source}T12:00:00`, 'UTC')
+    const utcDate = toZonedTime(new Date(source), 'UTC')
     return utcDate;
 }
 

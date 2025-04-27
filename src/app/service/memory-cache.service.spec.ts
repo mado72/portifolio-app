@@ -60,7 +60,7 @@ describe('MemoryCacheService', () => {
   });
 
   it('should stop cleanup process on ngOnDestroy', () => {
-    spyOn<any>(global, 'clearInterval');
+    spyOn<any>(window, 'clearInterval');
     service.ngOnDestroy();
     expect(clearInterval).toHaveBeenCalled();
   });

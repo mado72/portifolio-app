@@ -1,14 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PortfolioComponent } from './portfolio.component';
-import { BalanceService } from '../../service/balance.service';
-import { PortfolioService } from '../../service/portfolio-service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { QuoteService } from '../../service/quote.service';
 import { BalancesComponent } from '../../cashflow/balances/balances.component';
 import { FinancialForecastSummaryComponent } from '../../cashflow/financial-forecast-summary/financial-forecast-summary.component';
-import { SummarizePortfolioClassComponent } from '../../portfolio/summarize-portfolio-class/summarize-portfolio-class.component';
 import { PortfolioRegisterComponent } from '../../portfolio/portfolio-register/portfolio-register.component';
+import { SummarizePortfolioClassComponent } from '../../portfolio/summarize-portfolio-class/summarize-portfolio-class.component';
+import { AssetService } from '../../service/asset.service';
+import { BalanceService } from '../../service/balance.service';
+import { PortfolioService } from '../../service/portfolio-service';
+import { QuoteService } from '../../service/quote.service';
+import { PortfolioComponent } from './portfolio.component';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 class MyService {
   getAllocationSummary = () => ([]);
@@ -28,8 +30,10 @@ class MyService {
 describe('PortfolioComponent', () => {
   let component: PortfolioComponent;
   let fixture: ComponentFixture<PortfolioComponent>;
-
+  let assetServiceMock = jasmine.createSpyObj('AssetService', ['getAllocationSummary', 'getBalancesByCurrencyExchange', 'portfolioAllocation', 'getBalancesSummarized', 'getForecastSummary', 'getAllBalances', 'portfolios', 'summarizeByClass']);
+  
   beforeEach(async () => {
+
     await TestBed.configureTestingModule({
       imports: [PortfolioComponent,
         BalancesComponent,
@@ -38,10 +42,14 @@ describe('PortfolioComponent', () => {
         SummarizePortfolioClassComponent        
       ],
       providers: [
+        provideExchangeServiceMock(),
+        { provide: AssetService, useValue: assetServiceMock },
+        
         { provide: QuoteService, useClass: MyService },
         { provide: BalanceService, useClass: MyService },
         { provide: PortfolioService, useClass: MyService },
-        provideAnimationsAsync()
+        provideAnimationsAsync(),
+        
       ]
     })
     .compileComponents();

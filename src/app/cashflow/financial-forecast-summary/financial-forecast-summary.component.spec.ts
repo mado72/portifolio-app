@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FinancialForecastSummaryComponent } from './financial-forecast-summary.component';
 import { BalanceService } from '../../service/balance.service';
 import { DecimalPipe } from '@angular/common';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 class MyService{
   getBalancesSummarized = () => 0;
@@ -18,6 +19,7 @@ describe('FinancialForecastSummaryComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FinancialForecastSummaryComponent],
       providers: [
+        provideExchangeServiceMock(),
         { provide: BalanceService, useClass: MyService }
       ]
     })

@@ -4,6 +4,7 @@ import { TransactionTableComponent } from './transaction-table.component';
 import { TransactionService } from '../../service/transaction.service';
 import { BalanceService } from '../../service/balance.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { provideExchangeServiceMock } from '../../service/service-mock.spec';
 
 class MyService {
   transactionSignal = () => [];
@@ -18,6 +19,7 @@ describe('TransactionTableComponent', () => {
     await TestBed.configureTestingModule({
       imports: [TransactionTableComponent],
       providers: [
+        provideExchangeServiceMock(),
         { provide: TransactionService, useClass: MyService},
         { provide: BalanceService, useClass: MyService},
         { provide: ChangeDetectorRef, useClass: MyService},

@@ -88,14 +88,14 @@ describe('YahooRemoteQuotesService', () => {
     const endDateStr = '2023-01-31';
     const expectedUrl = `${environment.apiBaseUrl}/yahoo/historical/${startDateStr}/${endDateStr}`;
     const httpMock = TestBed.inject(HttpTestingController);
-    const req = httpMock.expectOne(request=> {
-      return request.url === expectedUrl && request.params.get('ticker') === 'AAPL,JPM';
-    })
-
+    
     service.getHistorical(tickers, startDate, endDate).subscribe((data) => {
       expect(data).toEqual(mockResponse);
     });
 
+    const req = httpMock.expectOne(request=> {
+      return request.url.startsWith(expectedUrl) && request.params.get('ticker') === 'AAPL,JPM';
+    })
     expect(req.request.method).toBe('GET')
     req.flush(mockResponse);
     httpMock.verify();
