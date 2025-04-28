@@ -81,13 +81,13 @@ describe('ThreasureService', () => {
       console.log('should return cached response if available');
       const mockResponse: TreasuryBondResponse = { /* mock data */ };
       const ids = ['1', '2'];
-      const cacheKey = `${environment.apiBaseUrl}/bonds/filter?ids=1,2`;
+      const cacheKey = `${environment.apiBaseUrl}/bonds/filter?bonds=1,2`;
       cacheService.get.and.returnValue(mockResponse);
       
       service.getBondsById(ids).subscribe((response) => {
         expect(cacheService.get).toHaveBeenCalledWith(cacheKey);
         expect(response).toEqual(mockResponse);
-        httpMock.expectNone(`${environment.apiBaseUrl}/bonds/filter?ids=1,2`);
+        httpMock.expectNone(`${environment.apiBaseUrl}/bonds/filter?bonds=1,2`);
       });
       
     });
@@ -96,7 +96,7 @@ describe('ThreasureService', () => {
       console.log('should fetch data from API and cache it if not in cache');
       const mockResponse: TreasuryBondResponse = { /* mock data */ };
       const ids = ['1', '2'];
-      const cacheKey = `${environment.apiBaseUrl}/bonds/filter?ids=1,2`;
+      const cacheKey = `${environment.apiBaseUrl}/bonds/filter?bonds=1,2`;
       cacheService.get.and.returnValue(null);
 
       service.getBondsById(ids).subscribe((response) => {
@@ -104,7 +104,7 @@ describe('ThreasureService', () => {
         expect(cacheService.set).toHaveBeenCalledWith(cacheKey, mockResponse);
       });
 
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}/bonds/filter?ids=1,2`);
+      const req = httpMock.expectOne(`${environment.apiBaseUrl}/bonds/filter?bonds=1,2`);
       expect(req.request.method).toBe('GET');
       req.flush(mockResponse);
 

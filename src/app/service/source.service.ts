@@ -35,10 +35,13 @@ export class SourceService {
 
   readonly assetSource = computed(() => {
     if (!this.dataIsLoaded()) return {};
-    return Object.entries(this.dataSource.asset()).reduce((acc, [ticker, item]) => {
+    const assets = this.dataSource.asset();
+    if (Object.keys(assets).length === 0) return {};
+    
+    return Object.entries(assets).reduce((acc, [ticker, item]) => {
       if (ticker === 'undefined') {
-        console.error('Ticker is undefined', item);
-        throw new Error('Ticker is undefined');
+        console.warn('Ticker is undefined', item);
+        return acc;
       };
       const quote = {
         value: item.quote.value,
@@ -216,7 +219,7 @@ export class SourceService {
           currency: Currency[quote.currency as CurrencyType]
         },
         initialPrice,
-        lastUpdate: formatISO(lastUpdate),
+        lastUpdate: formatISO(lastUpdate || new Date()),
         controlByQty,
         trend,
         manualQuote

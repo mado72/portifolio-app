@@ -165,6 +165,9 @@ export class AssetService {
   }
   
   requestUpdateQuote(asset: AssetQuoteType) {
+    if (!!asset.manualQuote) {
+      return;
+    }
     this.quoteService.addAssetToUpdate(asset);
   }
 

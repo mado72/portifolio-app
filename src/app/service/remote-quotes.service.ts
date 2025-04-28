@@ -1,16 +1,17 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { differenceInMinutes, differenceInSeconds } from 'date-fns';
 import { filter, forkJoin, interval, map, Observable, of, tap, zipAll } from 'rxjs';
+import { Currency, CurrencyType } from '../model/domain.model';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 import { AssetQuoteType, Ticker } from '../model/source.model';
+import { CoinService } from './coin-remote.service';
 import { ImmutableRemoteQuotesService } from './immutable-remote-quotes.service';
 import { MockRemoteQuotesService } from './mock-remote-quotes.service';
 import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
+import { ThreasureService } from './threasure.service';
 import { YahooRemoteQuotesService } from './yahoo-remote-quotes.service';
-import { CurrencyType } from '../model/domain.model';
-import { CoinService } from './coin-remote.service';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class RemoteQuotesService {
   private mockRemoteQuotesService = inject(MockRemoteQuotesService);
   private yahooRemoteQuotesService = inject(YahooRemoteQuotesService);
   private immutableRemoteQuotesService = inject(ImmutableRemoteQuotesService);
+  private threasureService = inject(ThreasureService);
 
   private serviceMap = new Map<MarketPlaceEnum, IRemoteQuote>([
     [MarketPlaceEnum.BVMF, this.yahooRemoteQuotesService],
@@ -28,7 +30,7 @@ export class RemoteQuotesService {
     [MarketPlaceEnum.BOND, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.CRYPTO, this.mockRemoteQuotesService],
     [MarketPlaceEnum.COIN, this.immutableRemoteQuotesService],
-    [MarketPlaceEnum.BRTD, this.yahooRemoteQuotesService]
+    [MarketPlaceEnum.BRTD, this.threasureService]
   ]);
 
   private sourceService = inject(SourceService);
@@ -89,8 +91,8 @@ export class RemoteQuotesService {
     if (!Object.keys(assets).length) return of({});
 
     const tickers = Object.entries(assets)
-      .filter(([ticker, asset])=>!asset.manualQuote)
-      .map(([ticker, asset])=>ticker);
+      .filter(([_, asset])=>!asset.manualQuote)
+      .map(([ticker, _])=>ticker);
 
     return this.prepareRequestsToUpdateQuotes(tickers).pipe(
       tap(quotes => {
@@ -100,7 +102,7 @@ export class RemoteQuotesService {
             ...assets[ticker],
             quote: {
               value: quote.price,
-              currency: asset.quote.currency
+              currency: asset?.quote.currency || quote.currency,
             },
             trend: quote.price === quote.open ? 'unchanged' : quote.price > quote.open ? 'up' : 'down'
           }

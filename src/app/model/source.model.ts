@@ -43,6 +43,7 @@ export const fnTrend = (quotation: { initialPrice: number, quote: CurrencyValue 
 export enum AssetEnum {
     STOCK = "STOCK",
     BOND = "BOND",
+    FUND = "FUND",
     ETF = "ETF",
     CRYPTO = "CRYPTO",
     REAL_ESTATE = "REAL_ESTATE",
@@ -52,7 +53,8 @@ export enum AssetEnum {
 
 export const AssetDesc: Record<`${AssetEnum}`, string> = {
     STOCK: 'Ação',
-    BOND: 'Fundo',
+    BOND: 'Título',
+    FUND: 'Fundo',
     ETF: 'ETF',
     CRYPTO: 'Crypto',
     REAL_ESTATE: 'FII/RE',

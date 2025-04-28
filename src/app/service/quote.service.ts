@@ -1,6 +1,7 @@
 import { DestroyRef, inject, Injectable, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime, interval, map, Observable, of, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
+import { concat, debounceTime, interval, map, Observable, of, shareReplay, startWith, Subject, switchMap, tap } from 'rxjs';
+import { groupBy } from '../model/functions.model';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { QuoteResponse } from '../model/remote-quote.model';
 import { AssetQuoteRecord, AssetQuoteType, Ticker } from '../model/source.model';
@@ -25,9 +26,23 @@ export class QuoteService {
   // Observable para recuperar as cotações remotas
   private requestQuotes$ = of({}).pipe(
     switchMap(() => {
-      const request = this.penddingToQuote();
-      return this.remoteQuotesService.updateQuotes(request).pipe(
-        map(response => {
+      const pending = this.penddingToQuote();
+      const requestByMarketplaceMap = groupBy(Object.keys(pending), ticker => ticker.replace(/:.*/, ''));
+
+      const observables = Array.from(requestByMarketplaceMap.entries()).map(([marketPlace, tickers]) => {
+        const request : AssetQuoteRecord = (tickers as string[]).reduce((acc, ticker) => {
+          const asset = pending[ticker];
+          acc[ticker] = asset;
+          return acc;
+        }
+        , {} as AssetQuoteRecord);
+        return this.remoteQuotesService.updateQuotes(request).pipe(
+          map(response => ({request, response}))
+        );
+      });
+
+      return concat(...observables).pipe(
+        map(({request, response}) => {
           return this.processResponseToAssets(request, response);
         }),
         tap(() => {
@@ -88,6 +103,10 @@ export class QuoteService {
 
     return Object.entries(response).reduce((acc, [ticker, quote]) => {
       const original = request[ticker];
+      if (!original) {
+        console.warn(`Asset ${ticker} not found in request.`);
+        return acc;
+      }
       const initialPrice = original.initialPrice || quote.price;
       const asset = {
         ...original,
@@ -111,7 +130,7 @@ export class QuoteService {
       return;
     }
     
-    if (!asset.manualQuote) {
+    if (!!asset.manualQuote) {
       console.warn(`Asset ${asset.ticker} is not quotable.`);
       return;
     }

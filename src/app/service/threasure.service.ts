@@ -6,6 +6,8 @@ import { TreasuryBondResponse } from '../model/threasure.model';
 import { map, Observable, of, tap } from 'rxjs';
 import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 import { Currency } from '../model/domain.model';
+import { getMarketPlaceCode } from './quote.service';
+import { MarketPlaceEnum } from '../model/investment.model';
 
 @Injectable({
   providedIn: 'root'
@@ -19,12 +21,14 @@ export class ThreasureService implements IRemoteQuote{
   constructor() { }
 
   price(tickers: string[]): Observable<Record<string, QuoteResponse>> {
+    tickers = tickers.map(ticker => ticker.replace(/.*:/g, ''));
     return this.getBondsById(tickers).pipe(
       map((response) => {
         // Iterate over the response and extract the relevant data
         const quotes = Object.values(response).reduce((acc, bondData) => {
           const bond = bondData.TrsrBd;
-          acc[bond.isinCd] = {
+          const ticker = getMarketPlaceCode({ marketPlace: MarketPlaceEnum.BRTD, code: bond.isinCd });
+          acc[ticker] = {
             price: bond.untrRedVal,
             lastUpdate: new Date(bond.mtrtyDt),
             ticker: bond.isinCd,
@@ -59,7 +63,7 @@ export class ThreasureService implements IRemoteQuote{
   }
 
   getBondsById(ids: string[]) {
-    const params = new HttpParams().set('ids', ids.join(','));
+    const params = new HttpParams().set('bonds', ids.join(','));
     const url = `${environment.apiBaseUrl}/bonds/filter`;
     const cacheKey = `${url}?${params.toString()}`;
     const cachedResponse = this.cacheService.get<TreasuryBondResponse>(cacheKey);

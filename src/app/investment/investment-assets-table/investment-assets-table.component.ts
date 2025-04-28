@@ -9,7 +9,6 @@ import { AssetQuoteType } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { CurrencyComponent } from '../../utils/currency/currency.component';
-import { AssetCodePipe } from '../../utils/pipe/asset-code.pipe';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { TrendComponent } from '../../utils/trend/trend.component';
 
@@ -24,8 +23,7 @@ import { TrendComponent } from '../../utils/trend/trend.component';
     FontAwesomeModule,
     CurrencyComponent,
     TrendComponent,
-    AssetTypePipe,
-    AssetCodePipe
+    AssetTypePipe
   ],
   templateUrl: './investment-assets-table.component.html',
   styleUrl: './investment-assets-table.component.scss'
@@ -40,6 +38,7 @@ export class InvestmentAssetsTableComponent implements OnInit {
 
   datasource = computed(() => {
     const assets = Object.values(this.assetService.assets())
+      .sort((a, b) => a.type.localeCompare(b.type) || a.ticker.localeCompare(b.ticker))
       .map(asset => ({
         ...asset,
         deletable: this.editable() && (this.portfolioService.portfoliosOfAsset(asset)?.length || 0) < 1

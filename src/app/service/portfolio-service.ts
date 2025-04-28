@@ -229,7 +229,7 @@ export class PortfolioService {
     Object.values(allocSummarizedMap).forEach(alloc=>{
       this.summarize(
         {currency: portfolioCurrency, result: portfolioTotal},
-        {currency: assets[alloc.data.ticker]?.quote.currency || portfolio.currency, item: alloc.data}
+        {currency: assets[alloc.data.ticker]?.quote.currency || raw.currency, item: alloc.data}
       )
     });
 

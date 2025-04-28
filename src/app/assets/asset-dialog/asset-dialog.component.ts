@@ -13,6 +13,7 @@ import { MarketPlaceEnum } from '../../model/investment.model';
 import { AssetEnum, AssetQuoteType } from '../../model/source.model';
 import { RemoteQuotesService } from '../../service/remote-quotes.service';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
+import { CurrencyPipe } from '@angular/common';
 
 export type AssetDialogType = {
   title: string,
@@ -32,6 +33,7 @@ export type AssetDialogType = {
     MatCheckboxModule,
     MatCardModule,
     MatButtonModule,
+    CurrencyPipe,
     AssetTypePipe
   ],
   templateUrl: './asset-dialog.component.html',
@@ -84,12 +86,15 @@ export class AssetDialogComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     combineLatest([
       this.marketPlace.valueChanges.pipe(startWith(this.marketPlace.value)),
-      this.code.valueChanges.pipe(startWith(this.code.value)).pipe(
+      this.code.valueChanges.pipe(startWith(this.code.value)),
+      this.manualQuote.valueChanges.pipe(startWith(this.manualQuote.value))
+      .pipe(
         debounceTime(1000),
         distinctUntilChanged()
       )
     ]).subscribe(([marketPlace, code]) => {
-      if (!! code) {
+      const manualQuote = this.manualQuote.value;
+      if (!! code && ! manualQuote) {
         this.remoteQuotesService.getRemoteQuote(marketPlace, code.toLocaleUpperCase()).subscribe(quoteResponse => {
           if (quoteResponse) {
             if (! this.name.value) {

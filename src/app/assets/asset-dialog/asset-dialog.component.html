@@ -55,6 +55,11 @@
                     }
                 </mat-form-field>
             }
+            @else {
+                <div>
+                    {{ quoteValue.value | currency:quoteCurrency.value }}
+                </div>
+            }
         </ng-container>
         
         <div class="d-flex justify-content-between">
