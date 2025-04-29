@@ -3,6 +3,10 @@
     margin: 20px 0;
 }
 
+.lock-icon {
+    width: 18px;
+}
+
 .financial-grid {
 
     th,
@@ -59,4 +63,9 @@
     .month-total {
         width: 8%;
     }
+
+    .negative-cell {
+        background-color: rgba(255, 0, 0, 0.1);
+    }
+
 }

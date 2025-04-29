@@ -3,11 +3,16 @@ import { Component, EventEmitter, input, Input, OnInit, Output } from '@angular/
 import { FormsModule } from '@angular/forms';
 import { CellChangeEvent, CellData, GridData, RowData } from './financial-gird.model';
 import { getMonth } from 'date-fns';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-financial-grid',
   standalone: true,
-  imports: [FormsModule],
+  imports: [
+    FormsModule,
+    FontAwesomeModule,
+  ],
   templateUrl: './financial-grid.component.html',
   styleUrl: './financial-grid.component.scss',
 })
@@ -21,7 +26,12 @@ export class FinancialGridComponent {
 
   showFooter = input<boolean>(true);
 
+  showColumnTotal = input<boolean>(true);
+
   editable = input<boolean>(true);
+
+  readonly faLock = faLock;
+  readonly faLockOpen = faLockOpen;
   
   @Output() cellChanged = new EventEmitter<CellChangeEvent>();
   
@@ -45,7 +55,8 @@ export class FinancialGridComponent {
       rows.push({
         label: `Item ${i + 1}`,
         cells: cells,
-        disabled: false
+        disabled: false,
+        operation: 'plus'
       });
     }
     
@@ -80,32 +91,6 @@ export class FinancialGridComponent {
     });
   }
 
-  toggleCell(rowIndex: number, columnIndex: number, event: MouseEvent): void {
-    event.stopPropagation(); // Evita que o evento propague para a célula/linha
-    const cell = this.gridData().rows[rowIndex].cells[columnIndex];
-    cell.disabled = !cell.disabled;
-  }
-
-  toggleRow(rowIndex: number): void {
-    const row = this.gridData().rows[rowIndex];
-    row.disabled = !row.disabled;
-    
-    // Atualiza o estado de todas as células na linha
-    row.cells.forEach(cell => {
-      cell.disabled = row.disabled;
-    });
-  }
-
-  toggleColumn(columnIndex: number): void {
-    // Verifica se todas as células da coluna estão desabilitadas
-    const allDisabled = this.gridData().rows.every(row => row.cells[columnIndex].disabled);
-    
-    // Inverte o estado atual
-    this.gridData().rows.forEach(row => {
-      row.cells[columnIndex].disabled = !allDisabled;
-    });
-  }
-
   // Método auxiliar para formatar números para exibição
   formatNumber(value: number | null): string {
     if (value === null) return '';
@@ -114,16 +99,20 @@ export class FinancialGridComponent {
 
   // Método para calcular o total de uma linha
   getRowTotal(rowIndex: number): number {
+    const operation = this.gridData().rows[rowIndex].operation;
+    if (operation === 'none') return 0; // Se a operação for 'none', retorna 0
+    
     return this.gridData().rows[rowIndex].cells
-      .map(cell => cell.value || 0)
+      .map(cell => (operation === 'plus' ? 1 : -1) * (cell.value || 0))
       .reduce((sum, value) => sum + value, 0);
   }
 
   // Método para calcular o total de uma coluna
   getColumnTotal(columnIndex: number): number {
-    return this.gridData().rows
-      .map(row => row.cells[columnIndex].value || 0)
-      .reduce((sum, value) => sum + value, 0);
+    return Math.abs(this.gridData().rows
+      .map(row => 
+        (row.operation === 'plus' ? 1 : row.operation === 'minus' ? -1 : 0) * (row.cells[columnIndex].value || 0))
+      .reduce((sum, value) => sum + value, 0));
   }
   
   // Método para verificar se uma coluna está totalmente desabilitada
@@ -138,7 +127,7 @@ export class FinancialGridComponent {
   }
 
   getCellEditable(rowIndex: number, columnIndex: number): boolean {
-    return (this.editable() ?? true) && (this.gridData().rows[rowIndex].cells[columnIndex].editable ?? true);
+    return (this.editable() ?? true);
   }
 
 }

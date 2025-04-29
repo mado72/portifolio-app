@@ -2,13 +2,13 @@
 export interface CellData {
     value: number | null;
     disabled: boolean;
-    editable?: boolean;
   }
   
   export interface RowData {
     label: string;
     cells: CellData[];
     disabled: boolean;
+    operation: "plus" | "minus" | "none";
   }
   
   export interface GridData {

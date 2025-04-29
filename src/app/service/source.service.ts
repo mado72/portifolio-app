@@ -35,90 +35,14 @@ export class SourceService {
     scheduled: signal<Record<string, ScheduledStatemetType>>({}),
     // profitability: signal<ProfitabilityDataRaw>([]),
     profitability: signal<Record<number, Record<string, number[]>>>({}),
+    withdraw: signal<{[year: number]: {[month: number] : number}}>({}),
   };
-
-  readonly assetSource = computed(() => {
-    if (!this.dataIsLoaded()) return {};
-    const assets = this.dataSource.asset();
-    if (Object.keys(assets).length === 0) return {};
-    
-    return Object.entries(assets).reduce((acc, [ticker, item]) => {
-      if (ticker === 'undefined') {
-        console.warn('Ticker is undefined', item);
-        return acc;
-      };
-      const quote = {
-        value: item.quote.value,
-        currency: Currency[item.quote.currency as CurrencyType]
-      }
-      acc[ticker] = {
-        ...item,
-        ticker,
-        lastUpdate: parseISO(item.lastUpdate),
-        initialPrice: quote.value,
-        quote: {
-          currency: quote.currency,
-          value: quote.value
-        },
-        type: AssetEnum[item.type as keyof typeof AssetEnum],
-        trend: 'unchanged'
-      };
-      return acc;
-    }, {} as Record<string, AssetQuoteType>);
-  });
-
-  readonly balanceSource = computed(() => {
-    if (!this.dataIsLoaded()) return {};
-    return Object.entries(this.dataSource.balance()).reduce((acc, [key, item]) => {
-      acc[key] = {
-        ...item,
-        type: AccountTypeEnum[item.type as keyof typeof AccountTypeEnum],
-        balance: {
-          value: item.balance,
-          currency: Currency[item.currency as CurrencyType],
-        },
-        date: parseISO(item.date)
-      };
-      return acc;
-    }, {} as Record<string, BalanceType>)
-  });
-
-  readonly incomeSource = computed(() => {
-    if (!this.dataIsLoaded()) return {};
-
-    return Object.entries(this.dataSource.income()).reduce((acc, [key, item]) => {
-      acc[key] = {
-        ...item,
-        date: parseDateYYYYMMDD(item.date)
-      }
-      return acc;
-    }, {} as Record<string, IncomeType>)
-  });
-
-  readonly investmentSource = computed(() => {
-    if (!this.dataIsLoaded()) return {};
-
-    return this.dataSource.investment();
-  });
-
-  readonly cashflowSource = computed(() => {
-    if (!this.dataIsLoaded()) return {};
-
-    return this.dataSource.cashflow();
-  });
-
-  readonly scheduledSource = computed(() => {
-    if (!this.dataIsLoaded()) return {};
-
-    return this.dataSource.scheduled();
-  })
 
   constructor() { }
 
   loadInitialData() {
     this.dataIsLoaded.set(false);
     this.loadData(initialData);
-    this.dataIsLoaded.set(true);
   }
 
   /**
@@ -157,6 +81,8 @@ export class SourceService {
     this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
     this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
     this.dataSource.profitability.set(this.profitabilitySourceToRecord(jsonData.profitability));
+    this.dataSource.withdraw.set(this.withdrawSourceToRecord(jsonData.withdraw));
+    this.dataIsLoaded.set(true);
   }
 
   emptyAllData() {
@@ -168,6 +94,7 @@ export class SourceService {
     this.dataSource.portfolio.set({});
     this.dataSource.scheduled.set({});
     this.dataSource.profitability.set([]);
+    this.dataSource.withdraw.set({});
     alert('Todos os dados foram excluídos!');
   }
 
@@ -193,7 +120,8 @@ export class SourceService {
       cashflow: Object.values(this.dataSource.cashflow()),
       portfolio: Object.values(this.dataSource.portfolio()),
       scheduled: Object.values(this.dataSource.scheduled()),
-      profitability: this.dataSource.profitability()
+      profitability: this.dataSource.profitability(),
+      withdraw: this.dataSource.withdraw()
     }
     const jsonString = JSON.stringify(data);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -206,6 +134,36 @@ export class SourceService {
   }
 
   // asset ------------------------
+
+  readonly assetSource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+    const assets = this.dataSource.asset();
+    if (Object.keys(assets).length === 0) return {};
+    
+    return Object.entries(assets).reduce((acc, [ticker, item]) => {
+      if (ticker === 'undefined') {
+        console.warn('Ticker is undefined', item);
+        return acc;
+      };
+      const quote = {
+        value: item.quote.value,
+        currency: Currency[item.quote.currency as CurrencyType]
+      }
+      acc[ticker] = {
+        ...item,
+        ticker,
+        lastUpdate: parseISO(item.lastUpdate),
+        initialPrice: quote.value,
+        quote: {
+          currency: quote.currency,
+          value: quote.value
+        },
+        type: AssetEnum[item.type as keyof typeof AssetEnum],
+        trend: 'unchanged'
+      };
+      return acc;
+    }, {} as Record<string, AssetQuoteType>);
+  });
 
   protected assetSourceToRecord(data: AssetSourceRawType[]) {
     return data.reduce((acc, item) => {
@@ -272,6 +230,22 @@ export class SourceService {
 
   // balance ------------------
 
+  readonly balanceSource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+    return Object.entries(this.dataSource.balance()).reduce((acc, [key, item]) => {
+      acc[key] = {
+        ...item,
+        type: AccountTypeEnum[item.type as keyof typeof AccountTypeEnum],
+        balance: {
+          value: item.balance,
+          currency: Currency[item.currency as CurrencyType],
+        },
+        date: parseISO(item.date)
+      };
+      return acc;
+    }, {} as Record<string, BalanceType>)
+  });
+
   protected balanceToRecord(data: BalanceSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id as string] = item;
@@ -319,6 +293,18 @@ export class SourceService {
   }
 
   // income ---------------------
+
+  readonly incomeSource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+
+    return Object.entries(this.dataSource.income()).reduce((acc, [key, item]) => {
+      acc[key] = {
+        ...item,
+        date: parseDateYYYYMMDD(item.date)
+      }
+      return acc;
+    }, {} as Record<string, IncomeType>)
+  });
 
   protected incomeSourceToRecord(data: IncomeSourceRawType[]) {
     return data.reduce((acc, item) => {
@@ -372,6 +358,12 @@ export class SourceService {
   }
 
   // investment -----------------
+
+  readonly investmentSource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+
+    return this.dataSource.investment();
+  });
 
   protected investmentSourceToRecord(data: InvestmentTransactionSourceRawType[]): Record<string, InvestmentTransactionType> {
     return data.reduce((acc, item) => {
@@ -439,6 +431,12 @@ export class SourceService {
   }
 
   // cashflow ----------------------------
+
+  readonly cashflowSource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+
+    return this.dataSource.cashflow();
+  });
 
   protected cashSourceToRecord(data: TransactionSourceRawType[]) {
     return data.reduce((acc, item) => {
@@ -560,6 +558,12 @@ export class SourceService {
 
   // scheduledTransaction --------------
 
+  readonly scheduledSource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+
+    return this.dataSource.scheduled();
+  })
+
   protected scheduledSourceToRecord(data: ScheduledsSourceRawType[]) {
     return data.reduce((acc, item) => {
       acc[item.id as string] = {
@@ -662,6 +666,52 @@ export class SourceService {
     this.dataSource.profitability.update(profitability => {
       delete profitability[year];
       return { ...profitability };
+    })
+  }
+
+  // withdraw --------------
+
+  protected withdrawSourceToRecord(data: {[year: number]: {[month: number] : number}}) {
+    return Object.entries(data).reduce((acc, [year, item]) => {
+      acc[Number(year)] = item;
+      return acc;
+    }, {} as Record<number, {[month: number]: number}>);
+  }
+
+  withdrawToSource(items: Record<number, Record<number, number>>) {
+    return Object.entries(items).reduce((acc, [year, item]) => {
+      acc[year] = item;
+      return acc;
+    }, {} as Record<string, Record<number, number>>);
+  }
+
+  addWithdraw(year: number, month: number, amount: number) {
+    const added = this.withdrawToSource({[year]: {[month]: amount}});
+    this.dataSource.withdraw.update(withdraw => ({
+      ...withdraw,
+      ...added
+    }));
+    return added;
+  }
+
+  updateWithdraw(year: number, month: number, amount: number) {
+    const updated = this.withdrawToSource({[year]: {[month]: amount}});
+    this.dataSource.withdraw.update(withdraw => ({
+      ...withdraw,
+      ...updated
+    }));
+    return updated;
+  }
+
+  deleteWithdraw(year: number, month: number) {
+    this.dataSource.withdraw.update(withdraw => {
+      if (withdraw[year]) {
+        delete withdraw[year][month];
+        if (Object.keys(withdraw[year]).length === 0) {
+          delete withdraw[year];
+        }
+      }
+      return { ...withdraw };
     })
   }
 

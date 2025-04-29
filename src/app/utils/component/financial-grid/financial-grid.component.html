@@ -3,68 +3,67 @@
     <div class="table-responsive">
         <table class="table table-bordered table-hover financial-grid">
             @if (showHeader()) {
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-start">{{ gridData().title }}</th>
-                        @for (month of gridData().months; track month; let colIndex = $index) {
-                        <th [class.table-secondary]="isColumnDisabled(colIndex)"
-                            [class.bg-primary]="colIndex === currentMonthIndex()"
-                            [class.bg-opacity-25]="colIndex === currentMonthIndex()"
-                            class="text-center position-relative month-cell">
-    
-                            {{ month }}
-    
-                            <span class="toggle-icon position-absolute top-0 end-0 p-1">
-                                <i class="bi" [class]="isColumnDisabled(colIndex) ? 'bi-lock-fill' : 'bi-lock'"></i>
-                            </span>
-                        </th>
-                        }
-                        <th class="text-end bg-light month-total">Total</th>
-                    </tr>
-                </thead>
+            <thead class="table-light">
+                <tr>
+                    <th class="text-start">{{ gridData().title }}</th>
+                    @for (month of gridData().months; track month; let colIndex = $index) {
+                    <th [class.table-secondary]="isColumnDisabled(colIndex)"
+                        [class.bg-primary]="colIndex === currentMonthIndex()"
+                        [class.bg-opacity-25]="colIndex === currentMonthIndex()"
+                        class="text-center position-relative month-cell">
+
+                        {{ month }}
+                    </th>
+                    }
+                    @if (showColumnTotal()) {
+                    <th class="text-end bg-light month-total">Total</th>
+                    }
+                </tr>
+            </thead>
             }
             <tbody>
                 @for (row of gridData().rows; track row; let rowIndex = $index) {
                 <tr [class.table-secondary]="row.disabled">
-                    <td class="row-label fw-bold position-relative" (click)="toggleRow(rowIndex)">
+                    <td class="row-label fw-bold position-relative">
                         {{ row.label }}
-                        <span class="toggle-icon position-absolute top-0 end-0 p-1">
-                            <i class="bi" [class]="row.disabled ? 'bi-lock-fill' : 'bi-lock'"></i>
-                        </span>
                     </td>
                     @for (cell of row.cells; track cell; let colIndex = $index) {
-                    <td [class.table-secondary]="cell.disabled || row.disabled" class="position-relative month-cell">
-                        <div class="d-flex align-items-center">
+                    <td [class.table-secondary]="cell.disabled || row.disabled"
+                        [class.negative-cell]="!cell.disabled && row.operation === 'minus'"
+                        class="position-relative month-cell">
+                        <div class="d-flex justify-content-between align-items-center">
+                            @if (row.operation === 'minus' && !!cell.value) {
+                            <span>-</span>
+                            }
                             <input type="number" class="form-control form-control-sm border-0 text-end bg-transparent"
                                 [disabled]="cell.disabled || row.disabled"
-                                [value]="cell.value === null ? '' : cell.value"
-                                [readonly]="!cell.editable || !editable()"
+                                [value]="cell.value === null ? '' : cell.value" [readonly]="!editable()"
                                 (input)="onCellChange(rowIndex, colIndex, $event)" min="0" step="0.01">
-                            <button type="button" class="btn btn-sm btn-link p-0 ms-1 toggle-cell"
-                                (click)="toggleCell(rowIndex, colIndex, $event)">
-                                <i class="bi" [class]="cell.disabled ? 'bi-lock-fill' : 'bi-lock'"></i>
-                            </button>
                         </div>
                     </td>
                     }
+                    @if (showColumnTotal()) {
                     <td class="text-end fw-bold bg-light month-total">{{ formatNumber(getRowTotal(rowIndex)) }}</td>
+                    }
                 </tr>
                 }
             </tbody>
             @if (showFooter()) {
-                <tfoot class="table-light">
-                    <tr>
-                        <td class="fw-bold">Total</td>
-                        @for (month of gridData().months; track month; let colIndex = $index) {
-                        <td class="text-end fw-bold">
-                            {{ formatNumber(getColumnTotal(colIndex)) }}
-                        </td>
-                        }
-                        <td class="text-end fw-bold bg-primary bg-opacity-10">
-                            {{ formatNumber(getGrandTotal()) }}
-                        </td>
-                    </tr>
-                </tfoot>
+            <tfoot class="table-light">
+                <tr>
+                    <td class="fw-bold">Total</td>
+                    @for (month of gridData().months; track month; let colIndex = $index) {
+                    <td class="text-end fw-bold">
+                        {{ formatNumber(getColumnTotal(colIndex)) }}
+                    </td>
+                    }
+                    @if (showColumnTotal()) {
+                    <td class="text-end fw-bold bg-primary bg-opacity-10">
+                        {{ formatNumber(getGrandTotal()) }}
+                    </td>
+                    }
+                </tr>
+            </tfoot>
             }
         </table>
     </div>

@@ -25,31 +25,9 @@ export class ProfitabilityComponent {
 
   currentMonth = getMonth(new Date());
 
-  financialData = computed(() => {
-    const current = this.current();
-    const historical = this.historical();
-
-    return {
-      title: 'Classes',
-      months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      rows: Object.entries(historical).reduce((rows, entry) => {
-        const [classify, values] = entry;
-        rows.push({
-          label: classify,
-          disabled: false,
-          cells: values.reduce((acc, value, index) => {
-            acc.push({value: index >= this.currentMonth ? current[classify] || 0 : value, disabled: index > this.currentMonth});
-            return acc;
-          }, [] as CellData[])
-        });
-        return rows;
-      }, [] as RowData[])
-    };
-  });
 
   cellChanged(event: CellChangeEvent) {
     console.log('Cell changed:', event);
   }
-
 
 }

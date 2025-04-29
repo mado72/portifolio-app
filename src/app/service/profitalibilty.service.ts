@@ -46,5 +46,22 @@ export class ProfitabilityService {
     return this.sourceService.dataSource.profitability()[currentYear];
   })
 
+  withdraw = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return []
+    }
+    const currentYear = getYear(new Date());
+    const withdraw = this.sourceService.dataSource.withdraw()[currentYear];
+    const values = Array(12).fill(0) as number[];
+    if (! withdraw) {
+      return values;
+    }
+    
+    Object.entries(withdraw).forEach(([month, value]) => {
+      values[parseInt(month)] = value;
+    });
+    return values;
+  });      
+
   constructor() { }
 }

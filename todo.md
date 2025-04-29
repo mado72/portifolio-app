@@ -16,3 +16,4 @@ Todo list:
  - [x] Acrescentar banco na lista de transações
  - [x] Acrescentar classe em portfolio
  - [x] Calcular initial value entre transações diferentes.
+ - [ ] Tornar os dados anualizáveis. A estrutura de dados deverá estar organizada por ano.

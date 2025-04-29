@@ -1,8 +1,5 @@
-import { DatePipe, DecimalPipe, KeyValuePipe } from '@angular/common';
-import { Component, computed, EventEmitter, inject, input, Output } from '@angular/core';
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { format, getMonth, setMonth } from 'date-fns';
-import { ProfitabilityService } from '../../service/profitalibilty.service';
+import { Component, computed, input } from '@angular/core';
+import { getMonth } from 'date-fns';
 import { CellChangeEvent, CellData, RowData } from '../../utils/component/financial-grid/financial-gird.model';
 import { FinancialGridComponent } from '../../utils/component/financial-grid/financial-grid.component';
 
@@ -24,7 +21,7 @@ export class ProfitabilityClassesComponent {
   financialData = computed(() => {
     const historical = this.dataSource();
 
-    if (!historical) {
+    if (!historical || !Object.keys(historical).length) {
       return {
         title: 'Classes',
         months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
@@ -38,21 +35,24 @@ export class ProfitabilityClassesComponent {
       return acc;
     }, {} as Record<string, number>);
 
+    const rows = Object.entries(historical).reduce((rows, entry) => {
+      const [classify, values] = entry;
+      rows.push({
+        label: classify,
+        disabled: false,
+        operation: 'plus',
+        cells: values.reduce((acc, value, index) => {
+          acc.push({ value: index >= this.currentMonth ? current[classify] || 0 : value, disabled: index > this.currentMonth });
+          return acc;
+        }, [] as CellData[])
+      });
+      return rows;
+    }, [] as RowData[]);
+
     return {
       title: 'Classes',
       months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      rows: Object.entries(historical).reduce((rows, entry) => {
-        const [classify, values] = entry;
-        rows.push({
-          label: classify,
-          disabled: false,
-          cells: values.reduce((acc, value, index) => {
-            acc.push({value: index >= this.currentMonth ? current[classify] || 0 : value, disabled: index > this.currentMonth});
-            return acc;
-          }, [] as CellData[])
-        });
-        return rows;
-      }, [] as RowData[])
+      rows: rows
     };
   });
 

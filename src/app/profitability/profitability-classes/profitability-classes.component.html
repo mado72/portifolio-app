@@ -1,3 +1,4 @@
-<app-financial-grid [gridData]="financialData()"
-  (cellChanged)="cellChanged($event)">
-</app-financial-grid>
+<app-financial-grid 
+  [gridData]="financialData()"
+  (cellChanged)="cellChanged($event)"
+  [showColumnTotal]="false"></app-financial-grid>

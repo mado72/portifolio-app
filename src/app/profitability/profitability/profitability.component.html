@@ -1,11 +1,3 @@
 <app-profitability-classes
   [dataSource]="historical()"
 ></app-profitability-classes>
-
-<app-financial-grid 
-  [gridData]="financialData()"
-  (cellChanged)="cellChanged($event)"
-  [showHeader]="false"
-  [showFooter]="false"
-  [editable]="false">
-</app-financial-grid>
