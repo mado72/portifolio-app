@@ -3,15 +3,12 @@ import { Component, EventEmitter, input, Input, OnInit, Output } from '@angular/
 import { FormsModule } from '@angular/forms';
 import { CellChangeEvent, CellData, GridData, RowData } from './financial-gird.model';
 import { getMonth } from 'date-fns';
-import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faLock, faLockOpen } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-financial-grid',
   standalone: true,
   imports: [
-    FormsModule,
-    FontAwesomeModule,
+    FormsModule
   ],
   templateUrl: './financial-grid.component.html',
   styleUrl: './financial-grid.component.scss',
@@ -30,9 +27,6 @@ export class FinancialGridComponent {
 
   editable = input<boolean>(true);
 
-  readonly faLock = faLock;
-  readonly faLockOpen = faLockOpen;
-  
   @Output() cellChanged = new EventEmitter<CellChangeEvent>();
   
   // Meses abreviados em português
@@ -128,6 +122,10 @@ export class FinancialGridComponent {
 
   getCellEditable(rowIndex: number, columnIndex: number): boolean {
     return (this.editable() ?? true);
+  }
+
+  tabIndex(rowIndex: number, columnIndex: number): number {
+    return columnIndex * this.gridData().rows.length + rowIndex + 1;
   }
 
 }
