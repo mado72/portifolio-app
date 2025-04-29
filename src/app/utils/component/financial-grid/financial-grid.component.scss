@@ -1,0 +1,62 @@
+/* financial-grid.component.scss */
+.financial-grid-container {
+    margin: 20px 0;
+}
+
+.financial-grid {
+
+    th,
+    td {
+        vertical-align: middle;
+    }
+
+    .toggle-icon,
+    .toggle-cell {
+        opacity: 0.3;
+        font-size: 0.8rem;
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+
+    tr:hover .toggle-icon,
+    td:hover .toggle-cell {
+        opacity: 0.7;
+    }
+
+    input[type="number"] {
+        &:focus {
+            box-shadow: none;
+            outline: none;
+            background-color: rgba(13, 110, 253, 0.1) !important;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+
+        /* Remove as setas do input number */
+        appearance: textfield;
+        -moz-appearance: textfield;
+
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    }
+
+    .row-label {
+        background-color: rgba(0, 0, 0, 0.02);
+        cursor: pointer;
+    }
+
+    .month-cell {
+        width: 6.5%;
+    }
+
+    .month-total {
+        width: 8%;
+    }
+}
