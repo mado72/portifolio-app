@@ -12,8 +12,17 @@ import { getMonth } from 'date-fns';
   styleUrl: './financial-grid.component.scss',
 })
 export class FinancialGridComponent {
+  
   gridData = input<GridData>(this.initializeDefaultData());
+
   currentMonthIndex = input<number>(getMonth(new Date()));
+
+  showHeader = input<boolean>(true);
+
+  showFooter = input<boolean>(true);
+
+  editable = input<boolean>(true);
+  
   @Output() cellChanged = new EventEmitter<CellChangeEvent>();
   
   // Meses abreviados em português
@@ -129,6 +138,7 @@ export class FinancialGridComponent {
   }
 
   getCellEditable(rowIndex: number, columnIndex: number): boolean {
-    return (this.gridData().editable ?? true) && (this.gridData().rows[rowIndex].cells[columnIndex].editable ?? true);
+    return (this.editable() ?? true) && (this.gridData().rows[rowIndex].cells[columnIndex].editable ?? true);
   }
+
 }

@@ -15,7 +15,6 @@ export interface CellData {
     title: string;
     months: string[];
     rows: RowData[];
-    editable?: boolean;
   }
   
   export type CellChangeEvent = {
