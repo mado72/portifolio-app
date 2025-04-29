@@ -7,6 +7,8 @@ import { SourceService } from './service/source.service';
 import { JsonPipe } from '@angular/common';
 import { PortfolioService } from './service/portfolio-service';
 import { BalanceService } from './service/balance.service';
+import { setDefaultOptions } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 @Component({
   selector: 'app-root',
@@ -42,10 +44,12 @@ export class AppComponent {
     acc["assets"] = datasource.asset();
     acc["accounts"] = datasource.balance();
     acc["transactions"] = datasource.investment();
+    acc["profitability"] = datasource.profitability();
     return acc;
   })
 
   constructor() {
     inject(RemoteQuotesService);
+    setDefaultOptions({ locale: ptBR })
   }
 }
