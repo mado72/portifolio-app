@@ -10,6 +10,8 @@ import {
   IncomeSourceDataType as IncomeSourceRawType, IncomeType,
   InvestmentTransactionSourceRawType, InvestmentTransactionType,
   PortfolioSourceRawType,
+  ProfitabilityDataRaw,
+  ProfitabilityDataRawItem,
   ScheduledsSourceDataType as ScheduledsSourceRawType,
   ScheduledStatemetType,
   Ticker,
@@ -30,7 +32,9 @@ export class SourceService {
     investment: signal<Record<string, InvestmentTransactionType>>({}),
     cashflow: signal<Record<string, TransactionType>>({}), // FIXME forçando data para o mês corrente
     portfolio: signal<Record<string, PortfolioSourceRawType>>({}),
-    scheduled: signal<Record<string, ScheduledStatemetType>>({})
+    scheduled: signal<Record<string, ScheduledStatemetType>>({}),
+    // profitability: signal<ProfitabilityDataRaw>([]),
+    profitability: signal<Record<number, Record<string, number[]>>>({}),
   };
 
   readonly assetSource = computed(() => {
@@ -152,6 +156,7 @@ export class SourceService {
     this.dataSource.cashflow.set(this.cashSourceToRecord(jsonData.cashflow));
     this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
     this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
+    this.dataSource.profitability.set(this.profitabilitySourceToRecord(jsonData.profitability));
   }
 
   emptyAllData() {
@@ -162,6 +167,7 @@ export class SourceService {
     this.dataSource.cashflow.set({});
     this.dataSource.portfolio.set({});
     this.dataSource.scheduled.set({});
+    this.dataSource.profitability.set([]);
     alert('Todos os dados foram excluídos!');
   }
 
@@ -186,7 +192,8 @@ export class SourceService {
       investment: Object.values(this.dataSource.investment()),
       cashflow: Object.values(this.dataSource.cashflow()),
       portfolio: Object.values(this.dataSource.portfolio()),
-      scheduled: Object.values(this.dataSource.scheduled())
+      scheduled: Object.values(this.dataSource.scheduled()),
+      profitability: this.dataSource.profitability()
     }
     const jsonString = JSON.stringify(data);
     const blob = new Blob([jsonString], { type: 'application/json' });
@@ -621,5 +628,42 @@ export class SourceService {
     })
     this.dataSource.asset.update(assets => ({ ...assets })); // force update
   }
+
+  // profitability --------------
+
+  protected profitabilitySourceToRecord(data: ProfitabilityDataRaw) {
+    return Object.entries(data).reduce((acc, [year, item]) => {
+      acc[Number(year)] = item;
+      return acc;
+    }, {} as Record<number, ProfitabilityDataRawItem>);
+  }
+
+  profitabilityToSource(items: Record<number, Record<string, number[]>>) {
+    return Object.entries(items).reduce((acc, [year, item]) => {
+      acc[year.toString()] = item;
+      return acc;
+    }, {} as Record<string, ProfitabilityDataRawItem>);
+  }
+
+  addProfitability(year: number, item: ProfitabilityDataRawItem) {
+    const added = this.profitabilityToSource({[year.toString()]: item});
+    this.dataSource.profitability.update(profitability => ({
+      ...profitability,
+      ...added
+    }))
+    return added;
+  }
+
+  updateProfitability(year: number, changes: ProfitabilityDataRawItem) {
+    return this.addProfitability(year, changes);
+  }
+
+  deleteProfitability(year: number) {
+    this.dataSource.profitability.update(profitability => {
+      delete profitability[year];
+      return { ...profitability };
+    })
+  }
+
 }
 

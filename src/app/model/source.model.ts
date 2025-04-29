@@ -233,3 +233,7 @@ export type ScheduledStatemetType = Omit<ScheduledsSourceDataType, "scheduled" |
 }
 
 export type ScheduledSourceDataRecord = Record<string, ScheduledStatemetType>;
+
+export type ProfitabilityDataRawItem = { [classify: string]: number[] }
+
+export type ProfitabilityDataRaw = { [year: string | number]: { [classify: string]: number[] } }

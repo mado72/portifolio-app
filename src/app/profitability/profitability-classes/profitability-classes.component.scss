@@ -1,0 +1,20 @@
+.form-control {
+    border: 0
+}
+
+.month {
+    width: 12%;
+}
+
+.current-month {
+    background-color: #f0f8ff !important;
+
+    input {
+        background-color: #f0f8ff !important;
+    }
+    color: #000 !important;
+}
+
+input {
+    font-size: 0.9em !important;
+}
