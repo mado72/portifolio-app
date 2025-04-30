@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./layout/header/header.component";
 import { RemoteQuotesService } from './service/remote-quotes.service';
@@ -22,25 +22,57 @@ import { ptBR } from 'date-fns/locale';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'portifolio-app';
 
   private sourceService = inject(SourceService);
   private portfolioService = inject(PortfolioService);
   private balanceService = inject(BalanceService);
+  private remoteQuoteService = inject(RemoteQuotesService);
 
-  portfolios = this.portfolioService.portfolios;
+  source = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {}
+    }
+    return this.sourceService.getData();
+  });
 
-  transactions = this.sourceService.investmentSource;
+  portfolios = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {}
+    }
+    return this.portfolioService.portfolios();
+  });
 
-  assets = this.sourceService.assetSource;
+  transactions = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {}
+    }
+    return this.sourceService.investmentSource();
+  });
 
-  balances = this.balanceService.getAccounts
+  assets = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {}
+    }
+    return this.sourceService.assetSource();
+  });
 
-  source = this.sourceService.getData;
+  balances = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {}
+    }
+    return this.balanceService.getAccounts();
+  });
+
 
   constructor() {
-    inject(RemoteQuotesService);
     setDefaultOptions({ locale: ptBR })
+  }
+
+  ngOnInit() {
+    this.remoteQuoteService.updateExchanges().subscribe(() => {
+      this.sourceService.loadInitialData();
+    });
   }
 }

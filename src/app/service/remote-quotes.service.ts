@@ -76,9 +76,6 @@ export class RemoteQuotesService {
 
   constructor() {
     this.updateQuotes(this.sourceService.assetSource()).subscribe();
-    this.updateExchanges().subscribe(()=> {
-      this.sourceService.loadInitialData();
-    });
     effect(() => {
       const diffLastUpdate = differenceInSeconds(this.lastUpdate().value, this.lastUpdate().old as Date);
       if (diffLastUpdate > 0) {
