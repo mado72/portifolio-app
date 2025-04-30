@@ -112,17 +112,7 @@ export class SourceService {
    * @returns {void} - This function does not return any value.
    */
   downloadDataAsJson(filename: string = 'data.json') {
-    const data = {
-      asset: Object.values(this.dataSource.asset()),
-      balance: Object.values(this.dataSource.balance()),
-      income: Object.values(this.dataSource.income()),
-      investment: Object.values(this.dataSource.investment()),
-      cashflow: Object.values(this.dataSource.cashflow()),
-      portfolio: Object.values(this.dataSource.portfolio()),
-      scheduled: Object.values(this.dataSource.scheduled()),
-      profitability: this.dataSource.profitability(),
-      withdraw: this.dataSource.withdraw()
-    }
+    const data = this.getData()
     const jsonString = JSON.stringify(data);
     const blob = new Blob([jsonString], { type: 'application/json' });
     const url = window.URL.createObjectURL(blob);
@@ -164,6 +154,18 @@ export class SourceService {
       return acc;
     }, {} as Record<string, AssetQuoteType>);
   });
+
+  getData = computed(() =>({
+      asset: Object.values(this.dataSource.asset()),
+      balance: Object.values(this.dataSource.balance()),
+      income: Object.values(this.dataSource.income()),
+      investment: Object.values(this.dataSource.investment()),
+      cashflow: Object.values(this.dataSource.cashflow()),
+      portfolio: Object.values(this.dataSource.portfolio()),
+      scheduled: Object.values(this.dataSource.scheduled()),
+      profitability: this.dataSource.profitability(),
+      withdraw: this.dataSource.withdraw()
+    }));
 
   protected assetSourceToRecord(data: AssetSourceRawType[]) {
     return data.reduce((acc, item) => {

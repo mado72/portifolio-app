@@ -187,10 +187,13 @@ export class EarningsYearSheetComponent implements OnInit {
   }
 
   private filterByTypeReference(earnings: { date: Date; id: string; ticker: string; amount: number; type: IncomeEnum; }[]) {
-    const assets = Object.entries(this.assets)
-      .filter(([_, asset]) => asset.type === this.filter().typeReference)
-      .map(([ticker, _]) => ticker);
-    return earnings.filter(earning => assets.includes(earning.ticker));
+    const typeReference = this.filter().typeReference;
+    const assets = this.assets();
+    const filtered = Object.entries(assets)
+      .filter(([_, asset]) => asset.type === typeReference)
+      .map(([ticker, _]) => ticker)
+      .sort();
+    return earnings.filter(earning => filtered.includes(earning.ticker));
   }
 
   totalMonth(vlMonth: number): number {

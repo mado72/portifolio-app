@@ -4,12 +4,14 @@ import { FinancialGridComponent } from '../../utils/component/financial-grid/fin
 import { CellChangeEvent, CellData, RowData } from '../../utils/component/financial-grid/financial-gird.model';
 import { ProfitabilityService } from '../../service/profitalibilty.service';
 import { getMonth } from 'date-fns';
+import { ProfitabilityIncomeWithdrawComponent } from '../profitability-income-withdraw/profitability-income-withdraw.component';
 
 @Component({
   selector: 'app-profitability',
   standalone: true,
   imports: [
     ProfitabilityClassesComponent,
+    ProfitabilityIncomeWithdrawComponent,
     FinancialGridComponent
   ],
   templateUrl: './profitability.component.html',

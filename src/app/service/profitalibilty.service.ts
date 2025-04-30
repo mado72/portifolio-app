@@ -64,4 +64,9 @@ export class ProfitabilityService {
   });      
 
   constructor() { }
+  
+  months() {
+    return ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+  }
+
 }

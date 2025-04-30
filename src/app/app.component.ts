@@ -37,16 +37,7 @@ export class AppComponent {
 
   balances = this.balanceService.getAccounts
 
-  source = computed(() => {
-    const acc : Record<string, any> = {};
-    const datasource = this.sourceService.dataSource;
-    acc["portfolios"] = datasource.portfolio();
-    acc["assets"] = datasource.asset();
-    acc["accounts"] = datasource.balance();
-    acc["transactions"] = datasource.investment();
-    acc["profitability"] = datasource.profitability();
-    return acc;
-  })
+  source = this.sourceService.getData;
 
   constructor() {
     inject(RemoteQuotesService);
