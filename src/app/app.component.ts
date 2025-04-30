@@ -1,4 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
+import { AfterViewInit, Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from "./layout/header/header.component";
 import { RemoteQuotesService } from './service/remote-quotes.service';
@@ -9,6 +9,10 @@ import { PortfolioService } from './service/portfolio-service';
 import { BalanceService } from './service/balance.service';
 import { setDefaultOptions } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { QuoteService } from './service/quote.service';
+import { AssetQuoteType } from './model/source.model';
+
+const DEBOUNCE_TIME = 1000;
 
 @Component({
   selector: 'app-root',
@@ -22,7 +26,7 @@ import { ptBR } from 'date-fns/locale';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'portifolio-app';
 
   private sourceService = inject(SourceService);
@@ -30,19 +34,14 @@ export class AppComponent implements OnInit {
   private balanceService = inject(BalanceService);
   private remoteQuoteService = inject(RemoteQuotesService);
 
-  source = computed(() => {
-    if (!this.sourceService.dataIsLoaded()) {
-      return {}
-    }
-    return this.sourceService.getData();
-  });
+  source = signal<any>({});
 
-  portfolios = computed(() => {
-    if (!this.sourceService.dataIsLoaded()) {
-      return {}
-    }
-    return this.portfolioService.portfolios();
-  });
+  // portfolios = computed(() => {
+  //   if (!this.sourceService.dataIsLoaded()) {
+  //     return {}
+  //   }
+  //   return this.portfolioService.portfolios();
+  // });
 
   transactions = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
@@ -51,28 +50,41 @@ export class AppComponent implements OnInit {
     return this.sourceService.investmentSource();
   });
 
-  assets = computed(() => {
+  inputSource = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return {}
     }
-    return this.sourceService.assetSource();
+    return this.sourceService.getData();
   });
 
-  balances = computed(() => {
-    if (!this.sourceService.dataIsLoaded()) {
-      return {}
-    }
-    return this.balanceService.getAccounts();
-  });
-
+  debounceTimeout: any = null;
 
   constructor() {
     setDefaultOptions({ locale: ptBR })
+
+    effect(() => {
+      const source = this.inputSource();
+
+      if (this.debounceTimeout) {
+        clearTimeout(this.debounceTimeout);
+      }
+      this.debounceTimeout = setTimeout(() => {
+        // this.assets.set(this.inputAssets());
+        this.source.set(source);
+      }, DEBOUNCE_TIME);
+    });
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.remoteQuoteService.updateExchanges().subscribe(() => {
       this.sourceService.loadInitialData();
     });
+  }
+
+  ngOnDestroy(): void {
+    if (this.debounceTimeout) {
+      clearTimeout(this.debounceTimeout);
+    }
+    this.remoteQuoteService.destroy();
   }
 }
