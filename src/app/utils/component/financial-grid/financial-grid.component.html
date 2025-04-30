@@ -15,7 +15,7 @@
                         {{ month }}
                     </th>
                     }
-                    @if (showColumnTotal()) {
+                    @if (showTotalColumn()) {
                     <th class="text-end bg-light month-total">Total</th>
                     }
                 </tr>
@@ -49,7 +49,7 @@
                         </div>
                     </td>
                     }
-                    @if (showColumnTotal()) {
+                    @if (showTotalColumn()) {
                     <td class="text-end fw-bold bg-light month-total">{{ formatNumber(getRowTotal(rowIndex)) }}</td>
                     }
                 </tr>
@@ -64,7 +64,7 @@
                         {{ formatNumber(getColumnTotal(colIndex)) }}
                     </td>
                     }
-                    @if (showColumnTotal()) {
+                    @if (showTotalColumn()) {
                     <td class="text-end fw-bold bg-primary bg-opacity-10">
                         {{ formatNumber(getGrandTotal()) }}
                     </td>

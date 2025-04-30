@@ -23,7 +23,7 @@ export class FinancialGridComponent {
 
   showFooter = input<boolean>(true);
 
-  showColumnTotal = input<boolean>(true);
+  showTotalColumn = input<boolean>(true);
 
   editable = input<boolean>(true);
 

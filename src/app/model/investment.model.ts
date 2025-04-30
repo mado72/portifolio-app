@@ -131,3 +131,10 @@ export type ExchangeStructureType = {
 }
 
 export type ExchangeView = "original" | "exchanged";
+
+export type MonthsNumberArray = number[];
+
+export interface ProfitabilityByClass {
+    classify: string;
+    values: MonthsNumberArray;
+}
