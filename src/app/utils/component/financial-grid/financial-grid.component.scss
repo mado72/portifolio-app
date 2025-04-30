@@ -1,4 +1,7 @@
 /* financial-grid.component.scss */
+.table {
+    width: calc(100% - 2rem);
+}
 .financial-grid-container {
     margin: 20px 0;
 }
@@ -68,4 +71,32 @@
         background-color: rgba(255, 0, 0, 0.1);
     }
 
+}
+
+.cell-copy-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.cell-copy-text {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    text-align: right;
+    pointer-events: none; // Não impede o clique no input
+    user-select: auto; // Permite selecionar e copiar
+    // padding-right: 0.5rem;
+    font-size: 0.8rem;
+    background: transparent;
+    z-index: 1;
+}
+
+.cell-copy-input {
+    position: relative;
+    background: transparent;
+    padding: 0 12px 0 0;
+    z-index: 2;
 }
