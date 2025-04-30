@@ -17,3 +17,5 @@ Todo list:
  - [x] Acrescentar classe em portfolio
  - [x] Calcular initial value entre transações diferentes.
  - [ ] Tornar os dados anualizáveis. A estrutura de dados deverá estar organizada por ano.
+ - [ ] Criar um novo banco de dados para cada ano.
+ - [ ] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
