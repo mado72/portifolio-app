@@ -67,6 +67,12 @@
         width: 8%;
     }
 
+    .table-secondary.negative-cell {
+        background-color: rgba(234, 182, 182);
+    }
+    .table-secondary.positive-cell {
+        background-color: rgb(132, 152, 132,0.8);
+    }
     .negative-cell {
         background-color: rgba(255, 0, 0, 0.1);
     }
@@ -97,5 +103,6 @@
     position: relative;
     background: transparent;
     padding: 0 12px 0 0;
+    width: 95%;
     z-index: 2;
 }

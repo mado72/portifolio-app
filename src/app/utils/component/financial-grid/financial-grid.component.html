@@ -30,7 +30,8 @@
                     @for (cell of row.cells; track cell; let colIndex = $index) {
                     <td [class.table-secondary]="cell.disabled || row.disabled"
                         [class.negative-cell]="!cell.disabled && row.operation === 'minus'"
-                        class="position-relative month-cell">
+                        [class.positive-cell]="row.disabled && !isColumnDisabled(colIndex) && row.operation === 'plus'"
+                            class="position-relative month-cell">
                         <div class="d-flex justify-content-between align-items-center">
                             @if (row.operation === 'minus' && !!cell.value) {
                             <span>-</span>
