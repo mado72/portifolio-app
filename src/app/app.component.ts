@@ -76,9 +76,11 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.remoteQuoteService.updateExchanges().subscribe(() => {
-      this.sourceService.loadInitialData();
-    });
+    setTimeout(() => {
+      this.remoteQuoteService.updateExchanges().subscribe(() => {
+        this.sourceService.loadInitialData();
+      });
+    }, 0);
   }
 
   ngOnDestroy(): void {
