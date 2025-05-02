@@ -5,13 +5,16 @@
   <app-financial-grid 
   [gridData]="financialGridData()"
   [showTotalColumn]="false"
+  (cellChange)="onFinancialCellChanged($event)"
   ></app-financial-grid>
+  
   <app-financial-grid 
     [gridData]="contributionGridData()"
     [showTotalColumn]="false"
     [showHeader]="false"
     [showFooter]="false"
     [tabIndexInitial]="financialGridData().rows.length + 1"
+    (cellChange)="onContributionCellChanged($event)"
     ></app-financial-grid>
   
     <app-financial-grid 

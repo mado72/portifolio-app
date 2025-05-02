@@ -8,7 +8,7 @@ import { TransactionService } from './transaction.service';
 import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
 import { InvestmentEnum, MonthsNumberArray, TransactionStatus } from '../model/investment.model';
 import { ProfitabilityByClass } from '../model/investment.model';
-import { CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
+import { CellChangeEvent, CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
 import { Currency } from '../model/domain.model';
 
 export type AggregatedKinds = 'incomes' | 'contributions' | 'redemptions' | 'withdrawals';
@@ -19,7 +19,6 @@ export type AggregatedTransactionsRows = { [type in AggregatedKinds]: RowData };
   providedIn: 'root'
 })
 export class ProfitabilityService {
-
   private sourceService = inject(SourceService);
 
   private portfolioService = inject(PortfolioService);
@@ -35,6 +34,7 @@ export class ProfitabilityService {
     return this.getCurrentMonthProfitability(this.portfolioService.portfolios());
   });
 
+  // Modificado para usar o sinal profitability do SourceService
   profitabilityByClassRows = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return []
@@ -42,7 +42,11 @@ export class ProfitabilityService {
 
     const profitabilityByClass = this.calculateProfitability(
       this.portfolioService.portfolios(), this.sourceService.dataSource.profitability());
-    return this.convertProfitabilityByClassToRowData(profitabilityByClass, this.currentMonthProfitability());
+    return this.convertProfitabilityByClassToRowData(profitabilityByClass, this.currentMonthProfitability())
+      .reduce((acc, row) => {
+        acc[row.label] = row;
+        return acc;
+      }, {} as { [classify: string]: RowData });
   });
 
   aggregatedTransactionsRows = computed(() => {
@@ -60,10 +64,11 @@ export class ProfitabilityService {
     }
     const aggregatedTransactionsRows = this.aggregatedTransactionsRows();
 
+    const profitabilityRows = Object.values(this.profitabilityByClassRows());
     return {
       title: 'Rendimentos e Resgates',
       months: this.months(),
-      rows: this.profitabilityByClassRows().concat(
+      rows: profitabilityRows.concat(
         aggregatedTransactionsRows?.redemptions || [],
         aggregatedTransactionsRows?.withdrawals || [],
       )
@@ -94,23 +99,23 @@ export class ProfitabilityService {
     if (!this.sourceService.dataIsLoaded()) {
       return null;
     }
-    const profitabilityByClassRows = this.profitabilityByClassRows();
+    const profitabilityByClassRows = Object.values(this.profitabilityByClassRows());
     const previousYearEndValue = profitabilityByClassRows.reduce((acc, row) => {
-      const firstMonthCell = row.cells[0]; // Pega a célula do primeiro mês
+      const firstMonthCell = row.cells[0]; // Gets the cell of the first month
       if (firstMonthCell?.value) {
-        acc += firstMonthCell.value; // Soma os valores das células do primeiro mês
+        acc += firstMonthCell.value; // Adds the values of the cells from the first month
       }
       return acc;
-    }, 0) || 0; 
+    }, 0) || 0;
     // TODO: Deveria ser o valor do ano anterior, não o total do primeiro mês 
 
     const profitabilityRows = this.calculateVAR(profitabilityByClassRows, previousYearEndValue);
     const rows = [
       profitabilityRows?.growthValues ?? { label: 'Crescimento', disabled: true, operation: 'none', cells: [] },
       profitabilityRows?.varValues ?? { label: 'VAR', disabled: true, operation: 'none', cells: [] },
-      profitabilityRows?.varPercValues ?? { label: 'VAR%', disabled: true, operation: 'none', cells: [] },
-      profitabilityRows?.aggregatedValues ?? { label: 'Acumulado', disabled: true, operation: 'none', cells: [] },
-      profitabilityRows?.yieldValues ?? { label: 'Yield', disabled: true, operation: 'none', cells: [] }
+      profitabilityRows?.varPercValues ?? { label: 'VAR%', disabled: true, operation: 'none', cells: [], suffix: '%' },
+      profitabilityRows?.aggregatedValues ?? { label: 'Acumulado', disabled: true, operation: 'none', cells: [], suffix: '%' },
+      profitabilityRows?.yieldValues ?? { label: 'Yield', disabled: true, operation: 'none', cells: [], suffix: '%' }
     ];
     return {
       title: 'Crescimento',
@@ -179,7 +184,7 @@ export class ProfitabilityService {
    * It also ensures that cell values are rounded to two decimal places.
    */
   private mapMonthlyInvestmentTransactions(transactionsByMonth: { [month: number]: InvestmentTransactionType[]; }, currencyDefault: Currency) {
-
+    
     const currentMonth = getMonth(new Date());
 
     const initialData: AggregatedTransactionsRows = {
@@ -255,6 +260,7 @@ export class ProfitabilityService {
    * @returns An array of contribution values for each month.
    */
   private calculateContributions(contributions: { [month: number]: number }): number[] {
+    // Implementação existente...
     const values = Array(12).fill(0) as number[];
     if (!contributions) {
       return values;
@@ -278,6 +284,7 @@ export class ProfitabilityService {
    * @returns An array of 12 numbers representing the accumulated contributions for each month.
    */
   private calculateContributionsAccumulated(contributions?: RowData): RowData | undefined {
+    // Implementação existente...
     const values = Array(12).fill(0) as number[];
     if (!contributions) {
       return undefined;
@@ -316,6 +323,7 @@ export class ProfitabilityService {
    *          of InvestmentTransactionType objects for that month.
    */
   private aggregateTransactionsByMonth(transactions: Record<string, InvestmentTransactionType>): { [month: number]: InvestmentTransactionType[]; } {
+    // Implementação existente...
     const filters = [InvestmentEnum.DIVIDENDS, InvestmentEnum.IOE_RETURN, InvestmentEnum.RENT_RETURN, InvestmentEnum.CONTRIBUTION, InvestmentEnum.SELL, InvestmentEnum.WITHDRAWAL];
     return Object.values(transactions)
       .filter(t => filters.includes(t.type)
@@ -342,6 +350,7 @@ export class ProfitabilityService {
    *          are the total profitability for each classification, rounded to two decimal places.
    */
   private getCurrentMonthProfitability(portfolios: PortfolioRecord) {
+    // Implementação existente...
     const currencyDefault = this.exchangeService.currencyDefault();
 
     const portfoliosMap = groupBy(Object.values(portfolios), (portfolio) => portfolio.classify);
@@ -360,15 +369,16 @@ export class ProfitabilityService {
   }
 
   /**
-   * Calculates the profitability for the given portfolios and updates the source data
-   * with the current month's profitability values. It then returns the profitability
-   * data grouped by classification.
+   * Calculates the profitability of a portfolio based on the provided source data.
+   * This method ensures that the source data is not modified directly by creating a copy
+   * and updating it with the current month's profitability values.
    *
-   * @param portfolios - The portfolio record containing the portfolio data.
-   * @param source - A record containing profitability data organized by year, classification,
-   * and an array of monthly values.
-   * @returns An array of profitability data grouped by classification, where each entry
-   * contains the classification and its corresponding values.
+   * @param portfolios - The portfolio record containing the data to calculate profitability for.
+   * @param source - A nested record structure where the first key is the year, the second key is a classification,
+   * and the value is an array of numbers representing monthly profitability values.
+   * @returns An array of objects representing profitability by classification, where each object contains:
+   * - `classify`: The classification key.
+   * - `values`: An array of monthly profitability values for the current year.
    */
   private calculateProfitability(portfolios: PortfolioRecord, source: Record<number, Record<string, number[]>>) {
     if (!this.sourceService.dataIsLoaded()) {
@@ -376,14 +386,24 @@ export class ProfitabilityService {
     }
     const currentMonth = getMonth(new Date());
     const currentYear = getYear(new Date());
-    const currentYearProfitability = source[currentYear];
+
+    // Create a copy of the source object to avoid modifying it directly
+    const updatedSource = { ...source };
+    if (!updatedSource[currentYear]) {
+      updatedSource[currentYear] = {};
+    }
+
     const current = this.getCurrentMonthProfitability(portfolios);
 
+    // Updates the copy with the current values
     Object.entries(current).forEach(([classify, value]) => {
-      currentYearProfitability[classify][currentMonth] = value;
+      if (!updatedSource[currentYear][classify]) {
+        updatedSource[currentYear][classify] = Array(12).fill(0);
+      }
+      updatedSource[currentYear][classify][currentMonth] = value;
     });
 
-    return Object.entries(currentYearProfitability).map(([classify, values]) => ({
+    return Object.entries(updatedSource[currentYear]).map(([classify, values]) => ({
       classify,
       values
     } as ProfitabilityByClass));
@@ -424,7 +444,6 @@ export class ProfitabilityService {
     const aggregatedValues = monthArray.slice() as MonthsNumberArray;
     const yieldValues = monthArray.slice() as MonthsNumberArray;
 
-    // TRM - Total dos rendimentos do mês
     const profitabilityRows: MonthsNumberArray = profitabilityByClassRows.map(row => this.rowDataToNumberArray(row))
       .reduce((acc, row) => {
         row.forEach((value, month) => {
@@ -485,6 +504,62 @@ export class ProfitabilityService {
     };
   }
 
+  /**
+   * Updates the financial grid data based on a cell change event.
+   *
+   * This method modifies the value of a specific cell in the financial grid data
+   * and updates the profitability using the `updateProfitability` method.
+   *
+   * @param event - The cell change event containing the following properties:
+   *   - `rowIndex`: The index of the row in the grid.
+   *   - `columnIndex`: The index of the column in the grid.
+   *   - `value`: The new value to be set in the cell.
+   *   - `rowLabel`: The label of the row being updated.
+   */
+  updateFinancialGridData(event: CellChangeEvent) {
+    const { rowIndex, columnIndex, value, rowLabel } = event;
+    const gridData = this.financialGridData();
+    if (gridData) {
+      const row = gridData.rows[rowIndex];
+      if (row && row.cells[columnIndex]) {
+        row.cells[columnIndex].value = value;
+      }
+    }
+
+    // Update the profitability
+    this.updateProfitability(
+      getYear(new Date()),
+      rowLabel,
+      columnIndex,
+      value ?? 0
+    );
+  }
+
+  
+  /**
+   * Updates the profitability data for a specific year, classification, and month with a given value.
+   * If the year or classification does not exist in the profitability data, it initializes them.
+   *
+   * @param year - The year for which the profitability data is being updated.
+   * @param classify - The classification/category of the profitability data.
+   * @param month - The month (0-indexed) for which the profitability value is being updated.
+   * @param value - The new profitability value to set for the specified year, classification, and month.
+   * @returns A promise or result from the `sourceService.updateProfitability` method, indicating the update status.
+   */
+  updateProfitability(year: number, classify: string, month: number, value: number) {
+    
+    const profiltability = this.sourceService.dataSource.profitability();
+
+    if (!profiltability[year]) {
+      profiltability[year] = {};
+    }
+    if (!profiltability[year][classify]) {
+      profiltability[year][classify] = Array(12).fill(0);
+    }
+    profiltability[year][classify][month] = value;
+    return this.sourceService.updateProfitability(year, profiltability[year]);
+  }
+
   monthNumberArrayToRowData(label: string, monthNumberArray: MonthsNumberArray): RowData {
     const currentMonth = getMonth(new Date());
     return {
@@ -498,5 +573,4 @@ export class ProfitabilityService {
   months() {
     return ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   }
-
 }

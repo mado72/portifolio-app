@@ -31,7 +31,7 @@ export class FinancialGridComponent {
 
   editable = input<boolean>(true);
 
-  @Output() cellChanged = new EventEmitter<CellChangeEvent>();
+  @Output() cellChange = new EventEmitter<CellChangeEvent>();
   
   // Meses abreviados em português
   readonly defaultMonths = [
@@ -70,7 +70,7 @@ export class FinancialGridComponent {
     this.gridData().rows[rowIndex].cells[columnIndex].value = value;
     
     // Emite o evento de mudança
-    this.cellChanged.emit({
+    this.cellChange.emit({
       rowIndex,
       columnIndex,
       value,

@@ -29,4 +29,14 @@ export class ProfitabilityComponent {
   isLoading = computed(() => !this.profitabilityService.financialGridData() 
     || !this.profitabilityService.contributionGridData()
     || !this.profitabilityService.growthGridData());
+
+  onFinancialCellChanged(event: CellChangeEvent) {
+    console.log('Financial cell changed:', event);
+    this.profitabilityService.updateFinancialGridData(event);
+  }
+
+  onContributionCellChanged(event: CellChangeEvent) {
+    console.log('Contribution cell changed:', event);
+    // this.profitabilityService.updateContributionGridData(event);
+  }
 }
