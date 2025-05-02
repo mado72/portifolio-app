@@ -35,7 +35,7 @@ export class SourceService {
     scheduled: signal<Record<string, ScheduledStatemetType>>({}),
     // profitability: signal<ProfitabilityDataRaw>([]),
     profitability: signal<Record<number, Record<string, number[]>>>({}),
-    withdraw: signal<{[year: number]: {[month: number] : number}}>({}),
+    withdrawal: signal<{[year: number]: {[month: number] : number}}>({}),
   };
 
   constructor() { }
@@ -81,7 +81,7 @@ export class SourceService {
     this.dataSource.portfolio.set(this.portfolioSourceToRecord(jsonData.portfolio));
     this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
     this.dataSource.profitability.set(this.profitabilitySourceToRecord(jsonData.profitability));
-    this.dataSource.withdraw.set(this.withdrawSourceToRecord(jsonData.withdraw));
+    this.dataSource.withdrawal.set(this.withdrawalSourceToRecord(jsonData.withdrawal));
     this.dataIsLoaded.set(true);
   }
 
@@ -94,7 +94,7 @@ export class SourceService {
     this.dataSource.portfolio.set({});
     this.dataSource.scheduled.set({});
     this.dataSource.profitability.set([]);
-    this.dataSource.withdraw.set({});
+    this.dataSource.withdrawal.set({});
     alert('Todos os dados foram excluídos!');
   }
 
@@ -164,7 +164,7 @@ export class SourceService {
       portfolio: Object.values(this.dataSource.portfolio()),
       scheduled: Object.values(this.dataSource.scheduled()),
       profitability: this.dataSource.profitability(),
-      withdraw: this.dataSource.withdraw()
+      withdrawal: this.dataSource.withdrawal()
     }));
 
   protected assetSourceToRecord(data: AssetSourceRawType[]) {
@@ -671,49 +671,49 @@ export class SourceService {
     })
   }
 
-  // withdraw --------------
+  // withdrawal --------------
 
-  protected withdrawSourceToRecord(data: {[year: number]: {[month: number] : number}}) {
+  protected withdrawalSourceToRecord(data: {[year: number]: {[month: number] : number}}) {
     return Object.entries(data).reduce((acc, [year, item]) => {
       acc[Number(year)] = item;
       return acc;
     }, {} as Record<number, {[month: number]: number}>);
   }
 
-  withdrawToSource(items: Record<number, Record<number, number>>) {
+  protected withdrawToSource(items: Record<number, Record<number, number>>) {
     return Object.entries(items).reduce((acc, [year, item]) => {
       acc[year] = item;
       return acc;
     }, {} as Record<string, Record<number, number>>);
   }
 
-  addWithdraw(year: number, month: number, amount: number) {
-    const added = this.withdrawToSource({[year]: {[month]: amount}});
-    this.dataSource.withdraw.update(withdraw => ({
-      ...withdraw,
+  addWithdrawal(year: number, month: number, amount: number) {
+    const added = this.withdrawalSourceToRecord({[year]: {[month]: amount}});
+    this.dataSource.withdrawal.update(withdrawal => ({
+      ...withdrawal,
       ...added
     }));
     return added;
   }
 
-  updateWithdraw(year: number, month: number, amount: number) {
-    const updated = this.withdrawToSource({[year]: {[month]: amount}});
-    this.dataSource.withdraw.update(withdraw => ({
-      ...withdraw,
+  updateWithdrawal(year: number, month: number, amount: number) {
+    const updated = this.withdrawalSourceToRecord({[year]: {[month]: amount}});
+    this.dataSource.withdrawal.update(withdrawal => ({
+      ...withdrawal,
       ...updated
     }));
     return updated;
   }
 
   deleteWithdraw(year: number, month: number) {
-    this.dataSource.withdraw.update(withdraw => {
-      if (withdraw[year]) {
-        delete withdraw[year][month];
-        if (Object.keys(withdraw[year]).length === 0) {
-          delete withdraw[year];
+    this.dataSource.withdrawal.update(withdrawal => {
+      if (withdrawal[year]) {
+        delete withdrawal[year][month];
+        if (Object.keys(withdrawal[year]).length === 0) {
+          delete withdrawal[year];
         }
       }
-      return { ...withdraw };
+      return { ...withdrawal };
     })
   }
 

@@ -22,7 +22,7 @@
             </thead>
             }
             <tbody>
-                @for (row of gridData().rows; track row; let rowIndex = $index) {
+                @for (row of gridData().rows; track row.cells; let rowIndex = $index) {
                 <tr [class.table-secondary]="row.disabled">
                     <td class="row-label fw-bold position-relative">
                         {{ row.label }}

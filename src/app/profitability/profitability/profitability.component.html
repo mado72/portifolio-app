@@ -1,4 +1,23 @@
-<app-financial-grid 
+@if (isLoading()) {
+  <!-- <app-loading></app-loading> -->
+   Loading...
+} @else {
+  <app-financial-grid 
   [gridData]="financialGridData()"
   [showTotalColumn]="false"
   ></app-financial-grid>
+  <app-financial-grid 
+    [gridData]="contributionGridData()"
+    [showTotalColumn]="false"
+    [showHeader]="false"
+    [showFooter]="false"
+    [tabIndexInitial]="financialGridData().rows.length + 1"
+    ></app-financial-grid>
+  
+    <app-financial-grid 
+    [showTotalColumn]="false"
+    [showHeader]="false"
+    [showFooter]="false"
+    [gridData]="growthGridData()"
+    ></app-financial-grid>
+}

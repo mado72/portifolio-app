@@ -1,6 +1,6 @@
 import { Component, computed, inject } from '@angular/core';
 import { ProfitabilityService } from '../../service/profitalibilty.service';
-import { CellChangeEvent } from '../../utils/component/financial-grid/financial-gird.model';
+import { CellChangeEvent, GridData } from '../../utils/component/financial-grid/financial-gird.model';
 import { FinancialGridComponent } from '../../utils/component/financial-grid/financial-grid.component';
 
 @Component({
@@ -16,10 +16,17 @@ export class ProfitabilityComponent {
 
   private profitabilityService = inject(ProfitabilityService);
 
-  financialGridData = computed(() => this.profitabilityService.financialGridData());
+  financialGridData = computed(() => this.profitabilityService.financialGridData() as GridData);
 
   cellChanged(event: CellChangeEvent) {
     console.log('Cell changed:', event);
   }
 
+  contributionGridData = computed(() => this.profitabilityService.contributionGridData() as GridData);
+
+  growthGridData = computed(() => this.profitabilityService.growthGridData() as GridData);
+
+  isLoading = computed(() => !this.profitabilityService.financialGridData() 
+    || !this.profitabilityService.contributionGridData()
+    || !this.profitabilityService.growthGridData());
 }

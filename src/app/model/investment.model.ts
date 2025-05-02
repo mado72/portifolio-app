@@ -66,12 +66,14 @@ export type AllocationSet = {
 export enum InvestmentEnum {
     BUY = 'BUY',
     SELL = 'SELL',
-    DIVIDENDS = 'DIVIDENDS',
-    RENT_RETURN = 'RENT_RETURN',
-    IOE_RETURN = 'IOE_RETURN',
-    TRANSFER = 'TRANSFER',
-    SUBSCRIPTION = 'SUBSCRIPTION',
-    REDEMPTION = 'REDEMPTION',
+    DIVIDENDS = 'DIVIDENDS', // dividendos
+    RENT_RETURN = 'RENT_RETURN', // aluguel
+    IOE_RETURN = 'IOE_RETURN', // JCP
+    TRANSFER = 'TRANSFER', // transferência
+    SUBSCRIPTION = 'SUBSCRIPTION', // subscrição
+    REDEMPTION = 'REDEMPTION', // resgate
+    CONTRIBUTION = 'CONTRIBUTION', // aporte
+    WITHDRAWAL = 'WITHDRAWAL', // retirada
     OTHER = 'OTHER',
 }
 
@@ -86,6 +88,8 @@ export const InvestmentEnumDesc : Record<InvestmentEnumType, string> = {
     "TRANSFER": 'Transferência',
     "SUBSCRIPTION": 'Subscrição',
     "REDEMPTION": 'Resgate',
+    "CONTRIBUTION": 'Aporte',
+    "WITHDRAWAL": 'Retirada',
     "OTHER": 'Outros',
 }
 
@@ -96,8 +100,10 @@ export const InvestmentEnumFactor : Record<InvestmentEnum, number> = {
     OTHER: 0,
     REDEMPTION: 1,
     RENT_RETURN: 1,
+    CONTRIBUTION: 1,
     SELL: -1,
     SUBSCRIPTION: -1,
+    WITHDRAWAL: -1,
     TRANSFER: 0
 }
 

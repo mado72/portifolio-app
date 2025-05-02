@@ -17,6 +17,8 @@ export class FinancialGridComponent {
   
   gridData = input<GridData>(this.initializeDefaultData());
 
+  tabIndexInitial = input<number>(0);
+
   currentMonthIndex = input<number>(getMonth(new Date()));
 
   showHeader = input<boolean>(true);
@@ -125,7 +127,7 @@ export class FinancialGridComponent {
   }
 
   tabIndex(rowIndex: number, columnIndex: number): number {
-    return columnIndex * this.gridData().rows.length + rowIndex + 1;
+    return columnIndex * (this.gridData().rows.length) + rowIndex + 1 + 12 * this.tabIndexInitial();
   }
 
 }
