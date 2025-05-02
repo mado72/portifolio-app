@@ -3,12 +3,14 @@ import { Component, EventEmitter, input, Input, OnInit, Output } from '@angular/
 import { FormsModule } from '@angular/forms';
 import { CellChangeEvent, CellData, GridData, RowData } from './financial-gird.model';
 import { getMonth } from 'date-fns';
+import { MaskNumberDirective } from '../../directive/mask-number.directive';
 
 @Component({
   selector: 'app-financial-grid',
   standalone: true,
   imports: [
-    FormsModule
+    FormsModule,
+    MaskNumberDirective,
   ],
   templateUrl: './financial-grid.component.html',
   styleUrl: './financial-grid.component.scss',
@@ -63,17 +65,7 @@ export class FinancialGridComponent {
     };
   }
 
-  onCellChange(rowIndex: number, columnIndex: number, event: Event): void {
-    const target = event.target as HTMLInputElement;
-    const value = target.value === '' ? null : parseFloat(target.value);
-    
-    // Não permite valores negativos
-    if (value !== null && value < 0) {
-      // Restaura o valor anterior
-      target.value = this.gridData().rows[rowIndex].cells[columnIndex].value?.toString() || '';
-      return;
-    }
-    
+  onCellChange(rowIndex: number, columnIndex: number, value: number): void {
     // Atualiza o valor na grid
     this.gridData().rows[rowIndex].cells[columnIndex].value = value;
     

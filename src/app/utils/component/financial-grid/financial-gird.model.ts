@@ -9,6 +9,8 @@ export interface CellData {
     cells: CellData[];
     disabled: boolean;
     operation: "plus" | "minus" | "none";
+    prefix?: string;
+    suffix?: string;
   }
   
   export interface GridData {
