@@ -390,30 +390,6 @@ export class ProfitabilityService {
   }
 
   /**
-   * Calculates the growth of the portfolio relative to the previous month.
-   * @param monthlyValues - An array of portfolio values for each month.
-   * @param previousYearEndValue - The portfolio value at the end of the previous year.
-   * @returns An array of growth percentages for each month.
-   */
-  private calculateGrowth(monthlyValues: number[], previousYearEndValue: number): number[] {
-    const growth = Array(12).fill(0) as number[];
-
-    for (let i = 0; i < monthlyValues.length; i++) {
-      if (i === 0) {
-        // Calculate growth for the first month using the previous year's end value
-        if (previousYearEndValue !== 0) {
-          growth[i] = ((monthlyValues[i] - previousYearEndValue) / previousYearEndValue) * 100;
-        }
-      } else if (monthlyValues[i - 1] !== 0) {
-        // Calculate growth for subsequent months
-        growth[i] = ((monthlyValues[i] - monthlyValues[i - 1]) / monthlyValues[i - 1]) * 100;
-      }
-    }
-
-    return growth.map(value => Math.round(value * 100) / 100); // Round to 2 decimal places
-  }
-
-  /**
    * Converts row data to an array of numbers, defaulting to 0 if the value is undefined.
    * @param rowData - The row data to convert.
    * @returns An array of numbers representing the cell values in the row.
