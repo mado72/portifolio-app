@@ -3,11 +3,11 @@
    Loading...
 } @else {
   <app-financial-grid 
-  [gridData]="financialGridData()"
-  [showTotalColumn]="false"
-  (cellChange)="onFinancialCellChanged($event)"
+    [gridData]="financialGridData()"
+    [showTotalColumn]="false"
+    (cellChanged)="financialGridCellChanged($event)"
   ></app-financial-grid>
-  
+
   <app-financial-grid 
     [gridData]="contributionGridData()"
     [showTotalColumn]="false"

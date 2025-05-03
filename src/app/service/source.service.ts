@@ -660,8 +660,12 @@ export class SourceService {
     return added;
   }
 
-  updateProfitability(year: number, changes: ProfitabilityDataRawItem) {
-    return this.addProfitability(year, changes);
+  updateProfitability(year: number, classifyId: string, changes: number[]) {
+    const updated = this.profitabilityToSource({[year.toString()]: {[classifyId]: changes}});
+    return this.dataSource.profitability.update(profitability => ({
+      ...profitability,
+      ...updated
+    }));
   }
 
   deleteProfitability(year: number) {

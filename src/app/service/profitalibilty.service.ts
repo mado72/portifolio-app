@@ -1,8 +1,13 @@
 import { computed, inject, Injectable } from '@angular/core';
+import { getMonth, getYear } from 'date-fns';
+import { Currency } from '../model/domain.model';
 import { groupBy } from '../model/functions.model';
+import { InvestmentEnum, MonthsNumberArray, ProfitabilityByClass, TransactionStatus } from '../model/investment.model';
+import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
+import { CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
+import { ClassifyService } from './classify.service';
 import { ExchangeService } from './exchange.service';
 import { PortfolioService } from './portfolio-service';
-import { getMonth, getYear } from 'date-fns';
 import { SourceService } from './source.service';
 import { TransactionService } from './transaction.service';
 import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
@@ -26,6 +31,8 @@ export class ProfitabilityService {
   private transactionService = inject(TransactionService);
 
   private exchangeService = inject(ExchangeService);
+
+  private classifyService = inject(ClassifyService);
 
   currentMonthProfitability = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {

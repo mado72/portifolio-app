@@ -5,8 +5,8 @@
             @if (showHeader()) {
             <thead class="table-light">
                 <tr>
-                    <th class="text-start">{{ gridData().title }}</th>
-                    @for (month of gridData().months; track month; let colIndex = $index) {
+                    <th class="text-start">{{ gridData.title }}</th>
+                    @for (month of gridData.months; track month; let colIndex = $index) {
                     <th [class.table-secondary]="isColumnDisabled(colIndex)"
                         [class.bg-primary]="colIndex === currentMonthIndex()"
                         [class.bg-opacity-25]="colIndex === currentMonthIndex()"
@@ -22,7 +22,7 @@
             </thead>
             }
             <tbody>
-                @for (row of gridData().rows; track row.cells; let rowIndex = $index) {
+                @for (row of gridData.rows; track row.cells; let rowIndex = $index) {
                 <tr [class.table-secondary]="row.disabled">
                     <td class="row-label fw-bold position-relative">
                         {{ row.label }}
@@ -63,7 +63,7 @@
             <tfoot class="table-light">
                 <tr>
                     <td class="fw-bold">Total</td>
-                    @for (month of gridData().months; track month; let colIndex = $index) {
+                    @for (month of gridData.months; track month; let colIndex = $index) {
                     <td class="text-end fw-bold">
                         {{ formatNumber(getColumnTotal(colIndex)) }}
                     </td>
