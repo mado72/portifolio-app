@@ -4,17 +4,12 @@ import { Currency } from '../model/domain.model';
 import { groupBy } from '../model/functions.model';
 import { InvestmentEnum, MonthsNumberArray, ProfitabilityByClass, TransactionStatus } from '../model/investment.model';
 import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
-import { CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
+import { CellChangeEvent, CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
 import { ClassifyService } from './classify.service';
 import { ExchangeService } from './exchange.service';
 import { PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
 import { TransactionService } from './transaction.service';
-import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
-import { InvestmentEnum, MonthsNumberArray, TransactionStatus } from '../model/investment.model';
-import { ProfitabilityByClass } from '../model/investment.model';
-import { CellChangeEvent, CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
-import { Currency } from '../model/domain.model';
 
 export type AggregatedKinds = 'incomes' | 'contributions' | 'redemptions' | 'withdrawals';
 
@@ -564,7 +559,9 @@ export class ProfitabilityService {
       profiltability[year][classify] = Array(12).fill(0);
     }
     profiltability[year][classify][month] = value;
-    return this.sourceService.updateProfitability(year, profiltability[year]);
+
+
+    return this.sourceService.updateProfitability(year, classify, profiltability[year][classify]);
   }
 
   monthNumberArrayToRowData(label: string, monthNumberArray: MonthsNumberArray): RowData {

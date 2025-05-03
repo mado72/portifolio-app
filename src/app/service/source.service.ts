@@ -26,6 +26,7 @@ export class SourceService {
   readonly dataIsLoaded = signal(false);
 
   dataSource = {
+    classify: signal<Record<string, string>>({}),
     asset: signal<Record<Ticker, AssetSourceRawType>>({}),
     balance: signal<Record<string, BalanceSourceRawType>>({}),
     income: signal<Record<string, IncomeSourceRawType>>({}),

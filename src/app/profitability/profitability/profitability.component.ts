@@ -38,9 +38,8 @@ export class ProfitabilityComponent {
     // this.profitabilityService.updateContributionGridData(event);
   }
 
-  financialGridCellChanged(event: any) {
+  financialGridCellChanged(event: CellChangeEvent) {
     const value = event.value as number || 0;
-    this.profitabilityService.onFinancialGridCellChange(
-      this.currentYear(), event.rowIndex, event.columnIndex, value);
+    this.profitabilityService.updateFinancialGridData(event);
   }
 }
