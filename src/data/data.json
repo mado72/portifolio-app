@@ -1,1 +1,3888 @@
-{"asset":[{"ticker":"NYSE:JPM","name":"JP Morgan","type":"STOCK","quote":{"value":244.62,"currency":"USD"},"initialPrice":244.62,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NASDAQ:KHC","name":"Kraft Heinz Co.","type":"STOCK","quote":{"value":28.87,"currency":"USD"},"initialPrice":28.87,"lastUpdate":"2025-04-30T00:55:43-03:00","controlByQty":true,"trend":"down","manualQuote":false},{"ticker":"NYSE:USB","name":"U.S. Bancorp","type":"STOCK","quote":{"value":40.5,"currency":"USD"},"initialPrice":40.5,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NYSE:PFE","name":"Pfizer","type":"STOCK","quote":{"value":23.79,"currency":"USD"},"initialPrice":23.79,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NYSE:WMB","name":"Williams Companies","type":"STOCK","quote":{"value":59.67,"currency":"USD"},"initialPrice":59.67,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NYSE:KO","name":"Coca-Cola","type":"STOCK","quote":{"value":72.35,"currency":"USD"},"initialPrice":72.35,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NASDAQ:MSFT","name":"Microsoft","type":"STOCK","quote":{"value":394.04,"currency":"USD"},"initialPrice":394.04,"lastUpdate":"2025-04-30T00:55:43-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NYSE:O","name":"Realty Income","type":"REAL_ESTATE","quote":{"value":57.38,"currency":"USD"},"initialPrice":57.38,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NYSE:PLD","name":"Prologis","type":"REAL_ESTATE","quote":{"value":103.1,"currency":"USD"},"initialPrice":103.1,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"NYSE:EXR","name":"Extra Space Storage","type":"REAL_ESTATE","quote":{"value":141.43,"currency":"USD"},"initialPrice":141.43,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"down","manualQuote":false},{"ticker":"NYSE:ADC","name":"Agree Realty","type":"REAL_ESTATE","quote":{"value":77.33,"currency":"USD"},"initialPrice":77.33,"lastUpdate":"2025-04-30T00:56:32-03:00","controlByQty":true,"trend":"up","manualQuote":false},{"ticker":"BOND:SGOV","name":"iShares 0-3 Month Treasury","type":"ETF","quote":{"value":100.66,"currency":"USD"},"initialPrice":100.66,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:ITSA4","name":"ITAUSA PN","type":"STOCK","quote":{"value":10.63,"currency":"BRL"},"initialPrice":10.63,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:WEGE3","name":"WEG ON","type":"STOCK","quote":{"value":50.47,"currency":"BRL"},"initialPrice":50.47,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:BBAS3","name":"Banco do Brasil ON","type":"STOCK","quote":{"value":28.5,"currency":"BRL"},"initialPrice":28.5,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:AFHI11","name":"Af Invest Cri FII","type":"REAL_ESTATE","quote":{"value":93,"currency":"BRL"},"initialPrice":93,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:CVBI11","name":"CVBI VBI Credito","type":"REAL_ESTATE","quote":{"value":84.28,"currency":"BRL"},"initialPrice":84.28,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:HGRU11","name":"CSHG Renda Urbana FII","type":"REAL_ESTATE","quote":{"value":122.04,"currency":"BRL"},"initialPrice":122.04,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:JSRE11","name":"JS Real Estate FII","type":"REAL_ESTATE","quote":{"value":63.33,"currency":"BRL"},"initialPrice":63.33,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:LVBI11","name":"LVBI VBI Logistico","type":"REAL_ESTATE","quote":{"value":102.18,"currency":"BRL"},"initialPrice":102.18,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:RBRF11","name":"Rbr Alpha Fundos De Fundos","type":"REAL_ESTATE","quote":{"value":6.9,"currency":"BRL"},"initialPrice":6.9,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:WPLZ11","name":"West Plaza FII","type":"REAL_ESTATE","quote":{"value":48.7,"currency":"BRL"},"initialPrice":48.7,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:XPML11","name":"Xp Malls FII","type":"REAL_ESTATE","quote":{"value":106.3,"currency":"BRL"},"initialPrice":106.3,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:TAEE11","name":"TAESA UNIT","type":"STOCK","quote":{"value":36.16,"currency":"BRL"},"initialPrice":36.16,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:EGIE3","name":"Engie Brasil ON","type":"STOCK","quote":{"value":40.75,"currency":"BRL"},"initialPrice":40.75,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:CXSE3","name":"Cx Seguridade ON","type":"STOCK","quote":{"value":16.02,"currency":"BRL"},"initialPrice":16.02,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:BBSE3","name":"BB Seguridade ON","type":"STOCK","quote":{"value":41.83,"currency":"BRL"},"initialPrice":41.83,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:ABCB4","name":"ABC Brasil PN","type":"STOCK","quote":{"value":21.5,"currency":"BRL"},"initialPrice":21.5,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:SAPR11","name":"SANEPAR UNIT","type":"STOCK","quote":{"value":29.58,"currency":"BRL"},"initialPrice":29.58,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:CAML3","name":"CAMIL ON","type":"STOCK","quote":{"value":4.31,"currency":"BRL"},"initialPrice":4.31,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:FLRY3","name":"Fleury ON","type":"STOCK","quote":{"value":12.92,"currency":"BRL"},"initialPrice":12.92,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:TUPY3","name":"Tupy ON","type":"STOCK","quote":{"value":21.5,"currency":"BRL"},"initialPrice":21.5,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:GOAU4","name":"Gerdau PN","type":"STOCK","quote":{"value":8.62,"currency":"BRL"},"initialPrice":8.62,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BVMF:PRIO3","name":"PETRORIO ON","type":"STOCK","quote":{"value":34.66,"currency":"BRL"},"initialPrice":34.66,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BRTD:BRSTNCNTB6A3","name":"IPCA+6,02 2029","type":"BOND","quote":{"value":3360.52,"currency":"BRL"},"initialPrice":3360.52,"lastUpdate":"2025-04-30T00:56:34-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"OTHER:ENAT24-IPCA-728","name":"ENAT24 - BRAVA EG. IPCA+7,28","type":"BOND","quote":{"value":1016.71,"currency":"BRL"},"lastUpdate":"2025-04-29T21:59:03-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:BTG-LCA-CDI-092","name":"LCA 92% CDI","type":"FUND","quote":{"value":510.74,"currency":"BRL"},"lastUpdate":"2025-04-28T15:19:49-03:00","controlByQty":true,"manualQuote":true},{"ticker":"BRTD:BRSTNCNTB3E2","name":"IPCA+6,09 2035","type":"BOND","quote":{"value":2164.75,"currency":"BRL"},"initialPrice":2164.75,"lastUpdate":"2025-04-30T00:56:34-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BRTD:BRSTNCNTB2U0","name":"IPCA+ 2045 746","type":"BOND","quote":{"value":1082.29,"currency":"BRL"},"initialPrice":1082.29,"lastUpdate":"2025-04-30T00:56:34-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"BRTD:BRSTNCNTF238","name":"NTN-F2035 PRE 1490","type":"BOND","quote":{"value":821.11,"currency":"BRL"},"initialPrice":821.11,"lastUpdate":"2025-04-30T00:56:34-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false},{"ticker":"OTHER:BNP-Paribas-RF","name":"BNP Paribas RF FIRF","type":"FUND","quote":{"value":1214.09,"currency":"BRL"},"lastUpdate":"2025-04-28T15:19:42-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:XPREF-FIRF-REF-DI","name":"XP Ref. FIRF REF DI","type":"FUND","quote":{"value":1319.41,"currency":"BRL"},"lastUpdate":"2025-04-28T15:20:07-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:Trend-Inb Rico-FIC","name":"Trend Inb Rico FIC FIRF","type":"FUND","quote":{"value":366.5,"currency":"BRL"},"lastUpdate":"2025-04-28T15:20:02-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:NU-CASHBACK","name":"Nubank Cashback","type":"FUND","quote":{"value":809.87,"currency":"BRL"},"lastUpdate":"2025-04-28T15:19:56-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:BMG-CDB-ESCALONADO","name":"Bmg CDB Escalonado","type":"FUND","quote":{"value":1089.5,"currency":"BRL"},"lastUpdate":"2025-04-28T15:19:22-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:BMG-CDI-120","name":"Bmg CDI 120","type":"FUND","quote":{"value":1071.84,"currency":"BRL"},"lastUpdate":"2025-04-28T15:19:34-03:00","controlByQty":true,"manualQuote":true},{"ticker":"OTHER:BMG-CDB-SUPERPOUP","name":"Bmg CDB Superpoup","type":"FUND","quote":{"value":227.22,"currency":"BRL"},"lastUpdate":"2025-04-28T15:19:27-03:00","controlByQty":true,"manualQuote":true},{"ticker":"BVMF:VALE3","name":"VALE ON","type":"STOCK","quote":{"value":53.84,"currency":"BRL"},"initialPrice":53.84,"lastUpdate":"2025-04-30T00:56:33-03:00","controlByQty":true,"trend":"unchanged","manualQuote":false}],"balance":[{"id":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","accountName":"Nomad Inv","balance":2.29,"date":"2025-04-27","type":"INVESTMENT","currency":"USD"},{"id":"691d447d-520b-454d-9d95-04b399d4088c","accountName":"XP Inv.","balance":35.29,"date":"2025-04-27","type":"INVESTMENT","currency":"BRL"},{"id":"6c746e8a-2d77-4cbe-a3df-43c86663afad","accountName":"Rico Inv.","balance":56.77,"date":"2025-04-27","type":"INVESTMENT","currency":"BRL"},{"id":"0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a","accountName":"BTG Inv.","balance":25.74,"date":"2025-04-27","type":"INVESTMENT","currency":"BRL"},{"id":"33eee4ce-fa22-4602-b53d-f928b37a34b9","accountName":"Nu. Inv","balance":0,"date":"2025-04-27","type":"INVESTMENT","currency":"BRL"},{"id":"e56dbc62-6403-45e6-b02e-74a1dce6f508","accountName":"BMG Inv.","balance":0,"date":"2025-04-27","type":"INVESTMENT","currency":"BRL"}],"income":[],"investment":[{"id":"6964a33a-9257-4e73-8986-4c273b8775a9","ticker":"NYSE:JPM","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0.67950662,"quote":147.1656008296137,"value":{"value":100,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"88ec6879-7bd9-4d23-b6f9-d2deccedb561","ticker":"NASDAQ:KHC","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":3.28459438,"quote":32.40582783923536,"value":{"value":106.44,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"328f80c6-11e2-4652-be56-d6848d810c6b","ticker":"NYSE:USB","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":2.70709258,"quote":36.940000035019125,"value":{"value":100,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"babc7327-352b-440e-b050-c0f52d9a3a5e","ticker":"NYSE:PFE","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":3.62730623,"quote":33.1099698742557,"value":{"value":120.1,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"4c92a97d-a993-4d67-880c-999c4575c29a","ticker":"NYSE:WMB","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":2.89100896,"quote":34.59000002545824,"value":{"value":100,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"f2648633-2a57-4489-8447-3141f6d59fe4","ticker":"NYSE:KO","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":1.68690958,"quote":59.28000005785728,"value":{"value":100,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"ed554482-f676-4a05-8526-65d9fc92b387","ticker":"NASDAQ:MSFT","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0.01286792,"quote":381.56904923251,"value":{"value":4.91,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"fe8f1599-d751-4bf6-adb9-92adff13c3cf","ticker":"NYSE:O","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":1.426,"quote":56.100981767180926,"value":{"value":80,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"598b8f93-c44d-40ef-ace8-73e62e33cee6","ticker":"NYSE:PLD","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0.655,"quote":124.29007633587786,"value":{"value":81.41,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"5419ebd4-b0ee-4885-b166-43fcb5b9a8c0","ticker":"NYSE:EXR","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0.6232,"quote":128.36970474967907,"value":{"value":80,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"6cb52d6e-afd1-479e-a9c4-084a2f90cc6d","ticker":"NYSE:ADC","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":1.3002,"quote":61.52899553914782,"value":{"value":80,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"e02798ba-d071-4132-a854-13dcf5b5f0d2","ticker":"BOND:SGOV","date":"2024-12-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":1.0542,"quote":100.2940618478467,"value":{"value":105.73,"currency":"USD"},"type":"BUY","status":"COMPLETED"},{"id":"1fe8450f-156b-4032-8e7c-af8d0557bab5","ticker":"BVMF:ITSA4","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":200,"quote":10.9,"value":{"value":2180,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"d1cc005f-929f-42fb-83e3-e0470f7e6ac2","ticker":"BVMF:WEGE3","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":100,"quote":54.32,"value":{"value":5432,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"d4d996bd-de22-4b1b-a78d-7d43037fa4f4","ticker":"BVMF:BBAS3","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":25,"quote":26.26,"value":{"value":656.5,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"939b1f39-7a3f-4c20-907d-4aab3b65bbc9","ticker":"BVMF:AFHI11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":7,"quote":96.35000000000001,"value":{"value":674.45,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"6569c25e-b9a9-4e0c-92d1-1eb956196a13","ticker":"BVMF:CVBI11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":6,"quote":90.88499999999999,"value":{"value":545.31,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"a20b38dd-17da-4c47-8cc0-3d51aede57f5","ticker":"BVMF:HGRU11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":5,"quote":120.92090909999999,"value":{"value":604.6045455,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"896daf27-8bf5-455a-9e86-ae50b8b19ca5","ticker":"BVMF:JSRE11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":8,"quote":62.3916666625,"value":{"value":499.1333333,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"a1ada911-6dda-404c-99fb-6b382ea2bb62","ticker":"BVMF:LVBI11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":7,"quote":105.9175,"value":{"value":741.4225,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"9634fca2-884d-4582-b24d-55a43f43cff9","ticker":"BVMF:RBRF11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":60,"quote":6.84,"value":{"value":410.4,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"7ae8437c-eea1-40ba-9ffb-5e3d5942459b","ticker":"BVMF:WPLZ11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":4,"quote":58.92,"value":{"value":235.68,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"f8524033-5646-44a6-90d3-bb588ae4be15","ticker":"BVMF:XPML11","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":5,"quote":107.14200000000001,"value":{"value":535.71,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"c7622f5b-85fc-4f2b-8230-97a6df3a6005","ticker":"BVMF:TAEE11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":20,"quote":33.760000000000005,"value":{"value":675.2,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"af0f249d-a03c-4fde-80d9-ec668336d04b","ticker":"BVMF:EGIE3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":30,"quote":40.669999999999995,"value":{"value":1220.1,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"f060abe4-6d67-46c4-9d7a-7808ee621000","ticker":"BVMF:CXSE3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":40,"quote":14.629,"value":{"value":585.16,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"18d1603e-f513-477b-8166-fa60dfd14a9d","ticker":"BVMF:BBSE3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":40,"quote":33.36,"value":{"value":1334.4,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"8a070b97-5877-4125-973d-1d65009884a7","ticker":"BVMF:ABCB4","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":50,"quote":20.17,"value":{"value":1008.5,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"5f7352dc-04c4-4d08-b464-b95040291eed","ticker":"BVMF:SAPR11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":25,"quote":27.35,"value":{"value":683.75,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"f5d7b813-1e45-49f5-91e1-a3adb4fe8d42","ticker":"BVMF:CAML3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":50,"quote":7.14,"value":{"value":357,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"a95f8186-2f08-47e7-bd1b-0abe802e2fd9","ticker":"BVMF:FLRY3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":22,"quote":15.251818181818182,"value":{"value":335.54,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"f68b9507-02ca-48f4-bfec-ee59fd0a8f13","ticker":"BVMF:TUPY3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":32,"quote":23.9,"value":{"value":764.8,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"fb2f84cb-5645-4273-9156-cd0a57215a2b","ticker":"BVMF:GOAU4","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":35,"quote":11.31,"value":{"value":395.85,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"5396b5b9-0e4d-4295-a407-e9f02ff0ad2f","ticker":"BVMF:PRIO3","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":23,"quote":41.97391304347826,"value":{"value":965.4,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"a6c8f05c-92b1-42a3-abbd-476d944fc789","ticker":"BVMF:AFHI11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":5,"quote":96.35,"value":{"value":481.75,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"237e3ff5-feda-45b3-8e7d-b99a13b189a1","ticker":"BVMF:CVBI11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":8,"quote":90.885,"value":{"value":727.08,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"38147058-cfdd-4f16-9f2c-3bba5ad5dfc4","ticker":"BVMF:HGRU11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":6,"quote":120.92090908333334,"value":{"value":725.5254545,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"8a91dc37-e14a-4ae4-b825-5f558703d109","ticker":"BVMF:JSRE11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":10,"quote":62.39166666999999,"value":{"value":623.9166667,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"9bcbe5e4-5004-4a2f-a576-1039bda760e5","ticker":"BVMF:LVBI11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":5,"quote":105.91749999999999,"value":{"value":529.5875,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"dae141ba-0739-47aa-b8a3-4c586c3f3ccd","ticker":"BVMF:RBRF11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":28,"quote":6.840000000000001,"value":{"value":191.52,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"7f5168bc-1348-413f-9227-f876816d77ff","ticker":"BVMF:XPML11","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":5,"quote":107.14200000000001,"value":{"value":535.71,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"9ec997d4-833f-49cc-8158-6dc44ebc20a9","ticker":"BRTD:BRSTNCNTB6A3","date":"2024-12-28T03:00:00.000Z","accountId":"0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a","quantity":0.15,"quote":3266.87,"value":{"value":490.03,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"fab73d2d-6017-436e-95ff-207c410a1e7c","ticker":"OTHER:ENAT24-IPCA-728","date":"2024-12-28T03:00:00.000Z","accountId":"0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a","quantity":1,"quote":1094.05,"value":{"value":1094.05,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"08221941-1118-4879-bc34-a4539e7b0fd1","ticker":"OTHER:BTG-LCA-CDI-092","date":"2024-12-28T03:00:00.000Z","accountId":"0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a","quantity":2,"quote":500,"value":{"value":1000,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"8b7ba510-f7dc-4016-948a-19577767d181","ticker":"BRTD:BRSTNCNTB3E2","date":"2024-12-28T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0.46,"quote":2240.76,"value":{"value":1030.75,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"fc016bdb-ac6a-4f55-917c-37ec76e9a96d","ticker":"BRTD:BRSTNCNTB2U0","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0.04,"quote":3923.25,"value":{"value":156.93,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"ba496047-ccf9-4f6c-aa99-d3b97ee6cf76","ticker":"BRTD:BRSTNCNTF238","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0.31,"quote":787.097,"value":{"value":244,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"338e57c1-4b51-40c0-925e-8756f0ddde92","ticker":"OTHER:BNP-Paribas-RF","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":1,"quote":1095.78,"value":{"value":1095.78,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"a446ff74-0ab0-40eb-a632-81fb89e78e6c","ticker":"OTHER:XPREF-FIRF-REF-DI","date":"2024-12-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":1,"quote":1196.46,"value":{"value":1196.46,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"70241a18-bef6-41d0-b7dc-83eaa9f6c3e2","ticker":"OTHER:Trend-Inb Rico-FIC","date":"2024-12-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":1,"quote":309.77,"value":{"value":309.77,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"e265d399-26db-4045-864e-30019d323c92","ticker":"OTHER:NU-CASHBACK","date":"2024-12-28T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":1,"quote":607.02,"value":{"value":607.02,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"144a17f1-daa5-4e96-8a90-60224b4e1fd2","ticker":"OTHER:BMG-CDB-ESCALONADO","date":"2024-12-28T03:00:00.000Z","accountId":"e56dbc62-6403-45e6-b02e-74a1dce6f508","quantity":1,"quote":1000,"value":{"value":1000,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"5f50d4b2-c77f-4593-b324-a81201f3c382","ticker":"OTHER:BMG-CDI-120","date":"2024-12-28T03:00:00.000Z","accountId":"e56dbc62-6403-45e6-b02e-74a1dce6f508","quantity":1,"quote":1000,"value":{"value":1000,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"d93c4db7-5031-4cc6-9389-2644e02966a8","ticker":"OTHER:BMG-CDB-SUPERPOUP","date":"2024-12-28T03:00:00.000Z","accountId":"e56dbc62-6403-45e6-b02e-74a1dce6f508","quantity":1,"quote":200,"value":{"value":200,"currency":"BRL"},"type":"BUY","status":"COMPLETED"},{"id":"7d302260-254f-4d5d-ad3f-4ba9c02133e4","ticker":"BVMF:ABCB4","date":"2025-01-29T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":36.55,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"50312ace-bd30-4df4-8419-c0b198e0f0d5","ticker":"BVMF:AFHI11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":11.4,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"0a5e1b62-dcee-49c6-a265-b82c95af0551","ticker":"BVMF:AFHI11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":11.64,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"54b9d287-e81e-4072-808a-8c69cc2cd470","ticker":"BVMF:AFHI11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":11.76,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"05b03eeb-0b92-4dd5-a61a-c62c26ffb117","ticker":"BVMF:AFHI11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":11.88,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"831fb757-4f09-49f9-8780-6dd600eea0d4","ticker":"BVMF:BBSE3","date":"2025-03-29T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":90.89,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"584e7602-2695-4e4d-a14a-c26e3eaf3dde","ticker":"BVMF:BBSE3","date":"2025-03-29T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":1.49,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"1feb15f2-d654-47a6-9770-bf30415a1cca","ticker":"BVMF:CAML3","date":"2025-03-29T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":2.37,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"26155ff6-9a5f-42d4-a3cb-828b83b707ac","ticker":"BVMF:CAML3","date":"2025-03-31T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":0.87,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"a13a3616-59b8-4e38-a413-3463112e4cac","ticker":"BVMF:EGIE3","date":"2025-02-28T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":7.82,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"7ea47fd5-3ad8-4bac-8c17-88532e41b3ea","ticker":"BVMF:GOAU4","date":"2025-03-29T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":1.75,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"276d0599-9b17-4321-add0-39e6a71e71d8","ticker":"BVMF:ITSA4","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":85.71,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"9b9ad19b-c664-4f86-b8e5-ff659564487b","ticker":"BVMF:ITSA4","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":8.4,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"cb8cbde2-3ecb-401e-b25b-a03aed8bb6d8","ticker":"BVMF:ITSA4","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":19.37,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"f758539b-2c27-42e2-95ab-1aff3a0b9cf7","ticker":"BVMF:ITSA4","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":36.65,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"d0a0a251-6fe8-41dd-910f-2f1b93349017","ticker":"BVMF:CXSE3","date":"2025-01-29T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":12.4,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"7b7777b8-f699-4bd2-8563-107a669d5cf4","ticker":"BVMF:CXSE3","date":"2025-01-31T03:00:00.000Z","accountId":"691d447d-520b-454d-9d95-04b399d4088c","quantity":0,"quote":0,"value":{"value":0.05,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"ea147ab3-9e5f-42f1-8571-81b81c417fbd","ticker":"BVMF:ITSA4","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":6,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"2cd89076-13d8-49df-929a-2fb9f57f44c1","ticker":"BVMF:VALE3","date":"2025-03-29T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0,"quote":0,"value":{"value":47.12,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"5819ce6c-62a1-42e1-97e9-173ee2b704d3","ticker":"BVMF:VALE3","date":"2025-03-31T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0,"quote":0,"value":{"value":9.74,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"54b18a39-6589-44b9-825c-c1b5f4cb82d9","ticker":"BVMF:WEGE3","date":"2025-01-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.37,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"3982f547-fce8-4a1d-a30b-f002986ec65d","ticker":"BVMF:WEGE3","date":"2025-03-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":30.26,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"9a9a0492-86c1-452e-8727-24b21a760bc7","ticker":"BVMF:WEGE3","date":"2025-03-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":12.73,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"a1165f91-3575-4806-98c7-243f535c42ed","ticker":"BVMF:CVBI11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":14.7,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"b59955bd-603b-444e-9471-ebed71483c96","ticker":"BVMF:CVBI11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":14.7,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"97ea441f-d226-47db-ab90-abaa102d0d12","ticker":"BVMF:CVBI11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":14.7,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"483e91d5-ac0c-475d-bcee-d5b88c2a1e6d","ticker":"BVMF:CVBI11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":14.7,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"1fe7be34-1126-4863-abcb-6f46e3fdb286","ticker":"BVMF:CVBI11","date":"2025-03-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.71,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"47f5e578-ddbe-488b-8c30-79bf34f495d3","ticker":"BVMF:CVBI11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.59,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"1c445fa5-044a-4e9f-8e01-0ffe8ec32151","ticker":"BVMF:HGRU11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":20.9,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"cf313524-4e70-426b-8ecc-f0e9df4ff4cb","ticker":"BVMF:HGRU11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.9,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"d30530aa-8df4-4914-9eff-98c240eb5c20","ticker":"BVMF:HGRU11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.9,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"fa274376-ee5c-4480-8f75-0bbfb1b31217","ticker":"BVMF:HGRU11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.9,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"b999d342-f4ce-471d-8ef0-362274e7fe6c","ticker":"BVMF:HGRU11","date":"2025-01-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.09,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"821e9567-6c10-4528-807d-6cfd5ba7dbbd","ticker":"BVMF:HGRU11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.09,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"c4b36d42-4ca6-4030-8e00-c5be7b81d4ce","ticker":"BVMF:HGRU11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.07,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"917c71d7-8d30-4b17-81c5-9574d37d90c0","ticker":"BVMF:HGRU11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.22,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"a438e124-bc74-4d0a-b0ce-5af14e80b6c5","ticker":"BVMF:JSRE11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":8.64,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"d2e3aa5f-e45d-4144-ac0b-90a1dd22bf69","ticker":"BVMF:JSRE11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":8.64,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"0770dfc1-f46b-4fe0-bd34-8974e164d5e8","ticker":"BVMF:JSRE11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":8.64,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"384d6b3e-9fd5-41f7-91b7-ad3bebcb95b2","ticker":"BVMF:JSRE11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":8.64,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"bc464b41-4825-4a87-bb91-6a2ac6f930c4","ticker":"BVMF:JSRE11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.19,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"5346c27d-97e8-48d7-bf14-d9b135123078","ticker":"BVMF:JSRE11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.65,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"a7020f3c-e8d4-4179-81f0-dfd6b5289c5a","ticker":"BVMF:JSRE11","date":"2025-03-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.17,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"79429ebb-e74f-437e-83ee-c6571e8d26f0","ticker":"BVMF:LVBI11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.96,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"3b55ba7c-2382-4826-89ad-50cff464dac2","ticker":"BVMF:LVBI11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.96,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"7eb6763f-ea21-41ee-bc88-3c036389569a","ticker":"BVMF:LVBI11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.96,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"7246a4f3-57db-4de8-8bac-b801f54d483a","ticker":"BVMF:LVBI11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"afa4ede6-1ccf-43b9-8be1-219a10c0f3bf","ticker":"BVMF:RBRF11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":7.54,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"3f62e266-e1b2-4755-b214-ed50e570318b","ticker":"BVMF:RBRF11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":4.48,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"3cf5f3c7-627e-4070-b2f2-15491df54028","ticker":"BVMF:RBRF11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":4.48,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"bd516972-91b5-4991-a1a9-1412fc57ca9a","ticker":"BVMF:RBRF11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":5.28,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"4137de40-5e6e-4a03-8b85-2a5fb5b3c736","ticker":"BVMF:RBRF11","date":"2025-01-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":1.09,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"00820a7a-488b-416c-94a1-89951479e5d9","ticker":"BVMF:RBRF11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.8,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"7c5e05ee-5934-4b22-8551-6605811d434e","ticker":"BVMF:RBRF11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.4,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"5ec41cf9-6e62-4668-9920-1521c1277dfc","ticker":"BVMF:RBRF11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.26,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"485ae148-a806-47df-8806-f9ff0a022213","ticker":"BVMF:WPLZ11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":1.16,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"d4f1b3a0-c499-4c4a-b47a-d867030d6d19","ticker":"BVMF:WPLZ11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":1.28,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"e6daad6f-8af9-48cf-99b1-b87043f282d5","ticker":"BVMF:WPLZ11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":1.28,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"d9963590-0d67-4384-94e2-5654093a1d23","ticker":"BVMF:WPLZ11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":1.28,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"5dc418fd-9821-4882-a186-4d5f53d352a7","ticker":"BVMF:XPML11","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.2,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"1a545ffd-9bec-447f-bf6b-35466e158f3d","ticker":"BVMF:XPML11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.2,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"6c5e02ce-a832-4075-a0d6-3388c6650e93","ticker":"BVMF:XPML11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.2,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"d6056f67-832f-4156-a619-7c9803699b0a","ticker":"BVMF:XPML11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":9.2,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"94b6688b-d8ad-4234-82c4-1691f6b52b13","ticker":"BVMF:XPML11","date":"2025-03-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.04,"currency":"BRL"},"type":"IOE_RETURN","status":"COMPLETED","fees":0},{"id":"1df30644-b3ff-45d8-ad10-16accae2b810","ticker":"BVMF:XPML11","date":"2025-01-31T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.08,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"3a99d586-cd57-4d32-8c2f-b12f11089b8c","ticker":"BVMF:XPML11","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.06,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"42db0321-afe0-4171-a356-8f98c3782b99","ticker":"BVMF:XPML11","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.04,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"7220ec95-a1b9-49a6-9587-542da1d056dd","ticker":"BVMF:XPML11","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":0.02,"currency":"BRL"},"type":"RENT_RETURN","status":"COMPLETED","fees":0},{"id":"3ea5af54-f588-493c-b1e1-21f52d08e5da","ticker":"NASDAQ:KHC","date":"2025-03-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.92,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"555e8c5d-fe08-471d-9dfd-8c12f0d6f011","ticker":"NYSE:KO","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.6,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"e8b4af81-75bb-48f5-b424-9a1e00320596","ticker":"NYSE:JPM","date":"2025-02-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.59,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"e60b58cf-3055-4921-9657-633d435e18cd","ticker":"NYSE:PFE","date":"2025-03-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":1.08,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"0c18ba56-a574-48fd-89d3-267d88d1812c","ticker":"NYSE:USB","date":"2025-01-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.94,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"c7755813-b59b-4e86-8aac-21a42a062a2c","ticker":"NYSE:WMB","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":1.01,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"c20fa4ae-d501-407a-9b8e-409c325793d8","ticker":"NYSE:USB","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.94,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"6a734b80-dc0e-4a9c-9b57-3a25c35edf87","ticker":"NYSE:ADC","date":"2025-01-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.23,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"76b8f882-b003-4442-8414-addbd863dfab","ticker":"NYSE:ADC","date":"2025-02-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.23,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"a216fb57-a498-4139-9646-cd545c378ace","ticker":"NYSE:ADC","date":"2025-03-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.23,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"f3c5bf6a-e977-4419-91f1-9a0fd67f8646","ticker":"NYSE:ADC","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.23,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"8cec3921-6f36-4c45-a4c3-b4da975a3c2a","ticker":"NYSE:EXR","date":"2025-01-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.71,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"7bb08aca-9f8a-4a04-800f-27bbc32ffe2b","ticker":"NYSE:O","date":"2025-01-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.27,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"3ac76ff0-c733-42e7-b5e0-c1db1737f21c","ticker":"NYSE:O","date":"2025-02-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.27,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"aadc5a4c-0503-4417-88bd-11d0d07c95cc","ticker":"NYSE:O","date":"2025-03-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.27,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"1184c540-1f40-469f-81a0-fb5a1b5652b5","ticker":"NYSE:O","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.27,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"69f16fef-3c72-4d6e-af39-c44e7d1a3a12","ticker":"NYSE:PLD","date":"2025-01-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.44,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"66f1e61e-3727-4465-bd98-993c2a2fc653","ticker":"NYSE:PLD","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.46,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"92c849d2-9fc9-458f-984a-4b0cb213a1ea","ticker":"BOND:SGOV","date":"2025-02-28T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.27,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"b9e4f003-1299-43e3-9c7a-ad26af812511","ticker":"BOND:SGOV","date":"2025-03-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.23,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"7b7f2090-6d19-4c07-84f7-2fa18d4643fd","ticker":"BOND:SGOV","date":"2025-04-29T03:00:00.000Z","accountId":"5c4e0ac6-3221-495f-a097-c2f6dee2bd75","quantity":0,"quote":0,"value":{"value":0.25,"currency":"USD"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"be6ed516-05e8-495c-98eb-854012eec87e","ticker":"OTHER:NU-CASHBACK","date":"2025-01-29T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0,"quote":0,"value":{"value":12.79,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"39d3369e-0329-46cd-8820-6eff47a2fe56","ticker":"OTHER:NU-CASHBACK","date":"2025-02-28T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0,"quote":0,"value":{"value":13.39,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"c8b7f272-304f-4c8c-b875-10fb8b13dea6","ticker":"OTHER:NU-CASHBACK","date":"2025-03-29T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0,"quote":0,"value":{"value":14.18,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"1ad2c28e-3a1e-473c-be8e-8542ca1fb3cb","ticker":"OTHER:NU-CASHBACK","date":"2025-04-29T03:00:00.000Z","accountId":"33eee4ce-fa22-4602-b53d-f928b37a34b9","quantity":0,"quote":0,"value":{"value":15.93,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"74c983e5-8ef1-4344-80eb-4113cafeb9fc","ticker":"OTHER:Trend-Inb Rico-FIC","date":"2025-01-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":38.87,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"c6e482c5-d7ff-48b6-8473-f1378ea8a08e","ticker":"OTHER:Trend-Inb Rico-FIC","date":"2025-02-28T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":18.25,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"324248c1-2d4d-4954-86a7-6bf293fed641","ticker":"OTHER:Trend-Inb Rico-FIC","date":"2025-03-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":35.08,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0},{"id":"de344b79-1e99-4b03-9a7b-7bed7adb3cdd","ticker":"OTHER:Trend-Inb Rico-FIC","date":"2025-04-29T03:00:00.000Z","accountId":"6c746e8a-2d77-4cbe-a3df-43c86663afad","quantity":0,"quote":0,"value":{"value":29.36,"currency":"BRL"},"type":"DIVIDENDS","status":"COMPLETED","fees":0}],"cashflow":[],"portfolio":[{"id":"71b7c1cf-2fa0-4f49-80b7-150a71f2a3d2","name":"US Stocks","currency":"USD","classifyId":"Internacional","percPlanned":8.5,"allocations":[{"ticker":"NYSE:JPM","initialValue":100,"marketValue":165.49383730099999,"percPlanned":16,"profit":65.49,"performance":0.6549384,"quantity":0.67950662,"transactions":[{"id":"6964a33a-9257-4e73-8986-4c273b8775a9","quantity":0.67950662}],"percAllocation":0.22049212769808224},{"ticker":"NASDAQ:KHC","initialValue":106.44,"marketValue":96.8626882662,"percPlanned":16,"profit":-9.577,"performance":-0.0899785,"quantity":3.28459438,"transactions":[{"id":"88ec6879-7bd9-4d23-b6f9-d2deccedb561","quantity":3.28459438}],"percAllocation":0.12905290359257052},{"ticker":"NYSE:USB","initialValue":100,"marketValue":108.0671357936,"percPlanned":16,"profit":8.067,"performance":0.08067136,"quantity":2.70709258,"transactions":[{"id":"328f80c6-11e2-4652-be56-d6848d810c6b","quantity":2.70709258}],"percAllocation":0.14398090644324232},{"ticker":"NYSE:PFE","initialValue":120.1,"marketValue":83.1378587916,"percPlanned":16,"profit":-36.96,"performance":-0.3077614,"quantity":3.62730623,"transactions":[{"id":"babc7327-352b-440e-b050-c0f52d9a3a5e","quantity":3.62730623}],"percAllocation":0.1107669244739413},{"ticker":"NYSE:WMB","initialValue":100,"marketValue":170.65625890880003,"percPlanned":16,"profit":70.66,"performance":0.7065626,"quantity":2.89100896,"transactions":[{"id":"4c92a97d-a993-4d67-880c-999c4575c29a","quantity":2.89100896}],"percAllocation":0.2273701682519918},{"ticker":"NYSE:KO","initialValue":100,"marketValue":121.30566789779999,"percPlanned":16,"profit":21.31,"performance":0.2130567,"quantity":1.68690958,"transactions":[{"id":"f2648633-2a57-4489-8447-3141f6d59fe4","quantity":1.68690958}],"percAllocation":0.16161897779900747},{"ticker":"NASDAQ:MSFT","initialValue":4.91,"marketValue":5.042294452,"percPlanned":4,"profit":0.1323,"performance":0.02694388,"quantity":0.01286792,"transactions":[{"id":"ed554482-f676-4a05-8526-65d9fc92b387","quantity":0.01286792}],"percAllocation":0.006717991741164357}]},{"id":"80f55a2e-9ee4-4e4e-98f7-4ae04f666228","name":"US ETF","currency":"USD","classifyId":"Internacional","percPlanned":4.5,"allocations":[{"ticker":"NYSE:O","initialValue":80,"marketValue":81.12514,"percPlanned":25,"profit":1.125,"performance":0.01406425,"quantity":1.426,"transactions":[{"id":"fe8f1599-d751-4bf6-adb9-92adff13c3cf","quantity":1.426}],"percAllocation":0.24261300813670436},{"ticker":"NYSE:PLD","initialValue":81.41,"marketValue":66.9672,"percPlanned":25,"profit":-14.44,"performance":-0.1774082,"quantity":0.655,"transactions":[{"id":"598b8f93-c44d-40ef-ace8-73e62e33cee6","quantity":0.655}],"percAllocation":0.2002722440724578},{"ticker":"NYSE:EXR","initialValue":80,"marketValue":87.90236,"percPlanned":25,"profit":7.902,"performance":0.0987795,"quantity":0.6232,"transactions":[{"id":"5419ebd4-b0ee-4885-b166-43fcb5b9a8c0","quantity":0.6232}],"percAllocation":0.2628809760071356},{"ticker":"NYSE:ADC","initialValue":80,"marketValue":98.386134,"percPlanned":25,"profit":18.39,"performance":0.2298267,"quantity":1.3002,"transactions":[{"id":"6cb52d6e-afd1-479e-a9c4-084a2f90cc6d","quantity":1.3002}],"percAllocation":0.29423377178370214}]},{"id":"66574ec9-6a3d-48be-ab2c-79fa032555e6","name":"US Bond","currency":"USD","classifyId":"Internacional","percPlanned":1,"allocations":[{"ticker":"BOND:SGOV","initialValue":105.73,"marketValue":106.10523,"percPlanned":100,"profit":0.3752,"performance":0.003548945,"quantity":1.0542,"transactions":[{"id":"e02798ba-d071-4132-a854-13dcf5b5f0d2","quantity":1.0542}],"percAllocation":1}]},{"id":"8e8f4eda-9236-4724-9435-ae208cf84342","name":"B3 Hold","currency":"BRL","classifyId":"B3","percPlanned":5,"allocations":[{"ticker":"BVMF:ITSA4","initialValue":2180,"marketValue":2126,"percPlanned":0,"profit":-54,"performance":-0.02477064,"quantity":200,"transactions":[{"id":"1fe8450f-156b-4032-8e7c-af8d0557bab5","quantity":200}],"percAllocation":0.24485527509939325},{"ticker":"BVMF:WEGE3","initialValue":5432,"marketValue":5047,"percPlanned":0,"profit":-385,"performance":-0.07087629,"quantity":100,"transactions":[{"id":"d1cc005f-929f-42fb-83e3-e0470f7e6ac2","quantity":100}],"percAllocation":0.5812721417811091},{"ticker":"BVMF:BBAS3","initialValue":656.5,"marketValue":712.5,"percPlanned":0,"profit":56,"performance":0.08530084,"quantity":25,"transactions":[{"id":"d4d996bd-de22-4b1b-a78d-7d43037fa4f4","quantity":25}],"percAllocation":0.08205991698415696},{"ticker":"BVMF:PRIO3","initialValue":965.4,"marketValue":797.18,"percPlanned":0,"profit":-168.2,"performance":-0.174249,"quantity":23,"transactions":[{"id":"5396b5b9-0e4d-4295-a407-e9f02ff0ad2f","quantity":23}],"percAllocation":0.0918126661353407},{"ticker":"BVMF:VALE3","initialValue":53.84,"marketValue":53.84,"percPlanned":0,"percAllocation":0.006162636839382271,"performance":0,"profit":0,"transactions":[{"id":"08587021-2906-4c90-824b-39eca54230ac","quantity":1}]}]},{"id":"423565bc-9c86-4354-bc1c-0dda37868bf6","name":"FII","currency":"BRL","classifyId":"FII","percPlanned":18,"allocations":[{"ticker":"BVMF:AFHI11","initialValue":1156.2,"marketValue":1110.96,"percPlanned":0,"profit":-45.24,"performance":-0.03912818,"quantity":12,"transactions":[{"id":"939b1f39-7a3f-4c20-907d-4aab3b65bbc9","quantity":7},{"id":"a6c8f05c-92b1-42a3-abbd-476d944fc789","quantity":5}],"percAllocation":0.1503332891293346},{"ticker":"BVMF:CVBI11","initialValue":1272.3899999999999,"marketValue":1204,"percPlanned":0,"profit":-68.39,"performance":-0.05374924,"quantity":14,"transactions":[{"id":"6569c25e-b9a9-4e0c-92d1-1eb956196a13","quantity":6},{"id":"237e3ff5-feda-45b3-8e7d-b99a13b189a1","quantity":8}],"percAllocation":0.16292330967066218},{"ticker":"BVMF:HGRU11","initialValue":1330.13,"marketValue":1358.3899999999999,"percPlanned":0,"profit":28.26,"performance":0.02124604,"quantity":11,"transactions":[{"id":"a20b38dd-17da-4c47-8cc0-3d51aede57f5","quantity":5},{"id":"38147058-cfdd-4f16-9f2c-3bba5ad5dfc4","quantity":6}],"percAllocation":0.18381511181356378},{"ticker":"BVMF:JSRE11","initialValue":1123.05,"marketValue":1135.26,"percPlanned":0,"profit":12.21,"performance":0.01087218,"quantity":18,"transactions":[{"id":"896daf27-8bf5-455a-9e86-ae50b8b19ca5","quantity":8},{"id":"8a91dc37-e14a-4ae4-b825-5f558703d109","quantity":10}],"percAllocation":0.1536215253627209},{"ticker":"BVMF:LVBI11","initialValue":1271.01,"marketValue":1231.56,"percPlanned":0,"profit":-39.45,"performance":-0.03103831,"quantity":12,"transactions":[{"id":"a1ada911-6dda-404c-99fb-6b382ea2bb62","quantity":7},{"id":"9bcbe5e4-5004-4a2f-a576-1039bda760e5","quantity":5}],"percAllocation":0.16665268376910358},{"ticker":"BVMF:RBRF11","initialValue":601.92,"marketValue":613.36,"percPlanned":0,"profit":11.44,"performance":0.01900585,"quantity":88,"transactions":[{"id":"9634fca2-884d-4582-b24d-55a43f43cff9","quantity":60},{"id":"dae141ba-0739-47aa-b8a3-4c586c3f3ccd","quantity":28}],"percAllocation":0.0829988714448483},{"ticker":"BVMF:WPLZ11","initialValue":235.68,"marketValue":202.4,"percPlanned":0,"profit":-33.28,"performance":-0.1412084,"quantity":4,"transactions":[{"id":"7ae8437c-eea1-40ba-9ffb-5e3d5942459b","quantity":4}],"percAllocation":0.027388436775201017},{"ticker":"BVMF:XPML11","initialValue":535.71,"marketValue":535.71,"percPlanned":0,"profit":0,"performance":0,"quantity":5,"transactions":[{"id":"f8524033-5646-44a6-90d3-bb588ae4be15","quantity":5},{"id":"7f5168bc-1348-413f-9227-f876816d77ff","quantity":5}],"percAllocation":0.06759159139456629}]},{"id":"b4370a01-64de-48e3-8044-5db5c4a4e94a","name":"B3","currency":"BRL","classifyId":"B3","percPlanned":30,"allocations":[{"ticker":"BVMF:TAEE11","initialValue":675.2,"marketValue":719.4,"percPlanned":0,"profit":44.2,"performance":0.06546209,"quantity":20,"transactions":[{"id":"c7622f5b-85fc-4f2b-8230-97a6df3a6005","quantity":20}],"percAllocation":0.09448558287123746},{"ticker":"BVMF:EGIE3","initialValue":1220.1,"marketValue":1207.8,"percPlanned":0,"profit":-12.3,"performance":-0.01008114,"quantity":30,"transactions":[{"id":"af0f249d-a03c-4fde-80d9-ec668336d04b","quantity":30}],"percAllocation":0.15863175839849958},{"ticker":"BVMF:CXSE3","initialValue":585.16,"marketValue":665.1999999999999,"percPlanned":0,"profit":80.04,"performance":0.1367831,"quantity":40,"transactions":[{"id":"f060abe4-6d67-46c4-9d7a-7808ee621000","quantity":40}],"percAllocation":0.08736698599659043},{"ticker":"BVMF:BBSE3","initialValue":1334.4,"marketValue":1682,"percPlanned":0,"profit":347.6,"performance":0.2604916,"quantity":40,"transactions":[{"id":"18d1603e-f513-477b-8166-fa60dfd14a9d","quantity":40}],"percAllocation":0.22091291408037447},{"ticker":"BVMF:ABCB4","initialValue":1008.5,"marketValue":1068.5,"percPlanned":0,"profit":60,"performance":0.0594943,"quantity":50,"transactions":[{"id":"8a070b97-5877-4125-973d-1d65009884a7","quantity":50}],"percAllocation":0.14033617639410234},{"ticker":"BVMF:SAPR11","initialValue":683.75,"marketValue":743.25,"percPlanned":0,"profit":59.5,"performance":0.08702011,"quantity":25,"transactions":[{"id":"5f7352dc-04c4-4d08-b464-b95040291eed","quantity":25}],"percAllocation":0.09761802817493362},{"ticker":"BVMF:CAML3","initialValue":357,"marketValue":213.49999999999997,"percPlanned":0,"profit":-143.5,"performance":-0.4019608,"quantity":50,"transactions":[{"id":"f5d7b813-1e45-49f5-91e1-a3adb4fe8d42","quantity":50}],"percAllocation":0.028040967393674166},{"ticker":"BVMF:FLRY3","initialValue":335.54,"marketValue":285.56,"percPlanned":0,"profit":-49.98,"performance":-0.1489539,"quantity":22,"transactions":[{"id":"a95f8186-2f08-47e7-bd1b-0abe802e2fd9","quantity":22}],"percAllocation":0.0375052864118857},{"ticker":"BVMF:TUPY3","initialValue":764.8,"marketValue":728,"percPlanned":0,"profit":-36.8,"performance":-0.04811715,"quantity":32,"transactions":[{"id":"f68b9507-02ca-48f4-bfec-ee59fd0a8f13","quantity":32}],"percAllocation":0.09561510193252831},{"ticker":"BVMF:GOAU4","initialValue":395.85,"marketValue":300.65,"percPlanned":0,"profit":-95.2,"performance":-0.2404951,"quantity":35,"transactions":[{"id":"fb2f84cb-5645-4273-9156-cd0a57215a2b","quantity":35}],"percAllocation":0.03948719834617395}]},{"id":"14225b3c-7db2-4b42-886e-2b0f178bd95e","name":"Renda Fixa","currency":"BRL","classifyId":"Renda Fixa","percPlanned":15,"allocations":[{"ticker":"BRTD:BRSTNCNTB6A3","initialValue":490.03,"marketValue":502.30949999999996,"percPlanned":20,"profit":12.28,"performance":0.02505867,"quantity":0.15,"transactions":[{"id":"9ec997d4-833f-49cc-8158-6dc44ebc20a9","quantity":0.15}],"percAllocation":0.07900011929217042},{"ticker":"OTHER:ENAT24-IPCA-728","initialValue":1094.05,"marketValue":1016.71,"percPlanned":0,"profit":-77.34,"performance":-0.07069147,"quantity":1,"transactions":[{"id":"fab73d2d-6017-436e-95ff-207c410a1e7c","quantity":1}],"percAllocation":0.15990183599064442},{"ticker":"OTHER:BTG-LCA-CDI-092","initialValue":1000,"marketValue":1021.48,"percPlanned":0,"profit":21.48,"performance":0.02148,"quantity":2,"transactions":[{"id":"08221941-1118-4879-bc34-a4539e7b0fd1","quantity":2}],"percAllocation":0.16065203197344716},{"ticker":"BRTD:BRSTNCNTB3E2","initialValue":1030.75,"marketValue":988.4434,"percPlanned":7,"profit":-42.31,"performance":-0.04104448,"quantity":0.46,"transactions":[{"id":"8b7ba510-f7dc-4016-948a-19577767d181","quantity":0.46}],"percAllocation":0.15545624065154756},{"ticker":"BRTD:BRSTNCNTB2U0","initialValue":156.93,"marketValue":42.7744,"percPlanned":7,"profit":-114.2,"performance":-0.7274301,"quantity":0.04,"transactions":[{"id":"fc016bdb-ac6a-4f55-917c-37ec76e9a96d","quantity":0.04}],"percAllocation":0.006727292043353779},{"ticker":"BRTD:BRSTNCNTF238","initialValue":244,"marketValue":253.1212,"percPlanned":0,"profit":9.121,"performance":0.03738197,"quantity":0.31,"transactions":[{"id":"ba496047-ccf9-4f6c-aa99-d3b97ee6cf76","quantity":0.31}],"percAllocation":0.03980933069228699},{"ticker":"OTHER:BNP-Paribas-RF","initialValue":1095.78,"marketValue":1214.09,"percPlanned":0,"profit":118.3,"performance":0.1079688,"quantity":1,"transactions":[{"id":"338e57c1-4b51-40c0-925e-8756f0ddde92","quantity":1}],"percAllocation":0.19094453684716534},{"ticker":"OTHER:XPREF-FIRF-REF-DI","initialValue":1196.46,"marketValue":1319.41,"percPlanned":0,"profit":123,"performance":0.1027615,"quantity":1,"transactions":[{"id":"a446ff74-0ab0-40eb-a632-81fb89e78e6c","quantity":1}],"percAllocation":0.20750861250938435}]},{"id":"30f0559e-9180-434d-a1cf-a3fc8a503955","name":"Fundo Reserva","currency":"BRL","classifyId":"Reserva","percPlanned":8,"allocations":[{"ticker":"OTHER:Trend-Inb Rico-FIC","initialValue":309.77,"marketValue":366.5,"percPlanned":20,"profit":56.73,"performance":0.1831359,"quantity":1,"transactions":[{"id":"70241a18-bef6-41d0-b7dc-83eaa9f6c3e2","quantity":1}],"percAllocation":0.10280706774046054},{"ticker":"OTHER:NU-CASHBACK","initialValue":607.02,"marketValue":809.87,"percPlanned":20,"profit":202.9,"performance":0.3341735,"quantity":1,"transactions":[{"id":"e265d399-26db-4045-864e-30019d323c92","quantity":1}],"percAllocation":0.22717697121682615},{"ticker":"OTHER:BMG-CDB-ESCALONADO","initialValue":1000,"marketValue":1089.5,"percPlanned":20,"profit":89.5,"performance":0.0895,"quantity":1,"transactions":[{"id":"144a17f1-daa5-4e96-8a90-60224b4e1fd2","quantity":1}],"percAllocation":0.30561609905383835},{"ticker":"OTHER:BMG-CDI-120","initialValue":1000,"marketValue":1071.84,"percPlanned":20,"profit":71.84,"performance":0.07184,"quantity":1,"transactions":[{"id":"5f50d4b2-c77f-4593-b324-a81201f3c382","quantity":1}],"percAllocation":0.300662285093957},{"ticker":"OTHER:BMG-CDB-SUPERPOUP","initialValue":200,"marketValue":227.22,"percPlanned":20,"profit":27.22,"performance":0.1361,"quantity":1,"transactions":[{"id":"d93c4db7-5031-4cc6-9389-2644e02966a8","quantity":1}],"percAllocation":0.06373757689491799}]}],"scheduled":[],"profitability":{"2025":{"Internacional":[7777.14,6701.14,6701.14,6701.14,6701.14,6701.14,6701.14,6701.14,6701.14,6701.14,6701.14,6701.14],"B3":[12284.79,12284.79,12284.79,12284.79,12284.79,12284.79,12284.79,12284.79,12284.79,12284.79,12284.79,12284.79],"FII":[6849.12,6849.12,6849.12,6849.12,6849.12,6849.12,6849.12,6849.12,6849.12,6849.12,6849.12,6849.12],"Renda Fixa":[6161.72,6161.72,6161.72,6161.72,6161.72,6161.72,6161.72,6161.72,6161.72,6161.72,6161.72,6161.72],"Reserva":[3224.93,3224.93,3224.93,3224.93,3224.93,3224.93,3224.93,3224.93,3224.93,3224.93,3224.93,3224.93]}},"withdrawal":{"2025":{"2":1745.7,"3":400.93}}}
+{
+    "asset": [
+        {
+            "ticker": "NYSE:JPM",
+            "name": "JP Morgan",
+            "type": "STOCK",
+            "quote": {
+                "value": 244.62,
+                "currency": "USD"
+            },
+            "initialPrice": 244.62,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NASDAQ:KHC",
+            "name": "Kraft Heinz Co.",
+            "type": "STOCK",
+            "quote": {
+                "value": 28.87,
+                "currency": "USD"
+            },
+            "initialPrice": 28.87,
+            "lastUpdate": "2025-04-30T00:55:43-03:00",
+            "controlByQty": true,
+            "trend": "down",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:USB",
+            "name": "U.S. Bancorp",
+            "type": "STOCK",
+            "quote": {
+                "value": 40.5,
+                "currency": "USD"
+            },
+            "initialPrice": 40.5,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:PFE",
+            "name": "Pfizer",
+            "type": "STOCK",
+            "quote": {
+                "value": 23.79,
+                "currency": "USD"
+            },
+            "initialPrice": 23.79,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:WMB",
+            "name": "Williams Companies",
+            "type": "STOCK",
+            "quote": {
+                "value": 59.67,
+                "currency": "USD"
+            },
+            "initialPrice": 59.67,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:KO",
+            "name": "Coca-Cola",
+            "type": "STOCK",
+            "quote": {
+                "value": 72.35,
+                "currency": "USD"
+            },
+            "initialPrice": 72.35,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NASDAQ:MSFT",
+            "name": "Microsoft",
+            "type": "STOCK",
+            "quote": {
+                "value": 394.04,
+                "currency": "USD"
+            },
+            "initialPrice": 394.04,
+            "lastUpdate": "2025-04-30T00:55:43-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:O",
+            "name": "Realty Income",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 57.38,
+                "currency": "USD"
+            },
+            "initialPrice": 57.38,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:PLD",
+            "name": "Prologis",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 103.1,
+                "currency": "USD"
+            },
+            "initialPrice": 103.1,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:EXR",
+            "name": "Extra Space Storage",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 141.43,
+                "currency": "USD"
+            },
+            "initialPrice": 141.43,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "down",
+            "manualQuote": false
+        },
+        {
+            "ticker": "NYSE:ADC",
+            "name": "Agree Realty",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 77.33,
+                "currency": "USD"
+            },
+            "initialPrice": 77.33,
+            "lastUpdate": "2025-04-30T00:56:32-03:00",
+            "controlByQty": true,
+            "trend": "up",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BOND:SGOV",
+            "name": "iShares 0-3 Month Treasury",
+            "type": "ETF",
+            "quote": {
+                "value": 100.66,
+                "currency": "USD"
+            },
+            "initialPrice": 100.66,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:ITSA4",
+            "name": "ITAUSA PN",
+            "type": "STOCK",
+            "quote": {
+                "value": 10.63,
+                "currency": "BRL"
+            },
+            "initialPrice": 10.63,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:WEGE3",
+            "name": "WEG ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 50.47,
+                "currency": "BRL"
+            },
+            "initialPrice": 50.47,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:BBAS3",
+            "name": "Banco do Brasil ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 28.5,
+                "currency": "BRL"
+            },
+            "initialPrice": 28.5,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:AFHI11",
+            "name": "Af Invest Cri FII",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 93,
+                "currency": "BRL"
+            },
+            "initialPrice": 93,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:CVBI11",
+            "name": "CVBI VBI Credito",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 84.28,
+                "currency": "BRL"
+            },
+            "initialPrice": 84.28,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:HGRU11",
+            "name": "CSHG Renda Urbana FII",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 122.04,
+                "currency": "BRL"
+            },
+            "initialPrice": 122.04,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:JSRE11",
+            "name": "JS Real Estate FII",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 63.33,
+                "currency": "BRL"
+            },
+            "initialPrice": 63.33,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:LVBI11",
+            "name": "LVBI VBI Logistico",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 102.18,
+                "currency": "BRL"
+            },
+            "initialPrice": 102.18,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:RBRF11",
+            "name": "Rbr Alpha Fundos De Fundos",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 6.9,
+                "currency": "BRL"
+            },
+            "initialPrice": 6.9,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:WPLZ11",
+            "name": "West Plaza FII",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 48.7,
+                "currency": "BRL"
+            },
+            "initialPrice": 48.7,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:XPML11",
+            "name": "Xp Malls FII",
+            "type": "REAL_ESTATE",
+            "quote": {
+                "value": 106.3,
+                "currency": "BRL"
+            },
+            "initialPrice": 106.3,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:TAEE11",
+            "name": "TAESA UNIT",
+            "type": "STOCK",
+            "quote": {
+                "value": 36.16,
+                "currency": "BRL"
+            },
+            "initialPrice": 36.16,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:EGIE3",
+            "name": "Engie Brasil ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 40.75,
+                "currency": "BRL"
+            },
+            "initialPrice": 40.75,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:CXSE3",
+            "name": "Cx Seguridade ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 16.02,
+                "currency": "BRL"
+            },
+            "initialPrice": 16.02,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:BBSE3",
+            "name": "BB Seguridade ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 41.83,
+                "currency": "BRL"
+            },
+            "initialPrice": 41.83,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:ABCB4",
+            "name": "ABC Brasil PN",
+            "type": "STOCK",
+            "quote": {
+                "value": 21.5,
+                "currency": "BRL"
+            },
+            "initialPrice": 21.5,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:SAPR11",
+            "name": "SANEPAR UNIT",
+            "type": "STOCK",
+            "quote": {
+                "value": 29.58,
+                "currency": "BRL"
+            },
+            "initialPrice": 29.58,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:CAML3",
+            "name": "CAMIL ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 4.31,
+                "currency": "BRL"
+            },
+            "initialPrice": 4.31,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:FLRY3",
+            "name": "Fleury ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 12.92,
+                "currency": "BRL"
+            },
+            "initialPrice": 12.92,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:TUPY3",
+            "name": "Tupy ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 21.5,
+                "currency": "BRL"
+            },
+            "initialPrice": 21.5,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:GOAU4",
+            "name": "Gerdau PN",
+            "type": "STOCK",
+            "quote": {
+                "value": 8.62,
+                "currency": "BRL"
+            },
+            "initialPrice": 8.62,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BVMF:PRIO3",
+            "name": "PETRORIO ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 34.66,
+                "currency": "BRL"
+            },
+            "initialPrice": 34.66,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BRTD:BRSTNCNTB6A3",
+            "name": "IPCA+6,02 2029",
+            "type": "BOND",
+            "quote": {
+                "value": 3360.52,
+                "currency": "BRL"
+            },
+            "initialPrice": 3360.52,
+            "lastUpdate": "2025-04-30T00:56:34-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "OTHER:ENAT24-IPCA-728",
+            "name": "ENAT24 - BRAVA EG. IPCA+7,28",
+            "type": "BOND",
+            "quote": {
+                "value": 1016.71,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-29T21:59:03-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:BTG-LCA-CDI-092",
+            "name": "LCA 92% CDI",
+            "type": "FUND",
+            "quote": {
+                "value": 510.74,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:19:49-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "BRTD:BRSTNCNTB3E2",
+            "name": "IPCA+6,09 2035",
+            "type": "BOND",
+            "quote": {
+                "value": 2164.75,
+                "currency": "BRL"
+            },
+            "initialPrice": 2164.75,
+            "lastUpdate": "2025-04-30T00:56:34-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BRTD:BRSTNCNTB2U0",
+            "name": "IPCA+ 2045 746",
+            "type": "BOND",
+            "quote": {
+                "value": 1082.29,
+                "currency": "BRL"
+            },
+            "initialPrice": 1082.29,
+            "lastUpdate": "2025-04-30T00:56:34-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "BRTD:BRSTNCNTF238",
+            "name": "NTN-F2035 PRE 1490",
+            "type": "BOND",
+            "quote": {
+                "value": 821.11,
+                "currency": "BRL"
+            },
+            "initialPrice": 821.11,
+            "lastUpdate": "2025-04-30T00:56:34-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        },
+        {
+            "ticker": "OTHER:BNP-Paribas-RF",
+            "name": "BNP Paribas RF FIRF",
+            "type": "FUND",
+            "quote": {
+                "value": 1214.09,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:19:42-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:XPREF-FIRF-REF-DI",
+            "name": "XP Ref. FIRF REF DI",
+            "type": "FUND",
+            "quote": {
+                "value": 1319.41,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:20:07-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:Trend-Inb Rico-FIC",
+            "name": "Trend Inb Rico FIC FIRF",
+            "type": "FUND",
+            "quote": {
+                "value": 366.5,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:20:02-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:NU-CASHBACK",
+            "name": "Nubank Cashback",
+            "type": "FUND",
+            "quote": {
+                "value": 809.87,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:19:56-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:BMG-CDB-ESCALONADO",
+            "name": "Bmg CDB Escalonado",
+            "type": "FUND",
+            "quote": {
+                "value": 1089.5,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:19:22-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:BMG-CDI-120",
+            "name": "Bmg CDI 120",
+            "type": "FUND",
+            "quote": {
+                "value": 1071.84,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:19:34-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "OTHER:BMG-CDB-SUPERPOUP",
+            "name": "Bmg CDB Superpoup",
+            "type": "FUND",
+            "quote": {
+                "value": 227.22,
+                "currency": "BRL"
+            },
+            "lastUpdate": "2025-04-28T15:19:27-03:00",
+            "controlByQty": true,
+            "manualQuote": true
+        },
+        {
+            "ticker": "BVMF:VALE3",
+            "name": "VALE ON",
+            "type": "STOCK",
+            "quote": {
+                "value": 53.84,
+                "currency": "BRL"
+            },
+            "initialPrice": 53.84,
+            "lastUpdate": "2025-04-30T00:56:33-03:00",
+            "controlByQty": true,
+            "trend": "unchanged",
+            "manualQuote": false
+        }
+    ],
+    "balance": [
+        {
+            "id": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "accountName": "Nomad Inv",
+            "balance": 2.29,
+            "date": "2025-04-27",
+            "type": "INVESTMENT",
+            "currency": "USD"
+        },
+        {
+            "id": "691d447d-520b-454d-9d95-04b399d4088c",
+            "accountName": "XP Inv.",
+            "balance": 35.29,
+            "date": "2025-04-27",
+            "type": "INVESTMENT",
+            "currency": "BRL"
+        },
+        {
+            "id": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "accountName": "Rico Inv.",
+            "balance": 56.77,
+            "date": "2025-04-27",
+            "type": "INVESTMENT",
+            "currency": "BRL"
+        },
+        {
+            "id": "0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a",
+            "accountName": "BTG Inv.",
+            "balance": 25.74,
+            "date": "2025-04-27",
+            "type": "INVESTMENT",
+            "currency": "BRL"
+        },
+        {
+            "id": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "accountName": "Nu. Inv",
+            "balance": 0,
+            "date": "2025-04-27",
+            "type": "INVESTMENT",
+            "currency": "BRL"
+        },
+        {
+            "id": "e56dbc62-6403-45e6-b02e-74a1dce6f508",
+            "accountName": "BMG Inv.",
+            "balance": 0,
+            "date": "2025-04-27",
+            "type": "INVESTMENT",
+            "currency": "BRL"
+        }
+    ],
+    "income": [],
+    "investment": [
+        {
+            "id": "6964a33a-9257-4e73-8986-4c273b8775a9",
+            "ticker": "NYSE:JPM",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0.67950662,
+            "quote": 147.1656008296137,
+            "value": {
+                "value": 100,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "88ec6879-7bd9-4d23-b6f9-d2deccedb561",
+            "ticker": "NASDAQ:KHC",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 3.28459438,
+            "quote": 32.40582783923536,
+            "value": {
+                "value": 106.44,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "328f80c6-11e2-4652-be56-d6848d810c6b",
+            "ticker": "NYSE:USB",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 2.70709258,
+            "quote": 36.940000035019125,
+            "value": {
+                "value": 100,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "babc7327-352b-440e-b050-c0f52d9a3a5e",
+            "ticker": "NYSE:PFE",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 3.62730623,
+            "quote": 33.1099698742557,
+            "value": {
+                "value": 120.1,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "4c92a97d-a993-4d67-880c-999c4575c29a",
+            "ticker": "NYSE:WMB",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 2.89100896,
+            "quote": 34.59000002545824,
+            "value": {
+                "value": 100,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "f2648633-2a57-4489-8447-3141f6d59fe4",
+            "ticker": "NYSE:KO",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 1.68690958,
+            "quote": 59.28000005785728,
+            "value": {
+                "value": 100,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "ed554482-f676-4a05-8526-65d9fc92b387",
+            "ticker": "NASDAQ:MSFT",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0.01286792,
+            "quote": 381.56904923251,
+            "value": {
+                "value": 4.91,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "fe8f1599-d751-4bf6-adb9-92adff13c3cf",
+            "ticker": "NYSE:O",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 1.426,
+            "quote": 56.100981767180926,
+            "value": {
+                "value": 80,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "598b8f93-c44d-40ef-ace8-73e62e33cee6",
+            "ticker": "NYSE:PLD",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0.655,
+            "quote": 124.29007633587786,
+            "value": {
+                "value": 81.41,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "5419ebd4-b0ee-4885-b166-43fcb5b9a8c0",
+            "ticker": "NYSE:EXR",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0.6232,
+            "quote": 128.36970474967907,
+            "value": {
+                "value": 80,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "6cb52d6e-afd1-479e-a9c4-084a2f90cc6d",
+            "ticker": "NYSE:ADC",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 1.3002,
+            "quote": 61.52899553914782,
+            "value": {
+                "value": 80,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "e02798ba-d071-4132-a854-13dcf5b5f0d2",
+            "ticker": "BOND:SGOV",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 1.0542,
+            "quote": 100.2940618478467,
+            "value": {
+                "value": 105.73,
+                "currency": "USD"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "1fe8450f-156b-4032-8e7c-af8d0557bab5",
+            "ticker": "BVMF:ITSA4",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 200,
+            "quote": 10.9,
+            "value": {
+                "value": 2180,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "d1cc005f-929f-42fb-83e3-e0470f7e6ac2",
+            "ticker": "BVMF:WEGE3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 100,
+            "quote": 54.32,
+            "value": {
+                "value": 5432,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "d4d996bd-de22-4b1b-a78d-7d43037fa4f4",
+            "ticker": "BVMF:BBAS3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 25,
+            "quote": 26.26,
+            "value": {
+                "value": 656.5,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "939b1f39-7a3f-4c20-907d-4aab3b65bbc9",
+            "ticker": "BVMF:AFHI11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 7,
+            "quote": 96.35000000000001,
+            "value": {
+                "value": 674.45,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "6569c25e-b9a9-4e0c-92d1-1eb956196a13",
+            "ticker": "BVMF:CVBI11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 6,
+            "quote": 90.88499999999999,
+            "value": {
+                "value": 545.31,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "a20b38dd-17da-4c47-8cc0-3d51aede57f5",
+            "ticker": "BVMF:HGRU11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 5,
+            "quote": 120.92090909999999,
+            "value": {
+                "value": 604.6045455,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "896daf27-8bf5-455a-9e86-ae50b8b19ca5",
+            "ticker": "BVMF:JSRE11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 8,
+            "quote": 62.3916666625,
+            "value": {
+                "value": 499.1333333,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "a1ada911-6dda-404c-99fb-6b382ea2bb62",
+            "ticker": "BVMF:LVBI11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 7,
+            "quote": 105.9175,
+            "value": {
+                "value": 741.4225,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "9634fca2-884d-4582-b24d-55a43f43cff9",
+            "ticker": "BVMF:RBRF11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 60,
+            "quote": 6.84,
+            "value": {
+                "value": 410.4,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "7ae8437c-eea1-40ba-9ffb-5e3d5942459b",
+            "ticker": "BVMF:WPLZ11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 4,
+            "quote": 58.92,
+            "value": {
+                "value": 235.68,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "f8524033-5646-44a6-90d3-bb588ae4be15",
+            "ticker": "BVMF:XPML11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 5,
+            "quote": 107.14200000000001,
+            "value": {
+                "value": 535.71,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "c7622f5b-85fc-4f2b-8230-97a6df3a6005",
+            "ticker": "BVMF:TAEE11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 20,
+            "quote": 33.760000000000005,
+            "value": {
+                "value": 675.2,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "af0f249d-a03c-4fde-80d9-ec668336d04b",
+            "ticker": "BVMF:EGIE3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 30,
+            "quote": 40.669999999999995,
+            "value": {
+                "value": 1220.1,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "f060abe4-6d67-46c4-9d7a-7808ee621000",
+            "ticker": "BVMF:CXSE3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 40,
+            "quote": 14.629,
+            "value": {
+                "value": 585.16,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "18d1603e-f513-477b-8166-fa60dfd14a9d",
+            "ticker": "BVMF:BBSE3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 40,
+            "quote": 33.36,
+            "value": {
+                "value": 1334.4,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "8a070b97-5877-4125-973d-1d65009884a7",
+            "ticker": "BVMF:ABCB4",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 50,
+            "quote": 20.17,
+            "value": {
+                "value": 1008.5,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "5f7352dc-04c4-4d08-b464-b95040291eed",
+            "ticker": "BVMF:SAPR11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 25,
+            "quote": 27.35,
+            "value": {
+                "value": 683.75,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "f5d7b813-1e45-49f5-91e1-a3adb4fe8d42",
+            "ticker": "BVMF:CAML3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 50,
+            "quote": 7.14,
+            "value": {
+                "value": 357,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "a95f8186-2f08-47e7-bd1b-0abe802e2fd9",
+            "ticker": "BVMF:FLRY3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 22,
+            "quote": 15.251818181818182,
+            "value": {
+                "value": 335.54,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "f68b9507-02ca-48f4-bfec-ee59fd0a8f13",
+            "ticker": "BVMF:TUPY3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 32,
+            "quote": 23.9,
+            "value": {
+                "value": 764.8,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "fb2f84cb-5645-4273-9156-cd0a57215a2b",
+            "ticker": "BVMF:GOAU4",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 35,
+            "quote": 11.31,
+            "value": {
+                "value": 395.85,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "5396b5b9-0e4d-4295-a407-e9f02ff0ad2f",
+            "ticker": "BVMF:PRIO3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 23,
+            "quote": 41.97391304347826,
+            "value": {
+                "value": 965.4,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "a6c8f05c-92b1-42a3-abbd-476d944fc789",
+            "ticker": "BVMF:AFHI11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 5,
+            "quote": 96.35,
+            "value": {
+                "value": 481.75,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "237e3ff5-feda-45b3-8e7d-b99a13b189a1",
+            "ticker": "BVMF:CVBI11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 8,
+            "quote": 90.885,
+            "value": {
+                "value": 727.08,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "38147058-cfdd-4f16-9f2c-3bba5ad5dfc4",
+            "ticker": "BVMF:HGRU11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 6,
+            "quote": 120.92090908333334,
+            "value": {
+                "value": 725.5254545,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "8a91dc37-e14a-4ae4-b825-5f558703d109",
+            "ticker": "BVMF:JSRE11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 10,
+            "quote": 62.39166666999999,
+            "value": {
+                "value": 623.9166667,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "9bcbe5e4-5004-4a2f-a576-1039bda760e5",
+            "ticker": "BVMF:LVBI11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 5,
+            "quote": 105.91749999999999,
+            "value": {
+                "value": 529.5875,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "dae141ba-0739-47aa-b8a3-4c586c3f3ccd",
+            "ticker": "BVMF:RBRF11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 28,
+            "quote": 6.840000000000001,
+            "value": {
+                "value": 191.52,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "7f5168bc-1348-413f-9227-f876816d77ff",
+            "ticker": "BVMF:XPML11",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 5,
+            "quote": 107.14200000000001,
+            "value": {
+                "value": 535.71,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "9ec997d4-833f-49cc-8158-6dc44ebc20a9",
+            "ticker": "BRTD:BRSTNCNTB6A3",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a",
+            "quantity": 0.15,
+            "quote": 3266.87,
+            "value": {
+                "value": 490.03,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "fab73d2d-6017-436e-95ff-207c410a1e7c",
+            "ticker": "OTHER:ENAT24-IPCA-728",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a",
+            "quantity": 1,
+            "quote": 1094.05,
+            "value": {
+                "value": 1094.05,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "08221941-1118-4879-bc34-a4539e7b0fd1",
+            "ticker": "OTHER:BTG-LCA-CDI-092",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a",
+            "quantity": 2,
+            "quote": 500,
+            "value": {
+                "value": 1000,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "8b7ba510-f7dc-4016-948a-19577767d181",
+            "ticker": "BRTD:BRSTNCNTB3E2",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0.46,
+            "quote": 2240.76,
+            "value": {
+                "value": 1030.75,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "fc016bdb-ac6a-4f55-917c-37ec76e9a96d",
+            "ticker": "BRTD:BRSTNCNTB2U0",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0.04,
+            "quote": 3923.25,
+            "value": {
+                "value": 156.93,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "ba496047-ccf9-4f6c-aa99-d3b97ee6cf76",
+            "ticker": "BRTD:BRSTNCNTF238",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0.31,
+            "quote": 787.097,
+            "value": {
+                "value": 244,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "338e57c1-4b51-40c0-925e-8756f0ddde92",
+            "ticker": "OTHER:BNP-Paribas-RF",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 1,
+            "quote": 1095.78,
+            "value": {
+                "value": 1095.78,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "a446ff74-0ab0-40eb-a632-81fb89e78e6c",
+            "ticker": "OTHER:XPREF-FIRF-REF-DI",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 1,
+            "quote": 1196.46,
+            "value": {
+                "value": 1196.46,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "70241a18-bef6-41d0-b7dc-83eaa9f6c3e2",
+            "ticker": "OTHER:Trend-Inb Rico-FIC",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 1,
+            "quote": 309.77,
+            "value": {
+                "value": 309.77,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "e265d399-26db-4045-864e-30019d323c92",
+            "ticker": "OTHER:NU-CASHBACK",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 1,
+            "quote": 607.02,
+            "value": {
+                "value": 607.02,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "144a17f1-daa5-4e96-8a90-60224b4e1fd2",
+            "ticker": "OTHER:BMG-CDB-ESCALONADO",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "e56dbc62-6403-45e6-b02e-74a1dce6f508",
+            "quantity": 1,
+            "quote": 1000,
+            "value": {
+                "value": 1000,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "5f50d4b2-c77f-4593-b324-a81201f3c382",
+            "ticker": "OTHER:BMG-CDI-120",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "e56dbc62-6403-45e6-b02e-74a1dce6f508",
+            "quantity": 1,
+            "quote": 1000,
+            "value": {
+                "value": 1000,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "d93c4db7-5031-4cc6-9389-2644e02966a8",
+            "ticker": "OTHER:BMG-CDB-SUPERPOUP",
+            "date": "2024-12-28T03:00:00.000Z",
+            "accountId": "e56dbc62-6403-45e6-b02e-74a1dce6f508",
+            "quantity": 1,
+            "quote": 200,
+            "value": {
+                "value": 200,
+                "currency": "BRL"
+            },
+            "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "7d302260-254f-4d5d-ad3f-4ba9c02133e4",
+            "ticker": "BVMF:ABCB4",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 36.55,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "50312ace-bd30-4df4-8419-c0b198e0f0d5",
+            "ticker": "BVMF:AFHI11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 11.4,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "0a5e1b62-dcee-49c6-a265-b82c95af0551",
+            "ticker": "BVMF:AFHI11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 11.64,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "54b9d287-e81e-4072-808a-8c69cc2cd470",
+            "ticker": "BVMF:AFHI11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 11.76,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "05b03eeb-0b92-4dd5-a61a-c62c26ffb117",
+            "ticker": "BVMF:AFHI11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 11.88,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "831fb757-4f09-49f9-8780-6dd600eea0d4",
+            "ticker": "BVMF:BBSE3",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 90.89,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "584e7602-2695-4e4d-a14a-c26e3eaf3dde",
+            "ticker": "BVMF:BBSE3",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.49,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1feb15f2-d654-47a6-9770-bf30415a1cca",
+            "ticker": "BVMF:CAML3",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 2.37,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "26155ff6-9a5f-42d4-a3cb-828b83b707ac",
+            "ticker": "BVMF:CAML3",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.87,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "a13a3616-59b8-4e38-a413-3463112e4cac",
+            "ticker": "BVMF:EGIE3",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 7.82,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7ea47fd5-3ad8-4bac-8c17-88532e41b3ea",
+            "ticker": "BVMF:GOAU4",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.75,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "276d0599-9b17-4321-add0-39e6a71e71d8",
+            "ticker": "BVMF:ITSA4",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 85.71,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "9b9ad19b-c664-4f86-b8e5-ff659564487b",
+            "ticker": "BVMF:ITSA4",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 8.4,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "cb8cbde2-3ecb-401e-b25b-a03aed8bb6d8",
+            "ticker": "BVMF:ITSA4",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 19.37,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "f758539b-2c27-42e2-95ab-1aff3a0b9cf7",
+            "ticker": "BVMF:ITSA4",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 36.65,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "d0a0a251-6fe8-41dd-910f-2f1b93349017",
+            "ticker": "BVMF:CXSE3",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 12.4,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7b7777b8-f699-4bd2-8563-107a669d5cf4",
+            "ticker": "BVMF:CXSE3",
+            "date": "2025-01-31T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.05,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "ea147ab3-9e5f-42f1-8571-81b81c417fbd",
+            "ticker": "BVMF:ITSA4",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 6,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "2cd89076-13d8-49df-929a-2fb9f57f44c1",
+            "ticker": "BVMF:VALE3",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 47.12,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "5819ce6c-62a1-42e1-97e9-173ee2b704d3",
+            "ticker": "BVMF:VALE3",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.74,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "54b18a39-6589-44b9-825c-c1b5f4cb82d9",
+            "ticker": "BVMF:WEGE3",
+            "date": "2025-01-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.37,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3982f547-fce8-4a1d-a30b-f002986ec65d",
+            "ticker": "BVMF:WEGE3",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 30.26,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "9a9a0492-86c1-452e-8727-24b21a760bc7",
+            "ticker": "BVMF:WEGE3",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 12.73,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "a1165f91-3575-4806-98c7-243f535c42ed",
+            "ticker": "BVMF:CVBI11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 14.7,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "b59955bd-603b-444e-9471-ebed71483c96",
+            "ticker": "BVMF:CVBI11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 14.7,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "97ea441f-d226-47db-ab90-abaa102d0d12",
+            "ticker": "BVMF:CVBI11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 14.7,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "483e91d5-ac0c-475d-bcee-d5b88c2a1e6d",
+            "ticker": "BVMF:CVBI11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 14.7,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1fe7be34-1126-4863-abcb-6f46e3fdb286",
+            "ticker": "BVMF:CVBI11",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.71,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "47f5e578-ddbe-488b-8c30-79bf34f495d3",
+            "ticker": "BVMF:CVBI11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.59,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1c445fa5-044a-4e9f-8e01-0ffe8ec32151",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 20.9,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "cf313524-4e70-426b-8ecc-f0e9df4ff4cb",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.9,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "d30530aa-8df4-4914-9eff-98c240eb5c20",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.9,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "fa274376-ee5c-4480-8f75-0bbfb1b31217",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.9,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "b999d342-f4ce-471d-8ef0-362274e7fe6c",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-01-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.09,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "821e9567-6c10-4528-807d-6cfd5ba7dbbd",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.09,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "c4b36d42-4ca6-4030-8e00-c5be7b81d4ce",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.07,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "917c71d7-8d30-4b17-81c5-9574d37d90c0",
+            "ticker": "BVMF:HGRU11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.22,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "a438e124-bc74-4d0a-b0ce-5af14e80b6c5",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 8.64,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "d2e3aa5f-e45d-4144-ac0b-90a1dd22bf69",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 8.64,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "0770dfc1-f46b-4fe0-bd34-8974e164d5e8",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 8.64,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "384d6b3e-9fd5-41f7-91b7-ad3bebcb95b2",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 8.64,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "bc464b41-4825-4a87-bb91-6a2ac6f930c4",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.19,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "5346c27d-97e8-48d7-bf14-d9b135123078",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.65,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "a7020f3c-e8d4-4179-81f0-dfd6b5289c5a",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.17,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "79429ebb-e74f-437e-83ee-c6571e8d26f0",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.96,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3b55ba7c-2382-4826-89ad-50cff464dac2",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.96,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7eb6763f-ea21-41ee-bc88-3c036389569a",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.96,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7246a4f3-57db-4de8-8bac-b801f54d483a",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "afa4ede6-1ccf-43b9-8be1-219a10c0f3bf",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 7.54,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3f62e266-e1b2-4755-b214-ed50e570318b",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 4.48,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3cf5f3c7-627e-4070-b2f2-15491df54028",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 4.48,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "bd516972-91b5-4991-a1a9-1412fc57ca9a",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 5.28,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "4137de40-5e6e-4a03-8b85-2a5fb5b3c736",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-01-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.09,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "00820a7a-488b-416c-94a1-89951479e5d9",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.8,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7c5e05ee-5934-4b22-8551-6605811d434e",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.4,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "5ec41cf9-6e62-4668-9920-1521c1277dfc",
+            "ticker": "BVMF:RBRF11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.26,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "485ae148-a806-47df-8806-f9ff0a022213",
+            "ticker": "BVMF:WPLZ11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.16,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "d4f1b3a0-c499-4c4a-b47a-d867030d6d19",
+            "ticker": "BVMF:WPLZ11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.28,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "e6daad6f-8af9-48cf-99b1-b87043f282d5",
+            "ticker": "BVMF:WPLZ11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.28,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "d9963590-0d67-4384-94e2-5654093a1d23",
+            "ticker": "BVMF:WPLZ11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.28,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "5dc418fd-9821-4882-a186-4d5f53d352a7",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.2,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1a545ffd-9bec-447f-bf6b-35466e158f3d",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.2,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "6c5e02ce-a832-4075-a0d6-3388c6650e93",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.2,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "d6056f67-832f-4156-a619-7c9803699b0a",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 9.2,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "94b6688b-d8ad-4234-82c4-1691f6b52b13",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-03-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.04,
+                "currency": "BRL"
+            },
+            "type": "IOE_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1df30644-b3ff-45d8-ad10-16accae2b810",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-01-31T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.08,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3a99d586-cd57-4d32-8c2f-b12f11089b8c",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.06,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "42db0321-afe0-4171-a356-8f98c3782b99",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.04,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7220ec95-a1b9-49a6-9587-542da1d056dd",
+            "ticker": "BVMF:XPML11",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.02,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3ea5af54-f588-493c-b1e1-21f52d08e5da",
+            "ticker": "NASDAQ:KHC",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.92,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "555e8c5d-fe08-471d-9dfd-8c12f0d6f011",
+            "ticker": "NYSE:KO",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.6,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "e8b4af81-75bb-48f5-b424-9a1e00320596",
+            "ticker": "NYSE:JPM",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.59,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "e60b58cf-3055-4921-9657-633d435e18cd",
+            "ticker": "NYSE:PFE",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.08,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "0c18ba56-a574-48fd-89d3-267d88d1812c",
+            "ticker": "NYSE:USB",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.94,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "c7755813-b59b-4e86-8aac-21a42a062a2c",
+            "ticker": "NYSE:WMB",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 1.01,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "c20fa4ae-d501-407a-9b8e-409c325793d8",
+            "ticker": "NYSE:USB",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.94,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "6a734b80-dc0e-4a9c-9b57-3a25c35edf87",
+            "ticker": "NYSE:ADC",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.23,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "76b8f882-b003-4442-8414-addbd863dfab",
+            "ticker": "NYSE:ADC",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.23,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "a216fb57-a498-4139-9646-cd545c378ace",
+            "ticker": "NYSE:ADC",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.23,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "f3c5bf6a-e977-4419-91f1-9a0fd67f8646",
+            "ticker": "NYSE:ADC",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.23,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "8cec3921-6f36-4c45-a4c3-b4da975a3c2a",
+            "ticker": "NYSE:EXR",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.71,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7bb08aca-9f8a-4a04-800f-27bbc32ffe2b",
+            "ticker": "NYSE:O",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.27,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "3ac76ff0-c733-42e7-b5e0-c1db1737f21c",
+            "ticker": "NYSE:O",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.27,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "aadc5a4c-0503-4417-88bd-11d0d07c95cc",
+            "ticker": "NYSE:O",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.27,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1184c540-1f40-469f-81a0-fb5a1b5652b5",
+            "ticker": "NYSE:O",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.27,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "69f16fef-3c72-4d6e-af39-c44e7d1a3a12",
+            "ticker": "NYSE:PLD",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.44,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "66f1e61e-3727-4465-bd98-993c2a2fc653",
+            "ticker": "NYSE:PLD",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.46,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "92c849d2-9fc9-458f-984a-4b0cb213a1ea",
+            "ticker": "BOND:SGOV",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.27,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "b9e4f003-1299-43e3-9c7a-ad26af812511",
+            "ticker": "BOND:SGOV",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.23,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "7b7f2090-6d19-4c07-84f7-2fa18d4643fd",
+            "ticker": "BOND:SGOV",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 0.25,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "be6ed516-05e8-495c-98eb-854012eec87e",
+            "ticker": "OTHER:NU-CASHBACK",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 12.79,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "39d3369e-0329-46cd-8820-6eff47a2fe56",
+            "ticker": "OTHER:NU-CASHBACK",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 13.39,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "c8b7f272-304f-4c8c-b875-10fb8b13dea6",
+            "ticker": "OTHER:NU-CASHBACK",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 14.18,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "1ad2c28e-3a1e-473c-be8e-8542ca1fb3cb",
+            "ticker": "OTHER:NU-CASHBACK",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "33eee4ce-fa22-4602-b53d-f928b37a34b9",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 15.93,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "74c983e5-8ef1-4344-80eb-4113cafeb9fc",
+            "ticker": "OTHER:Trend-Inb Rico-FIC",
+            "date": "2025-01-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 38.87,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "c6e482c5-d7ff-48b6-8473-f1378ea8a08e",
+            "ticker": "OTHER:Trend-Inb Rico-FIC",
+            "date": "2025-02-28T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 18.25,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "324248c1-2d4d-4954-86a7-6bf293fed641",
+            "ticker": "OTHER:Trend-Inb Rico-FIC",
+            "date": "2025-03-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 35.08,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        },
+        {
+            "id": "de344b79-1e99-4b03-9a7b-7bed7adb3cdd",
+            "ticker": "OTHER:Trend-Inb Rico-FIC",
+            "date": "2025-04-29T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "quantity": 0,
+            "quote": 0,
+            "value": {
+                "value": 29.36,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED",
+            "fees": 0
+        }
+    ],
+    "cashflow": [],
+    "portfolio": [
+        {
+            "id": "71b7c1cf-2fa0-4f49-80b7-150a71f2a3d2",
+            "name": "US Stocks",
+            "currency": "USD",
+            "classifyId": "Internacional",
+            "percPlanned": 8.5,
+            "allocations": [
+                {
+                    "ticker": "NYSE:JPM",
+                    "initialValue": 100,
+                    "marketValue": 165.49383730099999,
+                    "percPlanned": 16,
+                    "profit": 65.49,
+                    "performance": 0.6549384,
+                    "quantity": 0.67950662,
+                    "transactions": [
+                        {
+                            "id": "6964a33a-9257-4e73-8986-4c273b8775a9",
+                            "quantity": 0.67950662
+                        }
+                    ],
+                    "percAllocation": 0.22049212769808224
+                },
+                {
+                    "ticker": "NASDAQ:KHC",
+                    "initialValue": 106.44,
+                    "marketValue": 96.8626882662,
+                    "percPlanned": 16,
+                    "profit": -9.577,
+                    "performance": -0.0899785,
+                    "quantity": 3.28459438,
+                    "transactions": [
+                        {
+                            "id": "88ec6879-7bd9-4d23-b6f9-d2deccedb561",
+                            "quantity": 3.28459438
+                        }
+                    ],
+                    "percAllocation": 0.12905290359257052
+                },
+                {
+                    "ticker": "NYSE:USB",
+                    "initialValue": 100,
+                    "marketValue": 108.0671357936,
+                    "percPlanned": 16,
+                    "profit": 8.067,
+                    "performance": 0.08067136,
+                    "quantity": 2.70709258,
+                    "transactions": [
+                        {
+                            "id": "328f80c6-11e2-4652-be56-d6848d810c6b",
+                            "quantity": 2.70709258
+                        }
+                    ],
+                    "percAllocation": 0.14398090644324232
+                },
+                {
+                    "ticker": "NYSE:PFE",
+                    "initialValue": 120.1,
+                    "marketValue": 83.1378587916,
+                    "percPlanned": 16,
+                    "profit": -36.96,
+                    "performance": -0.3077614,
+                    "quantity": 3.62730623,
+                    "transactions": [
+                        {
+                            "id": "babc7327-352b-440e-b050-c0f52d9a3a5e",
+                            "quantity": 3.62730623
+                        }
+                    ],
+                    "percAllocation": 0.1107669244739413
+                },
+                {
+                    "ticker": "NYSE:WMB",
+                    "initialValue": 100,
+                    "marketValue": 170.65625890880003,
+                    "percPlanned": 16,
+                    "profit": 70.66,
+                    "performance": 0.7065626,
+                    "quantity": 2.89100896,
+                    "transactions": [
+                        {
+                            "id": "4c92a97d-a993-4d67-880c-999c4575c29a",
+                            "quantity": 2.89100896
+                        }
+                    ],
+                    "percAllocation": 0.2273701682519918
+                },
+                {
+                    "ticker": "NYSE:KO",
+                    "initialValue": 100,
+                    "marketValue": 121.30566789779999,
+                    "percPlanned": 16,
+                    "profit": 21.31,
+                    "performance": 0.2130567,
+                    "quantity": 1.68690958,
+                    "transactions": [
+                        {
+                            "id": "f2648633-2a57-4489-8447-3141f6d59fe4",
+                            "quantity": 1.68690958
+                        }
+                    ],
+                    "percAllocation": 0.16161897779900747
+                },
+                {
+                    "ticker": "NASDAQ:MSFT",
+                    "initialValue": 4.91,
+                    "marketValue": 5.042294452,
+                    "percPlanned": 4,
+                    "profit": 0.1323,
+                    "performance": 0.02694388,
+                    "quantity": 0.01286792,
+                    "transactions": [
+                        {
+                            "id": "ed554482-f676-4a05-8526-65d9fc92b387",
+                            "quantity": 0.01286792
+                        }
+                    ],
+                    "percAllocation": 0.006717991741164357
+                }
+            ]
+        },
+        {
+            "id": "80f55a2e-9ee4-4e4e-98f7-4ae04f666228",
+            "name": "US ETF",
+            "currency": "USD",
+            "classifyId": "Internacional",
+            "percPlanned": 4.5,
+            "allocations": [
+                {
+                    "ticker": "NYSE:O",
+                    "initialValue": 80,
+                    "marketValue": 81.12514,
+                    "percPlanned": 25,
+                    "profit": 1.125,
+                    "performance": 0.01406425,
+                    "quantity": 1.426,
+                    "transactions": [
+                        {
+                            "id": "fe8f1599-d751-4bf6-adb9-92adff13c3cf",
+                            "quantity": 1.426
+                        }
+                    ],
+                    "percAllocation": 0.24261300813670436
+                },
+                {
+                    "ticker": "NYSE:PLD",
+                    "initialValue": 81.41,
+                    "marketValue": 66.9672,
+                    "percPlanned": 25,
+                    "profit": -14.44,
+                    "performance": -0.1774082,
+                    "quantity": 0.655,
+                    "transactions": [
+                        {
+                            "id": "598b8f93-c44d-40ef-ace8-73e62e33cee6",
+                            "quantity": 0.655
+                        }
+                    ],
+                    "percAllocation": 0.2002722440724578
+                },
+                {
+                    "ticker": "NYSE:EXR",
+                    "initialValue": 80,
+                    "marketValue": 87.90236,
+                    "percPlanned": 25,
+                    "profit": 7.902,
+                    "performance": 0.0987795,
+                    "quantity": 0.6232,
+                    "transactions": [
+                        {
+                            "id": "5419ebd4-b0ee-4885-b166-43fcb5b9a8c0",
+                            "quantity": 0.6232
+                        }
+                    ],
+                    "percAllocation": 0.2628809760071356
+                },
+                {
+                    "ticker": "NYSE:ADC",
+                    "initialValue": 80,
+                    "marketValue": 98.386134,
+                    "percPlanned": 25,
+                    "profit": 18.39,
+                    "performance": 0.2298267,
+                    "quantity": 1.3002,
+                    "transactions": [
+                        {
+                            "id": "6cb52d6e-afd1-479e-a9c4-084a2f90cc6d",
+                            "quantity": 1.3002
+                        }
+                    ],
+                    "percAllocation": 0.29423377178370214
+                }
+            ]
+        },
+        {
+            "id": "66574ec9-6a3d-48be-ab2c-79fa032555e6",
+            "name": "US Bond",
+            "currency": "USD",
+            "classifyId": "Internacional",
+            "percPlanned": 1,
+            "allocations": [
+                {
+                    "ticker": "BOND:SGOV",
+                    "initialValue": 105.73,
+                    "marketValue": 106.10523,
+                    "percPlanned": 100,
+                    "profit": 0.3752,
+                    "performance": 0.003548945,
+                    "quantity": 1.0542,
+                    "transactions": [
+                        {
+                            "id": "e02798ba-d071-4132-a854-13dcf5b5f0d2",
+                            "quantity": 1.0542
+                        }
+                    ],
+                    "percAllocation": 1
+                }
+            ]
+        },
+        {
+            "id": "8e8f4eda-9236-4724-9435-ae208cf84342",
+            "name": "B3 Hold",
+            "currency": "BRL",
+            "classifyId": "B3",
+            "percPlanned": 5,
+            "allocations": [
+                {
+                    "ticker": "BVMF:ITSA4",
+                    "initialValue": 2180,
+                    "marketValue": 2126,
+                    "percPlanned": 0,
+                    "profit": -54,
+                    "performance": -0.02477064,
+                    "quantity": 200,
+                    "transactions": [
+                        {
+                            "id": "1fe8450f-156b-4032-8e7c-af8d0557bab5",
+                            "quantity": 200
+                        }
+                    ],
+                    "percAllocation": 0.24485527509939325
+                },
+                {
+                    "ticker": "BVMF:WEGE3",
+                    "initialValue": 5432,
+                    "marketValue": 5047,
+                    "percPlanned": 0,
+                    "profit": -385,
+                    "performance": -0.07087629,
+                    "quantity": 100,
+                    "transactions": [
+                        {
+                            "id": "d1cc005f-929f-42fb-83e3-e0470f7e6ac2",
+                            "quantity": 100
+                        }
+                    ],
+                    "percAllocation": 0.5812721417811091
+                },
+                {
+                    "ticker": "BVMF:BBAS3",
+                    "initialValue": 656.5,
+                    "marketValue": 712.5,
+                    "percPlanned": 0,
+                    "profit": 56,
+                    "performance": 0.08530084,
+                    "quantity": 25,
+                    "transactions": [
+                        {
+                            "id": "d4d996bd-de22-4b1b-a78d-7d43037fa4f4",
+                            "quantity": 25
+                        }
+                    ],
+                    "percAllocation": 0.08205991698415696
+                },
+                {
+                    "ticker": "BVMF:PRIO3",
+                    "initialValue": 965.4,
+                    "marketValue": 797.18,
+                    "percPlanned": 0,
+                    "profit": -168.2,
+                    "performance": -0.174249,
+                    "quantity": 23,
+                    "transactions": [
+                        {
+                            "id": "5396b5b9-0e4d-4295-a407-e9f02ff0ad2f",
+                            "quantity": 23
+                        }
+                    ],
+                    "percAllocation": 0.0918126661353407
+                },
+                {
+                    "ticker": "BVMF:VALE3",
+                    "initialValue": 53.84,
+                    "marketValue": 53.84,
+                    "percPlanned": 0,
+                    "percAllocation": 0.006162636839382271,
+                    "performance": 0,
+                    "profit": 0,
+                    "transactions": [
+                        {
+                            "id": "08587021-2906-4c90-824b-39eca54230ac",
+                            "quantity": 1
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "id": "423565bc-9c86-4354-bc1c-0dda37868bf6",
+            "name": "FII",
+            "currency": "BRL",
+            "classifyId": "FII",
+            "percPlanned": 18,
+            "allocations": [
+                {
+                    "ticker": "BVMF:AFHI11",
+                    "initialValue": 1156.2,
+                    "marketValue": 1110.96,
+                    "percPlanned": 0,
+                    "profit": -45.24,
+                    "performance": -0.03912818,
+                    "quantity": 12,
+                    "transactions": [
+                        {
+                            "id": "939b1f39-7a3f-4c20-907d-4aab3b65bbc9",
+                            "quantity": 7
+                        },
+                        {
+                            "id": "a6c8f05c-92b1-42a3-abbd-476d944fc789",
+                            "quantity": 5
+                        }
+                    ],
+                    "percAllocation": 0.1503332891293346
+                },
+                {
+                    "ticker": "BVMF:CVBI11",
+                    "initialValue": 1272.3899999999999,
+                    "marketValue": 1204,
+                    "percPlanned": 0,
+                    "profit": -68.39,
+                    "performance": -0.05374924,
+                    "quantity": 14,
+                    "transactions": [
+                        {
+                            "id": "6569c25e-b9a9-4e0c-92d1-1eb956196a13",
+                            "quantity": 6
+                        },
+                        {
+                            "id": "237e3ff5-feda-45b3-8e7d-b99a13b189a1",
+                            "quantity": 8
+                        }
+                    ],
+                    "percAllocation": 0.16292330967066218
+                },
+                {
+                    "ticker": "BVMF:HGRU11",
+                    "initialValue": 1330.13,
+                    "marketValue": 1358.3899999999999,
+                    "percPlanned": 0,
+                    "profit": 28.26,
+                    "performance": 0.02124604,
+                    "quantity": 11,
+                    "transactions": [
+                        {
+                            "id": "a20b38dd-17da-4c47-8cc0-3d51aede57f5",
+                            "quantity": 5
+                        },
+                        {
+                            "id": "38147058-cfdd-4f16-9f2c-3bba5ad5dfc4",
+                            "quantity": 6
+                        }
+                    ],
+                    "percAllocation": 0.18381511181356378
+                },
+                {
+                    "ticker": "BVMF:JSRE11",
+                    "initialValue": 1123.05,
+                    "marketValue": 1135.26,
+                    "percPlanned": 0,
+                    "profit": 12.21,
+                    "performance": 0.01087218,
+                    "quantity": 18,
+                    "transactions": [
+                        {
+                            "id": "896daf27-8bf5-455a-9e86-ae50b8b19ca5",
+                            "quantity": 8
+                        },
+                        {
+                            "id": "8a91dc37-e14a-4ae4-b825-5f558703d109",
+                            "quantity": 10
+                        }
+                    ],
+                    "percAllocation": 0.1536215253627209
+                },
+                {
+                    "ticker": "BVMF:LVBI11",
+                    "initialValue": 1271.01,
+                    "marketValue": 1231.56,
+                    "percPlanned": 0,
+                    "profit": -39.45,
+                    "performance": -0.03103831,
+                    "quantity": 12,
+                    "transactions": [
+                        {
+                            "id": "a1ada911-6dda-404c-99fb-6b382ea2bb62",
+                            "quantity": 7
+                        },
+                        {
+                            "id": "9bcbe5e4-5004-4a2f-a576-1039bda760e5",
+                            "quantity": 5
+                        }
+                    ],
+                    "percAllocation": 0.16665268376910358
+                },
+                {
+                    "ticker": "BVMF:RBRF11",
+                    "initialValue": 601.92,
+                    "marketValue": 613.36,
+                    "percPlanned": 0,
+                    "profit": 11.44,
+                    "performance": 0.01900585,
+                    "quantity": 88,
+                    "transactions": [
+                        {
+                            "id": "9634fca2-884d-4582-b24d-55a43f43cff9",
+                            "quantity": 60
+                        },
+                        {
+                            "id": "dae141ba-0739-47aa-b8a3-4c586c3f3ccd",
+                            "quantity": 28
+                        }
+                    ],
+                    "percAllocation": 0.0829988714448483
+                },
+                {
+                    "ticker": "BVMF:WPLZ11",
+                    "initialValue": 235.68,
+                    "marketValue": 202.4,
+                    "percPlanned": 0,
+                    "profit": -33.28,
+                    "performance": -0.1412084,
+                    "quantity": 4,
+                    "transactions": [
+                        {
+                            "id": "7ae8437c-eea1-40ba-9ffb-5e3d5942459b",
+                            "quantity": 4
+                        }
+                    ],
+                    "percAllocation": 0.027388436775201017
+                },
+                {
+                    "ticker": "BVMF:XPML11",
+                    "initialValue": 535.71,
+                    "marketValue": 535.71,
+                    "percPlanned": 0,
+                    "profit": 0,
+                    "performance": 0,
+                    "quantity": 5,
+                    "transactions": [
+                        {
+                            "id": "f8524033-5646-44a6-90d3-bb588ae4be15",
+                            "quantity": 5
+                        },
+                        {
+                            "id": "7f5168bc-1348-413f-9227-f876816d77ff",
+                            "quantity": 5
+                        }
+                    ],
+                    "percAllocation": 0.06759159139456629
+                }
+            ]
+        },
+        {
+            "id": "b4370a01-64de-48e3-8044-5db5c4a4e94a",
+            "name": "B3",
+            "currency": "BRL",
+            "classifyId": "B3",
+            "percPlanned": 30,
+            "allocations": [
+                {
+                    "ticker": "BVMF:TAEE11",
+                    "initialValue": 675.2,
+                    "marketValue": 719.4,
+                    "percPlanned": 0,
+                    "profit": 44.2,
+                    "performance": 0.06546209,
+                    "quantity": 20,
+                    "transactions": [
+                        {
+                            "id": "c7622f5b-85fc-4f2b-8230-97a6df3a6005",
+                            "quantity": 20
+                        }
+                    ],
+                    "percAllocation": 0.09448558287123746
+                },
+                {
+                    "ticker": "BVMF:EGIE3",
+                    "initialValue": 1220.1,
+                    "marketValue": 1207.8,
+                    "percPlanned": 0,
+                    "profit": -12.3,
+                    "performance": -0.01008114,
+                    "quantity": 30,
+                    "transactions": [
+                        {
+                            "id": "af0f249d-a03c-4fde-80d9-ec668336d04b",
+                            "quantity": 30
+                        }
+                    ],
+                    "percAllocation": 0.15863175839849958
+                },
+                {
+                    "ticker": "BVMF:CXSE3",
+                    "initialValue": 585.16,
+                    "marketValue": 665.1999999999999,
+                    "percPlanned": 0,
+                    "profit": 80.04,
+                    "performance": 0.1367831,
+                    "quantity": 40,
+                    "transactions": [
+                        {
+                            "id": "f060abe4-6d67-46c4-9d7a-7808ee621000",
+                            "quantity": 40
+                        }
+                    ],
+                    "percAllocation": 0.08736698599659043
+                },
+                {
+                    "ticker": "BVMF:BBSE3",
+                    "initialValue": 1334.4,
+                    "marketValue": 1682,
+                    "percPlanned": 0,
+                    "profit": 347.6,
+                    "performance": 0.2604916,
+                    "quantity": 40,
+                    "transactions": [
+                        {
+                            "id": "18d1603e-f513-477b-8166-fa60dfd14a9d",
+                            "quantity": 40
+                        }
+                    ],
+                    "percAllocation": 0.22091291408037447
+                },
+                {
+                    "ticker": "BVMF:ABCB4",
+                    "initialValue": 1008.5,
+                    "marketValue": 1068.5,
+                    "percPlanned": 0,
+                    "profit": 60,
+                    "performance": 0.0594943,
+                    "quantity": 50,
+                    "transactions": [
+                        {
+                            "id": "8a070b97-5877-4125-973d-1d65009884a7",
+                            "quantity": 50
+                        }
+                    ],
+                    "percAllocation": 0.14033617639410234
+                },
+                {
+                    "ticker": "BVMF:SAPR11",
+                    "initialValue": 683.75,
+                    "marketValue": 743.25,
+                    "percPlanned": 0,
+                    "profit": 59.5,
+                    "performance": 0.08702011,
+                    "quantity": 25,
+                    "transactions": [
+                        {
+                            "id": "5f7352dc-04c4-4d08-b464-b95040291eed",
+                            "quantity": 25
+                        }
+                    ],
+                    "percAllocation": 0.09761802817493362
+                },
+                {
+                    "ticker": "BVMF:CAML3",
+                    "initialValue": 357,
+                    "marketValue": 213.49999999999997,
+                    "percPlanned": 0,
+                    "profit": -143.5,
+                    "performance": -0.4019608,
+                    "quantity": 50,
+                    "transactions": [
+                        {
+                            "id": "f5d7b813-1e45-49f5-91e1-a3adb4fe8d42",
+                            "quantity": 50
+                        }
+                    ],
+                    "percAllocation": 0.028040967393674166
+                },
+                {
+                    "ticker": "BVMF:FLRY3",
+                    "initialValue": 335.54,
+                    "marketValue": 285.56,
+                    "percPlanned": 0,
+                    "profit": -49.98,
+                    "performance": -0.1489539,
+                    "quantity": 22,
+                    "transactions": [
+                        {
+                            "id": "a95f8186-2f08-47e7-bd1b-0abe802e2fd9",
+                            "quantity": 22
+                        }
+                    ],
+                    "percAllocation": 0.0375052864118857
+                },
+                {
+                    "ticker": "BVMF:TUPY3",
+                    "initialValue": 764.8,
+                    "marketValue": 728,
+                    "percPlanned": 0,
+                    "profit": -36.8,
+                    "performance": -0.04811715,
+                    "quantity": 32,
+                    "transactions": [
+                        {
+                            "id": "f68b9507-02ca-48f4-bfec-ee59fd0a8f13",
+                            "quantity": 32
+                        }
+                    ],
+                    "percAllocation": 0.09561510193252831
+                },
+                {
+                    "ticker": "BVMF:GOAU4",
+                    "initialValue": 395.85,
+                    "marketValue": 300.65,
+                    "percPlanned": 0,
+                    "profit": -95.2,
+                    "performance": -0.2404951,
+                    "quantity": 35,
+                    "transactions": [
+                        {
+                            "id": "fb2f84cb-5645-4273-9156-cd0a57215a2b",
+                            "quantity": 35
+                        }
+                    ],
+                    "percAllocation": 0.03948719834617395
+                }
+            ]
+        },
+        {
+            "id": "14225b3c-7db2-4b42-886e-2b0f178bd95e",
+            "name": "Renda Fixa",
+            "currency": "BRL",
+            "classifyId": "Renda Fixa",
+            "percPlanned": 15,
+            "allocations": [
+                {
+                    "ticker": "BRTD:BRSTNCNTB6A3",
+                    "initialValue": 490.03,
+                    "marketValue": 502.30949999999996,
+                    "percPlanned": 20,
+                    "profit": 12.28,
+                    "performance": 0.02505867,
+                    "quantity": 0.15,
+                    "transactions": [
+                        {
+                            "id": "9ec997d4-833f-49cc-8158-6dc44ebc20a9",
+                            "quantity": 0.15
+                        }
+                    ],
+                    "percAllocation": 0.07900011929217042
+                },
+                {
+                    "ticker": "OTHER:ENAT24-IPCA-728",
+                    "initialValue": 1094.05,
+                    "marketValue": 1016.71,
+                    "percPlanned": 0,
+                    "profit": -77.34,
+                    "performance": -0.07069147,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "fab73d2d-6017-436e-95ff-207c410a1e7c",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.15990183599064442
+                },
+                {
+                    "ticker": "OTHER:BTG-LCA-CDI-092",
+                    "initialValue": 1000,
+                    "marketValue": 1021.48,
+                    "percPlanned": 0,
+                    "profit": 21.48,
+                    "performance": 0.02148,
+                    "quantity": 2,
+                    "transactions": [
+                        {
+                            "id": "08221941-1118-4879-bc34-a4539e7b0fd1",
+                            "quantity": 2
+                        }
+                    ],
+                    "percAllocation": 0.16065203197344716
+                },
+                {
+                    "ticker": "BRTD:BRSTNCNTB3E2",
+                    "initialValue": 1030.75,
+                    "marketValue": 988.4434,
+                    "percPlanned": 7,
+                    "profit": -42.31,
+                    "performance": -0.04104448,
+                    "quantity": 0.46,
+                    "transactions": [
+                        {
+                            "id": "8b7ba510-f7dc-4016-948a-19577767d181",
+                            "quantity": 0.46
+                        }
+                    ],
+                    "percAllocation": 0.15545624065154756
+                },
+                {
+                    "ticker": "BRTD:BRSTNCNTB2U0",
+                    "initialValue": 156.93,
+                    "marketValue": 42.7744,
+                    "percPlanned": 7,
+                    "profit": -114.2,
+                    "performance": -0.7274301,
+                    "quantity": 0.04,
+                    "transactions": [
+                        {
+                            "id": "fc016bdb-ac6a-4f55-917c-37ec76e9a96d",
+                            "quantity": 0.04
+                        }
+                    ],
+                    "percAllocation": 0.006727292043353779
+                },
+                {
+                    "ticker": "BRTD:BRSTNCNTF238",
+                    "initialValue": 244,
+                    "marketValue": 253.1212,
+                    "percPlanned": 0,
+                    "profit": 9.121,
+                    "performance": 0.03738197,
+                    "quantity": 0.31,
+                    "transactions": [
+                        {
+                            "id": "ba496047-ccf9-4f6c-aa99-d3b97ee6cf76",
+                            "quantity": 0.31
+                        }
+                    ],
+                    "percAllocation": 0.03980933069228699
+                },
+                {
+                    "ticker": "OTHER:BNP-Paribas-RF",
+                    "initialValue": 1095.78,
+                    "marketValue": 1214.09,
+                    "percPlanned": 0,
+                    "profit": 118.3,
+                    "performance": 0.1079688,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "338e57c1-4b51-40c0-925e-8756f0ddde92",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.19094453684716534
+                },
+                {
+                    "ticker": "OTHER:XPREF-FIRF-REF-DI",
+                    "initialValue": 1196.46,
+                    "marketValue": 1319.41,
+                    "percPlanned": 0,
+                    "profit": 123,
+                    "performance": 0.1027615,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "a446ff74-0ab0-40eb-a632-81fb89e78e6c",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.20750861250938435
+                }
+            ]
+        },
+        {
+            "id": "30f0559e-9180-434d-a1cf-a3fc8a503955",
+            "name": "Fundo Reserva",
+            "currency": "BRL",
+            "classifyId": "Reserva",
+            "percPlanned": 8,
+            "allocations": [
+                {
+                    "ticker": "OTHER:Trend-Inb Rico-FIC",
+                    "initialValue": 309.77,
+                    "marketValue": 366.5,
+                    "percPlanned": 20,
+                    "profit": 56.73,
+                    "performance": 0.1831359,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "70241a18-bef6-41d0-b7dc-83eaa9f6c3e2",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.10280706774046054
+                },
+                {
+                    "ticker": "OTHER:NU-CASHBACK",
+                    "initialValue": 607.02,
+                    "marketValue": 809.87,
+                    "percPlanned": 20,
+                    "profit": 202.9,
+                    "performance": 0.3341735,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "e265d399-26db-4045-864e-30019d323c92",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.22717697121682615
+                },
+                {
+                    "ticker": "OTHER:BMG-CDB-ESCALONADO",
+                    "initialValue": 1000,
+                    "marketValue": 1089.5,
+                    "percPlanned": 20,
+                    "profit": 89.5,
+                    "performance": 0.0895,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "144a17f1-daa5-4e96-8a90-60224b4e1fd2",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.30561609905383835
+                },
+                {
+                    "ticker": "OTHER:BMG-CDI-120",
+                    "initialValue": 1000,
+                    "marketValue": 1071.84,
+                    "percPlanned": 20,
+                    "profit": 71.84,
+                    "performance": 0.07184,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "5f50d4b2-c77f-4593-b324-a81201f3c382",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.300662285093957
+                },
+                {
+                    "ticker": "OTHER:BMG-CDB-SUPERPOUP",
+                    "initialValue": 200,
+                    "marketValue": 227.22,
+                    "percPlanned": 20,
+                    "profit": 27.22,
+                    "performance": 0.1361,
+                    "quantity": 1,
+                    "transactions": [
+                        {
+                            "id": "d93c4db7-5031-4cc6-9389-2644e02966a8",
+                            "quantity": 1
+                        }
+                    ],
+                    "percAllocation": 0.06373757689491799
+                }
+            ]
+        }
+    ],
+    "scheduled": [],
+    "profitability": {
+        "2025": {
+            "Internacional": [
+                7777.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14,
+                6701.14
+            ],
+            "B3": [
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79,
+                12284.79
+            ],
+            "FII": [
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12,
+                6849.12
+            ],
+            "Renda Fixa": [
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72,
+                6161.72
+            ],
+            "Reserva": [
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93,
+                3224.93
+            ]
+        }
+    },
+    "withdrawal": {
+        "2025": {
+            "2": 1745.7,
+            "3": 400.93
+        }
+    }
+}
