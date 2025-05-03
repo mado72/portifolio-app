@@ -1,7 +1,8 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ProfitabilityService } from '../../service/profitalibilty.service';
 import { CellChangeEvent, GridData } from '../../utils/component/financial-grid/financial-gird.model';
 import { FinancialGridComponent } from '../../utils/component/financial-grid/financial-grid.component';
+import { getYear } from 'date-fns';
 
 @Component({
   selector: 'app-profitability',
@@ -22,6 +23,8 @@ export class ProfitabilityComponent {
     console.log('Cell changed:', event);
   }
 
+  currentYear = signal<number>(getYear(new Date()));
+
   contributionGridData = computed(() => this.profitabilityService.contributionGridData() as GridData);
 
   growthGridData = computed(() => this.profitabilityService.growthGridData() as GridData);
@@ -29,4 +32,11 @@ export class ProfitabilityComponent {
   isLoading = computed(() => !this.profitabilityService.financialGridData() 
     || !this.profitabilityService.contributionGridData()
     || !this.profitabilityService.growthGridData());
+
+  financialGridCellChanged(event: any) {
+    const value = event.value as number || 0;
+    this.profitabilityService.onFinancialGridCellChange(
+      this.currentYear(), event.rowIndex, event.columnIndex, value);
+  }
+
 }

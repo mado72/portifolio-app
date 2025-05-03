@@ -1,15 +1,15 @@
 import { computed, inject, Injectable } from '@angular/core';
+import { getMonth, getYear } from 'date-fns';
+import { Currency } from '../model/domain.model';
 import { groupBy } from '../model/functions.model';
+import { InvestmentEnum, MonthsNumberArray, ProfitabilityByClass, TransactionStatus } from '../model/investment.model';
+import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
+import { CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
+import { ClassifyService } from './classify.service';
 import { ExchangeService } from './exchange.service';
 import { PortfolioService } from './portfolio-service';
-import { getMonth, getYear } from 'date-fns';
 import { SourceService } from './source.service';
 import { TransactionService } from './transaction.service';
-import { InvestmentTransactionType, PortfolioRecord } from '../model/source.model';
-import { InvestmentEnum, MonthsNumberArray, TransactionStatus } from '../model/investment.model';
-import { ProfitabilityByClass } from '../model/investment.model';
-import { CellData, RowData } from '../utils/component/financial-grid/financial-gird.model';
-import { Currency } from '../model/domain.model';
 
 export type AggregatedKinds = 'incomes' | 'contributions' | 'redemptions' | 'withdrawals';
 
@@ -28,6 +28,8 @@ export class ProfitabilityService {
 
   private exchangeService = inject(ExchangeService);
 
+  private classifyService = inject(ClassifyService);
+
   currentMonthProfitability = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return {}
@@ -35,14 +37,20 @@ export class ProfitabilityService {
     return this.getCurrentMonthProfitability(this.portfolioService.portfolios());
   });
 
+  profitabilityArray = computed(() => {
+    const calculatedProfitability = this.calculateProfitability(
+      this.portfolioService.portfolios(), this.sourceService.dataSource.profitability());
+    
+    return calculatedProfitability;
+  });
+
   profitabilityByClassRows = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return []
     }
 
-    const profitabilityByClass = this.calculateProfitability(
-      this.portfolioService.portfolios(), this.sourceService.dataSource.profitability());
-    return this.convertProfitabilityByClassToRowData(profitabilityByClass, this.currentMonthProfitability());
+    const calculatedProfitability = this.profitabilityArray();
+    return this.convertProfitabilityByClassToRowData(calculatedProfitability, this.currentMonthProfitability());
   });
 
   aggregatedTransactionsRows = computed(() => {
@@ -483,6 +491,14 @@ export class ProfitabilityService {
       aggregatedValues: this.monthNumberArrayToRowData("Acumulado", aggregatedValues),
       yieldValues: this.monthNumberArrayToRowData("Yield", yieldValues),
     };
+  }
+
+  onFinancialGridCellChange(year: number, rowIndex: number, month: number, value: number): void {
+    const profitabilityItem = {...this.profitabilityArray()[rowIndex]};
+    profitabilityItem.values[month] = value;
+    const classifyId = this.classifyService.getClassifyByName(profitabilityItem.classify);
+    // Atualiza o valor na grid
+    this.sourceService.updateProfitability(year, classifyId, profitabilityItem.values);
   }
 
   monthNumberArrayToRowData(label: string, monthNumberArray: MonthsNumberArray): RowData {
