@@ -22,12 +22,12 @@
             </thead>
             }
             <tbody>
-                @for (row of gridData.rows; track row.cells; let rowIndex = $index) {
+                @for (row of gridData.rows; track trackByRow($index, row); let rowIndex = $index) {
                 <tr [class.table-secondary]="row.disabled">
                     <td class="row-label fw-bold position-relative">
                         {{ row.label }}
                     </td>
-                    @for (cell of row.cells; track cell; let colIndex = $index) {
+                    @for (cell of row.cells; track trackByCell($index, cell); let colIndex = $index) {
                     <td [class.table-secondary]="cell.disabled || row.disabled"
                         [class.negative-cell]="!cell.disabled && row.operation === 'minus'"
                         [class.positive-cell]="row.disabled && !isColumnDisabled(colIndex) && row.operation === 'plus'"
@@ -44,9 +44,12 @@
                                     class="form-control form-control-sm border-0 text-end bg-transparent cell-copy-input"
                                     inputmode="decimal"
                                     [disabled]="cell.disabled || row.disabled"
-                                    [maskNumber]="cell.value" [readonly]="!editable()" 
+                                    [maskNumber]="cell.value"
+                                    [readonly]="!editable()"
+                                    (focus)="onCellFocus(rowIndex, colIndex)"
+                                    (paste)="onPaste($event)"
                                     (maskNumberChange)="onCellChange(rowIndex, colIndex, $event)"
-                                    [prefix]="row.prefix" 
+                                    [prefix]="row.prefix"
                                     [suffix]="row.suffix"
                                     [tabindex]="tabIndex(rowIndex, colIndex)">
                             </div>

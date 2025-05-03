@@ -45,6 +45,8 @@ export class FinancialGridComponent {
     'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
   ];
 
+  focusedCell: { rowIndex: number; columnIndex: number } | null = null;
+
   initializeDefaultData() {
     const rows: RowData[] = [];
     
@@ -83,6 +85,44 @@ export class FinancialGridComponent {
       rowLabel: this.gridData.rows[rowIndex].label,
       columnLabel: this.gridData.months[columnIndex]
     });
+  }
+
+  onCellFocus(rowIndex: number, columnIndex: number): void {
+    this.focusedCell = { rowIndex, columnIndex };
+  }
+
+  onPaste(event: ClipboardEvent): void {
+    const focusedCell = this.focusedCell;
+    if (!focusedCell) return;
+
+    const clipboardData = event.clipboardData;
+    const pastedData = clipboardData?.getData('text');
+
+    if (pastedData) {
+      const rows = pastedData.split('\n').map(row => row.split('\t'));
+      let { rowIndex, columnIndex } = focusedCell;
+
+      rows.forEach((row) => {
+        row.forEach((value) => {
+          if (this.gridData.rows[rowIndex] && this.gridData.rows[rowIndex].cells[columnIndex]) {
+            let [num, decimal] = value.split(',');
+            if (!decimal) {
+              decimal = '00';
+            }
+            num = num.replace(/\D/g, ''); // Remove caracteres não numéricos
+            decimal = decimal.replace(/\D/g, ''); // Remove caracteres não numéricos
+            value = num + '.' + decimal; // Concatena os números e decimal
+            // value = value.replace(/,/g, '.'); // Substitui vírgula por ponto
+            this.onCellChange(rowIndex, columnIndex, parseFloat(value) || 0);
+          }
+          columnIndex++;
+        });
+        rowIndex++;
+        columnIndex = focusedCell.columnIndex; // Reset column index for the next row
+      });
+    }
+
+    event.preventDefault();
   }
 
   // Método auxiliar para formatar números para exibição
@@ -126,6 +166,14 @@ export class FinancialGridComponent {
 
   tabIndex(rowIndex: number, columnIndex: number): number {
     return columnIndex * (this.gridData.rows.length) + rowIndex + 1 + 12 * this.tabIndexInitial();
+  }
+
+  trackByRow(index: number, row: RowData): string {
+    return row.label; // Use uma propriedade única para identificar a linha
+  }
+
+  trackByCell(index: number, cell: CellData): number {
+    return index; // Use o índice ou uma propriedade única para identificar a célula
   }
 
 }
