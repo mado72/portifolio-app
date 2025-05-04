@@ -56,7 +56,13 @@
       </td>
       <th mat-footer-cell *matFooterCellDef class="number vlMonth">
         <div class="w-100 text-end pe-3">
-          {{ totalMonth($index) | number:'1.2-2' }}
+          <app-exchange 
+            [exchange]="totalMonth($index)" 
+            [hideIcon]="true" 
+            [display]="exchangeView()"
+            [useCurrencySymbol]="true"
+            ></app-exchange>
+          <!-- {{ totalMonth($index)  }} -->
         </div>
       </th>
     </ng-container>

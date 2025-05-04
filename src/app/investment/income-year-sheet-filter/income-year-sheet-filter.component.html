@@ -33,5 +33,16 @@
                 </mat-select>
             </mat-form-field>
         </div>
+        <div class="me-3">
+            <mat-form-field appearance="fill">
+                <mat-label>Moeda</mat-label>
+                <mat-select [(ngModel)]="filter.currencyReference" (selectionChange)="onFilterChange()">
+                    <mat-option [value]="null">Todas</mat-option>
+                    @for (currency of currencies; track $index) {
+                    <mat-option [value]="currency">{{ currency }}</mat-option>
+                    }
+                </mat-select>
+            </mat-form-field>
+        </div>
     </div>
 </div>

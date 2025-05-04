@@ -9,9 +9,15 @@ import { AssetEnum } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
 import { provideDateFnsAdapter } from '../../adapter/date-fnd-adapter';
+import { Currency } from '../../model/domain.model';
 
 
-export type IncomeFilterType = { portfolioReference: string | null; dateReference: Date, typeReference: AssetEnum | null };
+export type IncomeFilterType = { 
+  portfolioReference: string | null; 
+  dateReference: Date; 
+  typeReference: AssetEnum | null; 
+  currencyReference: Currency | null; // Adicionado o filtro por moeda
+};
 
 const YEAR_FORMATS = {
   parse: {
@@ -50,8 +56,9 @@ export class IncomeYearSheetFilterComponent {
   filter: IncomeFilterType = {
     portfolioReference: null,
     dateReference: new Date(),
-    typeReference: null
-  }
+    typeReference: null,
+    currencyReference: null, // Inicializa com null
+  };
 
   @Output() filterChanged = new EventEmitter<IncomeFilterType>();
 
@@ -60,6 +67,8 @@ export class IncomeYearSheetFilterComponent {
   readonly earningTypes = Object.values(IncomeEnum);
 
   readonly DIVIDENDS = IncomeEnum.DIVIDENDS;
+
+  readonly currencies = Object.values(Currency); // Lista de moedas disponíveis
 
   porfolios = computed(() => Object.values(this.portfolioService.portfolios()));
 

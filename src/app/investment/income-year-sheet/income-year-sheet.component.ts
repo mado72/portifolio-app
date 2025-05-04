@@ -1,20 +1,19 @@
-import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, inject, signal } from '@angular/core';
+import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { endOfYear, getMonth, isWithinInterval, startOfYear } from 'date-fns';
-import { ExchangeStructureType, ExchangeView, Income, IncomeEnum, InvestmentEnum } from '../../model/investment.model';
+import { Currency } from '../../model/domain.model';
+import { ExchangeStructureType, IncomeEnum, InvestmentEnum } from '../../model/investment.model';
 import { InvestmentTransactionType, Ticker } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
-import { InvestmentService } from '../../service/investment.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { TransactionService } from '../../service/transaction.service';
-import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
-import { ExchangeService } from '../../service/exchange.service';
-import { Currency } from '../../model/domain.model';
 import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
+import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
 
 type IncomeEntry = {
   id?: string;
@@ -44,6 +43,7 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
     MatTableModule,
     MatIconModule,
     MatButtonModule,
+    CurrencyPipe,
     DecimalPipe,
     DatePipe,
     IncomeYearSheetFilterComponent,
@@ -68,13 +68,20 @@ export class IncomeYearSheetComponent {
 
   readonly vlMonths = this.months.map((_, idx) => `vl${idx}`);
 
-  filter = signal<IncomeFilterType>({ dateReference: new Date(), typeReference: null, portfolioReference: null });
+  filter = signal<IncomeFilterType>({
+    dateReference: new Date(),
+    typeReference: null,
+    portfolioReference: null,
+    currencyReference: null, // Adicionado o filtro por moeda
+  });
 
   queue = signal<IncomeEntry[]>([]);
 
   assets = this.assetService.assets;
 
   exchangeView = this.exchangeService.exchangeView;
+
+  currencyDefault = this.exchangeService.currencyDefault;
 
   incomesFiltered = computed(() => {
     const incomes = Object.entries(this.transactionService.investmentTransactions())
@@ -106,7 +113,10 @@ export class IncomeYearSheetComponent {
 
   private getIncomesFiltered(filter: IncomeFilterType, incomes: { [ticker: string]: InvestmentTransactionType[]; }) {
     const assets = Object.values(this.assets())
-      .filter(asset => !filter.typeReference || asset.type === filter.typeReference)
+      .filter(asset => 
+        (!filter.typeReference || asset.type === filter.typeReference) &&
+        (!filter.currencyReference || asset.quote.currency === filter.currencyReference) // Filtra pela moeda
+      )
       .map(asset => asset.ticker);
 
     const tickers = !filter.portfolioReference ? assets
@@ -160,11 +170,21 @@ export class IncomeYearSheetComponent {
     return data;
   }
 
-  totalMonth(vlMonth: number): number {
-    return this.data().reduce((sum, row) => {
+  totalMonth(vlMonth: number): ExchangeStructureType {
+    const total = this.data().reduce((sum, row) => {
       const entry = row.entries[vlMonth];
       return sum + entry.amount.exchanged.value;
     }, 0);
+    return {
+      original: {
+        currency: this.currencyDefault(),
+        value: total
+      },
+      exchanged: {
+        currency: this.currencyDefault(),
+        value: total
+      }
+    }
   }
 
   createRow(ticker: Ticker, assetType: InvestmentEnum, assetCurrency: Currency, currencyDefault: Currency): SheetRow {
