@@ -1,4 +1,4 @@
-import { DecimalPipe } from '@angular/common';
+import { CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, input, LOCALE_ID, signal } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,7 +12,8 @@ import { ExchangeStructureType } from '../../../model/investment.model';
   imports: [
     MatButtonModule,
     MatIconModule,
-    DecimalPipe
+    DecimalPipe,
+    CurrencyPipe
   ],
   templateUrl: './exchange.component.html',
   styleUrl: './exchange.component.scss'
@@ -42,6 +43,8 @@ export class ExchangeComponent {
   readonly faExchange = faExchange;
 
   private decimalPipe = new DecimalPipe(inject(LOCALE_ID));
+
+  private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
 
   /**
    * Represents an exchange input that can hold a value of type `ExchangeStructureType`,
@@ -84,11 +87,13 @@ export class ExchangeComponent {
    */
   value = computed(()=> {
     const exchange = this.exchange();
-    if (!exchange) {
-      return null;
-    }
+
     const display = this.exchangeDisplay() as keyof ExchangeStructureType;
-    return exchange[display];
+
+    if (!exchange || !exchange[display].value) {
+      return '-';
+    }
+    return this.decimalPipe.transform(exchange[display].value, '1.2-2');
   });
 
   /**
@@ -99,11 +104,12 @@ export class ExchangeComponent {
    */
   other = computed(()=> {
     const exchange = this.exchange();
-    if (!exchange) {
-      return null;
-    }
     const display = this.exchangeDisplay() === "original" ? "exchanged" : "original";
-    return exchange[display];
+
+    if (!exchange || !exchange[display].value) {
+      return '';
+    }
+    return this.decimalPipe.transform(exchange[display].value, '1.2-2');
   });
 
   /**
@@ -142,6 +148,32 @@ export class ExchangeComponent {
    *
    * @returns A string in the format: "<currency> <formatted value>", or `undefined` if `other` is null or undefined.
    */
-  iconTitle = computed(() => this.other()?.currency + ' ' + this.decimalPipe.transform(this.other()?.value, "1.2-2"))
+  iconTitle = computed(() => this.disabled() ? undefined :
+    this.exchangeDisplay() === "exchanged" ? this.other() : this.value())
+
+  useCurrencySymbol = input<boolean>(false);
+
+  currency = computed(() => {
+    const exchange = this.exchange();
+    if (!exchange) {
+      return null;
+    }
+    const display = this.exchangeDisplay() as keyof ExchangeStructureType;
+
+    if (this.useCurrencySymbol()) {
+      const value = this.currencyPipe.transform(
+        exchange[display].value, exchange[display].currency, 'symbol', '1.2-2');
+      return value?.split(/\s+/)[0];
+    }
+    return exchange[display].currency;
+  })
+
+  disabled = computed(() => {
+    const exchange = this.exchange();
+    if (!exchange) {
+      return true;
+    }
+    return exchange.original.currency === exchange.exchanged.currency;
+  });
 
 }

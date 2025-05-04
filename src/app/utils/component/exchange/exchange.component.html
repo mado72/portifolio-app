@@ -1,13 +1,8 @@
-<span class="exch-currency">{{ value()?.currency }}</span>
-<span class="exch-value">
-    @if (value()?.value) {
-        {{ value()?.value | number:'1.2-2' }}
-    }
-    @else { - }
-</span>
+<span class="exch-currency">{{ currency() }}</span>
+<span class="exch-value">{{ value() }}</span>
 @if (!hideIcon()) {
     <button class="exch-icon" mat-icon-button (click)="$event.stopImmediatePropagation(); toggle();" [title]="iconTitle()" 
-        [disabled]="other()?.currency === value()?.currency">
+        [disabled]="disabled()">
          <mat-icon>currency_exchange</mat-icon>
     </button>
 }
