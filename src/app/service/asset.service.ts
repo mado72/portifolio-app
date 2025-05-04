@@ -48,6 +48,10 @@ export class AssetService {
       this.sourceService.updateAsset(Object.values(assets))
     })
   }
+
+  getMarketPlaces() {
+    return Object.values(MarketPlaceEnum);
+  }
   
   // Force to update all assets
   updateAllAssets() {

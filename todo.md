@@ -19,4 +19,5 @@ Todo list:
  - [ ] Tornar os dados anualizáveis. A estrutura de dados deverá estar organizada por ano.
  - [ ] Criar um novo banco de dados para cada ano.
  - [x] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
+ - [x] Adicionar filtro em consulta de transações
  - [ ] Adicionar filtro em consulta de ativos

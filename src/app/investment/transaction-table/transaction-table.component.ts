@@ -1,17 +1,25 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
-import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Output, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
+import { ExchangeService } from '../../service/exchange.service';
 import { TransactionService } from '../../service/transaction.service';
-import { CurrencyComponent } from '../../utils/currency/currency.component';
+import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
-import { ExchangeService } from '../../service/exchange.service';
-import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
+import { TransactionTableFilterComponent } from '../transaction-table-filter/transaction-table-filter.component';
+import { ActivatedRoute } from '@angular/router';
 
+type FilterType = {
+  investmentType: string | null;
+  marketPlace: string | null;
+  start: Date | null;
+  end: Date | null;
+  accountId: string | null;
+}
 
 @Component({
   selector: 'app-transaction-table',
@@ -24,12 +32,15 @@ import { ExchangeComponent } from '../../utils/component/exchange/exchange.compo
     MatButtonModule,
     InvestmentTypePipe,
     TransactionStatusPipe,
+    TransactionTableFilterComponent,
     ExchangeComponent
   ],
   templateUrl: './transaction-table.component.html',
   styleUrl: './transaction-table.component.scss'
 })
 export class TransactionTableComponent {
+
+  private activatedRoute = inject(ActivatedRoute);
 
   private transactionService = inject(TransactionService);
 
@@ -45,8 +56,25 @@ export class TransactionTableComponent {
 
   @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
 
+  filter = signal<FilterType>({
+    investmentType: null,
+    marketPlace: null,
+    start: null,
+    end: null,
+    accountId: null
+  })
+
   dataSource = computed(() => {
+    const filter = this.filter();
     return Object.values(this.transactionService.investmentTransactions())
+      .filter(t => {
+        if (filter.investmentType && t.type !== filter.investmentType) return false;
+        if (filter.marketPlace && !t.ticker.startsWith(filter.marketPlace)) return false;
+        if (filter.start && t.date < filter.start) return false;
+        if (filter.end && t.date > filter.end) return false;
+        if (filter.accountId && t.accountId !== filter.accountId) return false;
+        return true;
+      })
       .map(t=>({
         ...t,
         ...this.exchangeService.enhanceExchangeInfo(t.value, t.value.currency, ['value'])
@@ -55,6 +83,23 @@ export class TransactionTableComponent {
   });
 
   readonly accounts = computed(() => this.balanceService.getAllBalances())
+
+  constructor() {
+    this.activatedRoute.queryParams.subscribe((params) => {
+      const investmentType = params['investmentType'] ?? null;
+      const marketPlace = params['marketPlace'] ?? null;
+      const start = params['start'] ? new Date(params['start']) : null;
+      const end = params['end'] ? new Date(params['end']) : null;
+      const accountId = params['account'] ?? null;
+      this.filter.set({
+        investmentType,
+        marketPlace,
+        start,
+        end,
+        accountId
+      })
+    });
+  }
 
   deleteTransaction(event: MouseEvent, transaction: InvestmentTransactionType) {
     event.stopPropagation();

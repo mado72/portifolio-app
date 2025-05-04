@@ -45,6 +45,11 @@ export class TransactionService {
 
   constructor() { }
 
+  getInvestmentTypes() {
+    return Object.values(InvestmentEnum);
+
+  }
+
   createTransactionAllocations() {
     return Object.values(this.portfolioService.portfolios()).map(portfolio => {
       return {
