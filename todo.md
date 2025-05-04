@@ -20,4 +20,5 @@ Todo list:
  - [ ] Criar um novo banco de dados para cada ano.
  - [x] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
  - [x] Adicionar filtro em consulta de transações
- - [ ] Adicionar filtro em consulta de ativos
+ - [x] Adicionar filtro em consulta de ativos
+ - [ ] Persistir retiradas e resgates
