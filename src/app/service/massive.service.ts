@@ -197,7 +197,7 @@ export class MassiveService {
     const observables = Object.values(portfoliosMap).flatMap((item) => {
       let portfolio = Object.values(porfolios).find((port) => port.name === item.portfolio);
       if (!portfolio) {
-        const raw = this.portolioService.addPortfolio({ name: item.portfolio, percPlanned: 0, currency: item.currency, classify: '' });
+        const raw = this.portolioService.addPortfolio({ name: item.portfolio, percPlanned: 0, currency: item.currency, classifyName: '' });
         portfolio = this.portolioService.portfolios()[raw.id];
       }
       if (!portfolio) {

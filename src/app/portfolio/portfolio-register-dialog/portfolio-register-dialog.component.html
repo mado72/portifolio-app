@@ -19,8 +19,8 @@
             <mat-label>Classe</mat-label>
             <input type="text" matInput [matAutocomplete]="auto" formControlName="classify" />
             <mat-autocomplete #auto="matAutocomplete" [autoActiveFirstOption]="true">
-                @for (item of classes(); track $index) {
-                    <mat-option [value]="item">{{ item }}</mat-option>
+                @for (item of classifiers(); track item.id) {
+                    <mat-option [value]="item">{{ item.name }}</mat-option>
                 }
             </mat-autocomplete>
         </mat-form-field>

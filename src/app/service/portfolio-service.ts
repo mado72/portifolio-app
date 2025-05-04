@@ -1,14 +1,14 @@
 import { computed, inject, Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Currency, CurrencyType, CurrencyValue, isTransactionDeposit } from '../model/domain.model';
+import { Currency, CurrencyType, CurrencyValue } from '../model/domain.model';
 import { ExchangeStructureType, InvestmentEnumFactor } from '../model/investment.model';
-import { AssetQuoteType, PortfolioAllocation, PortfolioAllocationsArrayItemType, PortfolioAllocationSourceRawType, PortfolioAllocationStructureType, PortfolioRecord, PortfolioSourceRawType, PortfolioType, SummarizedDataType, Ticker } from '../model/source.model';
+import { AssetQuoteType, ClassifyType, PortfolioAllocation, PortfolioAllocationsArrayItemType, PortfolioAllocationSourceRawType, PortfolioRecord, PortfolioSourceRawType, PortfolioType, SummarizedDataType, Ticker } from '../model/source.model';
 import { PortfolioRegisterDialogComponent } from '../portfolio/portfolio-register-dialog/portfolio-register-dialog.component';
 import { AssetService } from './asset.service';
+import { ClassifyService } from './classify.service';
 import { ExchangeService } from './exchange.service';
 import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
-import { TransactionService } from './transaction.service';
 
 const INITIAL_TOTAL = Object.freeze({
   initialValue: 0,
@@ -28,7 +28,7 @@ export type PortfolioChangeType = {
   name?: string;
   percPlanned?: number;
   currency?: Currency;
-  class?: string;
+  classifyName?: string;
   transaction?: {
     id: string;
     quantity: number;
@@ -40,9 +40,11 @@ export type PortfolioChangeType = {
 })
 export class PortfolioService {
 
+  private dialog = inject(MatDialog);
+
   private sourceService = inject(SourceService);
 
-  private dialog = inject(MatDialog);
+  private classifyService = inject(ClassifyService);
 
   private assetService = inject(AssetService);
 
@@ -66,10 +68,10 @@ export class PortfolioService {
       const summarized = this.summarize(
         { currency: currencyDefault, result: acc },
         { currency: portfolio.currency, item: portfolio.total });
-      
+
       // Summarizes portfolios percentual planned
       summarized.percPlanned += portfolio.percPlanned;
-      
+
       return summarized;
     }, { ...INITIAL_TOTAL }))
 
@@ -88,20 +90,20 @@ export class PortfolioService {
     if (!this.sourceService.dataIsLoaded()) return {};
 
     const portfolios = this.sourceService.dataSource.portfolio();
-    
+
     // No assets found
     if (!Object.keys(portfolios).length) {
       return {};
     }
-    
+
     const assets = this.sourceService.assetSource();
 
     const portfoliosMap = Object.values(this.sourceService.dataSource.portfolio())
-      .reduce((rec, raw)=>{
+      .reduce((rec, raw) => {
         rec[raw.id] = this.parsePortfolioSourceRawType(raw, assets);
         return rec;
       }, {} as PortfolioRecord)
-    
+
     return portfoliosMap;
   });
 
@@ -150,9 +152,9 @@ export class PortfolioService {
    */
   private summarizeAllocationTransactions(alloc: PortfolioAllocationSourceRawType) {
     const asset = this.sourceService.assetSource()[alloc.ticker];
-    
+
     const transactions = this.sourceService.investmentSource();
-    
+
     /**
      * Represents a summarized allocation object that aggregates transaction data
      * to calculate total quantities, initial values, and market values.
@@ -215,7 +217,7 @@ export class PortfolioService {
      * the ticker as the key and the corresponding `PortfolioAllocation` object as
      * the value.
      */
-    const allocSummarizedMap = raw.allocations.reduce((allocMap, allocRaw)=>{
+    const allocSummarizedMap = raw.allocations.reduce((allocMap, allocRaw) => {
       const allocData = {
         ticker: allocRaw.ticker,
         ...this.summarizeAllocationTransactions(allocRaw),
@@ -226,10 +228,10 @@ export class PortfolioService {
     }, {} as Record<Ticker, Required<PortfolioAllocation>>);
 
     let portfolioTotal = { ...INITIAL_TOTAL };
-    Object.values(allocSummarizedMap).forEach(alloc=>{
+    Object.values(allocSummarizedMap).forEach(alloc => {
       this.summarize(
-        {currency: portfolioCurrency, result: portfolioTotal},
-        {currency: assets[alloc.data.ticker]?.quote.currency || raw.currency, item: alloc.data}
+        { currency: portfolioCurrency, result: portfolioTotal },
+        { currency: assets[alloc.data.ticker]?.quote.currency || raw.currency, item: alloc.data }
       )
     });
 
@@ -238,9 +240,14 @@ export class PortfolioService {
       alloc.data.percAllocation = alloc.data.marketValue / portfolioTotal.marketValue;
     })
 
+    const classify = raw.classifyId ? this.classifyService.classifiersMap()[raw.classifyId] : undefined;
+    raw = { ...raw };
+    delete (raw as any).classifyId; // Remove classifyId from raw data
+
     const portfolio: PortfolioType = {
       ...raw,
       currency: portfolioCurrency,
+      classify: classify,
       allocations: allocSummarizedMap,
       total: portfolioTotal
     }
@@ -267,7 +274,7 @@ export class PortfolioService {
     acc.result.initialValue += this.exchangeService.exchange(source.item.initialValue, source.currency, acc.currency).value;
     acc.result.marketValue += this.exchangeService.exchange(source.item.marketValue, source.currency, acc.currency).value;
     acc.result.profit += this.exchangeService.exchange(source.item.profit, source.currency, acc.currency).value;
-    acc.result.performance = acc.result.initialValue ? acc.result.profit / acc.result.initialValue: 0;
+    acc.result.performance = acc.result.initialValue ? acc.result.profit / acc.result.initialValue : 0;
     acc.result.percPlanned += this.exchangeService.exchange(source.item.percPlanned, source.currency, acc.currency).value;
     return acc.result;
   }
@@ -305,31 +312,32 @@ export class PortfolioService {
         return result
       })
       .reduce((acc, portfolio) => {
+        const classifyId = portfolio.classify?.id || '';
 
-        if (!acc[portfolio.classify]) {
-          acc[portfolio.classify] = { ...portfolio }
+        if (!acc[classifyId]) {
+          acc[classifyId] = { ...portfolio }
         }
         else {
-          acc[portfolio.classify] = {
-            ...acc[portfolio.classify],
+          acc[classifyId] = {
+            ...acc[classifyId],
             value: {
-              ...acc[portfolio.classify],
+              ...acc[classifyId],
               original: {
-                ...acc[portfolio.classify].value.original,
-                value: acc[portfolio.classify].value.original.value + portfolio.value.original.value
+                ...acc[classifyId].value.original,
+                value: acc[classifyId].value.original.value + portfolio.value.original.value
               },
               exchanged: {
-                ...acc[portfolio.classify].value.exchanged,
-                value: acc[portfolio.classify].value.exchanged.value + portfolio.value.exchanged.value
+                ...acc[classifyId].value.exchanged,
+                value: acc[classifyId].value.exchanged.value + portfolio.value.exchanged.value
               }
             },
-            percPlanned: acc[portfolio.classify].percPlanned + portfolio.percPlanned
+            percPlanned: acc[classifyId].percPlanned + portfolio.percPlanned
           }
         }
         total.value += portfolio.value.exchanged.value;
         return acc;
       }, {} as Record<string, {
-        classify: string,
+        classify?: ClassifyType,
         value: ExchangeStructureType,
         percPlanned: number,
         percAlloc: number
@@ -343,13 +351,20 @@ export class PortfolioService {
     return { items, total };
   }
 
-  addPortfolio({ name, currency, percPlanned, classify }: { name: string; currency: CurrencyType; percPlanned: number; classify: string}) {
+  addPortfolio({ name, currency, percPlanned, classifyName }: 
+    { name: string; currency: CurrencyType; percPlanned: number; classifyName?: string }) {
+    let classify: ClassifyType | undefined = this.classifyService.getClassifyByName(classifyName as string);
+
+    if (!classify && classifyName) {
+      classify = this.classifyService.addClassify(classifyName);
+    }
+
     return this.sourceService.addPortfolio({
       id: '',
       name,
       percPlanned,
       currency: Currency[currency],
-      classify,
+      classifyId: classify?.id,
       allocations: []
     })
   }
@@ -379,26 +394,31 @@ export class PortfolioService {
   }
 
   updatePortfolio(portfolioId: string, changes: PortfolioChangeType) {
-    const portfolio = this.portfolios()[portfolioId];
+    const portfolio = { ...this.portfolios()[portfolioId] };
     if (!portfolio) {
       throw new Error(`Portfolio not found: ${portfolioId}`);
     }
-    
-    const portfolioRaw : PortfolioSourceRawType = { 
+
+    let classifyId = this.classifyService.getClassifyByName(changes.classifyName as string)?.id || portfolio.classify?.id;
+    delete (portfolio as any).classify; // Remove classify from portfolio data
+
+    const portfolioRaw: PortfolioSourceRawType = {
       ...portfolio,
-      allocations: Object.values(portfolio.allocations).map(alloc=>({
+      classifyId,
+      allocations: Object.values(portfolio.allocations).map(alloc => ({
         ...alloc.data
       }))
     };
-    const allocationMap = portfolioRaw.allocations.reduce((acc, alloc)=>{
+    const allocationMap = portfolioRaw.allocations.reduce((acc, alloc) => {
       acc[alloc.ticker] = alloc;
       return acc;
     }, {} as Record<Ticker, PortfolioAllocationSourceRawType>)
 
+
     if (changes.name) portfolioRaw.name = changes.name;
     if (changes.currency) portfolioRaw.currency = Currency[changes.currency];
     if (changes.percPlanned) portfolioRaw.percPlanned = changes.percPlanned;
-    if (changes.class) portfolioRaw.classify = changes.class;
+    if (changes.classifyName) portfolioRaw.classifyId = classifyId;
 
     if (!!changes.transaction) {
       const chgTransaction = changes.transaction;
@@ -456,12 +476,12 @@ export class PortfolioService {
         }
         else {
           // Add transaction to allocation found
-          allocationFound.transactions.push({...chgTransaction});
+          allocationFound.transactions.push({ ...chgTransaction });
         }
       }
       else {
         // Add new allocation and transaction to portfolio
-        const allocation : PortfolioAllocationSourceRawType = {
+        const allocation: PortfolioAllocationSourceRawType = {
           ticker,
           initialValue,
           marketValue,
@@ -483,7 +503,7 @@ export class PortfolioService {
     this.sourceService.updatePortfolio([portfolioRaw]);
   }
 
-  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number, classify: string } }) {
+  openPortfolioDialog({ title, portfolioInfo }: { title: string; portfolioInfo: string | { id?: string; name: string, currency: Currency, percPlanned: number, classifyName?: string } }) {
     let portfolio: PortfolioType;
     if (typeof portfolioInfo === 'string') {
       portfolio = this.getPortfolioById(portfolioInfo as string);
@@ -506,14 +526,22 @@ export class PortfolioService {
     dialogRef.afterClosed().subscribe((result: PortfolioType) => {
       if (result) {
         if (!portfolio.id) {
-          this.addPortfolio({ ...result });
+          const classify = result.classify;
+          const newPortfolio: Omit<PortfolioType, "classify"> & { classifyName: string | undefined } = {
+            ...result,
+            classifyName: classify?.name,
+          }
+          this.addPortfolio({ ...newPortfolio });
         } else {
-          this.updatePortfolio(portfolio.id, {
+          const dataUpdated: Omit<PortfolioType, "classify"> & { classifyName: string | undefined } = {
+            ...result,
             name: result.name,
-            currency: result.currency,
+            classifyName: result.classify?.name,
             percPlanned: result.percPlanned,
-            class: result.classify
-          });
+            currency: result.currency,
+          }
+          // Update existing portfolio
+          this.updatePortfolio(portfolio.id, dataUpdated);
         }
       }
     });

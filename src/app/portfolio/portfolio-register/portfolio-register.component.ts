@@ -60,7 +60,6 @@ export class PortfolioRegisterComponent {
       portfolioInfo: {
         name: '',
         currency: this.exchangeService.currencyDefault(),
-        classify: '',
         percPlanned: 0,
       }
     });

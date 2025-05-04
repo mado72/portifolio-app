@@ -12,6 +12,7 @@ import { Currency } from '../../model/domain.model';
 import { PortfolioType } from '../../model/source.model';
 import { ExchangeService } from '../../service/exchange.service';
 import { PortfolioService } from '../../service/portfolio-service';
+import { ClassifyService } from '../../service/classify.service';
 
 export type DialogDataType = {
   title: string;
@@ -39,6 +40,8 @@ export class PortfolioRegisterDialogComponent {
 
   readonly exchangeService = inject(ExchangeService);
 
+  readonly classifyService = inject(ClassifyService);
+
   readonly portfolioService = inject(PortfolioService);
 
   readonly data = inject<DialogDataType>(MAT_DIALOG_DATA);
@@ -47,13 +50,7 @@ export class PortfolioRegisterDialogComponent {
 
   private fb = inject(FormBuilder);
 
-  classes = computed(() => 
-    Object.values(this.portfolioService.portfolios())
-      .filter(portfolio => !!portfolio.classify)
-      .reduce((acc, portfolio) => {
-        acc.add(portfolio.classify);
-        return acc;
-      }, new Set()));
+  classifiers = computed(() => this.classifyService.classifiers());
 
   readonly formPortfolio = this.fb.group({
     name: this.fb.control(this.data.portfolio.name || '', [Validators.required, Validators.minLength(2)]),
