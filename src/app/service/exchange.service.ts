@@ -59,6 +59,13 @@ export class ExchangeService {
     return result || currency;
   }
 
+  updateExchange(exchange: ExchangeStructureType): ExchangeStructureType {
+    const from = exchange.original.currency;
+    const to = exchange.exchanged.currency;
+    exchange.exchanged = this.exchange(exchange.original.value, from, to);
+    return exchange;
+  }
+
   enhanceExchangeInfo<T, K extends keyof T>(obj: T, originalCurrency: Currency, properties: K[]): Omit<T, K> & Record<K, ExchangeStructureType> {
     let result = { ...obj } as Omit<T, K> & Record<K, ExchangeStructureType>;
 
