@@ -1,4 +1,4 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { endOfDay, format, formatISO, parseISO } from 'date-fns';
 import { v4 as uuid } from 'uuid';
 import initialData from '../../data/data.json';
@@ -6,7 +6,7 @@ import { AccountTypeEnum, Currency, CurrencyType, Scheduled, TransactionEnum } f
 import { parseDateYYYYMMDD } from '../model/functions.model';
 import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
 import {
-  AssetEnum, AssetQuoteType, AssetSourceDataType as AssetSourceRawType, BalanceSourceDataType as BalanceSourceRawType, BalanceType,
+  AssetEnum, AssetQuoteType, AssetSourceRawType, BalanceSourceRawType, BalanceType,
   IncomeSourceDataType as IncomeSourceRawType, IncomeType,
   InvestmentTransactionSourceRawType, InvestmentTransactionType,
   PortfolioSourceRawType,
@@ -17,11 +17,14 @@ import {
   Ticker,
   TransactionSourceRawType, TransactionType
 } from '../model/source.model';
+import { AlertService } from './alert.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SourceService {
+
+  private alertService = inject(AlertService);
 
   readonly dataIsLoaded = signal(false);
 
@@ -36,7 +39,7 @@ export class SourceService {
     scheduled: signal<Record<string, ScheduledStatemetType>>({}),
     // profitability: signal<ProfitabilityDataRaw>([]),
     profitability: signal<Record<number, Record<string, number[]>>>({}),
-    withdrawal: signal<{[year: number]: {[month: number] : number}}>({}),
+    withdrawal: signal<{ [year: number]: { [month: number]: number } }>({}),
   };
 
   constructor() { }
@@ -64,9 +67,9 @@ export class SourceService {
         try {
           const jsonData = JSON.parse(e.target.result);
           this.loadData(jsonData);
-          alert('Dados carregados com sucesso!');
+          this.alertService.showSuccess('Dados carregados com sucesso!');
         } catch (error) {
-          alert('Erro ao carregar o arquivo JSON.');
+          this.alertService.showError('Erro ao carregar o arquivo JSON.');
         }
       };
       reader.readAsText(file);
@@ -74,6 +77,7 @@ export class SourceService {
   }
 
   private loadData(jsonData: any) {
+    this.dataSource.classify.set(this.classifySourceToRecord(jsonData.classify));
     this.dataSource.asset.set(this.assetSourceToRecord(jsonData.asset));
     this.dataSource.balance.set(this.balanceToRecord(jsonData.balance));
     this.dataSource.income.set(this.incomeSourceToRecord(jsonData.income));
@@ -87,6 +91,7 @@ export class SourceService {
   }
 
   emptyAllData() {
+    this.dataSource.classify.set({});
     this.dataSource.asset.set({});
     this.dataSource.balance.set({});
     this.dataSource.income.set({});
@@ -96,7 +101,7 @@ export class SourceService {
     this.dataSource.scheduled.set({});
     this.dataSource.profitability.set([]);
     this.dataSource.withdrawal.set({});
-    alert('Todos os dados foram excluídos!');
+    this.alertService.showSuccess('Todos os dados foram excluídos!');
   }
 
   /**
@@ -124,13 +129,73 @@ export class SourceService {
     window.URL.revokeObjectURL(url);
   }
 
+  getData = computed(() => ({
+    classify: this.dataSource.classify(),
+    asset: Object.values(this.dataSource.asset()),
+    balance: Object.values(this.dataSource.balance()),
+    income: Object.values(this.dataSource.income()),
+    investment: Object.values(this.dataSource.investment()),
+    cashflow: Object.values(this.dataSource.cashflow()),
+    portfolio: Object.values(this.dataSource.portfolio()),
+    scheduled: Object.values(this.dataSource.scheduled()),
+    profitability: this.dataSource.profitability(),
+    withdrawal: this.dataSource.withdrawal()
+  }));
+
+  // classify ------------------------
+
+  readonly classifySource = computed(() => {
+    if (!this.dataIsLoaded()) return {};
+    const classifiers = this.dataSource.classify();
+    if (Object.keys(classifiers).length === 0) return {};
+    return classifiers;
+  });
+
+  protected classifySourceToRecord(data: Record<string, string>) {
+    return data;
+  };
+
+  classifyToSource(items: Record<string, string>): Record<string, string> {
+    return items;
+  }
+
+  addClassify(classify: string) {
+    const id = uuid();
+    const added = {
+      [id]: classify
+    }
+    this.dataSource.classify.update(classifiers => ({
+      ...classifiers,
+      ...added
+    }))
+    return { id, name: classify };
+  }
+
+  updateClassify(changes: Record<string, string>) {
+    if (Object.keys(changes).length === 0) return changes;
+    changes = {...changes };
+    this.dataSource.classify.update(classifys => ({
+      ...classifys,
+      ...changes
+    }))
+    return changes;
+  }
+
+  deleteClassify(classifyId: string) {
+    this.dataSource.classify.update(classifiers => {
+      delete classifiers[classifyId];
+
+      return { ...classifiers };
+    })
+  }
+
   // asset ------------------------
 
   readonly assetSource = computed(() => {
     if (!this.dataIsLoaded()) return {};
     const assets = this.dataSource.asset();
     if (Object.keys(assets).length === 0) return {};
-    
+
     return Object.entries(assets).reduce((acc, [ticker, item]) => {
       if (ticker === 'undefined') {
         console.warn('Ticker is undefined', item);
@@ -155,18 +220,6 @@ export class SourceService {
       return acc;
     }, {} as Record<string, AssetQuoteType>);
   });
-
-  getData = computed(() =>({
-      asset: Object.values(this.dataSource.asset()),
-      balance: Object.values(this.dataSource.balance()),
-      income: Object.values(this.dataSource.income()),
-      investment: Object.values(this.dataSource.investment()),
-      cashflow: Object.values(this.dataSource.cashflow()),
-      portfolio: Object.values(this.dataSource.portfolio()),
-      scheduled: Object.values(this.dataSource.scheduled()),
-      profitability: this.dataSource.profitability(),
-      withdrawal: this.dataSource.withdrawal()
-    }));
 
   protected assetSourceToRecord(data: AssetSourceRawType[]) {
     return data.reduce((acc, item) => {
@@ -518,12 +571,12 @@ export class SourceService {
 
   portfolioToSource(items: PortfolioSourceRawType[]): PortfolioSourceRawType[] {
     return items.map(item => {
-      const { id, name, currency, classify, percPlanned, allocations } = item;
+      const { id, name, currency, classifyId, percPlanned, allocations } = item;
       return {
         id,
         name,
         currency: Currency[currency as CurrencyType],
-        classify,
+        classifyId,
         percPlanned,
         allocations: Object.values(allocations)
       } as PortfolioSourceRawType;
@@ -653,7 +706,7 @@ export class SourceService {
   }
 
   addProfitability(year: number, item: ProfitabilityDataRawItem) {
-    const added = this.profitabilityToSource({[year.toString()]: item});
+    const added = this.profitabilityToSource({ [year.toString()]: item });
     this.dataSource.profitability.update(profitability => ({
       ...profitability,
       ...added
@@ -662,10 +715,11 @@ export class SourceService {
   }
 
   updateProfitability(year: number, classifyId: string, changes: number[]) {
-    const updated = this.profitabilityToSource({[year.toString()]: {[classifyId]: changes}});
     return this.dataSource.profitability.update(profitability => ({
-      ...profitability,
-      ...updated
+      [year.toString()]: {
+        ...profitability[year],
+        [classifyId]: changes
+      }
     }));
   }
 
@@ -678,11 +732,11 @@ export class SourceService {
 
   // withdrawal --------------
 
-  protected withdrawalSourceToRecord(data: {[year: number]: {[month: number] : number}}) {
+  protected withdrawalSourceToRecord(data: { [year: number]: { [month: number]: number } }) {
     return Object.entries(data).reduce((acc, [year, item]) => {
       acc[Number(year)] = item;
       return acc;
-    }, {} as Record<number, {[month: number]: number}>);
+    }, {} as Record<number, { [month: number]: number }>);
   }
 
   protected withdrawToSource(items: Record<number, Record<number, number>>) {
@@ -693,7 +747,7 @@ export class SourceService {
   }
 
   addWithdrawal(year: number, month: number, amount: number) {
-    const added = this.withdrawalSourceToRecord({[year]: {[month]: amount}});
+    const added = this.withdrawalSourceToRecord({ [year]: { [month]: amount } });
     this.dataSource.withdrawal.update(withdrawal => ({
       ...withdrawal,
       ...added
@@ -702,7 +756,7 @@ export class SourceService {
   }
 
   updateWithdrawal(year: number, month: number, amount: number) {
-    const updated = this.withdrawalSourceToRecord({[year]: {[month]: amount}});
+    const updated = this.withdrawalSourceToRecord({ [year]: { [month]: amount } });
     this.dataSource.withdrawal.update(withdrawal => ({
       ...withdrawal,
       ...updated

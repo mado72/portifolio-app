@@ -7,17 +7,7 @@ export type EntityDataSource = {
     id: string;
 }
 
-export type DataSourceType = {
-    asset: AssetSourceDataType[],
-    balance: BalanceSourceDataType[],
-    earning: IncomeSourceDataType[],
-    investment: InvestmentTransactionSourceRawType[],
-    portfolio: PortfolioSourceRawType[],
-    cashflow: TransactionSourceRawType[],
-    scheduleds: ScheduledsSourceDataType[],
-}
-
-export type AssetSourceDataType = {
+export type AssetSourceRawType = {
     ticker: string;
     controlByQty: boolean;
     quote: {
@@ -62,7 +52,7 @@ export const AssetDesc: Record<`${AssetEnum}`, string> = {
     OTHER: 'Outro'
 }
 
-export type AssetQuoteType = Omit<AssetSourceDataType, "code" | "marketPlace" | "quote" | "type" | "lastUpdate"> & {
+export type AssetQuoteType = Omit<AssetSourceRawType, "code" | "marketPlace" | "quote" | "type" | "lastUpdate"> & {
     ticker: string;
     initialPrice: number;
     lastUpdate: Date;
@@ -73,7 +63,7 @@ export type AssetQuoteType = Omit<AssetSourceDataType, "code" | "marketPlace" | 
 
 export type AssetQuoteRecord = Record<string, AssetQuoteType>;
 
-export type BalanceSourceDataType = {
+export type BalanceSourceRawType = {
     id?: string;
     accountName: string;
     balance: number;
@@ -82,7 +72,7 @@ export type BalanceSourceDataType = {
     date: string;
 };
 
-export type BalanceType = Omit<BalanceSourceDataType, "balance" | "currency" | "type" | "date"> & {
+export type BalanceType = Omit<BalanceSourceRawType, "balance" | "currency" | "type" | "date"> & {
     balance: CurrencyValue;
     type: AccountTypeEnum;
     date: Date;
@@ -161,6 +151,11 @@ export type SummarizedDataType = {
     performance?: number
 }
 
+export type ClassifyType = {
+    id: string;
+    name: string;
+}
+
 export type PortfolioAllocationSourceRawType = SummarizedDataType & {
     ticker: Ticker;
     transactions: {id: string; quantity: number}[];
@@ -190,13 +185,14 @@ export type PortfolioSourceRawType = {
     id: string;
     name: string;
     currency: string;
-    classify: string;
+    classifyId?: string;
     percPlanned: number;
     allocations: PortfolioAllocationSourceRawType[];
 }
 
-export type PortfolioType = Omit<PortfolioSourceRawType, "allocations" | "currency"> & {
+export type PortfolioType = Omit<PortfolioSourceRawType, "allocations" | "currency" | "classifyId"> & {
     currency: Currency;
+    classify?: ClassifyType;
     allocations: PortfolioAllocationRecord;
     total: Required<SummarizedDataType>;
 };
