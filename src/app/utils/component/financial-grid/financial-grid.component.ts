@@ -1,22 +1,22 @@
 // financial-grid.component.ts
-import { Component, EventEmitter, input, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CellChangeEvent, CellData, GridData, RowData } from './financial-gird.model';
 import { getMonth } from 'date-fns';
 import { MaskNumberDirective } from '../../directive/mask-number.directive';
+import { CellChangeEvent, CellData, GridData, RowData } from './financial-gird.model';
 
 @Component({
   selector: 'app-financial-grid',
   standalone: true,
   imports: [
     FormsModule,
-    MaskNumberDirective,
+    MaskNumberDirective
   ],
   templateUrl: './financial-grid.component.html',
   styleUrl: './financial-grid.component.scss',
 })
 export class FinancialGridComponent {
-  
+
   @Input() set gridData(data: GridData) {
     this._gridData = data || this.initializeDefaultData();
   }
@@ -38,10 +38,10 @@ export class FinancialGridComponent {
   editable = input<boolean>(true);
 
   @Output() cellChange = new EventEmitter<CellChangeEvent>();
-  
+
   // Meses abreviados em português
   readonly defaultMonths = [
-    'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 
+    'Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun',
     'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'
   ];
 
@@ -49,15 +49,15 @@ export class FinancialGridComponent {
 
   initializeDefaultData() {
     const rows: RowData[] = [];
-    
+
     // Cria algumas linhas de exemplo
     for (let i = 0; i < 5; i++) {
       const cells: CellData[] = [];
-      
+
       for (let j = 0; j < 12; j++) {
         cells.push({ value: 0, disabled: false });
       }
-      
+
       rows.push({
         label: `Item ${i + 1}`,
         cells: cells,
@@ -65,7 +65,7 @@ export class FinancialGridComponent {
         operation: 'plus'
       });
     }
-    
+
     return {
       title: 'Planilha Financeira',
       months: this.defaultMonths,
@@ -76,7 +76,7 @@ export class FinancialGridComponent {
   onCellChange(rowIndex: number, columnIndex: number, value: number): void {
     // Atualiza o valor na grid
     this.gridData.rows[rowIndex].cells[columnIndex].value = value;
-    
+
     // Emite o evento de mudança
     this.cellChange.emit({
       rowIndex,
@@ -135,7 +135,7 @@ export class FinancialGridComponent {
   getRowTotal(rowIndex: number): number {
     const operation = this.gridData.rows[rowIndex].operation;
     if (operation === 'none') return 0; // Se a operação for 'none', retorna 0
-    
+
     return this.gridData.rows[rowIndex].cells
       .map(cell => (operation === 'plus' ? 1 : -1) * (cell.value || 0))
       .reduce((sum, value) => sum + value, 0);
@@ -144,19 +144,19 @@ export class FinancialGridComponent {
   // Método para calcular o total de uma coluna
   getColumnTotal(columnIndex: number): number {
     return Math.abs(this.gridData.rows
-      .map(row => 
+      .map(row =>
         (row.operation === 'plus' ? 1 : row.operation === 'minus' ? -1 : 0) * (row.cells[columnIndex].value || 0))
       .reduce((sum, value) => sum + value, 0));
   }
-  
+
   // Método para verificar se uma coluna está totalmente desabilitada
   isColumnDisabled(columnIndex: number): boolean {
     return this.gridData.rows.every(row => row.cells[columnIndex]?.disabled || false);
   }
-  
+
   // Método para obter o total geral
   getGrandTotal(): number {
-    return this.gridData.rows.reduce((sum, row) => 
+    return this.gridData.rows.reduce((sum, row) =>
       sum + this.getRowTotal(this.gridData.rows.indexOf(row)), 0);
   }
 

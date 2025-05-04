@@ -11,6 +11,7 @@ export interface CellData {
     operation: "plus" | "minus" | "none";
     prefix?: string;
     suffix?: string;
+    attached?: any;
   }
   
   export interface GridData {
