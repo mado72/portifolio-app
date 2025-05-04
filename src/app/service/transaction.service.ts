@@ -1,5 +1,5 @@
 import { computed, inject, Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { InvestmentTransactionType } from '../model/source.model';
 import { AssetService } from './asset.service';
@@ -13,6 +13,8 @@ import { isWithinInterval } from 'date-fns';
 })
 export class TransactionService {
 
+  private activatedRoute = inject(ActivatedRoute);
+
   private router = inject(Router);
 
   private portfolioService = inject(PortfolioService);
@@ -21,7 +23,7 @@ export class TransactionService {
 
   private sourceService = inject(SourceService);
 
-  investmentTransactions = computed(() => {
+  readonly investmentTransactions = computed(() => {
     return this.sourceService.investmentSource();
   })
 
@@ -47,7 +49,6 @@ export class TransactionService {
 
   getInvestmentTypes() {
     return Object.values(InvestmentEnum);
-
   }
 
   createTransactionAllocations() {
@@ -111,8 +112,12 @@ export class TransactionService {
     this.sourceService.deleteInvestmentTransaction(id);
   }
 
-  createTransaction() {
-    this.router.navigate(['investment', 'transactions', 'create']);
+  createTransaction(urlBase? : string) {
+    if (urlBase) {
+      this.router.navigate([urlBase, 'transactions', 'create']);
+    } else {
+      this.router.navigate(['investment', 'transactions', 'create']);
+    }
   }
 
   editTransaction(transactionId: string) {

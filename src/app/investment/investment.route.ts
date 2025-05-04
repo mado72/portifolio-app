@@ -17,35 +17,24 @@ export const investmentRoutes: Routes = [
     },
     {
         path: 'incomes',
-        loadComponent: () => import('./income-year-sheet/income-year-sheet.component').then(mod => mod.IncomeYearSheetComponent)
-    },
-    {
-        path: 'transactions',
+        data: {
+            back: '/investment/incomes',
+        },
         children: [
             {
                 path: '',
-                pathMatch: 'full',
-                redirectTo: 'list'
+                loadComponent: () => import('./income-year-sheet/income-year-sheet.component').then(mod => mod.IncomeYearSheetComponent),
+                pathMatch: 'full'
             },
             {
-                path: 'list',
-                loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent)
-            },
-            {
-                path: 'create',
-                loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent),
-                data: {
-                    action: 'create'
-                }
-            },
-            {
-                path: 'edit/:id',
-                loadComponent: () => import('./investment-transactions-control/investment-transactions-control.component').then(mod => mod.InvestmentTransactionsControlComponent),
-                data: {
-                    action: 'edit'
-                }
-            },
+                path: 'transactions',
+                loadChildren: () => import('./transactions.route').then(mod => mod.transactionsRoutes),
+            }
         ]
+    },
+    {
+        path: 'transactions',
+        loadChildren: () => import('./transactions.route').then(mod => mod.transactionsRoutes),
     }
 
 ]
