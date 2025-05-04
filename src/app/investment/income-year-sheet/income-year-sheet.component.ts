@@ -1,7 +1,6 @@
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
@@ -13,18 +12,6 @@ import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { TransactionService } from '../../service/transaction.service';
 import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
-
-const YEAR_FORMATS = {
-  parse: {
-    dateInput: 'yyyy',
-  },
-  display: {
-    dateInput: 'yyyy',
-    monthYearLabel: 'MMM yyyy',
-    dateA11yLabel: 'LL',
-    monthYearA11yLabel: 'MMMM yyyy',
-  },
-};
 
 type IncomeEntry = {
   id?: string;
@@ -57,10 +44,6 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
     DecimalPipe,
     DatePipe,
     IncomeYearSheetFilterComponent
-  ],
-  providers: [
-    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' },
-    provideNativeDateAdapter(YEAR_FORMATS)
   ],
   templateUrl: './income-year-sheet.component.html',
   styleUrl: './income-year-sheet.component.scss'

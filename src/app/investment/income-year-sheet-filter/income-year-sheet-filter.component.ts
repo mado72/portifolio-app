@@ -8,9 +8,22 @@ import { IncomeEnum } from '../../model/investment.model';
 import { AssetEnum } from '../../model/source.model';
 import { PortfolioService } from '../../service/portfolio-service';
 import { AssetTypePipe } from '../../utils/pipe/asset-type.pipe';
+import { provideDateFnsAdapter } from '../../adapter/date-fnd-adapter';
 
 
 export type IncomeFilterType = { portfolioReference: string | null; dateReference: Date, typeReference: AssetEnum | null };
+
+const YEAR_FORMATS = {
+  parse: {
+    dateInput: 'yyyy', // Formato de entrada corrigido
+  },
+  display: {
+    dateInput: 'yyyy', // Formato de exibição no campo de entrada corrigido
+    monthYearLabel: 'yyyy', // Formato do rótulo do mês/ano corrigido
+    dateA11yLabel: 'yyyy', // Acessibilidade corrigida
+    monthYearA11yLabel: 'yyyy', // Acessibilidade corrigida
+  },
+};
 
 
 @Component({
@@ -23,6 +36,9 @@ export type IncomeFilterType = { portfolioReference: string | null; dateReferenc
     MatSelectModule,
     AssetTypePipe,
     FormsModule
+  ],
+  providers: [
+    provideDateFnsAdapter(YEAR_FORMATS),
   ],
   templateUrl: './income-year-sheet-filter.component.html',
   styleUrl: './income-year-sheet-filter.component.scss'
