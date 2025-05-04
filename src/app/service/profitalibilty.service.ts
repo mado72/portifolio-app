@@ -19,6 +19,9 @@ export type AggregatedTransactionsRows = { [type in AggregatedKinds]: RowData };
   providedIn: 'root'
 })
 export class ProfitabilityService {
+
+  private classifierService = inject(ClassifyService);
+
   private sourceService = inject(SourceService);
 
   private portfolioService = inject(PortfolioService);
@@ -36,15 +39,17 @@ export class ProfitabilityService {
     return this.getCurrentMonthProfitability(this.portfolioService.portfolios());
   });
 
+  portfolioProfitability = computed(() => this.calculateProfitability(
+    this.portfolioService.portfolios(), this.sourceService.dataSource.profitability()));
+
   // Modificado para usar o sinal profitability do SourceService
   profitabilityByClassRows = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return []
     }
 
-    const profitabilityByClass = this.calculateProfitability(
-      this.portfolioService.portfolios(), this.sourceService.dataSource.profitability());
-    return this.convertProfitabilityByClassToRowData(profitabilityByClass, this.currentMonthProfitability())
+    const portfolioProfitability = this.portfolioProfitability();
+    return this.convertProfitabilityByClassToRowData(portfolioProfitability, this.currentMonthProfitability())
       .reduce((acc, row) => {
         acc[row.label] = row;
         return acc;
@@ -101,17 +106,12 @@ export class ProfitabilityService {
     if (!this.sourceService.dataIsLoaded()) {
       return null;
     }
-    const profitabilityByClassRows = Object.values(this.profitabilityByClassRows());
-    const previousYearEndValue = profitabilityByClassRows.reduce((acc, row) => {
-      const firstMonthCell = row.cells[0]; // Gets the cell of the first month
-      if (firstMonthCell?.value) {
-        acc += firstMonthCell.value; // Adds the values of the cells from the first month
-      }
-      return acc;
-    }, 0) || 0;
-    // TODO: Deveria ser o valor do ano anterior, não o total do primeiro mês 
+    const calculatedProfitabilityRows = Object.values(this.profitabilityByClassRows());
 
-    const profitabilityRows = this.calculateVAR(profitabilityByClassRows, previousYearEndValue);
+    const lastYearProfitability = this.sourceService.dataSource.profitability()[getYear(new Date()) - 1] || {};
+    const previousYearEndValue = Object.values(lastYearProfitability).reduce((sum, row) => sum += row[row.length - 1], 0) || 0;
+
+    const profitabilityRows = this.calculateVAR(calculatedProfitabilityRows, previousYearEndValue);
     const rows = [
       profitabilityRows?.growthValues ?? { label: 'Crescimento', disabled: true, operation: 'none', cells: [] },
       profitabilityRows?.varValues ?? { label: 'VAR', disabled: true, operation: 'none', cells: [] },
@@ -146,9 +146,11 @@ export class ProfitabilityService {
   private convertProfitabilityByClassToRowData(profitabilities: ProfitabilityByClass[], currentMonthProfitability: Record<string, number>) {
     const currentMonth = getMonth(new Date());
 
+    const classifiersMap = this.classifierService.classifiersMap();
+
     return Object.values(profitabilities).reduce((rows, { classify, values }) => {
       rows.push({
-        label: classify,
+        label: classifiersMap[classify]?.name || classify,
         disabled: false,
         operation: 'plus',
         cells: values.reduce((acc, value, index) => {
@@ -186,7 +188,7 @@ export class ProfitabilityService {
    * It also ensures that cell values are rounded to two decimal places.
    */
   private mapMonthlyInvestmentTransactions(transactionsByMonth: { [month: number]: InvestmentTransactionType[]; }, currencyDefault: Currency) {
-    
+
     const currentMonth = getMonth(new Date());
 
     const initialData: AggregatedTransactionsRows = {
@@ -254,24 +256,6 @@ export class ProfitabilityService {
     });
 
     return computed;
-  }
-
-  /**
-   * Calculate the contributions to calculate.
-   * @param contributions - The contributions to calculate.
-   * @returns An array of contribution values for each month.
-   */
-  private calculateContributions(contributions: { [month: number]: number }): number[] {
-    // Implementação existente...
-    const values = Array(12).fill(0) as number[];
-    if (!contributions) {
-      return values;
-    }
-
-    Object.entries(contributions).forEach(([month, value]) => {
-      values[parseInt(month)] = value;
-    });
-    return values;
   }
 
   /**
@@ -355,7 +339,7 @@ export class ProfitabilityService {
     // Implementação existente...
     const currencyDefault = this.exchangeService.currencyDefault();
 
-    const portfoliosMap = groupBy(Object.values(portfolios), (portfolio) => portfolio.classify);
+    const portfoliosMap = groupBy(Object.values(portfolios), (portfolio) => portfolio.classify?.id || '');
 
     const classes = Array.from(portfoliosMap.keys()).reduce((acc, className) => {
       const ports = portfoliosMap.get(className);
@@ -474,35 +458,35 @@ export class ProfitabilityService {
       const income = incomeRows[month] || 0;
 
       // Calculate growth for the month
-      growthValues[month] = profitabilityRows[month] - previousProfitability;
+      growthValues[month] = Math.round(10000 * ((profitabilityRows[month] / previousProfitability) - 1)) / 100 || 0;
 
       // Calculate the VAR value for the month
-      varValues[month] = currentProfitability - (previousProfitability + contributions - withdrawals - redemptions - income);
+      varValues[month] = Math.round(100 * (currentProfitability - (previousProfitability + contributions - withdrawals - redemptions - income))) / 100;
 
       // Calculate VAR% for the month
-      varPercValues[month] = varValues[month] / (previousProfitability + contributions);
+      varPercValues[month] = Math.round(10000 * varValues[month] / (previousProfitability + contributions)) / 100;
 
       // Calculate the aggregated VAR% for the month
       if (month == 0) {
         aggregatedValues[month] = varPercValues[month];
       }
       else {
-        aggregatedValues[month] = (1 + varPercValues[month]) * (1 + aggregatedValues[month - 1]) - 1;
+        aggregatedValues[month] = (1 + varPercValues[month] / 100) * (1 + aggregatedValues[month - 1]) - 1;
       }
 
       // Calculate the yield for the month
-      yieldValues[month] = (income / currentProfitability) || 0;
+      yieldValues[month] = Math.round(10000 * (income / currentProfitability)) / 100 || 0;
 
       // Update the previousProfitability for the next iteration
       previousProfitability = currentProfitability || 0;
     }
 
     return {
-      growthValues: this.monthNumberArrayToRowData("Crescimento", growthValues),
+      growthValues: this.monthNumberArrayToRowData("Crescimento", growthValues, { suffix: ' %' }),
       varValues: this.monthNumberArrayToRowData("VAR", varValues),
-      varPercValues: this.monthNumberArrayToRowData("VAR%", varPercValues),
-      aggregatedValues: this.monthNumberArrayToRowData("Acumulado", aggregatedValues),
-      yieldValues: this.monthNumberArrayToRowData("Yield", yieldValues),
+      varPercValues: this.monthNumberArrayToRowData("VAR%", varPercValues, { suffix: ' %' }),
+      aggregatedValues: this.monthNumberArrayToRowData("Acumulado", aggregatedValues, { suffix: ' %' }),
+      yieldValues: this.monthNumberArrayToRowData("Yield", yieldValues, { suffix: ' %' }),
     };
   }
 
@@ -537,20 +521,22 @@ export class ProfitabilityService {
     );
   }
 
-  
+
   /**
    * Updates the profitability data for a specific year, classification, and month with a given value.
    * If the year or classification does not exist in the profitability data, it initializes them.
    *
    * @param year - The year for which the profitability data is being updated.
-   * @param classify - The classification/category of the profitability data.
+   * @param classifyName - The classification/category of the profitability data.
    * @param month - The month (0-indexed) for which the profitability value is being updated.
    * @param value - The new profitability value to set for the specified year, classification, and month.
    * @returns A promise or result from the `sourceService.updateProfitability` method, indicating the update status.
    */
-  updateProfitability(year: number, classify: string, month: number, value: number) {
-    
+  updateProfitability(year: number, classifyName: string, month: number, value: number) {
+
     const profiltability = this.sourceService.dataSource.profitability();
+
+    const classify = this.classifyService.getClassifyByName(classifyName)?.id || classifyName;
 
     if (!profiltability[year]) {
       profiltability[year] = {};
@@ -564,13 +550,15 @@ export class ProfitabilityService {
     return this.sourceService.updateProfitability(year, classify, profiltability[year][classify]);
   }
 
-  monthNumberArrayToRowData(label: string, monthNumberArray: MonthsNumberArray): RowData {
+  monthNumberArrayToRowData(label: string, monthNumberArray: MonthsNumberArray, options?: { prefix?: string, suffix?: string }): RowData {
     const currentMonth = getMonth(new Date());
     return {
       label,
       disabled: true,
       operation: 'none',
       cells: monthNumberArray.map((value, month) => ({ value, disabled: month > currentMonth })),
+      prefix: options?.prefix,
+      suffix: options?.suffix
     } as RowData;
   }
 
