@@ -3,7 +3,7 @@ Todo list:
  - [x] IMPLEMENTAR PESQUISA DE CAMBIO - 14/04/2025
  - [x] Adicionar cotação no menu
  - [x] Verificar se os proventos estão sendo armazenados em source
- - [ ] Corrigir investment service para obter os proventos para uma data.
+ - [x] Corrigir investment service para obter os proventos para uma data.
  - [x] Prover mecanismo para alterar o valor de mercado de um ativo manual
  - [x] Refatorar para obter cotação de um asset adicionado.
  - [x] Remover ativo de carteira.
@@ -11,11 +11,12 @@ Todo list:
  - [x] Corrigir localização da data do formulário de transaction-form
  - [x] Adicionar campo classe em portfolio (formulário)
  - [x] Passar o nome do portfolio para o formulário de transaction
- - [ ] Filtrar por classe de portfolio
+ - [x] Filtrar por classe de portfolio
  - [ ] Filtrar transações por ticker, tipo e banco
  - [x] Acrescentar banco na lista de transações
  - [x] Acrescentar classe em portfolio
  - [x] Calcular initial value entre transações diferentes.
  - [ ] Tornar os dados anualizáveis. A estrutura de dados deverá estar organizada por ano.
  - [ ] Criar um novo banco de dados para cada ano.
- - [ ] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
+ - [x] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
+ - [ ] Adicionar filtro em consulta de ativos
