@@ -15,10 +15,10 @@
                 "value": 252.51,
                 "currency": "USD"
             },
-            "initialPrice": 244.62,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 252.51,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -29,10 +29,10 @@
                 "value": 28.64,
                 "currency": "USD"
             },
-            "initialPrice": 28.87,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 28.64,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -43,10 +43,10 @@
                 "value": 41.47,
                 "currency": "USD"
             },
-            "initialPrice": 40.5,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 41.47,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -57,10 +57,10 @@
                 "value": 24.2,
                 "currency": "USD"
             },
-            "initialPrice": 23.79,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 24.2,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -71,10 +71,10 @@
                 "value": 60,
                 "currency": "USD"
             },
-            "initialPrice": 59.67,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 60,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -85,10 +85,10 @@
                 "value": 71.65,
                 "currency": "USD"
             },
-            "initialPrice": 72.35,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 71.65,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -99,10 +99,10 @@
                 "value": 435.28,
                 "currency": "USD"
             },
-            "initialPrice": 394.04,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 435.28,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -113,10 +113,10 @@
                 "value": 56.96,
                 "currency": "USD"
             },
-            "initialPrice": 57.38,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 56.96,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -127,10 +127,10 @@
                 "value": 105.41,
                 "currency": "USD"
             },
-            "initialPrice": 103.1,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 105.41,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -141,10 +141,10 @@
                 "value": 149.56,
                 "currency": "USD"
             },
-            "initialPrice": 141.43,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 149.56,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -155,10 +155,10 @@
                 "value": 76.36,
                 "currency": "USD"
             },
-            "initialPrice": 77.33,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 76.36,
+            "lastUpdate": "2025-05-03T16:09:59-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -169,10 +169,10 @@
                 "value": 100.4,
                 "currency": "USD"
             },
-            "initialPrice": 100.66,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 100.4,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -183,10 +183,10 @@
                 "value": 10.53,
                 "currency": "BRL"
             },
-            "initialPrice": 10.63,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 10.53,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -197,10 +197,10 @@
                 "value": 44.42,
                 "currency": "BRL"
             },
-            "initialPrice": 50.47,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 44.42,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -211,10 +211,10 @@
                 "value": 28.9,
                 "currency": "BRL"
             },
-            "initialPrice": 28.5,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 28.9,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -225,10 +225,10 @@
                 "value": 93.89,
                 "currency": "BRL"
             },
-            "initialPrice": 93,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 93.89,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -239,10 +239,10 @@
                 "value": 86.54,
                 "currency": "BRL"
             },
-            "initialPrice": 84.28,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 86.54,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -253,10 +253,10 @@
                 "value": 121.87,
                 "currency": "BRL"
             },
-            "initialPrice": 122.04,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 121.87,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -267,10 +267,10 @@
                 "value": 63.47,
                 "currency": "BRL"
             },
-            "initialPrice": 63.33,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 63.47,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -281,10 +281,10 @@
                 "value": 102.49,
                 "currency": "BRL"
             },
-            "initialPrice": 102.18,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 102.49,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -295,10 +295,10 @@
                 "value": 7.18,
                 "currency": "BRL"
             },
-            "initialPrice": 6.9,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 7.18,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -309,10 +309,10 @@
                 "value": 49,
                 "currency": "BRL"
             },
-            "initialPrice": 48.7,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 49,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -323,10 +323,10 @@
                 "value": 106.9,
                 "currency": "BRL"
             },
-            "initialPrice": 106.3,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 106.9,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -337,10 +337,10 @@
                 "value": 35.4,
                 "currency": "BRL"
             },
-            "initialPrice": 36.16,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 35.4,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -351,10 +351,10 @@
                 "value": 41.06,
                 "currency": "BRL"
             },
-            "initialPrice": 40.75,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 41.06,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -365,10 +365,10 @@
                 "value": 15.8,
                 "currency": "BRL"
             },
-            "initialPrice": 16.02,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 15.8,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -379,10 +379,10 @@
                 "value": 42.15,
                 "currency": "BRL"
             },
-            "initialPrice": 41.83,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 42.15,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -393,10 +393,10 @@
                 "value": 21.64,
                 "currency": "BRL"
             },
-            "initialPrice": 21.5,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 21.64,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -407,10 +407,10 @@
                 "value": 29.85,
                 "currency": "BRL"
             },
-            "initialPrice": 29.58,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 29.85,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -421,10 +421,10 @@
                 "value": 4.36,
                 "currency": "BRL"
             },
-            "initialPrice": 4.31,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 4.36,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -435,10 +435,10 @@
                 "value": 12.95,
                 "currency": "BRL"
             },
-            "initialPrice": 12.92,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 12.95,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -449,10 +449,10 @@
                 "value": 21,
                 "currency": "BRL"
             },
-            "initialPrice": 21.5,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 21,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -463,10 +463,10 @@
                 "value": 8.32,
                 "currency": "BRL"
             },
-            "initialPrice": 8.62,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 8.32,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -477,10 +477,10 @@
                 "value": 36.43,
                 "currency": "BRL"
             },
-            "initialPrice": 34.66,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 36.43,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -491,14 +491,14 @@
                 "value": 3363.55,
                 "currency": "BRL"
             },
-            "initialPrice": 3360.52,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 3363.55,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
-            "ticker": "OTHER:ENAT24-IPCA-728",
+            "ticker": "BOND:ENAT24-IPCA-728",
             "name": "ENAT24 - BRAVA EG. IPCA+7,28",
             "type": "BOND",
             "quote": {
@@ -529,10 +529,10 @@
                 "value": 2179.61,
                 "currency": "BRL"
             },
-            "initialPrice": 2164.75,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 2179.61,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -543,10 +543,10 @@
                 "value": 1085.68,
                 "currency": "BRL"
             },
-            "initialPrice": 1082.29,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 1085.68,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -557,10 +557,10 @@
                 "value": 829.5,
                 "currency": "BRL"
             },
-            "initialPrice": 821.11,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 829.5,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "unchanged",
             "manualQuote": false
         },
         {
@@ -655,10 +655,10 @@
                 "value": 52.8,
                 "currency": "BRL"
             },
-            "initialPrice": 53.84,
-            "lastUpdate": "2025-05-03T15:47:09-03:00",
+            "initialPrice": 52.8,
+            "lastUpdate": "2025-05-03T16:10:00-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "unchanged",
             "manualQuote": false
         }
     ],
@@ -1304,7 +1304,7 @@
         },
         {
             "id": "fab73d2d-6017-436e-95ff-207c410a1e7c",
-            "ticker": "OTHER:ENAT24-IPCA-728",
+            "ticker": "BOND:ENAT24-IPCA-728",
             "date": "2024-12-28T03:00:00.000Z",
             "accountId": "0a6bec24-66ee-4ca5-bfdf-2ae0ea606a0a",
             "quantity": 1,
@@ -3608,7 +3608,7 @@
                     "percAllocation": 0.07900011929217042
                 },
                 {
-                    "ticker": "OTHER:ENAT24-IPCA-728",
+                    "ticker": "BOND:ENAT24-IPCA-728",
                     "initialValue": 1094.05,
                     "marketValue": 1016.71,
                     "percPlanned": 0,
@@ -3813,6 +3813,78 @@
     ],
     "scheduled": [],
     "profitability": {
+        "2024": {
+            "13edea67-ca89-47b4-bf12-9f22d2ab716d": [
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91,
+                7295.91
+            ],
+            "f4d4de2e-005d-480a-b38a-dcf9bb73db5c": [
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65,
+                15297.65
+            ],
+            "99f60f12-2aec-4732-a516-22f2255a6e54": [
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29,
+                7324.29
+            ],
+            "f191b728-d726-44e7-9de3-f2d6f154eab1": [
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04,
+                4898.04
+            ],
+            "67621b79-8824-4562-8b24-20e901b03b5d": [
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7,
+                5142.7
+            ]
+        },
         "2025": {
             "13edea67-ca89-47b4-bf12-9f22d2ab716d": [
                 6981.97,
@@ -3889,7 +3961,8 @@
     "withdrawal": {
         "2025": {
             "2": 1745.7,
-            "3": 400.93
+            "3": 400.93,
+            "4": 2002.30
         }
     }
 }
