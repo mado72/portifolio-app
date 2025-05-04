@@ -1,17 +1,14 @@
 @if(! formData()) {
-    <button mat-button class="primary button" (click)="addTransaction()">
-        <mat-icon>add</mat-icon>
-        Nova transação
-    </button>
-        <app-transaction-table
-            (onClickItem)="editTransaction($event)"
-            (onDeleteItem)="onDeleteItem($event)"/>
+    @if(enableBackButton()) {
+        <app-back-transaction-button></app-back-transaction-button>
+    }
+<app-add-transaction-button></app-add-transaction-button>
+<app-transaction-table 
+    (onClickItem)="editTransaction($event)" (onDeleteItem)="onDeleteItem($event)" />
 }
 @else {
-    <div class="force-orientation-landscape">
-        <app-investment-transaction-form
-            [data]="formData()"
-            (onSubmit)="onSaveTransaction($event)"
-            (onCancel)="onCancelTransactionForm()"/>
-    </div>
+<div class="force-orientation-landscape">
+    <app-investment-transaction-form [data]="formData()" (onSubmit)="onSaveTransaction($event)"
+        (onCancel)="onCancelTransactionForm()" />
+</div>
 }

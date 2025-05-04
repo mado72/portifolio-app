@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { TransactionService } from '../../service/transaction.service';
+import { AddTransactionButtonComponent } from '../add-transaction-button/add-transaction-button.component';
+import { BackTransactionButtonComponent } from '../back-transaction-button/back-transaction-button.component';
 import { IntestmentTransactionFormData, InvestmentTransactionFormComponent, InvestmentTransactionFormResult } from '../investment-transaction-form/investment-transaction-form.component';
 import { TransactionTableComponent } from '../transaction-table/transaction-table.component';
 
@@ -11,8 +11,8 @@ import { TransactionTableComponent } from '../transaction-table/transaction-tabl
   selector: 'app-investment-transactions-control',
   standalone: true,
   imports: [
-    MatButtonModule,
-    MatIconModule,
+    AddTransactionButtonComponent,
+    BackTransactionButtonComponent,
     TransactionTableComponent,
     InvestmentTransactionFormComponent
   ],
@@ -27,7 +27,12 @@ export class InvestmentTransactionsControlComponent implements OnInit {
 
   formData = signal<IntestmentTransactionFormData>(null);
 
+  enableBackButton = signal(false);
+
   ngOnInit(): void {
+    const url = this.activatedRoute.snapshot.data["back"];
+    this.enableBackButton.set(url && url.length > 0);
+
     const action = this.activatedRoute.snapshot.data["action"];
     switch (action) {
       case 'create':

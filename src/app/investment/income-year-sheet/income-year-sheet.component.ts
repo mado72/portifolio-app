@@ -12,6 +12,8 @@ import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
 import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
 import { TrGroupComponent } from '../../utils/component/tr-group/tr-group.component';
+import { MatButtonModule } from '@angular/material/button';
+import { AddTransactionButtonComponent } from '../add-transaction-button/add-transaction-button.component';
 
 type IncomeEntry = {
   id?: string;
@@ -42,6 +44,7 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
     DecimalPipe,
     DatePipe,
     IncomeYearSheetFilterComponent,
+    AddTransactionButtonComponent,
     TrGroupComponent,
     ExchangeComponent
   ],
@@ -212,20 +215,12 @@ export class IncomeYearSheetComponent {
     row.entries[month] = cellData;
   }
 
-  updateEntry($event: any, index: number, element: SheetRow) {
-    element.entries[index].date = new Date();
-  }
-
-  addTransaction() {
-    this.transactionService.createTransaction();
-  }
-
   editCell(monthIndex: number, element: any) {
     const currentYear = new Date().getFullYear(); // Obtém o ano corrente
     const startOfMonth = new Date(currentYear, monthIndex, 1); // Define o início do mês com o ano corrente
     const endOfMonth = new Date(currentYear, monthIndex + 1, 0); // Define o fim do mês com o ano corrente
 
-    this.router.navigate(['investment', 'transactions', 'list'], {
+    this.router.navigate(['investment', 'incomes', 'transactions'], {
       queryParams: {
         investmentType: element.type, // Tipo correspondente
         ticker: element.ticker, // Código do ativo
