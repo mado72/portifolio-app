@@ -1,31 +1,36 @@
-<div class="filter-container">
-  <mat-form-field appearance="fill">
-    <mat-label>Nome do ativo</mat-label>
-    <input matInput (input)="handleInput($event, 'name')" [value]="name" />
-  </mat-form-field>
+<div class="card">
+  <div class="card-header">Filtros</div>
+  <div class="card-body">
+    <div class="filter-container">
+      <mat-form-field appearance="fill">
+        <mat-label>Nome do ativo</mat-label>
+        <input matInput (input)="handleInput($event, 'name')" [value]="name" />
+      </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Ticker</mat-label>
-    <input matInput (input)="handleInput($event, 'ticker')" [value]="ticker" />
-  </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Ticker</mat-label>
+        <input matInput (input)="handleInput($event, 'ticker')" [value]="ticker" />
+      </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Mercados</mat-label>
-    <mat-select (selectionChange)="onFilterChange('marketPlace', $event.value)" [value]="marketPlace">
-      <mat-option>Todos</mat-option>
-      @for (market of marketPlaces; track $index) {
-        <mat-option [value]="market">{{ market }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Mercados</mat-label>
+        <mat-select (selectionChange)="onFilterChange('marketPlace', $event.value)" [value]="marketPlace">
+          <mat-option>Todos</mat-option>
+          @for (market of marketPlaces; track $index) {
+            <mat-option [value]="market">{{ market }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
 
-  <mat-form-field appearance="fill">
-    <mat-label>Tipo</mat-label>
-    <mat-select (selectionChange)="onFilterChange('type', $event.value)" [value]="type">
-      <mat-option>Todos</mat-option>
-      @for (type of types; track $index) {
-        <mat-option [value]="type">{{ type | assetType }}</mat-option>
-      }
-    </mat-select>
-  </mat-form-field>
+      <mat-form-field appearance="fill">
+        <mat-label>Tipo</mat-label>
+        <mat-select (selectionChange)="onFilterChange('type', $event.value)" [value]="type">
+          <mat-option>Todos</mat-option>
+          @for (type of types; track $index) {
+            <mat-option [value]="type">{{ type | assetType }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
 </div>

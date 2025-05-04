@@ -1,7 +1,6 @@
-<p>income-year-sheet works!</p>
-<app-income-year-sheet-filter (filterChanged)="filterChanged($event)"/>
+<app-income-year-sheet-filter (filterChanged)="filterChanged($event)"></app-income-year-sheet-filter>
 <!-- Criação do formArray -->
-<table mat-table [dataSource]="data()" class="mat-elevation-z8 w-100 mat-table-hover">
+<table mat-table [dataSource]="data()" class="mat-elevation-z8 w-100 mat-table-hover mt-3">
 
   <ng-container matColumnDef="ticker">
     <th mat-header-cell *matHeaderCellDef> Código </th>
