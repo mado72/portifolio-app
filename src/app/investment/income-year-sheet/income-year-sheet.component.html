@@ -1,3 +1,8 @@
+<button mat-button class="primary button" (click)="addTransaction()">
+  <mat-icon>add</mat-icon>
+  Nova transação
+</button>
+
 <app-income-year-sheet-filter (filterChanged)="filterChanged($event)"></app-income-year-sheet-filter>
 <!-- Criação do formArray -->
 <table mat-table [dataSource]="data()" class="mat-elevation-z8 w-100 mat-table-hover mt-3">

@@ -204,6 +204,10 @@ export class IncomeYearSheetComponent {
     element.entries[index].date = new Date();
   }
 
+  addTransaction() {
+    this.transactionService.createTransaction();
+  }
+
   editCell(index: number, element: SheetRow) {
     // const entry = element.entries[index];
     // if (!entry.date) {
