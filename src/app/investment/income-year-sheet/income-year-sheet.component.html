@@ -21,13 +21,6 @@
             {{element.description}}
           </em>
         </div>
-        @if (element.rowspan < 3) {
-          <div class="ms-auto">
-            <button type="button" mat-icon-button (click)="addRow(element)">
-              <mat-icon class="md-18">add_circle</mat-icon>
-            </button>
-          </div>
-        }
       </div>
     </td>
     <th mat-footer-cell *matFooterCellDef>Total</th>
@@ -35,7 +28,7 @@
 
   
   <ng-container matColumnDef="acronym">
-    <th mat-header-cell *matHeaderCellDef> T </th>
+    <th mat-header-cell *matHeaderCellDef> Tipo </th>
     <td mat-cell *matCellDef="let element"> {{element.acronymEarn}} </td>
     <th mat-footer-cell *matFooterCellDef ></th>
   </ng-container>
@@ -51,7 +44,13 @@
         }
         @else {
           <div class="w-100 text-end">
-            {{ element.entries[$index].amount | number:'1.2-2'}}
+            <app-exchange 
+              [exchange]="element.entries[$index].amount" 
+              [hideIcon]="true" 
+              [display]="exchangeView()"
+              [useCurrencySymbol]="true"
+              ></app-exchange>
+            <!-- {{ element.entries[$index].amount | number:'1.2-2'}} -->
           </div>
         }
       </td>

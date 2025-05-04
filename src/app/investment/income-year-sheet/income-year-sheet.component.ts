@@ -5,18 +5,21 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { endOfYear, getMonth, isWithinInterval, startOfYear } from 'date-fns';
-import { Income, IncomeEnum, InvestmentEnum } from '../../model/investment.model';
-import { InvestmentTransactionType } from '../../model/source.model';
+import { ExchangeStructureType, ExchangeView, Income, IncomeEnum, InvestmentEnum } from '../../model/investment.model';
+import { InvestmentTransactionType, Ticker } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
 import { InvestmentService } from '../../service/investment.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { TransactionService } from '../../service/transaction.service';
 import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
+import { ExchangeService } from '../../service/exchange.service';
+import { Currency } from '../../model/domain.model';
+import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
 
 type IncomeEntry = {
   id?: string;
   date?: Date;
-  amount: number;
+  amount: ExchangeStructureType;
 };
 
 type SheetRow = {
@@ -43,7 +46,8 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
     MatButtonModule,
     DecimalPipe,
     DatePipe,
-    IncomeYearSheetFilterComponent
+    IncomeYearSheetFilterComponent,
+    ExchangeComponent
   ],
   templateUrl: './income-year-sheet.component.html',
   styleUrl: './income-year-sheet.component.scss'
@@ -52,13 +56,11 @@ export class IncomeYearSheetComponent {
 
   private transactionService = inject(TransactionService);
 
-  private investmentService = inject(InvestmentService);
+  private exchangeService = inject(ExchangeService);
 
   private assetService = inject(AssetService);
 
   private portfolioService = inject(PortfolioService);
-
-  private changeDetectorRef = inject(ChangeDetectorRef);
 
   private router = inject(Router);
 
@@ -71,6 +73,8 @@ export class IncomeYearSheetComponent {
   queue = signal<IncomeEntry[]>([]);
 
   assets = this.assetService.assets;
+
+  exchangeView = this.exchangeService.exchangeView;
 
   incomesFiltered = computed(() => {
     const incomes = Object.entries(this.transactionService.investmentTransactions())
@@ -87,7 +91,8 @@ export class IncomeYearSheetComponent {
     return this.getIncomesFiltered(this.filter(), incomes);
   });
 
-  data = computed<SheetRow[]>(() => this.getData(Object.values(this.incomesFiltered()).flatMap(incomes => incomes)));
+  data = computed<SheetRow[]>(() => this.getData(
+    Object.values(this.incomesFiltered()).flatMap(incomes => incomes)));
 
   readonly displayedColumns = ['ticker', 'acronym', ...this.months.map((_, idx) => `vl${idx}`)];
 
@@ -96,7 +101,7 @@ export class IncomeYearSheetComponent {
   }
 
   getData(incomes: InvestmentTransactionType[]) {
-    return this.prepareSheetRows(incomes);
+    return this.prepareSheetRows(this.exchangeService.currencyDefault(), incomes);
   }
 
   private getIncomesFiltered(filter: IncomeFilterType, incomes: { [ticker: string]: InvestmentTransactionType[]; }) {
@@ -124,7 +129,7 @@ export class IncomeYearSheetComponent {
     return incomesTicker;
   }
 
-  private prepareSheetRows(incomes: InvestmentTransactionType[]) {
+  private prepareSheetRows(currencyDefault: Currency, incomes: InvestmentTransactionType[]) {
     let data: SheetRow[] = [];
     const tickerMap = new Map<string, SheetRow>();
     const mainRowMap = new Map<string, number>();
@@ -137,7 +142,7 @@ export class IncomeYearSheetComponent {
       let row = tickerMap.get(acronymKey);
 
       if (!row) {
-        row = this.incomeToRow(income);
+        row = this.createRow(income.ticker, income.type, income.value.currency, currencyDefault);
         tickerMap.set(acronymKey, row);
 
         if (mainRowIdx !== undefined) {
@@ -156,31 +161,39 @@ export class IncomeYearSheetComponent {
   }
 
   totalMonth(vlMonth: number): number {
-    return parseFloat(this.data().reduce((acc, row) => {
+    return this.data().reduce((sum, row) => {
       const entry = row.entries[vlMonth];
-      return acc + (entry?.amount || 0);
-    }, 0).toFixed(2));
+      return sum + entry.amount.exchanged.value;
+    }, 0);
   }
 
-  incomeToRow(income: InvestmentTransactionType) {
+  createRow(ticker: Ticker, assetType: InvestmentEnum, assetCurrency: Currency, currencyDefault: Currency): SheetRow {
     return {
-      ticker: income?.ticker,
-      description: this.assets()[income?.ticker]?.name || '',
-      acronymEarn: EARNING_ACRONYM[income?.type] || EARNING_ACRONYM[IncomeEnum.DIVIDENDS],
+      ticker,
+      description: this.assets()[ticker]?.name || '',
+      acronymEarn: EARNING_ACRONYM[assetType] || EARNING_ACRONYM[IncomeEnum.DIVIDENDS],
       rowspan: 1,
-      entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
+      entries: new Array(12).fill(0).map(_ => ({ 
+        amount: {
+          original: {currency: assetCurrency, value: 0},
+          exchanged: {currency: currencyDefault, value: 0}
+        } 
+      }))
     } as SheetRow;
   }
 
   incomeValueToRow(income: InvestmentTransactionType, row: SheetRow) {
     const month = getMonth(income.date);
-    const data = {
+    const cellData = {
       month,
       ...income,
-      amount: parseFloat(income.value.value.toFixed(2)),
+      amount: this.exchangeService.updateExchange({
+        original: { currency: income.value.currency, value: income.value.value },
+        exchanged: { currency: this.exchangeService.currencyDefault(), value: 0 }
+      } as ExchangeStructureType),
       acronymEarn: EARNING_ACRONYM[income.type]
     };
-    row.entries[month] = data;
+    row.entries[month] = cellData;
   }
 
   updateEntry($event: any, index: number, element: SheetRow) {
@@ -204,70 +217,6 @@ export class IncomeYearSheetComponent {
         end: endOfMonth.toISOString() // Data final do mês
       }
     });
-  }
-
-  addRow(row: SheetRow) {
-    // const newRow = {
-    //   ...row,
-    //   main: false,
-    //   entries: new Array(12).fill(0).map(_ => ({ amount: 0 }))
-    // };
-
-    // const dialogRef = this.dialog.open(IncomesEntryDialogComponent, {
-    //   data: { newRow, title: 'Cadastro de Novo Provento' }
-    // });
-
-    // this.processDialogResults(dialogRef, newRow).subscribe(_ => {
-    //   this.doFilter();
-    // });
-  }
-
-  // private processDialogResults(dialogRef: MatDialogRef<IncomesEntryDialogComponent, IncomeEntry | undefined>, element: SheetRow) {
-  //   return dialogRef.afterClosed().pipe(
-  //     map((result?: IncomeEntry) => {
-  //       result && this.saveIncome(element, result);
-  //       return result;
-  //     }),
-  //     catchError(error => {
-  //       console.error(`Error while processing dialog`, error);
-  //       return [];
-  //     })
-  //   );
-  // }
-
-  private saveIncome(element: SheetRow, entry: IncomeEntry) {
-    let [marketPlace, code] = element.ticker.includes(':')
-      ? element.ticker.split(':')
-      : [element.ticker, ''];
-    const incomes = this.investmentService.findIncomesOfAsset({ marketPlace, code });
-
-    const income: Income | undefined = incomes.find(item => item.id === entry.id);
-
-    if (!!income) {
-      if (!entry.amount && income.id) {
-        this.investmentService.deleteIncome(income.id);
-      }
-      else if (income.id) {
-        const entryData = { ...income, ...entry, ticker: element.ticker } as Required<Income>;
-        if (entry.date && !isNaN(new Date(entry.date).getTime())) {
-          this.investmentService.updateIncome(income.id, { ...entryData, date: new Date(entry.date) });
-        } else {
-          console.warn('Invalid date provided for entry:', entry);
-        }
-      }
-    }
-    else {
-      const incomeTypeFound = Object.entries(EARNING_ACRONYM)
-        .map(([key, value]) => ({ key: key as IncomeEnum, value }))
-        .find(item => item.value === element.acronymEarn);
-
-      const entryData = { type: incomeTypeFound?.key, ...entry, ticker: element.ticker } as Required<Income>;
-      if (entry.amount && entryData.type && entryData.ticker && entryData.date && !isNaN(new Date(entryData.date).getTime())) {
-        this.investmentService.addIncome(element.ticker, entryData);
-
-        this.changeDetectorRef.detectChanges();
-      }
-    }
   }
 
   getRowsPan(row: SheetRow) {
