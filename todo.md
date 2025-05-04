@@ -28,4 +28,5 @@ Todo list:
  - [ ] Adicionar gráfico de evolução de patrimônio por ativo
  - [ ] Adicionar gráfico de evolução de patrimônio por classe de ativo
  - [ ] Acrescentar serviço para atualizar criptoativos
- - [ ] Resolver visualização de exchange nos proventos
+ - [x] Resolver visualização de exchange nos proventos
+ - [ ] Acrescentar filtro por moeda em proventos
