@@ -31,7 +31,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
     "bootstrap": "^5.3.3",
-    "date-fns": "^4.1.0",
+    "date-fns": "^3.6.0",
     "date-fns-tz": "^3.2.0",
     "jquery": "^3.7.1",
     "material-symbols": "^0.29.2",
