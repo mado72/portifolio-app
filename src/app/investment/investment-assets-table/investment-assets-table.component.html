@@ -5,6 +5,8 @@
 </div>
 }
 
+<app-investment-asset-table-filter></app-investment-asset-table-filter>
+
 <table mat-table [dataSource]="datasource()" class="mat-elevation-z8 primary mat-table-hover" [trackBy]="trackByFn">
     <ng-container matColumnDef="name">
         <th mat-header-cell *matHeaderCellDef> Nome </th>
