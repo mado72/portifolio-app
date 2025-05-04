@@ -5,7 +5,8 @@ import { InvestmentTransactionType } from '../model/source.model';
 import { AssetService } from './asset.service';
 import { PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
-import { TransactionStatus } from '../model/investment.model';
+import { InvestmentEnum, TransactionStatus } from '../model/investment.model';
+import { isWithinInterval } from 'date-fns';
 
 @Injectable({
   providedIn: 'root'
@@ -117,4 +118,32 @@ export class TransactionService {
     this.router.navigate(['investment', 'transactions']);
   }
 
+  mapByAssetIncome(interval: { start: Date, end: Date}): { [ticker: string]: InvestmentTransactionType[] } {
+    const types = [InvestmentEnum.DIVIDENDS, InvestmentEnum.IOE_RETURN, InvestmentEnum.RENT_RETURN];
+    return Object.values(this.investmentTransactions()).filter(transaction => {
+      return types.includes(transaction.type) && isWithinInterval(transaction.date, interval);
+    })
+    .sort((a, b) => {
+      return a.date.getTime() - b.date.getTime();
+    })
+    .reduce((acc, transaction) => {
+      if (!acc[transaction.ticker]) {
+        acc[transaction.ticker] = [];
+      }
+      acc[transaction.ticker].push(transaction);
+      return acc;
+    }, {} as { [ticker: string]: InvestmentTransactionType[] });
+  }
+
+  mapByAsset(interval: { start: Date, end: Date}): { [ticker: string]: InvestmentTransactionType[] } {
+    return Object.values(this.investmentTransactions()).filter(transaction => {
+      return isWithinInterval(transaction.date, interval);
+    }).reduce((acc, transaction) => {
+      if (!acc[transaction.ticker]) {
+        acc[transaction.ticker] = [];
+      }
+      acc[transaction.ticker].push(transaction);
+      return acc;
+    }, {} as { [ticker: string]: InvestmentTransactionType[] });
+  }
 }
