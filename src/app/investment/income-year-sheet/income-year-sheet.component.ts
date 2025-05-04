@@ -1,8 +1,5 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTableModule } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { endOfYear, getMonth, isWithinInterval, startOfYear } from 'date-fns';
 import { Currency } from '../../model/domain.model';
@@ -40,9 +37,6 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
   selector: 'app-income-year-sheet',
   standalone: true,
   imports: [
-    MatTableModule,
-    MatIconModule,
-    MatButtonModule,
     CurrencyPipe,
     DecimalPipe,
     DatePipe,

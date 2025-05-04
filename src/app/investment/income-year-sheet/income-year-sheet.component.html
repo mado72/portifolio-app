@@ -1,79 +1,55 @@
-<button mat-button class="primary button" (click)="addTransaction()">
-  <mat-icon>add</mat-icon>
-  Nova transação
+<button class="btn btn-primary mb-3" (click)="addTransaction()">
+  <i class="bi bi-plus"></i> Nova transação
 </button>
 
 <app-income-year-sheet-filter (filterChanged)="filterChanged($event)"></app-income-year-sheet-filter>
-<!-- Criação do formArray -->
-<table mat-table [dataSource]="data()" class="mat-elevation-z8 w-100 mat-table-hover mt-3">
 
-  <ng-container matColumnDef="ticker">
-    <th mat-header-cell *matHeaderCellDef> Código </th>
-    <td mat-cell *matCellDef="let element; let idx = index" 
-      [attr.rowspan]="element.rowspan"
-      [style.display]="!element.main ? 'none': ''">
-      <div class="d-flex justify-contents-between">
-        <div class="d-flex flex-column align-middle">
-          <div>
-            {{element.ticker}}
+<table class="table table-hover mt-3 mat-elevation-z8">
+  <thead class="table-light">
+    <tr>
+      <th scope="col" class="cell-asset">Código</th>
+      <th scope="col" class="cell-acronymEarn">Tipo</th>
+      @for (month of months; track $index) {
+        <th scope="col" class="text-center cell-month">{{ month | date: 'MMM' }}</th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (element of data(); track $index) {
+      <tr>
+        <td [attr.rowspan]="element.rowspan" class="cell-asset" [style.display]="!element.main ? 'none' : ''">
+          <div class="d-flex flex-column">
+            <div>{{ element.ticker }}</div>
+            <em>{{ element.description }}</em>
           </div>
-          <em>
-            {{element.description}}
-          </em>
-        </div>
-      </div>
-    </td>
-    <th mat-footer-cell *matFooterCellDef>Total</th>
-  </ng-container>
-
-  
-  <ng-container matColumnDef="acronym">
-    <th mat-header-cell *matHeaderCellDef> Tipo </th>
-    <td mat-cell *matCellDef="let element"> {{element.acronymEarn}} </td>
-    <th mat-footer-cell *matFooterCellDef ></th>
-  </ng-container>
-
-  @for(month of months; track $index) {
-    <ng-container [matColumnDef]="vlMonths[$index]">
-      <th mat-header-cell *matHeaderCellDef class="vlMonth"> {{month | date:'MMM' }} </th>
-      <td mat-cell *matCellDef="let element" class="number cell vlMonth" (click)="editCell($index, element)">
-        @if (element.entries[$index].amount == 0) {
-          <div class="w-100 text-center">
-            -
-          </div>
-        }
-        @else {
-          <div class="w-100 text-end">
+        </td>
+        <td class="cell-acronymEarn">{{ element.acronymEarn }}</td>
+        @for (month of months; track $index) {
+          <td class="text-end cell-month" (click)="editCell($index, element)">
             <app-exchange 
               [exchange]="element.entries[$index].amount" 
               [hideIcon]="true" 
-              [display]="exchangeView()"
-              [useCurrencySymbol]="true"
-              ></app-exchange>
-            <!-- {{ element.entries[$index].amount | number:'1.2-2'}} -->
-          </div>
+              [display]="exchangeView()" 
+              [useCurrencySymbol]="true">
+            </app-exchange>
+          </td>
         }
-      </td>
-      <th mat-footer-cell *matFooterCellDef class="number vlMonth">
-        <div class="w-100 text-end pe-3">
+      </tr>
+    }
+  </tbody>
+  <tfoot class="table-light">
+    <tr>
+      <td colspan="2" class="text-end fw-bold cell-total-display">Total</td>
+      @for (month of months; track $index) {
+        <td class="text-end cell-total-month">
           <app-exchange 
             [exchange]="totalMonth($index)" 
             [hideIcon]="true" 
-            [display]="exchangeView()"
-            [useCurrencySymbol]="true"
-            ></app-exchange>
-          <!-- {{ totalMonth($index)  }} -->
-        </div>
-      </th>
-    </ng-container>
-  }
-
-
-  <!-- Cabeçalho e linhas -->
-  <tr mat-header-row *matHeaderRowDef="displayedColumns" ></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns" ></tr>
-  <tr mat-footer-row *matFooterRowDef="displayedColumns" class="table-total" ></tr>
+            [display]="exchangeView()" 
+            [useCurrencySymbol]="true">
+          </app-exchange>
+        </td>
+      }
+    </tr>
+  </tfoot>
 </table>
-<!-- <code>
-  <pre>{{data() | json}}</pre>
-</code> -->
