@@ -16,6 +16,7 @@ import { ActivatedRoute } from '@angular/router';
 type FilterType = {
   investmentType: string | null;
   marketPlace: string | null;
+  ticker: string | null; // Adicionado o campo ticker
   start: Date | null;
   end: Date | null;
   accountId: string | null;
@@ -59,6 +60,7 @@ export class TransactionTableComponent {
   filter = signal<FilterType>({
     investmentType: null,
     marketPlace: null,
+    ticker: null,
     start: null,
     end: null,
     accountId: null
@@ -70,16 +72,17 @@ export class TransactionTableComponent {
       .filter(t => {
         if (filter.investmentType && t.type !== filter.investmentType) return false;
         if (filter.marketPlace && !t.ticker.startsWith(filter.marketPlace)) return false;
+        if (filter.ticker && !t.ticker.toLocaleUpperCase().includes(filter.ticker.toLocaleUpperCase())) return false; // Filtro por ticker
         if (filter.start && t.date < filter.start) return false;
         if (filter.end && t.date > filter.end) return false;
         if (filter.accountId && t.accountId !== filter.accountId) return false;
         return true;
       })
-      .map(t=>({
+      .map(t => ({
         ...t,
         ...this.exchangeService.enhanceExchangeInfo(t.value, t.value.currency, ['value'])
       }))
-      .sort((t1,t2)=>t2.date.getTime()-t1.date.getTime());
+      .sort((t1, t2) => t2.date.getTime() - t1.date.getTime());
   });
 
   readonly accounts = computed(() => this.balanceService.getAllBalances())
@@ -88,16 +91,18 @@ export class TransactionTableComponent {
     this.activatedRoute.queryParams.subscribe((params) => {
       const investmentType = params['investmentType'] ?? null;
       const marketPlace = params['marketPlace'] ?? null;
+      const ticker = params['ticker'] ?? null; // Captura o ticker da URL
       const start = params['start'] ? new Date(params['start']) : null;
       const end = params['end'] ? new Date(params['end']) : null;
       const accountId = params['account'] ?? null;
       this.filter.set({
         investmentType,
         marketPlace,
+        ticker, // Adicionado ao filtro
         start,
         end,
         accountId
-      })
+      });
     });
   }
 

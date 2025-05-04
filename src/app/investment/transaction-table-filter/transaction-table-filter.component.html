@@ -2,6 +2,12 @@
     <div class="card-header">Filtro de Transações</div>
     <div class="card-body d-flex" [formGroup]="filterForm">
         <div class="me-3">
+            <mat-form-field>
+                <mat-label>Informe o Ticker</mat-label>
+                <input matInput id="ticker" formControlName="ticker" placeholder="Ex.: AAPL" />
+            </mat-form-field>
+        </div>
+        <div class="me-3">
             <mat-form-field formGroupName="range">
                 <mat-label>Informe o intervalo de datas</mat-label>
                 <mat-date-range-input [rangePicker]="rangePicker">
@@ -12,16 +18,14 @@
                 <mat-datepicker-toggle matIconSuffix [for]="rangePicker"></mat-datepicker-toggle>
                 <mat-date-range-picker #rangePicker>
                 </mat-date-range-picker>
-              </mat-form-field>
+            </mat-form-field>
         </div>
         <div class="me-3">
             <mat-form-field>
                 <mat-label>Tipo de transação</mat-label>
                 <mat-select id="transactionType" formControlName="investmentType">
                     <mat-option [value]="null">Todos</mat-option>
-                    @for (type of investmentTypes; track $index) {
-                    <mat-option [value]="type">{{ type | investmentType }}</mat-option>
-                    }
+                    <mat-option *ngFor="let type of investmentTypes" [value]="type">{{ type | investmentType }}</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
@@ -30,9 +34,7 @@
                 <mat-label>Mercado</mat-label>
                 <mat-select id="marketPlace" formControlName="marketPlace">
                     <mat-option [value]="null">Todos</mat-option>
-                    @for (place of marketPlaces; track $index) {
-                    <mat-option [value]="place">{{ place }}</mat-option>
-                    }
+                    <mat-option *ngFor="let place of marketPlaces" [value]="place">{{ place }}</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>
@@ -41,9 +43,7 @@
                 <mat-label>Conta</mat-label>
                 <mat-select id="account" formControlName="account">
                     <mat-option [value]="null">Todas</mat-option>
-                    @for (account of accounts(); track account.accountName) {
-                    <mat-option [value]="account">{{ account.accountName }}</mat-option>
-                    }
+                    <mat-option *ngFor="let account of accounts()" [value]="account">{{ account.accountName }}</mat-option>
                 </mat-select>
             </mat-form-field>
         </div>

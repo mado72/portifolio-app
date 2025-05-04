@@ -47,6 +47,7 @@ export class TransactionTableFilterComponent implements OnInit {
   filterForm = this.fb.group({
     investmentType: [null],
     marketPlace: [null],
+    ticker: [''], // Adicionado o campo de ticker
     range: this.fb.group({
       start: [null as Date | null],
       end: [null as Date | null]
@@ -59,6 +60,7 @@ export class TransactionTableFilterComponent implements OnInit {
       this.filterForm.patchValue({
         investmentType: params['investmentType'] || null,
         marketPlace: params['marketPlace'] || null,
+        ticker: params['ticker'] || '', // Adicionado para preencher o valor inicial do ticker
         range: {
           start: params['start'] ? new Date(params['start']) : null,
           end: params['end'] ? new Date(params['end']) : null,
@@ -72,6 +74,7 @@ export class TransactionTableFilterComponent implements OnInit {
         queryParams: {
           investmentType: value.investmentType,
           marketPlace: value.marketPlace,
+          ticker: value.ticker || null, // Adicionado para enviar o valor do ticker
           start: value.range?.start ?? null,
           end: value.range?.end ?? null,
           account: value.account?.id ?? null
