@@ -16,10 +16,6 @@ export const investmentRoutes: Routes = [
         }
     },
     {
-        path: 'earnings',
-        loadComponent: () => import('./earnings-year-sheet/earnings-year-sheet.component').then(mod => mod.EarningsYearSheetComponent)
-    },
-    {
         path: 'incomes',
         loadComponent: () => import('./income-year-sheet/income-year-sheet.component').then(mod => mod.IncomeYearSheetComponent)
     },
