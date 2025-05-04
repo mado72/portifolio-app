@@ -16,6 +16,7 @@
   </thead>
   <tbody>
     @for (element of data(); track $index) {
+      <tr-group>
       <tr>
         <td [attr.rowspan]="element.rowspan" class="cell-asset" [style.display]="!element.main ? 'none' : ''">
           <div class="d-flex flex-column">
@@ -35,6 +36,7 @@
           </td>
         }
       </tr>
+      </tr-group>
     }
   </tbody>
   <tfoot class="table-light">

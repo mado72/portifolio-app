@@ -1,4 +1,9 @@
 
+.table-hover > tbody > tr-group:hover > * {
+    color: var(--bs-table-hover-color);
+    background-color: var(--bs-table-hover-bg);
+    cursor: zoom-in
+}
 .table { 
     border-collapse: collapse;
 }

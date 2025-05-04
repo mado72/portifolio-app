@@ -11,6 +11,7 @@ import { PortfolioService } from '../../service/portfolio-service';
 import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
 import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
+import { TrGroupComponent } from '../../utils/component/tr-group/tr-group.component';
 
 type IncomeEntry = {
   id?: string;
@@ -41,10 +42,11 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
     DecimalPipe,
     DatePipe,
     IncomeYearSheetFilterComponent,
+    TrGroupComponent,
     ExchangeComponent
   ],
   templateUrl: './income-year-sheet.component.html',
-  styleUrl: './income-year-sheet.component.scss'
+  styleUrl: './income-year-sheet.component.scss',
 })
 export class IncomeYearSheetComponent {
 
