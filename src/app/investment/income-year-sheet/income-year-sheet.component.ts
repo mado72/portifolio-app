@@ -2,11 +2,11 @@ import { DatePipe, DecimalPipe } from '@angular/common';
 import { ChangeDetectorRef, Component, computed, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DATE_LOCALE, provideNativeDateAdapter } from '@angular/material/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { endOfYear, getMonth, isWithinInterval, startOfYear } from 'date-fns';
-import { Income, IncomeEnum, IncomeEnumType, InvestmentEnum } from '../../model/investment.model';
+import { Income, IncomeEnum, InvestmentEnum } from '../../model/investment.model';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { AssetService } from '../../service/asset.service';
 import { InvestmentService } from '../../service/investment.service';
@@ -77,7 +77,7 @@ export class IncomeYearSheetComponent {
 
   private changeDetectorRef = inject(ChangeDetectorRef);
 
-  private dialog = inject(MatDialog);
+  private router = inject(Router);
 
   readonly months = Array.from({ length: 12 }, (_, i) => new Date(0, i, 1));
 
@@ -208,30 +208,19 @@ export class IncomeYearSheetComponent {
     this.transactionService.createTransaction();
   }
 
-  editCell(index: number, element: SheetRow) {
-    // const entry = element.entries[index];
-    // if (!entry.date) {
-    //   entry.date = setMonth(new Date(), index);
-    // }
+  editCell(monthIndex: number, element: any) {
+    const currentYear = new Date().getFullYear(); // Obtém o ano corrente
+    const startOfMonth = new Date(currentYear, monthIndex, 1); // Define o início do mês com o ano corrente
+    const endOfMonth = new Date(currentYear, monthIndex + 1, 0); // Define o fim do mês com o ano corrente
 
-    // const incomeTypeFound = Object.entries(EARNING_ACRONYM)
-    //   .map(([key, value]) => ({ key, value }))
-    //   .find(item => item.value === element.acronymEarn);
-
-    // const dialogRef = this.dialog.open(IncomesEntryDialogComponent, {
-    //   data: { entry, type: incomeTypeFound?.key, title: 'Cadastro de Provento', disabled: true }
-    // });
-
-    // this.processDialogResults(dialogRef, element).subscribe(income => {
-    //   if (!income) return;
-    //   const month = getMonth(income.date as Date);
-
-    //   if (month !== index) {
-    //     element.entries[index] = { amount: 0 };
-    //     this.changeDetectorRef.detectChanges();
-    //   }
-    //   element.entries[month] = income;
-    // });
+    this.router.navigate(['investment', 'transactions', 'list'], {
+      queryParams: {
+        investmentType: element.type, // Tipo correspondente
+        ticker: element.ticker, // Código do ativo
+        start: startOfMonth.toISOString(), // Data inicial do mês
+        end: endOfMonth.toISOString() // Data final do mês
+      }
+    });
   }
 
   addRow(row: SheetRow) {
