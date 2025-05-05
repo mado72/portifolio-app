@@ -11,7 +11,7 @@ import { PortfolioService } from './portfolio-service';
 import { SourceService } from './source.service';
 import { TransactionService } from './transaction.service';
 
-export type AggregatedKinds = 'incomes' | 'contributions' | 'redemptions' | 'withdrawals';
+export type AggregatedKinds = 'incomes' | 'contributions' | 'sell' | 'withdrawals';
 
 export type AggregatedTransactionsRows = { [type in AggregatedKinds]: RowData };
 
@@ -76,7 +76,7 @@ export class ProfitabilityService {
       title: 'Rendimentos e Resgates',
       months: this.months(),
       rows: profitabilityRows.concat(
-        aggregatedTransactionsRows?.redemptions || [],
+        aggregatedTransactionsRows?.sell || [],
         aggregatedTransactionsRows?.withdrawals || [],
       )
     };
@@ -167,13 +167,13 @@ export class ProfitabilityService {
    *
    * @param transactionsByMonth - An object where the keys represent months (0-11) and the values are arrays of investment transactions for that month.
    * @param currencyDefault - The default currency to which all transaction values will be converted.
-   * @returns An object containing aggregated transaction data for each category (incomes, contributions, redemptions, withdrawals),
+   * @returns An object containing aggregated transaction data for each category (incomes, contributions, sell, withdrawals),
    *          with each category containing a label, operation type, and an array of monthly cell values.
    *
    * The returned structure includes:
    * - `incomes`: Aggregated income transactions (e.g., dividends, IOE returns, rent returns).
    * - `contributions`: Aggregated contribution transactions (e.g., contributions, sells).
-   * - `redemptions`: Aggregated redemption transactions.
+   * - `sell`: Aggregated redemption transactions.
    * - `withdrawals`: Aggregated withdrawal transactions.
    *
    * Each category contains:
@@ -200,11 +200,11 @@ export class ProfitabilityService {
       },
       contributions: {
         label: 'Aportes',
-        disabled: false,
+        disabled: true,
         operation: 'plus',
         cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: idx > currentMonth })),
       },
-      redemptions: {
+      sell: {
         label: 'Resgates',
         disabled: true,
         operation: 'minus',
@@ -212,7 +212,7 @@ export class ProfitabilityService {
       },
       withdrawals: {
         label: 'Retiradas',
-        disabled: false,
+        disabled: true,
         operation: 'minus',
         cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: idx > currentMonth })),
       }
@@ -228,14 +228,14 @@ export class ProfitabilityService {
             accIndex = 'incomes';
             break;
           case InvestmentEnum.CONTRIBUTION:
-          case InvestmentEnum.SELL:
+          case InvestmentEnum.BUY:
             accIndex = 'contributions';
             break;
           case InvestmentEnum.WITHDRAWAL:
             accIndex = 'withdrawals';
             break;
-          case InvestmentEnum.REDEMPTION:
-            accIndex = 'redemptions';
+          case InvestmentEnum.SELL:
+            accIndex = 'sell';
             break;
           default:
             return;
@@ -445,7 +445,7 @@ export class ProfitabilityService {
     const aggregatedTransactionsRows = this.aggregatedTransactionsRows();
 
     const contributionsRows: MonthsNumberArray = this.rowDataToNumberArray(aggregatedTransactionsRows?.contributions); // AM
-    const redemptionsRows: MonthsNumberArray = this.rowDataToNumberArray(aggregatedTransactionsRows?.redemptions); // RgM
+    const sellRows: MonthsNumberArray = this.rowDataToNumberArray(aggregatedTransactionsRows?.sell); // RgM
     const withdrawalsRows: MonthsNumberArray = this.rowDataToNumberArray(aggregatedTransactionsRows?.withdrawals); // RtM
     const incomeRows: MonthsNumberArray = this.rowDataToNumberArray(aggregatedTransactionsRows?.incomes); // PM
 
@@ -453,7 +453,7 @@ export class ProfitabilityService {
     for (let month = 0; month < 12; month++) {
       const currentProfitability = profitabilityRows[month] || 0;
       const contributions = contributionsRows[month] || 0;
-      const redemptions = redemptionsRows[month] || 0;
+      const sells = sellRows[month] || 0;
       const withdrawals = withdrawalsRows[month] || 0;
       const income = incomeRows[month] || 0;
 
@@ -461,7 +461,7 @@ export class ProfitabilityService {
       growthValues[month] = Math.round(10000 * ((profitabilityRows[month] / previousProfitability) - 1)) / 100 || 0;
 
       // Calculate the VAR value for the month
-      varValues[month] = Math.round(100 * (currentProfitability - (previousProfitability + contributions - withdrawals - redemptions - income))) / 100;
+      varValues[month] = Math.round(100 * (currentProfitability - (previousProfitability + contributions - withdrawals - sells - income))) / 100;
 
       // Calculate VAR% for the month
       varPercValues[month] = Math.round(10000 * varValues[month] / (previousProfitability + contributions)) / 100;

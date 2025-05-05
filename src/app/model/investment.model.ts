@@ -71,7 +71,6 @@ export enum InvestmentEnum {
     IOE_RETURN = 'IOE_RETURN', // JCP
     TRANSFER = 'TRANSFER', // transferência
     SUBSCRIPTION = 'SUBSCRIPTION', // subscrição
-    REDEMPTION = 'REDEMPTION', // resgate
     CONTRIBUTION = 'CONTRIBUTION', // aporte
     WITHDRAWAL = 'WITHDRAWAL', // retirada
     OTHER = 'OTHER',
@@ -87,7 +86,6 @@ export const InvestmentEnumDesc : Record<InvestmentEnumType, string> = {
     "IOE_RETURN": 'JCP',
     "TRANSFER": 'Transferência',
     "SUBSCRIPTION": 'Subscrição',
-    "REDEMPTION": 'Resgate',
     "CONTRIBUTION": 'Aporte',
     "WITHDRAWAL": 'Retirada',
     "OTHER": 'Outros',
@@ -98,7 +96,6 @@ export const InvestmentEnumFactor : Record<InvestmentEnum, number> = {
     DIVIDENDS: 1,
     IOE_RETURN: 1,
     OTHER: 0,
-    REDEMPTION: 1,
     RENT_RETURN: 1,
     CONTRIBUTION: 1,
     SELL: -1,

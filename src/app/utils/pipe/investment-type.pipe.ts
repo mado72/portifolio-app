@@ -25,7 +25,6 @@ const InvestmentAbrev : Record<`${InvestmentEnum}`, string> = {
     "IOE_RETURN": 'JCP',
     "TRANSFER": 'Trnsf',
     "SUBSCRIPTION": 'Subs',
-    "REDEMPTION": 'Rsgt',
     "WITHDRAWAL": 'Saq',
     "CONTRIBUTION": 'Apt',
     "OTHER": 'Otrs',
