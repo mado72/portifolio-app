@@ -173,7 +173,7 @@ export class ProfitabilityService {
    * The returned structure includes:
    * - `incomes`: Aggregated income transactions (e.g., dividends, IOE returns, rent returns).
    * - `contributions`: Aggregated contribution transactions (e.g., contributions, sells).
-   * - `sell`: Aggregated redemption transactions.
+   * - `sell`: Aggregated sell transactions.
    * - `withdrawals`: Aggregated withdrawal transactions.
    *
    * Each category contains:
@@ -310,7 +310,6 @@ export class ProfitabilityService {
    */
   private aggregateTransactionsByMonth(transactions: Record<string, InvestmentTransactionType>): { [month: number]: InvestmentTransactionType[]; } {
     // Implementação existente...
-    const filters = [InvestmentEnum.DIVIDENDS, InvestmentEnum.IOE_RETURN, InvestmentEnum.RENT_RETURN, InvestmentEnum.CONTRIBUTION, InvestmentEnum.SELL, InvestmentEnum.WITHDRAWAL];
     return Object.values(transactions)
       .filter(t =>
         t.status === TransactionStatus.COMPLETED
