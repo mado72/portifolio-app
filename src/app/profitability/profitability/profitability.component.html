@@ -17,7 +17,7 @@
     (cellChange)="onContributionCellChanged($event)"
     ></app-financial-grid>
   
-    <app-financial-grid 
+  <app-financial-grid 
     [showTotalColumn]="false"
     [showHeader]="false"
     [showFooter]="false"
@@ -25,6 +25,10 @@
     ></app-financial-grid>
 
   <div>
-    <app-portfolio-evolution-chart></app-portfolio-evolution-chart>
+    <app-portfolio-evolution-chart 
+      [profitabilityData]="portfolioEvolutionData()"
+      [accumulatedData]="accumulatedData()"
+      [currency]="currency()"
+      ></app-portfolio-evolution-chart>
   </div>
 }

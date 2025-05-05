@@ -4,13 +4,15 @@ import { CellChangeEvent, GridData } from '../../utils/component/financial-grid/
 import { FinancialGridComponent } from '../../utils/component/financial-grid/financial-grid.component';
 import { PortfolioEvolutionChartComponent } from '../../components/portfolio-evolution-chart/portfolio-evolution-chart.component';
 import { getYear } from 'date-fns';
+import { ExchangeService } from '../../service/exchange.service';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-profitability',
   standalone: true,
   imports: [
     FinancialGridComponent,
-    PortfolioEvolutionChartComponent // Importa o novo componente
+    PortfolioEvolutionChartComponent
   ],
   templateUrl: './profitability.component.html',
   styleUrl: './profitability.component.scss'
@@ -19,6 +21,14 @@ export class ProfitabilityComponent {
 
   private profitabilityService = inject(ProfitabilityService);
 
+  private exchangeService = inject(ExchangeService);
+
+  currency = computed(() => this.exchangeService.currencyDefault());
+  
+  portfolioEvolutionData = this.profitabilityService.portfolioEvolutionData;
+
+  accumulatedData = this.profitabilityService.accumulatedData;
+  
   financialGridData = computed(() => this.profitabilityService.financialGridData() as GridData);
 
   cellChanged(event: CellChangeEvent) {
@@ -45,11 +55,12 @@ export class ProfitabilityComponent {
     this.profitabilityService.updateFinancialGridData(event);
   }
 
-  // Dados simulados para o gráfico
-  portfolioEvolutionData = [
-    { name: '2021', value: 50000 },
-    { name: '2022', value: 75000 },
-    { name: '2023', value: 100000 },
-    { name: '2024', value: 125000 }
-  ];
+  // // Dados simulados para o gráfico
+  // portfolioEvolutionData = [
+  //   { name: '2021', value: 50000 },
+  //   { name: '2022', value: 75000 },
+  //   { name: '2023', value: 100000 },
+  //   { name: '2024', value: 125000 }
+  // ];
 }
+
