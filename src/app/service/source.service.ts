@@ -30,6 +30,7 @@ export class SourceService {
 
   dataSource = {
     classify: signal<Record<string, string>>({}),
+    exchanges: signal<{[year: number]: {[from:string]: {[to:string]: number[]}}}>({}),
     asset: signal<Record<Ticker, AssetSourceRawType>>({}),
     balance: signal<Record<string, BalanceSourceRawType>>({}),
     income: signal<Record<string, IncomeSourceRawType>>({}),
@@ -78,6 +79,7 @@ export class SourceService {
 
   private loadData(jsonData: any) {
     this.dataSource.classify.set(this.classifySourceToRecord(jsonData.classify));
+    this.dataSource.exchanges.set(jsonData.exchanges || {});
     this.dataSource.asset.set(this.assetSourceToRecord(jsonData.asset));
     this.dataSource.balance.set(this.balanceToRecord(jsonData.balance));
     this.dataSource.income.set(this.incomeSourceToRecord(jsonData.income));
@@ -101,6 +103,7 @@ export class SourceService {
     this.dataSource.scheduled.set({});
     this.dataSource.profitability.set([]);
     this.dataSource.withdrawal.set({});
+    this.dataSource.exchanges.set({});
     this.alertService.showSuccess('Todos os dados foram excluídos!');
   }
 
@@ -131,6 +134,7 @@ export class SourceService {
 
   getData = computed(() => ({
     classify: this.dataSource.classify(),
+    exchanges: this.dataSource.exchanges(),
     asset: Object.values(this.dataSource.asset()),
     balance: Object.values(this.dataSource.balance()),
     income: Object.values(this.dataSource.income()),
@@ -139,7 +143,7 @@ export class SourceService {
     portfolio: Object.values(this.dataSource.portfolio()),
     scheduled: Object.values(this.dataSource.scheduled()),
     profitability: this.dataSource.profitability(),
-    withdrawal: this.dataSource.withdrawal()
+    withdrawal: this.dataSource.withdrawal(),
   }));
 
   // classify ------------------------
