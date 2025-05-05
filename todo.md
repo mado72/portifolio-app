@@ -30,3 +30,4 @@ Todo list:
  - [ ] Acrescentar serviço para atualizar criptoativos
  - [x] Resolver visualização de exchange nos proventos
  - [x] Acrescentar filtro por moeda em proventos
+ - [ ] Adicionar coluna para exibir totais de proventos por ativo por classe

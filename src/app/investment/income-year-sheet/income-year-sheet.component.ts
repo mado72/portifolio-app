@@ -186,6 +186,37 @@ export class IncomeYearSheetComponent {
     }
   }
 
+  totalOverall(): ExchangeStructureType {
+    const total = this.data().reduce((sum, row) => {
+      return sum + row.entries.reduce((rowSum, entry) => {
+        return rowSum + (entry?.amount?.exchanged?.value || 0);
+      }, 0);
+    }, 0);
+
+    return {
+      original: {
+        currency: this.currencyDefault(),
+        value: total
+      },
+      exchanged: {
+        currency: this.currencyDefault(),
+        value: total
+      }
+    };
+  }
+
+  getTotalByRow(row: SheetRow): ExchangeStructureType {
+    const asset = this.assets()[row.ticker];
+    const total = row.entries.reduce((sum, entry) => {
+      return sum + (entry?.amount?.exchanged?.value || 0);
+    }, 0);
+
+    return this.exchangeService.updateExchange({
+      original: { currency: asset.quote.currency, value: total },
+      exchanged: { currency: this.exchangeService.currencyDefault(), value: 0 }
+    } as ExchangeStructureType);
+  }
+
   createRow(ticker: Ticker, assetType: InvestmentEnum, assetCurrency: Currency, currencyDefault: Currency): SheetRow {
     return {
       ticker,
