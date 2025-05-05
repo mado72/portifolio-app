@@ -8,6 +8,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { provideExchangeService } from './service/exchange.service';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 registerLocaleData(localePt);
 
@@ -23,6 +24,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()), 
     provideAnimationsAsync(),
     provideHttpClient(),
-    provideExchangeService()
+    provideExchangeService(), 
+    provideCharts(withDefaultRegisterables())
   ]
 };
