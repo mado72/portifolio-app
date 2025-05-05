@@ -275,8 +275,8 @@ export class ProfitabilityService {
     if (!contributions) {
       return undefined;
     }
-    Object.entries(contributions).forEach(([month, value]) => {
-      values[parseInt(month)] = value;
+    Object.values(contributions.cells).forEach((cell, month) => {
+      values[month] = cell.value || 0;
     });
 
     // Calculate the accumulated values
