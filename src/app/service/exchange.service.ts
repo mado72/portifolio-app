@@ -3,6 +3,7 @@ import { ExchangeStructureType, ExchangeView } from '../model/investment.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { CurrencyPipe } from '@angular/common';
 import { Currency, CurrencyType } from '../model/domain.model';
+import { SourceService } from './source.service';
 
 const ExchangeServiceFactory = (remoteQuotesService: RemoteQuotesService) => {
   return new ExchangeService(remoteQuotesService);
@@ -27,6 +28,8 @@ export type ExchangeType = ExchangeReq & {
   providedIn: 'root'
 })
 export class ExchangeService {
+
+  private sourceService = inject(SourceService);
 
   readonly exchangeView = signal<ExchangeView>("original");
 
@@ -86,5 +89,33 @@ export class ExchangeService {
     return result;
   }
 
+  /**
+   * Get exchange rates for a specific year.
+   * @param year - The year to retrieve exchange rates for.
+   * @returns Exchange rates for the specified year.
+   */
+  getExchangesByYear(year: number) {
+    return this.sourceService.dataSource.exchanges()[year] || {};
+  }
+
+  /**
+   * Get exchange rates between two currencies for a specific year.
+   * @param year - The year to retrieve exchange rates for.
+   * @param from - The source currency.
+   * @param to - The target currency.
+   * @returns Exchange rates between the specified currencies for the given year.
+   */
+  getExchangeRate(year: number, from: string, to: string): number[] | undefined {
+    const yearExchanges = this.getExchangesByYear(year);
+    return yearExchanges[from]?.[to];
+  }
+
+  /**
+   * Get all available years with exchange data.
+   * @returns An array of years with exchange data.
+   */
+  getAvailableYears(): number[] {
+    return Object.keys(this.sourceService.dataSource.exchanges()).map(Number);
+  }
 }
 
