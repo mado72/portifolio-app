@@ -15,6 +15,14 @@ export type AggregatedKinds = 'incomes' | 'contributions' | 'sell' | 'withdrawal
 
 export type AggregatedTransactionsRows = { [type in AggregatedKinds]: RowData };
 
+type FinancialMetrics = {
+  growthValues: RowData;
+  varValues: RowData;
+  varPercValues: RowData;
+  aggregatedValues: RowData;
+  yieldValues: RowData;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -32,18 +40,58 @@ export class ProfitabilityService {
 
   private classifyService = inject(ClassifyService);
 
-  currentMonthProfitability = computed(() => {
+  readonly currentMonthProfitability = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return {}
     }
     return this.getCurrentMonthProfitability(this.portfolioService.portfolios());
   });
 
-  portfolioProfitability = computed(() => this.calculateProfitability(
+  /**
+   * A computed property that calculates the profitability of the portfolio.
+   * It uses the portfolio data from the `portfolioService` and the profitability
+   * data from the `sourceService` to compute the result.
+   *
+   * @readonly
+   * @returns The computed profitability of the portfolio.
+   */
+  readonly portfolioProfitability = computed(() => this.calculateProfitability(
     this.portfolioService.portfolios(), this.sourceService.dataSource.profitability()));
 
-  // Modificado para usar o sinal profitability do SourceService
-  profitabilityByClassRows = computed(() => {
+  /**
+   * Computes the total profitability for each month by aggregating data from all profitability rows.
+   * 
+   * This computed property processes the profitability data by:
+   * - Retrieving all rows of profitability data by class.
+   * - Converting each row's data into a numeric array.
+   * - Summing up the values for each month across all rows.
+   * 
+   * @returns {MonthsNumberArray} An array of 12 numbers representing the total profitability for each month.
+   */
+  readonly profitabilityTotalRow = computed<MonthsNumberArray>(() => {
+    return Object.values(this.profitabilityByClassRows())
+      .map(row => this.rowDataToNumberArray(row))
+      .reduce((acc, row) => {
+        row.forEach((value, month) => {
+          acc[month] += value;
+        });
+        return acc;
+      }, Array(12).fill(0)); // Initialize an array of 12 zeros
+  });
+
+  
+  /**
+   * A computed property that generates a mapping of profitability data by class.
+   * 
+   * This property checks if the source data is loaded before proceeding. If the data
+   * is not loaded, it returns an empty array. Otherwise, it calculates the profitability
+   * data for the portfolio and converts it into a row data format, indexed by the 
+   * classification label.
+   * 
+   * @returns A dictionary where the keys are classification labels and the values are 
+   *          `RowData` objects representing profitability information for each class.
+   */
+  readonly profitabilityByClassRows = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return []
     }
@@ -56,7 +104,19 @@ export class ProfitabilityService {
       }, {} as { [classify: string]: RowData });
   });
 
-  aggregatedTransactionsRows = computed(() => {
+  /**
+   * A computed property that provides aggregated transaction rows.
+   * 
+   * This property calculates and returns the aggregated investment transactions
+   * grouped by month. It first checks if the source data is loaded; if not, it 
+   * returns `null`. Once the data is available, it aggregates the investment 
+   * transactions by month and maps them to a format suitable for display, using 
+   * the default currency from the exchange service.
+   * 
+   * @returns An array of aggregated transaction rows grouped by month, or `null` 
+   *          if the source data is not yet loaded.
+   */
+  readonly aggregatedTransactionsRows = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return null;
     }
@@ -65,7 +125,22 @@ export class ProfitabilityService {
     return this.mapMonthlyInvestmentTransactions(aggregatedIncomeWithdrawals, this.exchangeService.currencyDefault());
   });
 
-  financialGridData = computed(() => {
+  /**
+   * A computed property that generates financial grid data for the application.
+   * 
+   * This property depends on the state of the `sourceService` and aggregates
+   * profitability and transaction data to produce a structured object containing
+   * financial information.
+   * 
+   * @readonly
+   * @returns {object | null} An object containing the financial grid data or `null` 
+   * if the source data is not yet loaded. The returned object includes:
+   * - `title`: A string representing the title of the financial grid.
+   * - `months`: An array of months derived from the `months()` method.
+   * - `rows`: An array of rows combining profitability data and aggregated 
+   *   transaction data (e.g., sell and withdrawal transactions).
+   */
+  readonly financialGridData = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return null;
     }
@@ -82,7 +157,25 @@ export class ProfitabilityService {
     };
   });
 
-  contributionGridData = computed(() => {
+  /**
+   * A computed property that generates data for the contribution grid.
+   * 
+   * This property calculates and returns an object containing the title, 
+   * months, and rows of data for the grid. The rows are composed of 
+   * contributions, accumulated contributions, and incomes, if available.
+   * 
+   * The computation depends on the following:
+   * - Ensures that the source service data is loaded before proceeding.
+   * - Aggregates transaction rows to extract contributions and incomes.
+   * - Calculates accumulated contributions based on the contributions data.
+   * 
+   * @returns An object containing:
+   * - `title`: A string representing the title of the grid.
+   * - `months`: An array of months derived from the `months()` method.
+   * - `rows`: An array of row data, including contributions, accumulated contributions, and incomes.
+   *           Returns `null` if the source service data is not loaded.
+   */
+  readonly contributionGridData = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return null;
     }
@@ -102,27 +195,95 @@ export class ProfitabilityService {
     };
   });
 
-  growthGridData = computed(() => {
+  /**
+   * Computes the financial metric rows based on the profitability data and the previous year's end value.
+   * 
+   * This computed property checks if the source data is loaded. If not, it returns `undefined`.
+   * Otherwise, it calculates the profitability rows by class and retrieves the profitability data
+   * for the last year. It then calculates the total value at the end of the previous year and uses
+   * this value to compute the variantions for the profitability rows on year.
+   * 
+   * @returns An array of calculated financial metric rows or `undefined` if the source data is not loaded.
+   */
+  readonly financialMetricRows = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
-      return null;
+      return undefined;
     }
-    const calculatedProfitabilityRows = Object.values(this.profitabilityByClassRows());
 
+    const calculatedProfitabilityRows = Object.values(this.profitabilityByClassRows());
     const lastYearProfitability = this.sourceService.dataSource.profitability()[getYear(new Date()) - 1] || {};
     const previousYearEndValue = Object.values(lastYearProfitability).reduce((sum, row) => sum += row[row.length - 1], 0) || 0;
+    return this.calculateVAR(calculatedProfitabilityRows, previousYearEndValue);
+  });
 
-    const profitabilityRows = this.calculateVAR(calculatedProfitabilityRows, previousYearEndValue);
+  /**
+   * A computed property that generates the data structure for the growth grid.
+   * This grid contains financial profitability metrics, including growth values,
+   * VAR, VAR%, accumulated values, and yield values. If the source data is not
+   * loaded, the property returns `undefined`.
+   *
+   * @readonly
+   * @returns An object containing the title, months, and rows for the growth grid.
+   *          Each row represents a specific financial metric with its label, 
+   *          disabled state, operation type, cells, and optional suffix.
+   */
+  readonly growthGridData = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return undefined;
+    }
+
+    const financialProfitabilityMetrics = this.financialMetricRows();
     const rows = [
-      profitabilityRows?.growthValues ?? { label: 'Crescimento', disabled: true, operation: 'none', cells: [] },
-      profitabilityRows?.varValues ?? { label: 'VAR', disabled: true, operation: 'none', cells: [] },
-      profitabilityRows?.varPercValues ?? { label: 'VAR%', disabled: true, operation: 'none', cells: [], suffix: '%' },
-      profitabilityRows?.aggregatedValues ?? { label: 'Acumulado', disabled: true, operation: 'none', cells: [], suffix: '%' },
-      profitabilityRows?.yieldValues ?? { label: 'Yield', disabled: true, operation: 'none', cells: [], suffix: '%' }
+      financialProfitabilityMetrics?.growthValues ?? { label: 'Crescimento', disabled: true, operation: 'none', cells: [] },
+      financialProfitabilityMetrics?.varValues ?? { label: 'VAR', disabled: true, operation: 'none', cells: [] },
+      financialProfitabilityMetrics?.varPercValues ?? { label: 'VAR%', disabled: true, operation: 'none', cells: [], suffix: '%' },
+      financialProfitabilityMetrics?.aggregatedValues ?? { label: 'Acumulado', disabled: true, operation: 'none', cells: [], suffix: '%' },
+      financialProfitabilityMetrics?.yieldValues ?? { label: 'Yield', disabled: true, operation: 'none', cells: [], suffix: '%' }
     ];
     return {
       title: 'Crescimento',
       months: this.months(),
       rows
+    };
+  });
+
+  portfolioEvolutionData = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return null;
+    }
+    const total = this.profitabilityTotalRow();
+
+    if (!total?.length) {
+      return {
+        label: 'Evolução do Patrimônio',
+        values: Array(12).fill(0) as number[],
+      };
+    }
+
+    return {
+      label: 'Evolução do Patrimônio',
+      values: total
+    };
+  });
+
+  accumulatedData = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {
+        label: 'Rentabilidade Acumulada',
+        values: Array(12).fill(0) as number[],
+      };
+    }
+    const calculatePortfolioProfitability = this.financialMetricRows();
+    if (!calculatePortfolioProfitability) {
+      return {
+        label: 'Rentabilidade Acumulada',
+        values: Array(12).fill(0) as number[],
+      };
+    }
+    return {
+      label: 'Rentabilidade Acumulada',
+      values: calculatePortfolioProfitability.aggregatedValues.cells
+        .map(cell => (cell.value || 0) / 100),
     };
   });
 
@@ -408,19 +569,25 @@ export class ProfitabilityService {
   }
 
   /**
-   * Calculates various financial metrics (VAR, VAR%, growth, aggregated values, and yield) 
-   * based on profitability data and previous year-end value.
+   * Calculates various financial metrics (VAR, growth, yield, etc.) based on profitability data
+   * and previous year's end value.
    *
-   * @param profitabilityByClassRows - An array of `RowData` objects representing profitability data by class.
+   * @param profitabilityByClassRows - An array of `RowData` representing profitability data by class.
    * @param previousYearEndValue - The profitability value at the end of the previous year.
-   * @returns An object containing the following calculated metrics:
-   * - `growthValues`: Growth values for each month.
-   * - `varValues`: VAR (Value at Risk) values for each month.
-   * - `varPercValues`: VAR% values for each month.
-   * - `aggregatedValues`: Aggregated VAR% values for each month.
-   * - `yieldValues`: Yield values for each month.
+   * @returns A `FinancialMetrics` object containing calculated financial metrics, or `undefined` 
+   *          if profitability data is not provided.
+   *
+   * The function performs the following calculations for each month:
+   * - Growth: Percentage growth of profitability compared to the previous month.
+   * - VAR: The difference between the current profitability and the adjusted previous profitability.
+   * - VAR%: The percentage representation of the VAR value.
+   * - Aggregated VAR%: Cumulative percentage VAR over the months.
+   * - Yield: The percentage yield based on income and current profitability.
+   *
+   * The results are returned as a `FinancialMetrics` object, with each metric formatted as a 
+   * `RowData` object for display purposes.
    */
-  private calculateVAR(profitabilityByClassRows: RowData[], previousYearEndValue: number) {
+  private calculateVAR(profitabilityByClassRows: RowData[], previousYearEndValue: number): FinancialMetrics | undefined {
     const monthArray = Array(12).fill(0);
 
     const growthValues = monthArray.slice() as MonthsNumberArray;
@@ -486,7 +653,7 @@ export class ProfitabilityService {
       varPercValues: this.monthNumberArrayToRowData("VAR%", varPercValues, { suffix: ' %' }),
       aggregatedValues: this.monthNumberArrayToRowData("Acumulado", aggregatedValues, { suffix: ' %' }),
       yieldValues: this.monthNumberArrayToRowData("Yield", yieldValues, { suffix: ' %' }),
-    };
+    } as FinancialMetrics;
   }
 
   /**
