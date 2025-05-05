@@ -312,8 +312,8 @@ export class ProfitabilityService {
     // Implementação existente...
     const filters = [InvestmentEnum.DIVIDENDS, InvestmentEnum.IOE_RETURN, InvestmentEnum.RENT_RETURN, InvestmentEnum.CONTRIBUTION, InvestmentEnum.SELL, InvestmentEnum.WITHDRAWAL];
     return Object.values(transactions)
-      .filter(t => filters.includes(t.type)
-        && t.status === TransactionStatus.COMPLETED
+      .filter(t =>
+        t.status === TransactionStatus.COMPLETED
         && getYear(t.date) === getYear(new Date()))
       .reduce((acc, t) => {
         const month = getMonth(t.date);
