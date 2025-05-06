@@ -40,6 +40,52 @@ export class ProfitabilityService {
 
   private classifyService = inject(ClassifyService);
 
+  /**
+   * A computed property that processes profitability data from the source service.
+   * 
+   * This property checks if the data is loaded from the source service. If not, it returns an empty object.
+   * Otherwise, it transforms the profitability data into a nested structure where:
+   * - The outer object keys are years.
+   * - The inner object keys are classification names.
+   * - The values are arrays of numbers converted to the default currency using the exchange service.
+   * 
+   * The transformation involves:
+   * 1. Iterating over the profitability data entries grouped by year.
+   * 2. For each year, iterating over the classifications and their respective values.
+   * 3. Mapping each value to its equivalent in the default currency.
+   * 
+   * @returns An object where each year maps to another object, which maps classification names to arrays of converted numbers.
+   */
+  readonly profitabilitySource = computed(() => {
+    if (!this.sourceService.dataIsLoaded()) {
+      return {};
+    }
+    const currencyDefault = this.exchangeService.currencyDefault();
+
+    return Object.entries(this.sourceService.dataSource.profitability()).reduce((acc, [yearStr, classify]) => {
+      const year = Number(yearStr+'');
+
+      acc[year] = Object.entries(classify).reduce((accClassify, [classifyName, values]) => {
+        accClassify[classifyName] = values.map((value, month) => {
+          return this.retrieveExchangeValue(value, year, month);
+        });
+        return accClassify;
+      }
+      , {} as { [classifyName: string]: number[] });
+      return acc;
+    }, {} as { [year: string]: { [classifyName: string]: number[] } });
+  });
+
+  /**
+   * Computes the profitability for the current month based on the loaded portfolio data.
+   * 
+   * This computed property checks if the source data is loaded before proceeding. If the data
+   * is not loaded, it returns an empty object. Otherwise, it calculates the current month's
+   * profitability using the portfolio data provided by the portfolio service.
+   * 
+   * @returns An object representing the current month's profitability, or an empty object if
+   *          the data is not yet loaded.
+   */
   readonly currentMonthProfitability = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return {}
@@ -56,7 +102,7 @@ export class ProfitabilityService {
    * @returns The computed profitability of the portfolio.
    */
   readonly portfolioProfitability = computed(() => this.calculateProfitability(
-    this.portfolioService.portfolios(), this.sourceService.dataSource.profitability()));
+    this.portfolioService.portfolios(), this.profitabilitySource()));
 
   /**
    * Computes the total profitability for each month by aggregating data from all profitability rows.
@@ -210,10 +256,12 @@ export class ProfitabilityService {
       return undefined;
     }
 
-    const calculatedProfitabilityRows = Object.values(this.profitabilityByClassRows());
-    const lastYearProfitability = this.sourceService.dataSource.profitability()[getYear(new Date()) - 1] || {};
+    const profitabilityMatrix = Object.values(this.profitabilitySource()[getYear(new Date())]);
+
+    const lastYear = getYear(new Date()) - 1;
+    const lastYearProfitability = this.profitabilitySource()[lastYear] || {};
     const previousYearEndValue = Object.values(lastYearProfitability).reduce((sum, row) => sum += row[row.length - 1], 0) || 0;
-    return this.calculateVAR(calculatedProfitabilityRows, previousYearEndValue);
+    return this.calculateVAR(profitabilityMatrix, previousYearEndValue, getYear(new Date()));
   });
 
   /**
@@ -247,7 +295,19 @@ export class ProfitabilityService {
     };
   });
 
-  portfolioEvolutionData = computed(() => {
+  /**
+   * A computed property that provides data for the portfolio evolution chart.
+   * 
+   * This property calculates the evolution of the portfolio's value over time.
+   * If the source data is not loaded, it returns `null`. If the total profitability
+   * data is unavailable or empty, it returns a default object with a label and an
+   * array of 12 zero values. Otherwise, it returns an object containing the label
+   * and the calculated total values.
+   * 
+   * @returns An object containing the label and an array of values representing
+   *          the portfolio's evolution, or `null` if the source data is not loaded.
+   */
+  readonly portfolioEvolutionData = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return null;
     }
@@ -266,7 +326,21 @@ export class ProfitabilityService {
     };
   });
 
-  accumulatedData = computed(() => {
+  /**
+   * A computed property that provides accumulated profitability data.
+   * 
+   * This property calculates and returns an object containing a label and an array of values
+   * representing the accumulated profitability. If the source data is not loaded or the 
+   * financial metric rows are unavailable, it defaults to a label of "Rentabilidade Acumulada"
+   * and an array of 12 zeros.
+   * 
+   * @readonly
+   * @returns An object with the following structure:
+   * - `label`: A string indicating the label for the accumulated profitability.
+   * - `values`: An array of numbers representing the accumulated profitability values, 
+   *   normalized to percentages (divided by 100).
+   */
+  readonly accumulatedData = computed(() => {
     if (!this.sourceService.dataIsLoaded()) {
       return {
         label: 'Rentabilidade Acumulada',
@@ -288,6 +362,24 @@ export class ProfitabilityService {
   });
 
   constructor() { }
+
+  private retrieveExchangeValue(value: number, year: number, month: number): any {
+    const currentYear = getYear(new Date());
+    const currentMonth = getMonth(new Date());
+
+    const exchanges = this.exchangeService.getExchangesByYear(year);
+    const currencyDefault = this.exchangeService.currencyDefault();
+
+    if (currencyDefault === Currency.BRL) {
+      return value;
+    }
+    const currencyBRL = `${Currency.BRL}`;
+
+    if ((year != currentYear || month <= currentMonth) 
+      && exchanges[currencyBRL] && exchanges[currencyDefault][currencyBRL]) {
+      return (exchanges[currencyDefault][currencyBRL][month]) * value;
+    }
+  }
 
   /**
    * Converts an array of profitability data by class into a structured row data format.
@@ -587,7 +679,12 @@ export class ProfitabilityService {
    * The results are returned as a `FinancialMetrics` object, with each metric formatted as a 
    * `RowData` object for display purposes.
    */
-  private calculateVAR(profitabilityByClassRows: RowData[], previousYearEndValue: number): FinancialMetrics | undefined {
+  private calculateVAR(profitabilityMatrix: number[][], previousYearEndValue: number, year: number): FinancialMetrics | undefined {
+    
+    if (!profitabilityMatrix.length) {
+      return undefined; // Return undefined if profitabilityRows is not provided
+    }
+
     const monthArray = Array(12).fill(0);
 
     const growthValues = monthArray.slice() as MonthsNumberArray;
@@ -596,17 +693,21 @@ export class ProfitabilityService {
     const aggregatedValues = monthArray.slice() as MonthsNumberArray;
     const yieldValues = monthArray.slice() as MonthsNumberArray;
 
-    const profitabilityRows: MonthsNumberArray = profitabilityByClassRows.map(row => this.rowDataToNumberArray(row))
-      .reduce((acc, row) => {
-        row.forEach((value, month) => {
-          acc[month] += value;
-        });
-        return acc;
-      }, Array(12).fill(0)); // Initialize an array of 12 zeros
+    const profitabilityRows: MonthsNumberArray = Array(12).fill(0);
 
-    if (!profitabilityRows.length) {
-      return undefined; // Return undefined if profitabilityRows is not provided
-    }
+    const currentYear = getYear(new Date());
+    const currentMonth = getMonth(new Date());
+
+    profitabilityMatrix.forEach((row) => {
+      row.forEach((value, month) => {
+        if (month === 0 || currentYear != year || month <= currentMonth) {
+          profitabilityRows[month] +=  value || 0;
+        }
+        else {
+          profitabilityRows[month] = profitabilityRows[month-1];
+        }
+      });
+    });
 
     const aggregatedTransactionsRows = this.aggregatedTransactionsRows();
 
@@ -687,7 +788,6 @@ export class ProfitabilityService {
     );
   }
 
-
   /**
    * Updates the profitability data for a specific year, classification, and month with a given value.
    * If the year or classification does not exist in the profitability data, it initializes them.
@@ -700,7 +800,7 @@ export class ProfitabilityService {
    */
   updateProfitability(year: number, classifyName: string, month: number, value: number) {
 
-    const profiltability = this.sourceService.dataSource.profitability();
+    const profiltability = this.profitabilitySource();
 
     const classify = this.classifyService.getClassifyByName(classifyName)?.id || classifyName;
 
