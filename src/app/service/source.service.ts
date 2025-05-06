@@ -26,7 +26,9 @@ export class SourceService {
 
   private alertService = inject(AlertService);
 
-  readonly dataIsLoaded = signal(false);
+  private readonly dataIsLoaded$ = signal(false);
+
+  readonly dataIsLoaded = computed(() => this.dataIsLoaded$());
 
   dataSource = {
     classify: signal<Record<string, string>>({}),
@@ -46,7 +48,7 @@ export class SourceService {
   constructor() { }
 
   loadInitialData() {
-    this.dataIsLoaded.set(false);
+    this.dataIsLoaded$.set(false);
     this.loadData(initialData);
   }
 
@@ -89,7 +91,7 @@ export class SourceService {
     this.dataSource.scheduled.set(this.scheduledSourceToRecord(jsonData.scheduled));
     this.dataSource.profitability.set(this.profitabilitySourceToRecord(jsonData.profitability));
     this.dataSource.withdrawal.set(this.withdrawalSourceToRecord(jsonData.withdrawal));
-    this.dataIsLoaded.set(true);
+    this.dataIsLoaded$.set(true);
   }
 
   emptyAllData() {
