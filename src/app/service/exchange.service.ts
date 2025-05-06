@@ -4,6 +4,8 @@ import { RemoteQuotesService } from './remote-quotes.service';
 import { CurrencyPipe } from '@angular/common';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { SourceService } from './source.service';
+import { getYear } from 'date-fns';
+import { CoinService } from './coin-remote.service';
 
 const ExchangeServiceFactory = (remoteQuotesService: RemoteQuotesService) => {
   return new ExchangeService(remoteQuotesService);
@@ -31,6 +33,8 @@ export class ExchangeService {
 
   private sourceService = inject(SourceService);
 
+  private coinService = inject(CoinService);
+
   readonly exchangeView = signal<ExchangeView>("original");
 
   private currencyPipe = new CurrencyPipe(inject(LOCALE_ID));
@@ -39,7 +43,14 @@ export class ExchangeService {
 
   readonly exchanges = computed(() => this.remoteQuotesService.exchanges());
 
-  constructor(private remoteQuotesService: RemoteQuotesService) { }
+  constructor(private remoteQuotesService: RemoteQuotesService) { 
+    const currentYear = getYear(new Date());
+    const exchangesPerYear = this.sourceService.dataSource.exchanges();
+    
+    if (! exchangesPerYear[currentYear]) {
+      exchangesPerYear[currentYear] = {};
+    }
+  }
 
   toggleExchangeView() {
     this.exchangeView.update(exchangeView => (exchangeView === "original" ? "exchanged" : "original"));
@@ -116,6 +127,20 @@ export class ExchangeService {
    */
   getAvailableYears(): number[] {
     return Object.keys(this.sourceService.dataSource.exchanges()).map(Number);
+  }
+
+  /**
+   * Retrieves the exchange history for a specified year.
+   *
+   * @param year - The year for which to fetch the exchange history.
+   * @returns An observable or promise containing the exchange history
+   *          data for the specified year.
+   */
+  getExchangesInYear(year: number) {
+    const startDate = new Date(year, 0, 1);
+    const endDate = new Date(year, 11, 31);
+    return this.coinService.getExchangesHistory(startDate, endDate);
+
   }
 }
 
