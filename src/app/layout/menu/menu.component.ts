@@ -38,10 +38,10 @@ export class MenuComponent {
 
     const currencyDefault = this.exchangeService.currencyDefault();
 
-    return Object.keys(exchanges[currencyDefault]).map(from=>({
-      symbol: this.exchangeService.currencyToSymbol(from),
-      currency: Currency[from as keyof typeof Currency],
-      factor: exchanges[from as keyof typeof Currency][currencyDefault]
+    return Object.keys(exchanges[currencyDefault]).map(to=>({
+      symbol: this.exchangeService.currencyToSymbol(to),
+      currency: Currency[to as keyof typeof Currency],
+      factor: exchanges[currencyDefault][to as keyof typeof Currency]
     }))
   })
 
