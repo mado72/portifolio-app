@@ -35,31 +35,30 @@ export class CoinService {
     )
   }
 
-
   getExchangesHistory(startDate: Date, endDate: Date): Observable<Record<CurrencyType, Record<CurrencyType, number[]>>> {
     const symbols = Object.values(Currency).filter(c => c !== Currency.USD).map(c => `COIN:${c}`);
     const diffMonths = differenceInMonths(endDate, startDate) + 1;
 
     return this.yahooService.getHistorical(symbols, startDate, endDate).pipe(
       map((history: Record<string, ChartResultArray>) => {
-        const ratesByCurrency = Object.entries(history).reduce((acc, [ticker, q]) => {
+        const ratesUSDToCurrency = Object.entries(history).reduce((acc, [ticker, q]) => {
           const [_, symbol] = ticker.split(":");
           const currency = Currency[symbol as keyof typeof Currency];
 
           const quotesCurrency = q.quotes.reduce((accQ, quote, index) => {
             accQ[index] = quote.close || NaN;
             return accQ;
-          }, Array(diffMonths).fill(0) as number[]);
+          }, Array(diffMonths + 1).fill(0) as number[]);
 
           acc[currency] = quotesCurrency;
           return acc;
         }, {
-          USD: Array(diffMonths).fill(1)
+          USD: Array(diffMonths + 1).fill(1)
         } as Partial<Record<Currency, number[]>>);
 
         // Generate the full exchange map for each month
         const ratesPeriod = Array.from({ length: diffMonths }, (_, monthIndex) => {
-          const monthlyRates = Object.entries(ratesByCurrency).reduce((acc, [currency, rates]) => {
+          const monthlyRates = Object.entries(ratesUSDToCurrency).reduce((acc, [currency, rates]) => {
             acc[currency as CurrencyType] = rates[monthIndex];
             return acc;
           }, {} as Partial<Record<Currency, number>>);
@@ -86,8 +85,8 @@ export class CoinService {
     const entries = Object.entries(rates).reduce((acc, [c, factor]) => {
       const currency = Currency[c as keyof typeof Currency];
       acc[currency] = acc[currency] || {};
-      acc[currency][Currency.USD] = factor;
-      acc[Currency.USD][currency] = 1 / factor;
+      acc[currency][Currency.USD] = 1 / factor;
+      acc[Currency.USD][currency] = factor;
       return acc;
     }, {
       "USD": {}

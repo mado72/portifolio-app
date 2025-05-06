@@ -91,17 +91,23 @@ export class YahooRemoteQuotesService implements IRemoteQuote {
   }
 
   getHistorical(tickers: Ticker[], startDate: Date, endDate: Date): Observable<Record<string, ChartResultArray>> {
-    let yahooTickers = tickers.reduce((acc, ticker) => {
-      acc.push(ticker);
-      return acc;
-    }, [] as string[]).join(',')
+    const entries = tickers.map(ticker => [this.getYahooTicker(ticker), ticker] as const);
+    const yahooTickers = new Map(entries)
 
     const startDateStr = formatDateYYYYMMDD(startDate);
     const endDateStr = formatDateYYYYMMDD(endDate);
 
-    const params = new HttpParams().append('ticker', yahooTickers)
+    const params = new HttpParams().append('ticker', Array.from(yahooTickers.keys()).join(','))
     const url = `${environment.apiBaseUrl}/yahoo/historical/${startDateStr}/${endDateStr}`;
-    return this.http.get<Record<string, ChartResultArray>>(url, { params });
+    return this.http.get<Record<string, ChartResultArray>>(url, { params }).pipe(
+      map(response => {
+        return Object.entries(response).reduce((acc, [yahooTicker, item]) => {
+          const appTicker = yahooTickers.get(yahooTicker) as string;
+          acc[appTicker] = item;
+          return acc;
+        }, {} as Record<string, ChartResultArray>);
+      })
+    )
   }
 }
 

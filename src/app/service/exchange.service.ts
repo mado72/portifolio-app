@@ -1,10 +1,10 @@
-import { computed, inject, Injectable, LOCALE_ID, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, LOCALE_ID, signal } from '@angular/core';
 import { ExchangeStructureType, ExchangeView } from '../model/investment.model';
 import { RemoteQuotesService } from './remote-quotes.service';
 import { CurrencyPipe } from '@angular/common';
 import { Currency, CurrencyType } from '../model/domain.model';
 import { SourceService } from './source.service';
-import { getYear } from 'date-fns';
+import { endOfMonth, getMonth, getYear } from 'date-fns';
 import { CoinService } from './coin-remote.service';
 
 const ExchangeServiceFactory = (remoteQuotesService: RemoteQuotesService) => {
@@ -44,11 +44,55 @@ export class ExchangeService {
   readonly exchanges = computed(() => this.remoteQuotesService.exchanges());
 
   constructor(private remoteQuotesService: RemoteQuotesService) { 
+    effect(() => {
+      if (this.sourceService.dataIsLoaded()) {
+        this.initializeExchangesDataHistory();
+      }
+    });
+  }
+  
+  initializeExchangesDataHistory() {
     const currentYear = getYear(new Date());
+    const currentMonth = getMonth(new Date());
+
     const exchangesPerYear = this.sourceService.dataSource.exchanges();
-    
-    if (! exchangesPerYear[currentYear]) {
+
+    if (!exchangesPerYear[currentYear]) {
       exchangesPerYear[currentYear] = {};
+    }
+
+    if (!exchangesPerYear[currentYear][Currency.USD]) {
+      exchangesPerYear[currentYear][Currency.USD] = {};
+    }
+
+    if (!exchangesPerYear[currentYear][Currency.USD][Currency.BRL]) {
+      exchangesPerYear[currentYear][Currency.USD][Currency.BRL] = [];
+    }
+
+    if (currentMonth > exchangesPerYear[currentYear][Currency.USD][Currency.BRL].length) {
+      const startMonth = exchangesPerYear[currentYear][Currency.USD][Currency.BRL].length;
+      const startDate = endOfMonth(new Date(currentYear, startMonth, 1));
+      const endDate = new Date();
+
+      this.coinService.getExchangesHistory(startDate, endDate).subscribe((exchanges) => {
+        Object.entries(exchanges).forEach(([fromCurrency, toRates]) => {
+          if (!exchangesPerYear[currentYear][fromCurrency as CurrencyType]) {
+            exchangesPerYear[currentYear][fromCurrency as CurrencyType] = {};
+          }
+
+          Object.entries(toRates).forEach(([toCurrency, rates]) => {
+            if (!exchangesPerYear[currentYear][fromCurrency as CurrencyType][toCurrency as CurrencyType]) {
+              exchangesPerYear[currentYear][fromCurrency as CurrencyType][toCurrency as CurrencyType] = [];
+            }
+
+            // Append the new rates to the existing array
+            exchangesPerYear[currentYear][fromCurrency as CurrencyType][toCurrency as CurrencyType].push(...rates);
+          });
+        });
+
+        // Update the source service with the new exchanges data
+        this.sourceService.dataSource.exchanges.set(exchangesPerYear);
+      });
     }
   }
 
@@ -58,7 +102,7 @@ export class ExchangeService {
 
   getExchangeQuote(from: Currency, to: Currency) {
     const exchanges = this.exchanges();
-    return exchanges[from]?.[to];
+    return exchanges[to]?.[from];
   }
 
   exchange(value: number, from: Currency, to: Currency) {
@@ -140,7 +184,6 @@ export class ExchangeService {
     const startDate = new Date(year, 0, 1);
     const endDate = new Date(year, 11, 31);
     return this.coinService.getExchangesHistory(startDate, endDate);
-
   }
 }
 
