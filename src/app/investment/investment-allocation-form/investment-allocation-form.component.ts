@@ -18,8 +18,7 @@ export type InvestmentAllocationField = {
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    SelectOnFocusDirective,
-    JsonPipe
+    SelectOnFocusDirective
   ],
   templateUrl: './investment-allocation-form.component.html',
   styleUrl: './investment-allocation-form.component.scss'

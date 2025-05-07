@@ -42,8 +42,7 @@ export type InvestmentTransactionFormResult = InvestmentTransactionType & {
     MatDatepickerModule,
     NgTemplateOutlet,
     InvestmentTypePipe,
-    SelectOnFocusDirective,
-    JsonPipe
+    SelectOnFocusDirective
   ],
   templateUrl: './investment-transaction-form.component.html',
   styleUrl: './investment-transaction-form.component.scss'

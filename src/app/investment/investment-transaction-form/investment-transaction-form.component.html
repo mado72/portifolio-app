@@ -45,9 +45,6 @@
             </div>
         </div>
     </form>
-<pre>
-{{formValue() | json}}
-</pre>
 </div>
 
 <ng-template #actions>
@@ -152,6 +149,5 @@
         (formDataChanged)="setInputAllocations($event)"
         (formIsValid)="setInputAllocationsIsValid($event)"
         ></app-investment-allocation-form>
-        {{ allocationsIsValid }}
 </ng-template>
 
