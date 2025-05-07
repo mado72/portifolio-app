@@ -23,11 +23,12 @@ Todo list:
  - [x] Adicionar filtro em consulta de ativos
  - [ ] Persistir retiradas e resgates
  - [ ] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
- - [ ] Adicionar gráfico de evolução de patrimônio
- - [ ] Adicionar gráfico de evolução de patrimônio por classe de portfólio
+ - [x] Adicionar gráfico de evolução de patrimônio
+ - [x] Adicionar gráfico de evolução de patrimônio por classe de portfólio
  - [ ] Adicionar gráfico de evolução de patrimônio por ativo
  - [ ] Adicionar gráfico de evolução de patrimônio por classe de ativo
  - [ ] Acrescentar serviço para atualizar criptoativos
  - [x] Resolver visualização de exchange nos proventos
  - [x] Acrescentar filtro por moeda em proventos
  - [ ] Adicionar coluna para exibir totais de proventos por ativo por classe
+ - [ ] Tratar crypto como moeda
