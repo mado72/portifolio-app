@@ -40,7 +40,6 @@ export class SourceService {
     cashflow: signal<Record<string, TransactionType>>({}), // FIXME forçando data para o mês corrente
     portfolio: signal<Record<string, PortfolioSourceRawType>>({}),
     scheduled: signal<Record<string, ScheduledStatemetType>>({}),
-    // profitability: signal<ProfitabilityDataRaw>([]),
     profitability: signal<Record<number, Record<string, number[]>>>({}),
     withdrawal: signal<{ [year: number]: { [month: number]: number } }>({}),
   };

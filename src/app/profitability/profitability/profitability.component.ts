@@ -31,7 +31,7 @@ export class ProfitabilityComponent {
   portfolioEvolutionData = computed(() => {
     const evolutionData = this.profitabilityService.portfolioEvolutionData();
     if (!evolutionData) {
-      return [];
+      return null;
     }
     return {
       ...evolutionData,
