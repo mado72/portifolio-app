@@ -54,7 +54,7 @@ export class PortfolioRegisterDialogComponent {
 
   readonly formPortfolio = this.fb.group({
     name: this.fb.control(this.data.portfolio.name || '', [Validators.required, Validators.minLength(2)]),
-    classify: this.fb.control(this.data.portfolio.classify || '', [Validators.required]),
+    classify: this.fb.control(this.data.portfolio.classify?.name || '', [Validators.required]),
     percPlanned: this.fb.control(this.data.portfolio.percPlanned || 0, [Validators.required, Validators.min(0), Validators.max(100)]),
     currency: this.fb.control(this.data.portfolio.currency || this.exchangeService.currencyDefault(), [Validators.required]),
   });
@@ -62,9 +62,14 @@ export class PortfolioRegisterDialogComponent {
   readonly currenciesTypes = Object.keys(Currency);
 
   submitForm() {
+    const classify = this.classifiers().find(classify => classify.name === this.formPortfolio.value.classify) || {
+      name: this.formPortfolio.value.classify,
+      id: null
+    };
     const data = {
       ...this.data.portfolio,
-      ...this.formPortfolio.value
+      ...this.formPortfolio.value,
+      classify
     } as PortfolioType;
     this.dialogRef.close(data)
   }

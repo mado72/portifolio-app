@@ -399,7 +399,11 @@ export class PortfolioService {
       throw new Error(`Portfolio not found: ${portfolioId}`);
     }
 
-    let classifyId = this.classifyService.getClassifyByName(changes.classifyName as string)?.id || portfolio.classify?.id;
+    let classifyId = this.classifyService.getClassifyByName(changes.classifyName as string)?.id;
+    if (!classifyId) {
+      const classify = this.classifyService.addClassify(changes.classifyName as string);
+      classifyId = classify.id;
+    }
     delete (portfolio as any).classify; // Remove classify from portfolio data
 
     const portfolioRaw: PortfolioSourceRawType = {
