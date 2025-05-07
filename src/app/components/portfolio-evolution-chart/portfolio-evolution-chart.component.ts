@@ -5,6 +5,85 @@ import { Currency } from '../../model/domain.model';
 import DataLabelsPlugin from 'chartjs-plugin-datalabels';
 import { Chart } from 'chart.js';
 
+export const secondaryPalette = [
+    {
+        "backgroundColor": "transparent",  // Magenta
+        "borderColor": "rgba(214, 48, 160, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [1, 4]
+    },
+    {
+        "backgroundColor": "transparent",   // Amarelo/dourado
+        "borderColor": "rgba(255, 193, 7, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [8, 4]
+    },
+    {
+        "backgroundColor": "transparent",   // Verde
+        "borderColor": "rgba(40, 167, 69, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [3, 3]
+    },
+    {
+        "backgroundColor": "transparent",   // Laranja
+        "borderColor": "rgba(255, 87, 34, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [5, 2]
+    },
+    {
+        "backgroundColor": "transparent",   // Roxo escuro
+        "borderColor": "rgba(72, 52, 212, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [6, 3]
+    },
+    {
+        "backgroundColor": "transparent",   // Rosa escuro
+        "borderColor": "rgba(233, 30, 99, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [2, 6]
+    },
+    {
+        "backgroundColor": "transparent",  // Roxo claro
+        "borderColor": "rgba(108, 92, 231, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [2, 2]
+    },
+    {
+        "backgroundColor": "transparent",  // Cinza azulado
+        "borderColor": "rgba(96, 125, 139, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [1, 1]
+    },
+    {
+        "backgroundColor": "transparent",   // Laranja claro
+        "borderColor": "rgba(255, 152, 0, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [4, 4]
+    },
+    {
+        "backgroundColor": "transparent",    // Linha principal: azul forte
+        "borderColor": "rgba(0, 123, 255, 1)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 3
+    }, 
+    {
+        "backgroundColor": "transparent",  // Roxo vibrante
+        "borderColor": "rgba(156, 39, 176, 0.8)",
+        "pointBackgroundColor": "transparent",
+        "borderWidth": 2,
+        "borderDash": [7, 2]
+    }
+];
+
 @Component({
     selector: 'app-portfolio-evolution-chart',
     standalone: true,
@@ -39,43 +118,36 @@ export class PortfolioEvolutionChartComponent {
 
     readonly currency = input<Currency>(Currency.BRL);
 
-    readonly profitabilityData = input<{ label: string, values: number[] } | null>(null);
+    readonly secondariesRows = input<{
+        label: string;
+        values: number[];
+    }[]>([]);
+
+    readonly profitabilityEvolutionData = input<{ label: string, values: number[] } | null>(null);
 
     readonly accumulatedData = input<{ label: string, values: number[] } | null>(null);
 
     plugins = [DataLabelsPlugin];
 
     readonly lineChartData = computed<ChartConfiguration['data']>(() => {
-        const profitabilityData = this.profitabilityData() || { label: '', values: [] };
+        const profitabilityEvolutionData = this.profitabilityEvolutionData() || { label: '', values: [] };
+        const profitabilityData = this.secondariesRows();
         const accumulatedData = this.accumulatedData() || { label: '', values: [] };
 
         const data = {
             datasets: [
                 {
-                    data: profitabilityData.values,
-                    label: profitabilityData.label || 'Rentabilidade',
-                    type: 'line',
-                    backgroundColor: 'rgba(0, 123, 255, 0.2)',
-                    borderColor: 'rgba(0, 123, 255, 1)',
-                    pointBackgroundColor: 'rgba(0, 123, 255, 1)',
-                    pointBorderColor: '#fff',
-                    pointHoverBackgroundColor: '#fff',
-                    pointHoverBorderColor: 'rgba(0, 123, 255, 1)',
-                    fill: 'origin',
-                    tension: 0.4, // Suaviza a linha
-                    yAxisID: 'y-axis-right'
-                },
-                {
                     data: accumulatedData.values,
                     label: accumulatedData.label || 'Acumulado',
                     type: 'bar',
-                    backgroundColor: 'rgba(40, 167, 69, 0.6)',
-                    borderColor: 'rgba(40, 167, 69, 1)',
+                    backgroundColor: 'rgba(168, 130, 86, 0.2)',    // Marrom claro neutro
+                    borderColor: 'rgba(168, 130, 86, 1)',
+                    pointBackgroundColor: 'rgba(168, 130, 86, 1)',                    
                     borderWidth: 1,
                     yAxisID: 'y-axis-left',
                     datalabels: { // Configuração específica para o DataLabels
                         display: true,
-                        anchor: 'middle',
+                        anchor: 'center',
                         align: 'center',
                         formatter: (value: number) => {
                             return new Intl.NumberFormat(this.locale, {
@@ -88,10 +160,34 @@ export class PortfolioEvolutionChartComponent {
                             weight: 'bold'
                         }
                     }
+                },
+                {
+                    data: profitabilityEvolutionData.values,
+                    label: profitabilityEvolutionData.label || 'Rentabilidade',
+                    type: 'line',
+                    backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                    borderColor: 'rgba(0, 123, 255, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    fill: 'origin',
+                    tension: 0.4, // Suaviza a linha
+                    yAxisID: 'y-axis-right'
                 }
             ],
             labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
         } as ChartConfiguration['data'];
+
+        profitabilityData.forEach((item, index) => {
+            data.datasets.push({
+                data: item.values,
+                label: item.label,
+                type: 'line',
+                fill: 'origin',
+                tension: 0.4,
+                yAxisID: 'y-axis-right',
+                ...secondaryPalette[index % secondaryPalette.length], // Usa a paleta secundária
+            });
+        });
 
         return data;
     });
@@ -158,7 +254,7 @@ export class PortfolioEvolutionChartComponent {
                 datalabels: { // Configuração global do DataLabels
                     display: false
                 }
-             },
+            },
             scales: {
                 x: {},
                 'y-axis-left': {

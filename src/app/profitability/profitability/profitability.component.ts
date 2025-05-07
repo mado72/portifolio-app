@@ -6,6 +6,7 @@ import { PortfolioEvolutionChartComponent } from '../../components/portfolio-evo
 import { getYear } from 'date-fns';
 import { ExchangeService } from '../../service/exchange.service';
 import { JsonPipe } from '@angular/common';
+import { ClassifyService } from '../../service/classify.service';
 
 @Component({
   selector: 'app-profitability',
@@ -19,6 +20,8 @@ import { JsonPipe } from '@angular/common';
 })
 export class ProfitabilityComponent {
 
+  private classifierService = inject(ClassifyService);
+
   private profitabilityService = inject(ProfitabilityService);
 
   private exchangeService = inject(ExchangeService);
@@ -26,6 +29,16 @@ export class ProfitabilityComponent {
   currency = computed(() => this.exchangeService.currencyDefault());
   
   portfolioEvolutionData = this.profitabilityService.portfolioEvolutionData;
+
+  profitabilityData = computed(() => {
+    const classifierMap = this.classifierService.classifiersMap();
+    const entries = Object.entries(this.profitabilityService.profitabilitySource()[this.currentYear()])
+      .reduce((acc, [classifyId, values]) => {
+        acc.push({ label: classifierMap[classifyId].name, values });
+        return acc;
+      }, [] as { label: string, values: number[] }[]);
+    return entries;
+  });
 
   accumulatedData = this.profitabilityService.accumulatedData;
   

@@ -26,8 +26,10 @@
 
   <div class="w-75 text-center mx-auto mt-4 mb-4">
     <app-portfolio-evolution-chart 
-      [profitabilityData]="portfolioEvolutionData()"
+      [profitabilityEvolutionData]="portfolioEvolutionData()"
+      [secondariesRows]="profitabilityData()"
       [accumulatedData]="accumulatedData()"
+
       [currency]="currency()"
       ></app-portfolio-evolution-chart>
   </div>

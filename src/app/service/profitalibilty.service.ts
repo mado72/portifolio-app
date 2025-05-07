@@ -60,7 +60,6 @@ export class ProfitabilityService {
     if (!this.sourceService.dataIsLoaded()) {
       return {};
     }
-    const currencyDefault = this.exchangeService.currencyDefault();
 
     return Object.entries(this.sourceService.dataSource.profitability()).reduce((acc, [yearStr, classify]) => {
       const year = Number(yearStr+'');
