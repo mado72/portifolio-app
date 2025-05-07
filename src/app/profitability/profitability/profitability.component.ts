@@ -28,13 +28,22 @@ export class ProfitabilityComponent {
 
   currency = computed(() => this.exchangeService.currencyDefault());
   
-  portfolioEvolutionData = this.profitabilityService.portfolioEvolutionData;
+  portfolioEvolutionData = computed(() => {
+    const evolutionData = this.profitabilityService.portfolioEvolutionData();
+    if (!evolutionData) {
+      return [];
+    }
+    return {
+      ...evolutionData,
+      values: evolutionData.values.slice()
+    };
+  });
 
   profitabilityData = computed(() => {
     const classifierMap = this.classifierService.classifiersMap();
     const entries = Object.entries(this.profitabilityService.profitabilitySource()[this.currentYear()])
       .reduce((acc, [classifyId, values]) => {
-        acc.push({ label: classifierMap[classifyId].name, values });
+        acc.push({ label: classifierMap[classifyId].name, values: values.slice() });
         return acc;
       }, [] as { label: string, values: number[] }[]);
     return entries;

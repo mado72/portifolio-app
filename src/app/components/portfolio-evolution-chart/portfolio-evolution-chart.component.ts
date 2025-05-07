@@ -198,8 +198,8 @@ export class PortfolioEvolutionChartComponent {
 
         const accumulatedData = this.accumulatedData() || { label: '', values: [] };
         const formats = [
-            new Intl.NumberFormat(localeValue, { style: 'currency', currency: currencyCode, maximumFractionDigits: 2 }),
             new Intl.NumberFormat(localeValue, { style: 'percent', maximumFractionDigits: 2 }),
+            new Intl.NumberFormat(localeValue, { style: 'currency', currency: currencyCode, maximumFractionDigits: 2 }),
         ];
 
         return {
@@ -220,7 +220,8 @@ export class PortfolioEvolutionChartComponent {
                                 label += ': ';
                             }
                             if (context.parsed.y !== null) {
-                                const formatter = formats[context.datasetIndex] as Intl.NumberFormat; // Usa o formato correto baseado no índice do dataset
+                                const idx = context.datasetIndex > 0 ? 1 : context.datasetIndex;
+                                const formatter = formats[idx] as Intl.NumberFormat;
                                 label += formatter.format(context.parsed.y);
                             }
                             return label;
