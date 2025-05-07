@@ -238,7 +238,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
     ).subscribe(() => {
       const [marketPlace, code] = [marketPlaceField.value, codeField.value];
       if (code) {
-        const ticker = getMarketPlaceCode({ marketPlace, code });
+        const ticker = getMarketPlaceCode({ marketPlace, code: code.toLocaleUpperCase() });
         this.ticker.set(ticker);
         const asset = this.assets()[ticker];
         if (asset) {
