@@ -611,13 +611,13 @@ export class ProfitabilityService {
    * and updating it with the current month's profitability values.
    *
    * @param portfolios - The portfolio record containing the data to calculate profitability for.
-   * @param source - A nested record structure where the first key is the year, the second key is a classification,
+   * @param profitabilitySource - A nested record structure where the first key is the year, the second key is a classification,
    * and the value is an array of numbers representing monthly profitability values.
    * @returns An array of objects representing profitability by classification, where each object contains:
    * - `classify`: The classification key.
    * - `values`: An array of monthly profitability values for the current year.
    */
-  private calculateProfitability(portfolios: PortfolioRecord, source: Record<number, Record<string, number[]>>) {
+  private calculateProfitability(portfolios: PortfolioRecord, profitabilitySource: Record<number, Record<string, number[]>>) {
     if (!this.sourceService.dataIsLoaded()) {
       return [];
     }
@@ -625,22 +625,27 @@ export class ProfitabilityService {
     const currentYear = getYear(new Date());
 
     // Create a copy of the source object to avoid modifying it directly
-    const updatedSource = { ...source };
-    if (!updatedSource[currentYear]) {
-      updatedSource[currentYear] = {};
+    let updatedSource: Record<string, number[]>;
+    if (!profitabilitySource[currentYear]) {
+      updatedSource = {};
+    }
+    else {
+      updatedSource = profitabilitySource[currentYear];
     }
 
     const current = this.getCurrentMonthProfitability(portfolios);
 
     // Updates the copy with the current values
     Object.entries(current).forEach(([classify, value]) => {
-      if (!updatedSource[currentYear][classify]) {
-        updatedSource[currentYear][classify] = Array(12).fill(0);
+      if (!updatedSource[classify]) {
+        updatedSource[classify] = Array(12).fill(0);
       }
-      updatedSource[currentYear][classify][currentMonth] = value;
+      for (let i = currentMonth; i < 12; i++) {
+        updatedSource[classify][i] = value;
+      }
     });
 
-    return Object.entries(updatedSource[currentYear]).map(([classify, values]) => ({
+    return Object.entries(updatedSource).map(([classify, values]) => ({
       classify,
       values
     } as ProfitabilityByClass));
