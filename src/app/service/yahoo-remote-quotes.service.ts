@@ -2,13 +2,11 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../environments/environment.prod';
+import { Currency } from '../model/domain.model';
+import { formatDateYYYYMMDD } from '../model/functions.model';
 import { MarketPlaceEnum } from '../model/investment.model';
 import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
-import { Currency } from '../model/domain.model';
 import { Ticker } from '../model/source.model';
-import { endOfDay, format } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
-import { formatDateYYYYMMDD } from '../model/functions.model';
 
 const COIN_USD_CODES: Record<Currency, string> = {
   USD: '',

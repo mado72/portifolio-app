@@ -12,6 +12,7 @@ import { getMarketPlaceCode } from './quote.service';
 import { SourceService } from './source.service';
 import { ThreasureService } from './threasure.service';
 import { YahooRemoteQuotesService } from './yahoo-remote-quotes.service';
+import { CryptoService } from './crypto.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,13 +23,14 @@ export class RemoteQuotesService {
   private yahooRemoteQuotesService = inject(YahooRemoteQuotesService);
   private immutableRemoteQuotesService = inject(ImmutableRemoteQuotesService);
   private threasureService = inject(ThreasureService);
+  private cryptoService = inject(CryptoService);
 
   private serviceMap = new Map<MarketPlaceEnum, IRemoteQuote>([
     [MarketPlaceEnum.BVMF, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.NASDAQ, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.NYSE, this.yahooRemoteQuotesService],
     [MarketPlaceEnum.BOND, this.yahooRemoteQuotesService],
-    [MarketPlaceEnum.CRYPTO, this.mockRemoteQuotesService],
+    [MarketPlaceEnum.CRYPTO, this.cryptoService],
     [MarketPlaceEnum.COIN, this.immutableRemoteQuotesService],
     [MarketPlaceEnum.BRTD, this.threasureService]
   ]);
@@ -189,5 +191,19 @@ export class RemoteQuotesService {
           });
         })
       );
+  }
+
+  getCryptoLastValue(tickers: Ticker[]) {
+    return this.cryptoService.price(tickers).subscribe((response) => {
+      const updated = Object.entries(response).reduce((acc, [ticker, quote]) => {
+        acc[ticker] = {
+          ...this.assetsQuoted()[ticker],
+          trend: quote.price === quote.price ? 'unchanged' : quote.price > quote.price ? 'up' : 'down'
+        }
+        return acc;
+      }, {} as Record<string, AssetQuoteType>);
+
+      this.latestQuote.set(updated);
+    });
   }
 }
