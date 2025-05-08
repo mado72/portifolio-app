@@ -1,4 +1,4 @@
-import { computed, inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { getMonth, getYear } from 'date-fns';
 import { Currency } from '../model/domain.model';
 import { groupBy } from '../model/functions.model';
@@ -39,6 +39,8 @@ export class ProfitabilityService {
   private exchangeService = inject(ExchangeService);
 
   private classifyService = inject(ClassifyService);
+
+  selectedYear = signal<number>(getYear(new Date()));
 
   /**
    * A computed property that processes profitability data from the source service.
@@ -255,12 +257,13 @@ export class ProfitabilityService {
       return undefined;
     }
 
-    const profitabilityMatrix = Object.values(this.profitabilitySource()[getYear(new Date())]);
+    const selectedYear = this.selectedYear();
+    const profitabilityMatrix = Object.values(this.profitabilitySource()[selectedYear] || {});
 
-    const lastYear = getYear(new Date()) - 1;
+    const lastYear = selectedYear - 1;
     const lastYearProfitability = this.profitabilitySource()[lastYear] || {};
     const previousYearEndValue = Object.values(lastYearProfitability).reduce((sum, row) => sum += row[row.length - 1], 0) || 0;
-    return this.calculateVAR(profitabilityMatrix, previousYearEndValue, getYear(new Date()));
+    return this.calculateVAR(profitabilityMatrix, previousYearEndValue, selectedYear);
   });
 
   /**
@@ -396,6 +399,9 @@ export class ProfitabilityService {
    * future months are marked as disabled.
    */
   private convertProfitabilityByClassToRowData(profitabilities: ProfitabilityByClass[], currentMonthProfitability: Record<string, number>) {
+    
+    const selectedYear = this.selectedYear();
+    const currentYear = getYear(new Date());
     const currentMonth = getMonth(new Date());
 
     const classifiersMap = this.classifierService.classifiersMap();
@@ -406,7 +412,7 @@ export class ProfitabilityService {
         disabled: false,
         operation: 'plus',
         cells: values.reduce((acc, value, index) => {
-          acc.push({ value: index >= currentMonth ? currentMonthProfitability[classify] || 0 : value, disabled: index >= currentMonth });
+          acc.push({ value: selectedYear === currentYear && index >= currentMonth ? currentMonthProfitability[classify] || 0 : value, disabled: currentYear === selectedYear && index >= currentMonth });
           return acc;
         }, [] as CellData[])
       });
@@ -441,6 +447,8 @@ export class ProfitabilityService {
    */
   private mapMonthlyInvestmentTransactions(transactionsByMonth: { [month: number]: InvestmentTransactionType[]; }, currencyDefault: Currency) {
 
+    const selectedYear = this.selectedYear();
+    const currentYear = getYear(new Date());
     const currentMonth = getMonth(new Date());
 
     const initialData: AggregatedTransactionsRows = {
@@ -454,19 +462,19 @@ export class ProfitabilityService {
         label: 'Aportes',
         disabled: true,
         operation: 'plus',
-        cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: idx > currentMonth })),
+        cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: selectedYear === currentYear && idx > currentMonth })),
       },
       sell: {
         label: 'Resgates',
         disabled: true,
         operation: 'minus',
-        cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: idx > currentMonth })),
+        cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: selectedYear === currentYear && idx > currentMonth })),
       },
       withdrawals: {
         label: 'Retiradas',
         disabled: true,
         operation: 'minus',
-        cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: idx > currentMonth })),
+        cells: Array(12).fill(0).map((_, idx) => ({ value: 0, disabled: selectedYear === currentYear && idx > currentMonth })),
       }
     };
 
@@ -541,13 +549,15 @@ export class ProfitabilityService {
       return acc;
     }, [] as number[]);
 
+    const selectedYear = this.selectedYear();
+    const currentYear = getYear(new Date());
     const currentMonth = getMonth(new Date());
 
     return {
       label: 'Aportes Acumulados',
       disabled: true,
       operation: 'plus',
-      cells: cumulativeMonthlyValues.map((value, month) => ({ value, disabled: month > currentMonth })),
+      cells: cumulativeMonthlyValues.map((value, month) => ({ value, disabled: selectedYear === currentYear && month > currentMonth })),
     } as RowData;
   }
 
@@ -565,7 +575,7 @@ export class ProfitabilityService {
     return Object.values(transactions)
       .filter(t =>
         t.status === TransactionStatus.COMPLETED
-        && getYear(t.date) === getYear(new Date()))
+        && getYear(t.date) === this.selectedYear())
       .reduce((acc, t) => {
         const month = getMonth(t.date);
         if (!acc[month]) {
@@ -621,27 +631,34 @@ export class ProfitabilityService {
     if (!this.sourceService.dataIsLoaded()) {
       return [];
     }
-    const currentMonth = getMonth(new Date());
-    const currentYear = getYear(new Date());
 
+    const selectedYear = this.selectedYear();
+    
     // Create a copy of the source object to avoid modifying it directly
     let updatedSource: Record<string, number[]>;
-    if (!profitabilitySource[currentYear]) {
+    if (!profitabilitySource[selectedYear]) {
       updatedSource = {};
     }
     else {
-      updatedSource = profitabilitySource[currentYear];
+      updatedSource = profitabilitySource[selectedYear];
     }
 
     const current = this.getCurrentMonthProfitability(portfolios);
 
+    const currentYear = getYear(new Date());
+
+    const classifiersMap = this.classifierService.classifiersMap();
+    
     // Updates the copy with the current values
-    Object.entries(current).forEach(([classify, value]) => {
+    Object.keys(classifiersMap).forEach(classify => {
       if (!updatedSource[classify]) {
         updatedSource[classify] = Array(12).fill(0);
       }
-      for (let i = currentMonth; i < 12; i++) {
-        updatedSource[classify][i] = value;
+      if (currentYear === this.selectedYear()) {
+        const currentMonth = getMonth(new Date());
+        for (let i = currentMonth; i < 12; i++) {
+          updatedSource[classify][i] = current[classify]; // Use current[classify] instead of value
+        }
       }
     });
 
@@ -723,6 +740,10 @@ export class ProfitabilityService {
     let previousProfitability = previousYearEndValue;
     for (let month = 0; month < 12; month++) {
       const currentProfitability = profitabilityRows[month] || 0;
+      if (previousProfitability == 0) {
+        previousProfitability = currentProfitability;
+        continue;
+      }
       const contributions = contributionsRows[month] || 0;
       const sells = sellRows[month] || 0;
       const withdrawals = withdrawalsRows[month] || 0;
@@ -785,7 +806,7 @@ export class ProfitabilityService {
 
     // Update the profitability
     this.updateProfitability(
-      getYear(new Date()),
+      this.selectedYear(),
       rowLabel,
       columnIndex,
       value ?? 0
