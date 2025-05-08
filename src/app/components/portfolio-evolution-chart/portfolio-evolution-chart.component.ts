@@ -198,8 +198,15 @@ export class PortfolioEvolutionChartComponent {
 
         const accumulatedData = this.accumulatedData() || { label: '', values: [] };
         const formats = [
-            new Intl.NumberFormat(localeValue, { style: 'percent', maximumFractionDigits: 2 }),
-            new Intl.NumberFormat(localeValue, { style: 'currency', currency: currencyCode, maximumFractionDigits: 2 }),
+            { format: (value: number) => new Intl.NumberFormat(localeValue, { style: 'percent', maximumFractionDigits: 2 }).format(value/100) },
+            { format: (value: number) => { 
+                try {
+                    return new Intl.NumberFormat(localeValue, { style: 'currency', currency: currencyCode }).format(value);
+                } catch (error) {
+                    console.error('Error formatting currency:', error);
+                    return `${currencyCode }` + new Intl.NumberFormat(localeValue, { style: 'decimal' }).format(value);
+                }
+            } },
         ];
 
         return {
