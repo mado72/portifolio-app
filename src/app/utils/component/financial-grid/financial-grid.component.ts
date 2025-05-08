@@ -1,7 +1,7 @@
 // financial-grid.component.ts
 import { Component, EventEmitter, input, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { getMonth } from 'date-fns';
+import { getMonth, getYear } from 'date-fns';
 import { MaskNumberDirective } from '../../directive/mask-number.directive';
 import { CellChangeEvent, CellData, GridData, RowData } from './financial-gird.model';
 
@@ -26,6 +26,8 @@ export class FinancialGridComponent {
   private _gridData: GridData = this.initializeDefaultData();
 
   tabIndexInitial = input<number>(0);
+
+  year = input<number>(getYear(new Date()));
 
   currentMonthIndex = input<number>(getMonth(new Date()));
 
