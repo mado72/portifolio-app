@@ -77,9 +77,11 @@ export class BalancesComponent implements OnInit {
     })
     effect(()=> {
       const balances = this.balances();
-      this.selects.update(selects=>
-        selects = Object.values(balances).map(item => item.id as string)
-      );
+      setTimeout(()=>{
+        this.selects.update(selects=>
+          selects = Object.values(balances).map(item => item.id as string)
+        );
+      }, 0);
     });
   }
   
