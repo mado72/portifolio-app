@@ -31,5 +31,5 @@ Todo list:
  - [x] Resolver visualização de exchange nos proventos
  - [x] Acrescentar filtro por moeda em proventos
  - [ ] Adicionar coluna para exibir totais de proventos por ativo por classe
- - [ ] BUG: Formulário de Contas não está preenchendo os campos corretamente
+ - [x] BUG: Formulário de Contas não está preenchendo os campos corretamente
  - [ ] BUG: Tabela de proventos não está somando as transações para uma célula
