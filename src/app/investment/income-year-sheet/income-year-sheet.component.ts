@@ -1,4 +1,4 @@
-import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { endOfYear, getMonth, isWithinInterval, startOfYear } from 'date-fns';
@@ -10,10 +10,9 @@ import { ExchangeService } from '../../service/exchange.service';
 import { PortfolioService } from '../../service/portfolio-service';
 import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
-import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
 import { TrGroupComponent } from '../../utils/component/tr-group/tr-group.component';
-import { MatButtonModule } from '@angular/material/button';
 import { AddTransactionButtonComponent } from '../add-transaction-button/add-transaction-button.component';
+import { IncomeFilterType, IncomeYearSheetFilterComponent } from '../income-year-sheet-filter/income-year-sheet-filter.component';
 
 type IncomeEntry = {
   id?: string;
@@ -40,8 +39,6 @@ const EARNING_ACRONYM: Partial<Record<InvestmentEnum, string>> = {
   selector: 'app-income-year-sheet',
   standalone: true,
   imports: [
-    CurrencyPipe,
-    DecimalPipe,
     DatePipe,
     IncomeYearSheetFilterComponent,
     AddTransactionButtonComponent,
@@ -84,7 +81,9 @@ export class IncomeYearSheetComponent {
 
   incomesFiltered = computed(() => {
     const incomes = Object.entries(this.transactionService.investmentTransactions())
-      .filter(([_, item]) => isWithinInterval(item.date, { start: startOfYear(this.filter().dateReference), end: endOfYear(this.filter().dateReference) }))
+      .filter(([_, item]) => 
+        [InvestmentEnum.DIVIDENDS, InvestmentEnum.RENT_RETURN, InvestmentEnum.IOE_RETURN].includes(item.type) 
+        && isWithinInterval(item.date, { start: startOfYear(this.filter().dateReference), end: endOfYear(this.filter().dateReference) }))
       .sort(([_A, transactionA], [_B, transactionB]) => transactionA.ticker.localeCompare(transactionB.ticker)) // Sort by ticker
       .reduce((acc, [_, item]) => {
         if (!acc[item.ticker]) {
@@ -238,7 +237,7 @@ export class IncomeYearSheetComponent {
       month,
       ...income,
       amount: this.exchangeService.updateExchange({
-        original: { currency: income.value.currency, value: income.value.value },
+        original: { currency: income.value.currency, value: income.value.value + (row.entries[month]?.amount?.original?.value || 0) },
         exchanged: { currency: this.exchangeService.currencyDefault(), value: 0 }
       } as ExchangeStructureType),
       acronymEarn: EARNING_ACRONYM[income.type]
