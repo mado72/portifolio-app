@@ -19,7 +19,7 @@ import { CryptoService } from './crypto.service';
 })
 export class RemoteQuotesService {
 
-  private mockRemoteQuotesService = inject(MockRemoteQuotesService);
+  // private mockRemoteQuotesService = inject(MockRemoteQuotesService);
   private yahooRemoteQuotesService = inject(YahooRemoteQuotesService);
   private immutableRemoteQuotesService = inject(ImmutableRemoteQuotesService);
   private threasureService = inject(ThreasureService);
@@ -196,9 +196,14 @@ export class RemoteQuotesService {
   getCryptoLastValue(tickers: Ticker[]) {
     return this.cryptoService.price(tickers).subscribe((response) => {
       const updated = Object.entries(response).reduce((acc, [ticker, quote]) => {
+        const asset = this.assetsQuoted()[ticker];
         acc[ticker] = {
           ...this.assetsQuoted()[ticker],
-          trend: quote.price === quote.price ? 'unchanged' : quote.price > quote.price ? 'up' : 'down'
+          quote: {
+            value: quote.price,
+            currency: quote.currency,
+          },
+          trend: quote.price === asset?.quote.value ? 'unchanged' : quote.price > asset?.quote.value ? 'up' : 'down'
         }
         return acc;
       }, {} as Record<string, AssetQuoteType>);
