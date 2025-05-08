@@ -18,8 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
     FinancialGridComponent,
     PortfolioEvolutionChartComponent,
     FontAwesomeModule,
-    MatButtonModule,
-    JsonPipe
+    MatButtonModule
   ],
   templateUrl: './profitability.component.html',
   styleUrl: './profitability.component.scss'

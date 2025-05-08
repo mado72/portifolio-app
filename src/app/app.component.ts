@@ -1,16 +1,14 @@
-import { AfterViewInit, Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from "./layout/header/header.component";
-import { RemoteQuotesService } from './service/remote-quotes.service';
-import { ExchangeButtonComponent } from "./utils/component/exchange-button/exchange-button.component";
-import { SourceService } from './service/source.service';
-import { JsonPipe } from '@angular/common';
-import { PortfolioService } from './service/portfolio-service';
-import { BalanceService } from './service/balance.service';
 import { setDefaultOptions } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { QuoteService } from './service/quote.service';
-import { AssetQuoteType } from './model/source.model';
+import { HeaderComponent } from "./layout/header/header.component";
+import { BalanceService } from './service/balance.service';
+import { ExchangeService } from './service/exchange.service';
+import { PortfolioService } from './service/portfolio-service';
+import { RemoteQuotesService } from './service/remote-quotes.service';
+import { SourceService } from './service/source.service';
+import { ExchangeButtonComponent } from "./utils/component/exchange-button/exchange-button.component";
 
 const DEBOUNCE_TIME = 1000;
 
@@ -20,8 +18,7 @@ const DEBOUNCE_TIME = 1000;
   imports: [
     RouterOutlet,
     HeaderComponent,
-    ExchangeButtonComponent,
-    JsonPipe
+    ExchangeButtonComponent
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -33,8 +30,11 @@ export class AppComponent implements OnInit, OnDestroy {
   private portfolioService = inject(PortfolioService);
   private balanceService = inject(BalanceService);
   private remoteQuoteService = inject(RemoteQuotesService);
+  private exchangeService = inject(ExchangeService);
 
   source = signal<any>({});
+
+  exchanges = computed(() => this.exchangeService.exchanges());  
 
   // portfolios = computed(() => {
   //   if (!this.sourceService.dataIsLoaded()) {
