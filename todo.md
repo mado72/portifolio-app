@@ -12,24 +12,26 @@ Todo list:
  - [x] Adicionar campo classe em portfolio (formulário)
  - [x] Passar o nome do portfolio para o formulário de transaction
  - [x] Filtrar por classe de portfolio
- - [ ] Filtrar transações por ticker, tipo e banco
+ - [x] Filtrar transações por ticker, tipo e banco
  - [x] Acrescentar banco na lista de transações
  - [x] Acrescentar classe em portfolio
  - [x] Calcular initial value entre transações diferentes.
- - [ ] Tornar os dados anualizáveis. A estrutura de dados deverá estar organizada por ano.
+ - [x] Tornar os dados anualizáveis. A estrutura de dados deverá estar organizada por ano.
  - [ ] Criar um novo banco de dados para cada ano.
  - [x] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
  - [x] Adicionar filtro em consulta de transações
  - [x] Adicionar filtro em consulta de ativos
- - [ ] Persistir retiradas e resgates
+ - [x] Persistir retiradas e resgates
  - [ ] Criar um novo cadastro: classes de portfólio. Com este cadastro será possível consolidar os resultados por classe de portfólio.
  - [x] Adicionar gráfico de evolução de patrimônio
  - [x] Adicionar gráfico de evolução de patrimônio por classe de portfólio
  - [ ] Adicionar gráfico de evolução de patrimônio por ativo
  - [ ] Adicionar gráfico de evolução de patrimônio por classe de ativo
- - [ ] Acrescentar serviço para atualizar criptoativos
+ - [x] Acrescentar serviço para atualizar criptoativos
  - [x] Resolver visualização de exchange nos proventos
  - [x] Acrescentar filtro por moeda em proventos
  - [ ] Adicionar coluna para exibir totais de proventos por ativo por classe
  - [x] BUG: Formulário de Contas não está preenchendo os campos corretamente
  - [ ] BUG: Tabela de proventos não está somando as transações para uma célula
+ - [x] BUG: Corrigir tempo de espera para informar ativo da transação
+ - [x] BUG: Ordenar ativos no formulário de transações
