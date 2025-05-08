@@ -721,8 +721,9 @@ export class SourceService {
 
   updateProfitability(year: number, classifyId: string, changes: number[]) {
     return this.dataSource.profitability.update(profitability => ({
+      ...profitability,
       [year.toString()]: {
-        ...profitability[year],
+        ...profitability[year] || {},
         [classifyId]: changes
       }
     }));
