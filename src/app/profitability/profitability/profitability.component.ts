@@ -7,13 +7,19 @@ import { getYear } from 'date-fns';
 import { ExchangeService } from '../../service/exchange.service';
 import { JsonPipe } from '@angular/common';
 import { ClassifyService } from '../../service/classify.service';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-profitability',
   standalone: true,
   imports: [
     FinancialGridComponent,
-    PortfolioEvolutionChartComponent
+    PortfolioEvolutionChartComponent,
+    FontAwesomeModule,
+    MatButtonModule,
+    JsonPipe
   ],
   templateUrl: './profitability.component.html',
   styleUrl: './profitability.component.scss'
@@ -25,8 +31,16 @@ export class ProfitabilityComponent {
   private profitabilityService = inject(ProfitabilityService);
 
   private exchangeService = inject(ExchangeService);
+  
+  readonly chevronLeft = faCircleChevronLeft;
+
+  readonly chevronRight = faCircleChevronRight;
 
   currency = computed(() => this.exchangeService.currencyDefault());
+
+  currentYear = getYear(new Date());
+
+  selectedYear = this.profitabilityService.selectedYear;
   
   portfolioEvolutionData = computed(() => {
     const evolutionData = this.profitabilityService.portfolioEvolutionData();
@@ -41,7 +55,7 @@ export class ProfitabilityComponent {
 
   profitabilityData = computed(() => {
     const classifierMap = this.classifierService.classifiersMap();
-    const entries = Object.entries(this.profitabilityService.profitabilitySource()[this.currentYear()])
+    const entries = Object.entries(this.profitabilityService.profitabilitySource()[this.selectedYear()] || {})
       .reduce((acc, [classifyId, values]) => {
         acc.push({ label: classifierMap[classifyId].name, values: values.slice() });
         return acc;
@@ -56,8 +70,6 @@ export class ProfitabilityComponent {
   cellChanged(event: CellChangeEvent) {
     console.log('Cell changed:', event);
   }
-
-  currentYear = signal<number>(getYear(new Date()));
 
   contributionGridData = computed(() => this.profitabilityService.contributionGridData() as GridData);
 
@@ -75,6 +87,16 @@ export class ProfitabilityComponent {
   financialGridCellChanged(event: CellChangeEvent) {
     const value = event.value as number || 0;
     this.profitabilityService.updateFinancialGridData(event);
+  }
+
+  previousYear() {
+    const year = this.selectedYear() - 1;
+    this.selectedYear.set(year);
+  }
+
+  nextYear() {
+    const year = this.selectedYear() + 1;
+    this.selectedYear.set(year);
   }
 
   // // Dados simulados para o gráfico

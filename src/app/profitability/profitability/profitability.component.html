@@ -2,6 +2,19 @@
   <!-- <app-loading></app-loading> -->
    Loading...
 } @else {
+  <div class="card">
+    <div class="card-body d-flex nav-year align-items-center">
+      <button mat-mini-fab (click)="previousYear()">
+        <fa-icon [icon]="chevronLeft" size="lg"></fa-icon>
+      </button>
+      <div>
+        {{ selectedYear() }}
+      </div>
+      <button mat-mini-fab (click)="nextYear()">
+        <fa-icon [icon]="chevronRight" size="lg"></fa-icon>
+      </button>
+    </div>
+  </div>
   <app-financial-grid 
     [gridData]="financialGridData()"
     [showTotalColumn]="false"
