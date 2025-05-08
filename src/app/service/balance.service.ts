@@ -3,13 +3,12 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { addYears, areIntervalsOverlapping, endOfDay, endOfMonth, endOfYear, getDate, getTime, interval, Interval, isWithinInterval, max, min, setDate, startOfMonth, startOfYear } from 'date-fns';
 import { map } from 'rxjs';
 import { BalanceDialogComponent } from '../cashflow/balance-dialog/balance-dialog.component';
-import { AccountBalanceExchange, AccountBalanceSummaryItem, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../model/domain.model';
+import { AccountBalanceExchange, AccountTypeEnum, Currency, ForecastDateItem, isTransactionDeposit, isTransactionExpense } from '../model/domain.model';
 import { getScheduleDates, getZonedDate, groupBy, isSameZoneDate } from '../model/functions.model';
 import { TransactionStatus } from '../model/investment.model';
 import { BalanceType, ScheduledStatemetType, TransactionType } from '../model/source.model';
-import { QuoteService } from './quote.service';
-import { SourceService } from './source.service';
 import { ExchangeService } from './exchange.service';
+import { SourceService } from './source.service';
 
 @Injectable({
   providedIn: 'root'
@@ -315,11 +314,8 @@ export class BalanceService {
         account: {
           accountName: '',
           type: AccountTypeEnum.CHECKING,
-          balance: {
-            price: 0,
-            currency: this.exchangeService.currencyDefault()
-          },
-          date: new Date()
+          currency: this.exchangeService.currencyDefault(),
+          value: 0
         }
       }
     });
@@ -327,11 +323,18 @@ export class BalanceService {
     return this.processDialog(dialogRef);
   }
 
-  editAccount(account: AccountBalanceExchange) {
+  editAccount(account: BalanceType) {
+    account = this.sourceService.balanceSource()[account.id as string];
     const dialogRef = this.dialog.open(BalanceDialogComponent, {
       data: {
         title: 'Editar Conta',
-        account
+        account: {
+          id: account.id,
+          accountName: account.accountName,
+          type: account.type,
+          currency: account.balance.currency,
+          value: account.balance.value
+        }
       }
     });
 
