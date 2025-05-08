@@ -300,11 +300,11 @@
             "name": "JP Morgan",
             "type": "STOCK",
             "quote": {
-                "value": 249.39,
+                "value": 253.47,
                 "currency": "USD"
             },
-            "initialPrice": 249.39,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 253.47,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -314,11 +314,11 @@
             "name": "Kraft Heinz Co.",
             "type": "STOCK",
             "quote": {
-                "value": 28.23,
+                "value": 28.49,
                 "currency": "USD"
             },
-            "initialPrice": 28.23,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 28.49,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -328,11 +328,11 @@
             "name": "U.S. Bancorp",
             "type": "STOCK",
             "quote": {
-                "value": 41.3,
+                "value": 42.14,
                 "currency": "USD"
             },
-            "initialPrice": 41.3,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 42.14,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -342,11 +342,11 @@
             "name": "Pfizer",
             "type": "STOCK",
             "quote": {
-                "value": 22.79,
+                "value": 22.97,
                 "currency": "USD"
             },
-            "initialPrice": 22.79,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 22.97,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -356,11 +356,11 @@
             "name": "Williams Companies",
             "type": "STOCK",
             "quote": {
-                "value": 58.94,
+                "value": 57.06,
                 "currency": "USD"
             },
-            "initialPrice": 58.94,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 57.06,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -370,11 +370,11 @@
             "name": "Coca-Cola",
             "type": "STOCK",
             "quote": {
-                "value": 72.4,
+                "value": 71.17,
                 "currency": "USD"
             },
-            "initialPrice": 72.4,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 71.17,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -384,11 +384,11 @@
             "name": "Microsoft",
             "type": "STOCK",
             "quote": {
-                "value": 433.35,
+                "value": 438.17,
                 "currency": "USD"
             },
-            "initialPrice": 433.35,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 438.17,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -398,11 +398,11 @@
             "name": "Realty Income",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 56.74,
+                "value": 56.25,
                 "currency": "USD"
             },
-            "initialPrice": 56.74,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 56.25,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -412,11 +412,11 @@
             "name": "Prologis",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 105.04,
+                "value": 105.49,
                 "currency": "USD"
             },
-            "initialPrice": 105.04,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 105.49,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -426,11 +426,11 @@
             "name": "Extra Space Storage",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 147.23,
+                "value": 147.43,
                 "currency": "USD"
             },
-            "initialPrice": 147.23,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 147.43,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -440,11 +440,11 @@
             "name": "Agree Realty",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 76.19,
+                "value": 74.98,
                 "currency": "USD"
             },
-            "initialPrice": 76.19,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 74.98,
+            "lastUpdate": "2025-05-08T20:37:37-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -454,11 +454,11 @@
             "name": "iShares 0-3 Month Treasury",
             "type": "ETF",
             "quote": {
-                "value": 100.42,
+                "value": 100.45,
                 "currency": "USD"
             },
-            "initialPrice": 100.42,
-            "lastUpdate": "2025-05-08T04:12:40-03:00",
+            "initialPrice": 100.45,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -468,11 +468,11 @@
             "name": "ITAUSA PN",
             "type": "STOCK",
             "quote": {
-                "value": 10.54,
+                "value": 10.6,
                 "currency": "BRL"
             },
-            "initialPrice": 10.54,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 10.6,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -482,11 +482,11 @@
             "name": "WEG ON",
             "type": "STOCK",
             "quote": {
-                "value": 41.95,
+                "value": 42.21,
                 "currency": "BRL"
             },
-            "initialPrice": 41.95,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 42.21,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -496,11 +496,11 @@
             "name": "Banco do Brasil ON",
             "type": "STOCK",
             "quote": {
-                "value": 29.31,
+                "value": 29.41,
                 "currency": "BRL"
             },
-            "initialPrice": 29.31,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 29.41,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -510,11 +510,11 @@
             "name": "Af Invest Cri FII",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 92.89,
+                "value": 93.4,
                 "currency": "BRL"
             },
-            "initialPrice": 92.89,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 93.4,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -524,11 +524,11 @@
             "name": "CVBI VBI Credito",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 86,
+                "value": 86.74,
                 "currency": "BRL"
             },
-            "initialPrice": 86,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 86.74,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -538,11 +538,11 @@
             "name": "CSHG Renda Urbana FII",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 120.92,
+                "value": 119.1,
                 "currency": "BRL"
             },
-            "initialPrice": 120.92,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 119.1,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -552,11 +552,11 @@
             "name": "JS Real Estate FII",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 62.95,
+                "value": 62.75,
                 "currency": "BRL"
             },
-            "initialPrice": 62.95,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 62.75,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -566,11 +566,11 @@
             "name": "LVBI VBI Logistico",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 100.87,
+                "value": 100.97,
                 "currency": "BRL"
             },
-            "initialPrice": 100.87,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 100.97,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -584,7 +584,7 @@
                 "currency": "BRL"
             },
             "initialPrice": 7.04,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -594,11 +594,11 @@
             "name": "West Plaza FII",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 50.98,
+                "value": 48.5,
                 "currency": "BRL"
             },
-            "initialPrice": 50.98,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 48.5,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -608,11 +608,11 @@
             "name": "Xp Malls FII",
             "type": "REAL_ESTATE",
             "quote": {
-                "value": 105.18,
+                "value": 105.52,
                 "currency": "BRL"
             },
-            "initialPrice": 105.18,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 105.52,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -622,11 +622,11 @@
             "name": "TAESA UNIT",
             "type": "STOCK",
             "quote": {
-                "value": 34.88,
+                "value": 35.72,
                 "currency": "BRL"
             },
-            "initialPrice": 34.88,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 35.72,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -636,11 +636,11 @@
             "name": "Engie Brasil ON",
             "type": "STOCK",
             "quote": {
-                "value": 40.2,
+                "value": 39.82,
                 "currency": "BRL"
             },
-            "initialPrice": 40.2,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 39.82,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -650,11 +650,11 @@
             "name": "Cx Seguridade ON",
             "type": "STOCK",
             "quote": {
-                "value": 15.39,
+                "value": 14.99,
                 "currency": "BRL"
             },
-            "initialPrice": 15.39,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 14.99,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -664,11 +664,11 @@
             "name": "BB Seguridade ON",
             "type": "STOCK",
             "quote": {
-                "value": 39.21,
+                "value": 38.19,
                 "currency": "BRL"
             },
-            "initialPrice": 39.21,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 38.19,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -678,11 +678,11 @@
             "name": "ABC Brasil PN",
             "type": "STOCK",
             "quote": {
-                "value": 21.35,
+                "value": 21.49,
                 "currency": "BRL"
             },
-            "initialPrice": 21.35,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 21.49,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -692,11 +692,11 @@
             "name": "SANEPAR UNIT",
             "type": "STOCK",
             "quote": {
-                "value": 30.63,
+                "value": 30.7,
                 "currency": "BRL"
             },
-            "initialPrice": 30.63,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 30.7,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -706,11 +706,11 @@
             "name": "CAMIL ON",
             "type": "STOCK",
             "quote": {
-                "value": 4.35,
+                "value": 4.44,
                 "currency": "BRL"
             },
-            "initialPrice": 4.35,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 4.44,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -720,11 +720,11 @@
             "name": "Fleury ON",
             "type": "STOCK",
             "quote": {
-                "value": 12.83,
+                "value": 13.18,
                 "currency": "BRL"
             },
-            "initialPrice": 12.83,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 13.18,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -734,11 +734,11 @@
             "name": "Tupy ON",
             "type": "STOCK",
             "quote": {
-                "value": 19.36,
+                "value": 19.82,
                 "currency": "BRL"
             },
-            "initialPrice": 19.36,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 19.82,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -748,11 +748,11 @@
             "name": "Gerdau PN",
             "type": "STOCK",
             "quote": {
-                "value": 8.17,
+                "value": 8.35,
                 "currency": "BRL"
             },
-            "initialPrice": 8.17,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 8.35,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -762,11 +762,11 @@
             "name": "PETRORIO ON",
             "type": "STOCK",
             "quote": {
-                "value": 35.73,
+                "value": 36.66,
                 "currency": "BRL"
             },
-            "initialPrice": 35.73,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 36.66,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -776,11 +776,11 @@
             "name": "IPCA+6,02 2029",
             "type": "BOND",
             "quote": {
-                "value": 3364.12,
+                "value": 3380.59,
                 "currency": "BRL"
             },
-            "initialPrice": 3364.12,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 3380.59,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -814,11 +814,11 @@
             "name": "IPCA+6,09 2035",
             "type": "BOND",
             "quote": {
-                "value": 2208.87,
+                "value": 2232.46,
                 "currency": "BRL"
             },
-            "initialPrice": 2208.87,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 2232.46,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -828,11 +828,11 @@
             "name": "IPCA+ 2045 746",
             "type": "BOND",
             "quote": {
-                "value": 1097.17,
+                "value": 1116.11,
                 "currency": "BRL"
             },
-            "initialPrice": 1097.17,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 1116.11,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -842,11 +842,11 @@
             "name": "NTN-F2035 PRE 1490",
             "type": "BOND",
             "quote": {
-                "value": 836.3,
+                "value": 838.86,
                 "currency": "BRL"
             },
-            "initialPrice": 836.3,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 838.86,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -940,11 +940,11 @@
             "name": "VALE ON",
             "type": "STOCK",
             "quote": {
-                "value": 52.9,
+                "value": 52.74,
                 "currency": "BRL"
             },
-            "initialPrice": 52.9,
-            "lastUpdate": "2025-05-08T04:12:41-03:00",
+            "initialPrice": 52.74,
+            "lastUpdate": "2025-05-08T20:37:38-03:00",
             "controlByQty": true,
             "trend": "unchanged",
             "manualQuote": false
@@ -968,13 +968,13 @@
             "name": "BTC",
             "type": "CRYPTO",
             "quote": {
-                "value": 571076,
+                "value": 585385,
                 "currency": "BRL"
             },
-            "initialPrice": 558544,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 586967,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "down",
             "manualQuote": false
         },
         {
@@ -982,13 +982,13 @@
             "name": "ETH",
             "type": "CRYPTO",
             "quote": {
-                "value": 11012,
+                "value": 12475,
                 "currency": "BRL"
             },
-            "initialPrice": 10382,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 12497,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "down",
             "manualQuote": false
         },
         {
@@ -996,11 +996,11 @@
             "name": "USDT",
             "type": "CRYPTO",
             "quote": {
-                "value": 5.7613,
+                "value": 5.6845,
                 "currency": "BRL"
             },
-            "initialPrice": 5.7551,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 5.6718,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
             "trend": "up",
             "manualQuote": false
@@ -1010,13 +1010,13 @@
             "name": "Arbitrium",
             "type": "CRYPTO",
             "quote": {
-                "value": 1.9995,
+                "value": 2.01,
                 "currency": "BRL"
             },
-            "initialPrice": 1.7683,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 2.0728,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
-            "trend": "up",
+            "trend": "down",
             "manualQuote": false
         },
         {
@@ -1024,11 +1024,11 @@
             "name": "Solana",
             "type": "CRYPTO",
             "quote": {
-                "value": 868.03,
+                "value": 925.94,
                 "currency": "BRL"
             },
-            "initialPrice": 847.14,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 919.4,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
             "trend": "up",
             "manualQuote": false
@@ -1038,11 +1038,11 @@
             "name": "DYDX",
             "type": "CRYPTO",
             "quote": {
-                "value": 3.33,
+                "value": 3.5823,
                 "currency": "BRL"
             },
-            "initialPrice": 3.1896,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 3.5501,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
             "trend": "up",
             "manualQuote": false
@@ -1052,11 +1052,11 @@
             "name": "Stacks",
             "type": "CRYPTO",
             "quote": {
-                "value": 5.326,
+                "value": 5.585,
                 "currency": "BRL"
             },
-            "initialPrice": 5.12,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 5.532,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
             "trend": "up",
             "manualQuote": false
@@ -1066,11 +1066,11 @@
             "name": "Lido DAO",
             "type": "CRYPTO",
             "quote": {
-                "value": 4.8491,
+                "value": 5.4062,
                 "currency": "BRL"
             },
-            "initialPrice": 4.4091,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 5.4001,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
             "trend": "up",
             "manualQuote": false
@@ -1080,11 +1080,11 @@
             "name": "ChainLink",
             "type": "CRYPTO",
             "quote": {
-                "value": 84.169,
+                "value": 89.998,
                 "currency": "BRL"
             },
-            "initialPrice": 79.159,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 89.868,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
             "trend": "up",
             "manualQuote": false
@@ -1094,13 +1094,13 @@
             "name": "Optimist",
             "type": "CRYPTO",
             "quote": {
-                "value": 3.9432,
+                "value": 3.9019,
                 "currency": "BRL"
             },
-            "initialPrice": 4.0125,
-            "lastUpdate": "2025-05-08T04:12:43-03:00",
+            "initialPrice": 3.896,
+            "lastUpdate": "2025-05-08T20:37:42-03:00",
             "controlByQty": true,
-            "trend": "down",
+            "trend": "up",
             "manualQuote": false
         }
     ],
@@ -3619,6 +3619,66 @@
                 "currency": "BRL"
             },
             "type": "BUY",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "b2c857ee-f819-4d0b-946a-65dad3dc173b",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-05-06T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "value": {
+                "value": 0.28,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "49fed14a-606f-410c-8037-4921f460e620",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-05-08T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "value": {
+                "value": 5.25,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "11cfa218-849f-4636-85d9-854433c67617",
+            "ticker": "BVMF:JSRE11",
+            "date": "2025-05-08T03:00:00.000Z",
+            "accountId": "6c746e8a-2d77-4cbe-a3df-43c86663afad",
+            "value": {
+                "value": 0.04,
+                "currency": "BRL"
+            },
+            "type": "RENT_RETURN",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "9adcfe86-d1bb-4504-91ea-1374dc19570c",
+            "ticker": "BVMF:LVBI11",
+            "date": "2025-05-08T03:00:00.000Z",
+            "accountId": "691d447d-520b-454d-9d95-04b399d4088c",
+            "value": {
+                "value": 3.75,
+                "currency": "BRL"
+            },
+            "type": "DIVIDENDS",
+            "status": "COMPLETED"
+        },
+        {
+            "id": "9cb49f15-eab0-4dc2-a5ad-909efe59778f",
+            "ticker": "BOND:SGOV",
+            "date": "2025-05-07T03:00:00.000Z",
+            "accountId": "5c4e0ac6-3221-495f-a097-c2f6dee2bd75",
+            "value": {
+                "value": 0.24,
+                "currency": "USD"
+            },
+            "type": "DIVIDENDS",
             "status": "COMPLETED"
         }
     ],
