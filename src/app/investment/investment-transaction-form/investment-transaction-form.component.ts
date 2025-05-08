@@ -127,14 +127,17 @@ export class InvestmentTransactionFormComponent implements OnInit {
   optionsCode = computed(() => {
     const marketPlace = this.marketPlace();
     if (!marketPlace) return [];
+    const ticker = this.ticker();
     return Object.entries(this.assets())
-      .filter(([key, _]) => key.startsWith(`${marketPlace}:`))
+      .filter(([key, _]) => ! ticker ? key.startsWith(`${marketPlace}:`) : key.startsWith(ticker as string))
+      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
       .map(([_, asset]) => asset.ticker.replace(`${marketPlace}:`, ''));
   });
 
   optionsAccount = computed(() => {
     const accountName = this.accountName();
     return this.accounts()
+      .sort((a, b) => a.account.localeCompare(b.account))
       .filter(acc => acc.account.toLocaleLowerCase().includes(accountName.toLocaleLowerCase()));
   });
 
@@ -226,6 +229,15 @@ export class InvestmentTransactionFormComponent implements OnInit {
     listenMarketPlaceChanges$.subscribe(value => {
       this.marketPlace.set(value);
     })
+    
+    codeField.valueChanges.subscribe(value => {
+      if (marketPlaceField.value && codeField.value) {
+        this.ticker.set(getMarketPlaceCode({ marketPlace: marketPlaceField.value, code: value }));
+      }
+      else {
+        this.ticker.set(null);
+      }
+    });
 
     combineLatest({
       marketPlace: listenMarketPlaceChanges$,
@@ -237,7 +249,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
       distinctUntilChanged()
     ).subscribe(() => {
       const [marketPlace, code] = [marketPlaceField.value, codeField.value];
-      if (code) {
+      if (marketPlace && code) {
         const ticker = getMarketPlaceCode({ marketPlace, code: code.toLocaleUpperCase() });
         this.ticker.set(ticker);
         const asset = this.assets()[ticker];
@@ -245,12 +257,17 @@ export class InvestmentTransactionFormComponent implements OnInit {
           this.transactionForm.get('quote')?.setValue(asset.quote.value);
           return;
         }
+
+        const optionsCode = this.optionsCode();
+        const hasSome = optionsCode.some(key => key.startsWith(code.toLocaleUpperCase()));
+        if (!hasSome) {
+          this.assetService.newDialog(ticker).subscribe(asset => {
+            if (asset) {
+              this.transactionForm.get('quote')?.setValue(asset.quote.value);
+            }
+          })
+        }
         
-        this.assetService.newDialog(ticker).subscribe(asset => {
-          if (asset) {
-            this.transactionForm.get('quote')?.setValue(asset.quote.value);
-          }
-        })
       }
     });
   }
@@ -312,6 +329,7 @@ export class InvestmentTransactionFormComponent implements OnInit {
 
   accountNameDisplay = (id: string): string => this.balanceService.getAccounts()
     .filter(acc => acc.id === id)
+    .sort((a, b) => a.account.localeCompare(b.account))
     .map(acc => acc.account).find(_ => true) || '';
 
   toUpercase($event: Event) {
