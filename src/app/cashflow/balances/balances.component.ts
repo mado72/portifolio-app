@@ -75,6 +75,12 @@ export class BalancesComponent implements OnInit {
       this.totalBalanceChecking = this.summarize(this.dataSource()
         .filter(item => item.selected && item.type === AccountTypeEnum.CHECKING))
     })
+    effect(()=> {
+      const balances = this.balances();
+      this.selects.update(selects=>
+        selects = Object.values(balances).map(item => item.id as string)
+      );
+    });
   }
   
   ngOnInit(): void {
