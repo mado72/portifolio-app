@@ -21,8 +21,9 @@ describe('InvestmentTypePipe', () => {
     InvestmentEnum.IOE_RETURN,
     InvestmentEnum.TRANSFER,
     InvestmentEnum.SUBSCRIPTION,
-    InvestmentEnum.REDEMPTION,
-    InvestmentEnum.OTHER
+    InvestmentEnum.OTHER,
+    InvestmentEnum.CONTRIBUTION,
+    InvestmentEnum.WITHDRAWAL
   ];
 
   // Mapeamento de enum para abreviações esperadas
@@ -34,8 +35,9 @@ describe('InvestmentTypePipe', () => {
     [InvestmentEnum.IOE_RETURN]: 'JCP',
     [InvestmentEnum.TRANSFER]: 'Trnsf',
     [InvestmentEnum.SUBSCRIPTION]: 'Subs',
-    [InvestmentEnum.REDEMPTION]: 'Rsgt',
-    [InvestmentEnum.OTHER]: 'Otrs'
+    [InvestmentEnum.OTHER]: 'Otrs',
+    [InvestmentEnum.CONTRIBUTION]: 'Apts',
+    [InvestmentEnum.WITHDRAWAL]: 'Saqs',
   };
 
   describe('transform with enum values', () => {

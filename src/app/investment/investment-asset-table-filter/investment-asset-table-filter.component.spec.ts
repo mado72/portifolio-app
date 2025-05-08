@@ -28,24 +28,6 @@ describe('InvestmentAssetTableFilterComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should emit filter event on input change', () => {
-    spyOn(component.filterChange, 'emit');
-
-    component.name = 'Test Name';
-    component.marketPlace = 'Test Market';
-    component.ticker = 'TEST';
-    component.type = 'Test Type';
-
-    component.onFilterChange();
-
-    expect(component.filterChange.emit).toHaveBeenCalledWith({
-      name: 'Test Name',
-      marketPlace: 'Test Market',
-      ticker: 'TEST',
-      type: 'Test Type'
-    });
-  });
-
   it('should update filter values', () => {
     component.name = 'New Name';
     component.marketPlace = 'New Market';

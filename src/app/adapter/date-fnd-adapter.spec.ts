@@ -1,7 +1,7 @@
-import { DateFndAdapter } from './date-fnd-adapter';
+import { DateFnsAdapter } from './date-fnd-adapter';
 
 describe('DateFndAdapter', () => {
   it('should create an instance', () => {
-    expect(new DateFndAdapter()).toBeTruthy();
+    expect(new DateFnsAdapter()).toBeTruthy();
   });
 });
