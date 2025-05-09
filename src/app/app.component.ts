@@ -2,13 +2,13 @@ import { Component, computed, effect, inject, OnDestroy, OnInit, signal } from '
 import { RouterOutlet } from '@angular/router';
 import { setDefaultOptions } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { environment } from '../environments/environment';
 import { HeaderComponent } from "./layout/header/header.component";
-import { BalanceService } from './service/balance.service';
 import { ExchangeService } from './service/exchange.service';
-import { PortfolioService } from './service/portfolio-service';
 import { RemoteQuotesService } from './service/remote-quotes.service';
 import { SourceService } from './service/source.service';
 import { ExchangeButtonComponent } from "./utils/component/exchange-button/exchange-button.component";
+import { HealthStatusComponent } from './components/health-status/health-status.component';
 
 const DEBOUNCE_TIME = 1000;
 
@@ -18,7 +18,8 @@ const DEBOUNCE_TIME = 1000;
   imports: [
     RouterOutlet,
     HeaderComponent,
-    ExchangeButtonComponent
+    ExchangeButtonComponent,
+    HealthStatusComponent,
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
@@ -27,8 +28,8 @@ export class AppComponent implements OnInit, OnDestroy {
   title = 'portifolio-app';
 
   private sourceService = inject(SourceService);
-  private portfolioService = inject(PortfolioService);
-  private balanceService = inject(BalanceService);
+  // private portfolioService = inject(PortfolioService);
+  // private balanceService = inject(BalanceService);
   private remoteQuoteService = inject(RemoteQuotesService);
   private exchangeService = inject(ExchangeService);
 
@@ -60,6 +61,8 @@ export class AppComponent implements OnInit, OnDestroy {
   debounceTimeout: any = null;
 
   constructor() {
+    console.log('AppComponent constructor');
+    console.log('AppComponent environment: ', environment.name);
     setDefaultOptions({ locale: ptBR })
 
     effect(() => {

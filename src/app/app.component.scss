@@ -16,3 +16,10 @@ pre {
     overflow: auto;
     background-color: #f8f9fa;
 }
+
+app-health-status {
+    position: fixed;
+    left: 10px;
+    top: 10px;
+    z-index: 20000;
+}

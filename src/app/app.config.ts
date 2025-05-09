@@ -1,5 +1,5 @@
 import { registerLocaleData } from '@angular/common';
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient } from '@angular/common/http';
 import localePt from '@angular/common/locales/pt';
 import { ApplicationConfig, LOCALE_ID, provideZoneChangeDetection } from '@angular/core';
 import { provideNativeDateAdapter } from '@angular/material/core';
@@ -9,6 +9,7 @@ import { provideRouter, withComponentInputBinding } from '@angular/router';
 import { routes } from './app.routes';
 import { provideExchangeService } from './service/exchange.service';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { HealthCheckInterceptor } from './interceptors/health-check.interceptor';
 
 registerLocaleData(localePt);
 
@@ -18,6 +19,11 @@ export const appConfig: ApplicationConfig = {
     {
       provide: MAT_DIALOG_DEFAULT_OPTIONS,
       useValue: { autoFocus: 'dialog', restoreFocus: true }
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: HealthCheckInterceptor,
+      multi: true
     },
     provideNativeDateAdapter(),
     provideZoneChangeDetection({ eventCoalescing: true }), 
