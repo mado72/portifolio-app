@@ -1,20 +1,36 @@
-FROM node:slim@sha256:03620fd150e0367cba2040f8697cb11b7ecb01272b161a667e944c861b930f16 AS build
+FROM node:22-slim AS build
 
+# Set the working directory
 WORKDIR /app
+
+# Copy package.json and package-lock.json
 COPY package*.json ./
-RUN npm install
+
+RUN ls -la /app
+
+# Install dependencies
+RUN npm install --omit=dev
+RUN npm install @angular-devkit/build-angular --save-dev
+
+# Copy the rest of the application files
 COPY . .
-RUN npm run build --configuration=production
 
-# Serve stage
-FROM nginx:1.28.0-alpine-slim@sha256:39a9a15e0a81914a96fa9ffa980cdfe08e2e5e73ae3424f341ad1f470147c413
+# Build the Angular application
+# RUN npm run build --omit=dev
+# CMD ["ng", "build", "--configuration", "production"]
+RUN npm run build
 
-# Copia o build do Angular para o nginx
+# Use a lightweight web server to serve the application
+FROM nginx:alpine
+
+# Copy the built application from the previous stage
 COPY --from=build /app/dist/portfolio-app /usr/share/nginx/html
 
-# Copia configuração customizada do nginx (opcional)
-# COPY nginx.conf /etc/nginx/nginx.conf
+# Copy the custom Nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 3000
+# Expose the port the app runs on
+EXPOSE 80
 
+# Command to run the application
 CMD ["nginx", "-g", "daemon off;"]
