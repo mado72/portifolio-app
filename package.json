@@ -1,6 +1,6 @@
 {
-  "name": "portifolio-app",
-  "version": "0.0.0",
+  "name": "portfolio-app",
+  "version": "0.0.3-SNAPSHOT",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",

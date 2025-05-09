@@ -25,7 +25,7 @@ const DEBOUNCE_TIME = 1000;
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit, OnDestroy {
-  title = 'portifolio-app';
+  title = 'portfolio-app';
 
   private sourceService = inject(SourceService);
   // private portfolioService = inject(PortfolioService);

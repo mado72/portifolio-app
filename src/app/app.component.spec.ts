@@ -25,17 +25,17 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
-  it(`should have the 'portifolio-app' title`, () => {
+  it(`should have the 'portfolio-app' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('portifolio-app');
+    expect(app.title).toEqual('portfolio-app');
   });
 
   // it('should render title', () => {
   //   const fixture = TestBed.createComponent(AppComponent);
   //   fixture.detectChanges();
   //   const compiled = fixture.nativeElement as HTMLElement;
-  //   expect(compiled.querySelector('h1')?.textContent).toContain('Hello, portifolio-app');
+  //   expect(compiled.querySelector('h1')?.textContent).toContain('Hello, portfolio-app');
   // });
   describe('getScheduleDates', () => {
     const scheduledRange = { start: new Date(2023, 0, 3), end: new Date(2023, 11, 28) };
