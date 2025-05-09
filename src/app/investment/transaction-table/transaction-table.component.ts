@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, computed, EventEmitter, inject, Output, s
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTableModule } from '@angular/material/table';
+import { ActivatedRoute } from '@angular/router';
 import { InvestmentTransactionType } from '../../model/source.model';
 import { BalanceService } from '../../service/balance.service';
 import { ExchangeService } from '../../service/exchange.service';
@@ -10,17 +11,8 @@ import { TransactionService } from '../../service/transaction.service';
 import { ExchangeComponent } from '../../utils/component/exchange/exchange.component';
 import { InvestmentTypePipe } from '../../utils/pipe/investment-type.pipe';
 import { TransactionStatusPipe } from '../../utils/pipe/transaction-status.pipe';
-import { TransactionTableFilterComponent } from '../transaction-table-filter/transaction-table-filter.component';
-import { ActivatedRoute } from '@angular/router';
+import { FilterType, TransactionTableFilterComponent } from '../transaction-table-filter/transaction-table-filter.component';
 
-type FilterType = {
-  investmentType: string | null;
-  marketPlace: string | null;
-  ticker: string | null; // Adicionado o campo ticker
-  start: Date | null;
-  end: Date | null;
-  accountId: string | null;
-}
 
 @Component({
   selector: 'app-transaction-table',
