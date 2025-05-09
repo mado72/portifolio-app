@@ -12,10 +12,11 @@ import { provideDateFnsAdapter } from '../../adapter/date-fnd-adapter';
 import { Currency } from '../../model/domain.model';
 
 
-export type IncomeFilterType = { 
-  portfolioReference: string | null; 
-  dateReference: Date; 
-  typeReference: AssetEnum | null; 
+export type IncomeFilterType = {
+  tickerReference: string | null;
+  portfolioReference: string | null;
+  dateReference: Date;
+  typeReference: AssetEnum | null;
   currencyReference: Currency | null; // Adicionado o filtro por moeda
 };
 
@@ -54,6 +55,7 @@ export class IncomeYearSheetFilterComponent {
   private portfolioService = inject(PortfolioService);
 
   filter: IncomeFilterType = {
+    tickerReference: null,
     portfolioReference: null,
     dateReference: new Date(),
     typeReference: null,
@@ -81,5 +83,11 @@ export class IncomeYearSheetFilterComponent {
   onFilterChange() {
     this.filterChanged.emit(this.filter);
   }
+
+  upperCaseInput($event: Event) {
+    const input = $event.target as HTMLInputElement;
+    input.value = input.value.toUpperCase();
+  }
+
 }
 

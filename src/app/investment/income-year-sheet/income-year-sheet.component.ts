@@ -65,6 +65,7 @@ export class IncomeYearSheetComponent {
   readonly vlMonths = this.months.map((_, idx) => `vl${idx}`);
 
   filter = signal<IncomeFilterType>({
+    tickerReference: null,
     dateReference: new Date(),
     typeReference: null,
     portfolioReference: null,
@@ -80,10 +81,13 @@ export class IncomeYearSheetComponent {
   currencyDefault = this.exchangeService.currencyDefault;
 
   incomesFiltered = computed(() => {
+    const incomeTypes = [InvestmentEnum.DIVIDENDS, InvestmentEnum.RENT_RETURN, InvestmentEnum.IOE_RETURN];
+    const filter = this.filter();
     const incomes = Object.entries(this.transactionService.investmentTransactions())
       .filter(([_, item]) => 
-        [InvestmentEnum.DIVIDENDS, InvestmentEnum.RENT_RETURN, InvestmentEnum.IOE_RETURN].includes(item.type) 
-        && isWithinInterval(item.date, { start: startOfYear(this.filter().dateReference), end: endOfYear(this.filter().dateReference) }))
+        incomeTypes.includes(item.type) 
+        && (!filter.tickerReference || item.ticker.indexOf(filter.tickerReference.toLocaleUpperCase()) !== -1)
+        && isWithinInterval(item.date, { start: startOfYear(filter.dateReference), end: endOfYear(filter.dateReference) }))
       .sort(([_A, transactionA], [_B, transactionB]) => transactionA.ticker.localeCompare(transactionB.ticker)) // Sort by ticker
       .reduce((acc, [_, item]) => {
         if (!acc[item.ticker]) {
@@ -93,7 +97,7 @@ export class IncomeYearSheetComponent {
         return acc;
       }, {} as { [ticker: string]: InvestmentTransactionType[] });
 
-    return this.getIncomesFiltered(this.filter(), incomes);
+    return this.getIncomesFiltered(filter, incomes);
   });
 
   data = computed<SheetRow[]>(() => this.getData(

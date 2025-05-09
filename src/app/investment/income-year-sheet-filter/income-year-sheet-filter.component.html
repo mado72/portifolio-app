@@ -1,7 +1,13 @@
 <div class="card">
     <div class="card-header">Filtro de Ativos</div>
-    <div class="card-body d-flex">
-        <div class="pe-3">
+    <div class="card-body d-flex gap-16">
+        <div>
+            <mat-form-field>
+                <input matInput placeholder="Ticker - NYSE:APPL" [(ngModel)]="filter.tickerReference"
+                    [ngModelOptions]="{standalone: true}" (ngModelChange)="onFilterChange()" (input)="upperCaseInput($event)">
+            </mat-form-field>
+        </div>
+        <div>
             <mat-form-field>
                 <input matInput [matDatepicker]="dp" placeholder="Month and Year" [(ngModel)]="filter.dateReference"
                     [ngModelOptions]="{standalone: true}">
@@ -9,7 +15,7 @@
                 <mat-datepicker #dp startView="multi-year" (yearSelected)="choosenYear($event, dp)"></mat-datepicker>
             </mat-form-field>
         </div>
-        <div class="pe-3">
+        <div>
             <mat-form-field>
                 <mat-label>Tipo de Ação</mat-label>
                 <mat-select matSelect [(ngModel)]="filter.typeReference" [ngModelOptions]="{standalone: true}"
@@ -21,7 +27,7 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        <div class="pe-3">
+        <div>
             <mat-form-field>
                 <mat-label>Carteira</mat-label>
                 <mat-select matSelect [(ngModel)]="filter.portfolioReference" [ngModelOptions]="{standalone: true}"
