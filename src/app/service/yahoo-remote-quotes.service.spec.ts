@@ -4,7 +4,7 @@ import { ChartResultArray, YahooRemoteQuotesService } from './yahoo-remote-quote
 import { HttpParams, provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { of } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { Ticker } from '../model/source.model';
 import { endOfDay } from 'date-fns';
 

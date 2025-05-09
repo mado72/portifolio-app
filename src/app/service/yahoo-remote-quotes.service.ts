@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { map, Observable } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { Currency } from '../model/domain.model';
 import { formatDateYYYYMMDD } from '../model/functions.model';
 import { MarketPlaceEnum } from '../model/investment.model';

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { CacheService } from './cache.service';
 import { TreasuryBondResponse } from '../model/threasure.model';
 import { map, Observable, of, tap } from 'rxjs';

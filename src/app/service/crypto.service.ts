@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Ticker } from '../model/source.model';
 import { map, Observable } from 'rxjs';
-import { environment } from '../../environments/environment.prod';
+import { environment } from '../../environments/environment';
 import { Currency } from '../model/domain.model';
 import { IRemoteQuote, QuoteResponse } from '../model/remote-quote.model';
 
