@@ -27,10 +27,14 @@ FROM nginx:alpine
 COPY --from=build /app/dist/portfolio-app /usr/share/nginx/html
 
 # Copy the custom Nginx configuration
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+ARG NGINX_CONF=nginx.conf
+COPY nginx/${NGINX_CONF} /etc/nginx/conf.d/default.conf
+
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port the app runs on
 EXPOSE 80
 
 # Command to run the application
 CMD ["nginx", "-g", "daemon off;"]
+
