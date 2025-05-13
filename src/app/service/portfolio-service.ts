@@ -345,7 +345,7 @@ export class PortfolioService {
 
     const items = consolidation.map(item => ({
       ...item,
-      percAlloc: Number((100 * item.value.exchanged.value / total.value).toPrecision(2))
+      percAlloc: Math.round(10000 * item.value.exchanged.value / total.value) / 100
     }));
 
     return { items, total };
