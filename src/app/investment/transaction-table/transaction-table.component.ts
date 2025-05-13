@@ -49,6 +49,15 @@ export class TransactionTableComponent {
 
   @Output() onClickItem = new EventEmitter<InvestmentTransactionType>();
 
+  filterData : FilterType = {
+    investmentType: null,
+    marketPlace: null,
+    ticker: null,
+    start: null,
+    end: null,
+    accountId: null
+  }
+
   filter = signal<FilterType>({
     investmentType: null,
     marketPlace: null,
@@ -87,14 +96,14 @@ export class TransactionTableComponent {
       const start = params['start'] ? new Date(params['start']) : null;
       const end = params['end'] ? new Date(params['end']) : null;
       const accountId = params['account'] ?? null;
-      this.filter.set({
+      this.filterData = {
         investmentType,
         marketPlace,
         ticker, // Adicionado ao filtro
         start,
         end,
         accountId
-      });
+      };
     });
   }
 

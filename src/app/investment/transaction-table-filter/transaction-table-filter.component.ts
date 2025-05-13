@@ -92,7 +92,7 @@ export class TransactionTableFilterComponent implements OnInit {
         ticker: params['ticker'] || '', // Adicionado para preencher o valor inicial do ticker
         range: {
           start: params['start'] ? new Date(params['start']) : startOfMonth(new Date()),
-          end: params['end'] ? new Date(params['end']) : endOfMonth(new Date()),
+          end: params['end'] ? new Date(params['end']): null,
         },
         account: params['account'] ? { id: params['account'] } : null
       });
