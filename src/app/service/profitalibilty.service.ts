@@ -64,7 +64,7 @@ export class ProfitabilityService {
     }
 
     return Object.entries(this.sourceService.dataSource.profitability()).reduce((acc, [yearStr, classify]) => {
-      const year = Number(yearStr+'');
+      const year = Number(yearStr + '');
 
       acc[year] = Object.entries(classify).reduce((accClassify, [classifyName, values]) => {
         accClassify[classifyName] = values.map((value, month) => {
@@ -72,7 +72,7 @@ export class ProfitabilityService {
         });
         return accClassify;
       }
-      , {} as { [classifyName: string]: number[] });
+        , {} as { [classifyName: string]: number[] });
       return acc;
     }, {} as { [year: string]: { [classifyName: string]: number[] } });
   });
@@ -126,7 +126,7 @@ export class ProfitabilityService {
       }, Array(12).fill(0)); // Initialize an array of 12 zeros
   });
 
-  
+
   /**
    * A computed property that generates a mapping of profitability data by class.
    * 
@@ -144,11 +144,21 @@ export class ProfitabilityService {
     }
 
     const portfolioProfitability = this.portfolioProfitability();
-    return this.convertProfitabilityByClassToRowData(portfolioProfitability, this.currentMonthProfitability())
+
+    const rowsMap = this.convertProfitabilityByClassToRowData(portfolioProfitability, this.currentMonthProfitability())
       .reduce((acc, row) => {
         acc[row.label] = row;
         return acc;
       }, {} as { [classify: string]: RowData });
+
+    return this.classifierService.classifiers().reduce((acc, { id, name }) => {
+      if (!rowsMap[name]) {
+        return acc;
+      }
+      acc[name] = rowsMap[name];
+      return acc;
+    }, {} as { [classify: string]: RowData });
+
   });
 
   /**
@@ -231,7 +241,23 @@ export class ProfitabilityService {
     const contributionsAccumulated = this.calculateContributionsAccumulated(contributions);
     const incomes = aggregatedTransactionsRows?.incomes;
 
-    const rows = (contributions ? [contributions as RowData] : [])
+    const equity = Object.values(this.profitabilityByClassRows()).reduce((acc, row) => {
+      acc.cells.forEach((cell, month) => {
+        if (cell.value !== undefined) {
+          cell.value = (cell.value || 0) + (row.cells[month].value || 0);
+        }
+      });
+      return acc;
+    }, 
+      {
+        cells: Array(12).fill(0).map(() => ({ value: 0, disabled: true })),
+        disabled: true,
+        label: 'Patrimônio',
+        operation: 'none',
+      } as RowData);
+
+    const rows = (equity ? [equity as RowData] : [])
+      .concat(contributions ? [contributions as RowData] : [])
       .concat(contributionsAccumulated ? [contributionsAccumulated as RowData] : [])
       .concat(incomes ? [incomes as RowData] : []);
 
@@ -377,7 +403,7 @@ export class ProfitabilityService {
     }
     const currencyBRL = `${Currency.BRL}`;
 
-    if ((year != currentYear || month <= currentMonth) 
+    if ((year != currentYear || month <= currentMonth)
       && exchanges[currencyBRL] && exchanges[currencyDefault][currencyBRL]) {
       return (exchanges[currencyDefault][currencyBRL][month]) * value;
     }
@@ -399,7 +425,7 @@ export class ProfitabilityService {
    * future months are marked as disabled.
    */
   private convertProfitabilityByClassToRowData(profitabilities: ProfitabilityByClass[], currentMonthProfitability: Record<string, number>) {
-    
+
     const selectedYear = this.selectedYear();
     const currentYear = getYear(new Date());
     const currentMonth = getMonth(new Date());
@@ -633,7 +659,7 @@ export class ProfitabilityService {
     }
 
     const selectedYear = this.selectedYear();
-    
+
     // Create a copy of the source object to avoid modifying it directly
     let updatedSource: Record<string, number[]>;
     if (!profitabilitySource[selectedYear]) {
@@ -648,7 +674,7 @@ export class ProfitabilityService {
     const currentYear = getYear(new Date());
 
     const classifiersMap = this.classifierService.classifiersMap();
-    
+
     // Updates the copy with the current values
     Object.keys(classifiersMap).forEach(classify => {
       if (!updatedSource[classify]) {
@@ -701,7 +727,7 @@ export class ProfitabilityService {
    * `RowData` object for display purposes.
    */
   private calculateVAR(profitabilityMatrix: number[][], previousYearEndValue: number, year: number): FinancialMetrics | undefined {
-    
+
     if (!profitabilityMatrix.length) {
       return undefined; // Return undefined if profitabilityRows is not provided
     }
@@ -722,10 +748,10 @@ export class ProfitabilityService {
     profitabilityMatrix.forEach((row) => {
       row.forEach((value, month) => {
         if (month === 0 || currentYear != year || month <= currentMonth) {
-          profitabilityRows[month] +=  value || 0;
+          profitabilityRows[month] += value || 0;
         }
         else {
-          profitabilityRows[month] = profitabilityRows[month-1];
+          profitabilityRows[month] = profitabilityRows[month - 1];
         }
       });
     });
