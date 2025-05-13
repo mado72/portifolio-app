@@ -302,6 +302,7 @@ export class PortfolioService {
       value: 0,
       currency: this.exchangeService.currencyDefault()
     };
+    const classifiers = this.sourceService.classifySource();
     const consolidation = Object.values(portfolios
       .map(portfolio => {
         const result = {
@@ -315,7 +316,7 @@ export class PortfolioService {
         const classifyId = portfolio.classify?.id || '';
 
         if (!acc[classifyId]) {
-          acc[classifyId] = { ...portfolio }
+          acc[classifyId] = { ...portfolio, classify: portfolio.classify as ClassifyType }
         }
         else {
           acc[classifyId] = {
@@ -336,12 +337,27 @@ export class PortfolioService {
         }
         total.value += portfolio.value.exchanged.value;
         return acc;
+      }, Object.entries(classifiers).reduce((acc, [id, classify]) => {
+        acc[id] = {
+          classify: {id, name: classify} as ClassifyType,
+          value: { original: { value: 0, currency: this.exchangeService.currencyDefault() }, exchanged: { value: 0, currency: this.exchangeService.currencyDefault() } },
+          percPlanned: 0,
+          percAlloc: 0
+        }
+        return acc;
       }, {} as Record<string, {
-        classify?: ClassifyType,
+        classify: ClassifyType,
         value: ExchangeStructureType,
         percPlanned: number,
         percAlloc: number
-      }>))
+      }>)));
+
+      // }, {} as Record<string, {
+      //   classify?: ClassifyType,
+      //   value: ExchangeStructureType,
+      //   percPlanned: number,
+      //   percAlloc: number
+      // }>))
 
     const items = consolidation.map(item => ({
       ...item,
