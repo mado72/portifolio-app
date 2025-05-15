@@ -65,4 +65,24 @@ describe('SummarizeService', () => {
       { classify: 'B', value: 4 }
     ]);
   });
+
+  it('should ignore items with missing classify in summarizeClass', () => {
+    const items = [{ value: 10 }, { classify: 'A', value: 5 }];
+    const result = service.summarizeClass(items as any);
+    expect(result).toEqual([{ classify: 'A', value: 5 }]);
+  });
+
+  it('should handle negative and zero values in summarizeClass', () => {
+    const items = [
+      { classify: 'A', value: 0 },
+      { classify: 'A', value: -5 },
+      { classify: 'B', value: 10 }
+    ];
+    const result = service.summarizeClass(items);
+    expect(result).toEqual([
+      { classify: 'A', value: -5 },
+      { classify: 'B', value: 10 }
+    ]);
+  });
+
 });
