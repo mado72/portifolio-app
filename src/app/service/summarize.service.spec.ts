@@ -36,34 +36,21 @@ describe('SummarizeService', () => {
 
   it('should summarize classes by month correctly', () => {
     const items = [
-      { classify: 'A', values: [1, 2, 3], month: 1 },
-      { classify: 'B', values: [4, 5, 6], month: 1 },
-      { classify: 'A', values: [7, 8, 9], month: 1 }
+      { classify: 'A', values: [1, 2, 3] },
+      { classify: 'B', values: [4, 5, 6] },
+      { classify: 'A', values: [7, 8, 9] }
     ];
     // Only the first occurrence of each classify is used for the month
     // So for month 1: A: 2, B: 5
-    const result = service.summarizeClassMonth(items);
+    const result = service.summarizeClassMonth(items, 1);
     expect(result).toEqual([
-      { classify: 'A', value: 2 },
+      { classify: 'A', value: 10 },
       { classify: 'B', value: 5 }
     ]);
   });
 
   it('should return empty array when summarizeClassMonth is called with empty array', () => {
-    expect(service.summarizeClassMonth([])).toEqual([]);
-  });
-
-  it('should handle summarizeClassMonth with different months', () => {
-    const items = [
-      { classify: 'A', values: [1, 2, 3], month: 2 },
-      { classify: 'B', values: [4, 5, 6], month: 0 }
-    ];
-    // A: values[2] = 3, B: values[0] = 4
-    const result = service.summarizeClassMonth(items);
-    expect(result).toEqual([
-      { classify: 'A', value: 3 },
-      { classify: 'B', value: 4 }
-    ]);
+    expect(service.summarizeClassMonth([], 1)).toEqual([]);
   });
 
   it('should ignore items with missing classify in summarizeClass', () => {

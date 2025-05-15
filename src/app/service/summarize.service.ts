@@ -22,10 +22,13 @@ export class SummarizeService {
     return Object.values(summary);
   }
 
-  summarizeClassMonth(items: {classify: string, values: number[], month: number}[]) {
+  summarizeClassMonth(items: {classify: string, values: number[]}[], month: number) {
     const values = items.reduce((acc, item) => {
       if (!acc[item.classify]) {
-        acc[item.classify] = { classify: item.classify, value: item.values[item.month] };
+        acc[item.classify] = { classify: item.classify, value: item.values[month] };
+      }
+      else {
+        acc[item.classify].value += item.values[month];
       }
       return acc;
     }, {} as Record<string, { classify: string; value: number }>);
