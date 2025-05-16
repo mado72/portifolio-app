@@ -36,4 +36,96 @@ export class SummarizeService {
     return this.summarizeClass(Object.values(values));
   }
 
+  summarizeClassYear(items: {classify: string, values: number[]}[]) {
+    const values = items.reduce((acc, item) => {
+      if (!acc[item.classify]) {
+        acc[item.classify] = { classify: item.classify, value: 0 };
+      }
+      for (let i = 0; i < item.values.length; i++) {
+        acc[item.classify].value += item.values[i];
+      }
+      return acc;
+    }, {} as Record<string, { classify: string; value: number }>);
+
+    return this.summarizeClass(Object.values(values));
+  }
+
+  summarizeYear(items: { classify: string; values: number[] }[]) : number[]{
+    const values = items.reduce((acc, item) => {
+      for (let i = 0; i < item.values.length; i++) {
+        if (!acc[i]) {
+          acc[i] = 0;
+        }
+        acc[i] += item.values[i];
+      }
+      return acc;
+    }, [] as number[]);
+
+    return values;
+  }
+
+  computeGrowthRate(lastValue: number, values: number[]): number[] {
+    return values.map((value, index) => {
+      if (index === 0 && lastValue === 0) {
+        lastValue = value; // Update lastValue for the next iteration
+        return 0; // No growth rate for the first item
+      }
+      const growthRate = ((value - lastValue) / lastValue) * 100;
+      lastValue = value; // Update lastValue for the next iteration
+      return Math.round(growthRate);
+    });
+  }
+
+  computeVariation(lastValue: number, values: number[], incomes: number[], withdrawals: number[], contributions: number[]): number[] {
+    return values.map((value, index) => {
+      if (index === 0 && lastValue === 0) {
+        lastValue = value; // Update lastValue for the next iteration
+        return 0; // No growth rate for the first item
+      }
+
+      const income = incomes[index] || 0;
+      const contribution = contributions[index] || 0;
+      const withdrawal = withdrawals[index] || 0;
+
+      const variation = value - (lastValue + contribution - income - withdrawal);
+      lastValue = value; // Update lastValue for the next iteration
+      return variation;
+    });
+  }
+
+  computeVariationRate(lastValue: number, variations: number[], incomes: number[]): number[] {
+    return variations.map((value, index) => {
+      if (index === 0 && lastValue === 0) {
+        lastValue = value; // Update lastValue for the next iteration
+        return 0; // No growth rate for the first item
+      }
+      const income = incomes[index] || 0;
+      const growthRate = (value / (lastValue + income)) * 10000;
+      lastValue = value; // Update lastValue for the next iteration
+      return Math.round(growthRate) / 100;
+    });
+  }
+
+  computeVariationAccumulated(variationsRate: number[]): number[] {
+    return variationsRate.map((value, index) => {
+      if (index === 0 ) {
+        const accumulated = variationsRate[index];
+        return accumulated; // No growth rate for the first item
+      }
+      const accumulated = (1 + variationsRate[index]) * (1 + variationsRate[index - 1]) - 1;
+      return Math.round(accumulated * 10000) / 10000;
+    });
+  }
+
+  yieldRate(values: number[], incomes: number[]): number[] {
+    return values.map((value, index) => {
+      const income = incomes[index] || 0;
+      if (value === 0 && income === 0) {
+        return 0; // No yield rate for 0 value and income
+      }
+      const yieldRate = (value / income) * 100;
+      return Math.round(yieldRate);
+    });
+  }
+
 }
