@@ -3,21 +3,21 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "ng serve - App",
+      "name": "frontend - ng serve",
       "type": "chrome",
       "request": "launch",
-      "preLaunchTask": "npm: start:verbose",
+      "preLaunchTask": "npm: start",
       "url": "http://localhost:4200/"
     },
     {
-      "name": "ng debug - App",
+      "name": "frontend - ng debug",
       "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: start:debug",
       "url": "http://localhost:4200/"
     },
     {
-      "name": "ng test",
+      "name": "frontend - ng test",
       "type": "chrome",
       "request": "launch",
       "preLaunchTask": "npm: test",
