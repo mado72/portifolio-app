@@ -1,9 +1,13 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
+import { ExchangeService } from './exchange.service';
+import { Currency } from '../model/domain.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SummarizeService {
+
+  private exchangeService = inject(ExchangeService);
 
   constructor() { }
 
@@ -22,13 +26,17 @@ export class SummarizeService {
     return Object.values(summary);
   }
 
-  summarizeClassMonth(items: {classify: string, values: number[]}[], month: number) {
+  summarizeClassMonth(items: {classify: string, currency: Currency, values: number[]}[], month: number) {
+    const currency = this.exchangeService.currencyDefault();
+
     const values = items.reduce((acc, item) => {
       if (!acc[item.classify]) {
-        acc[item.classify] = { classify: item.classify, value: item.values[month] };
+        acc[item.classify] = { classify: item.classify, value: 
+          this.exchangeService.exchange(item.values[month], item.currency, currency).value };
       }
       else {
-        acc[item.classify].value += item.values[month];
+        acc[item.classify].value += 
+          this.exchangeService.exchange(item.values[month], item.currency, currency).value;
       }
       return acc;
     }, {} as Record<string, { classify: string; value: number }>);
@@ -36,13 +44,16 @@ export class SummarizeService {
     return this.summarizeClass(Object.values(values));
   }
 
-  summarizeClassYear(items: {classify: string, values: number[]}[]) {
+  summarizeClassYear(items: {classify: string, currency: Currency, values: number[]}[]) {
+    const currency = this.exchangeService.currencyDefault();
+
     const values = items.reduce((acc, item) => {
       if (!acc[item.classify]) {
         acc[item.classify] = { classify: item.classify, value: 0 };
       }
       for (let i = 0; i < item.values.length; i++) {
-        acc[item.classify].value += item.values[i];
+        acc[item.classify].value += 
+          this.exchangeService.exchange(item.values[i], item.currency, currency).value;
       }
       return acc;
     }, {} as Record<string, { classify: string; value: number }>);
@@ -50,7 +61,8 @@ export class SummarizeService {
     return this.summarizeClass(Object.values(values));
   }
 
-  summarizeYear(items: { classify: string; values: number[] }[]) : number[]{
+  summarizeMatrix(items: { classify: string; values: number[] }[]) : number[]{
+    const currency = this.exchangeService.currencyDefault();
     const values = items.reduce((acc, item) => {
       for (let i = 0; i < item.values.length; i++) {
         if (!acc[i]) {
@@ -76,7 +88,8 @@ export class SummarizeService {
     });
   }
 
-  computeVariation(lastValue: number, values: number[], incomes: number[], withdrawals: number[], contributions: number[]): number[] {
+  computeVariation({lastValue, values, incomes, withdrawals, contributions}: 
+      {lastValue: number, values: number[], incomes: number[], withdrawals: number[], contributions: number[]}): number[] {
     return values.map((value, index) => {
       if (index === 0 && lastValue === 0) {
         lastValue = value; // Update lastValue for the next iteration
@@ -94,6 +107,7 @@ export class SummarizeService {
   }
 
   computeVariationRate(lastValue: number, variations: number[], incomes: number[]): number[] {
+
     return variations.map((value, index) => {
       if (index === 0 && lastValue === 0) {
         lastValue = value; // Update lastValue for the next iteration

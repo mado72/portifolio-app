@@ -1,12 +1,26 @@
 import { TestBed } from '@angular/core/testing';
 
 import { SummarizeService } from './summarize.service';
+import { Currency } from '../model/domain.model';
+import { ExchangeService } from './exchange.service';
 
 describe('SummarizeService', () => {
   let service: SummarizeService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ExchangeService,
+          useValue: {
+            currencyDefault: () => Currency.USD,
+            exchange: (value: number, fromCurrency: Currency, toCurrency: Currency) => ({
+              value: value * 1 // Mock exchange rate
+            })
+          }
+        }
+      ]
+    });
     service = TestBed.inject(SummarizeService);
   });
 
@@ -36,9 +50,9 @@ describe('SummarizeService', () => {
 
   it('should summarize classes by month correctly', () => {
     const items = [
-      { classify: 'A', values: [1, 2, 3] },
-      { classify: 'B', values: [4, 5, 6] },
-      { classify: 'A', values: [7, 8, 9] }
+      { classify: 'A', currency: Currency.USD, values: [1, 2, 3] },
+      { classify: 'B', currency: Currency.USD, values: [4, 5, 6] },
+      { classify: 'A', currency: Currency.USD, values: [7, 8, 9] }
     ];
     // Only the first occurrence of each classify is used for the month
     // So for month 1: A: 10, B: 5
@@ -74,9 +88,9 @@ describe('SummarizeService', () => {
 
   it('should summarize classes by year correctly', () => {
     const items = [
-      { classify: 'A', values: [1, 2, 3] },
-      { classify: 'B', values: [4, 5, 6] },
-      { classify: 'A', values: [7, 8, 9] }
+      { classify: 'A', currency: Currency.USD, values: [1, 2, 3] },
+      { classify: 'B', currency: Currency.USD, values: [4, 5, 6] },
+      { classify: 'A', currency: Currency.USD, values: [7, 8, 9] }
     ];
     // A: (1+2+3) + (7+8+9) = 30, B: 4+5+6 = 15
     const result = service.summarizeClassYear(items);
@@ -96,7 +110,7 @@ describe('SummarizeService', () => {
     // A: ((120-100)/100)*100 = 20
     // B: ((60-120)/120)*100 = -50
     // C: ((120-60)/60)*100 = 100
-    const result = service.computeGrowthRate(100, items);
+    const result = service.computeGrowthRate(100, Currency.USD, items);
     expect(result).toEqual([20, -50, 100]);
   });
 
@@ -105,7 +119,7 @@ describe('SummarizeService', () => {
     // first: index 0, lastValue 0 => 0
     // second: ((100-0)/0)*100 => Infinity, but in code lastValue is set to previous growthRate (0), so ((100-0)/0)*100 = Infinity
     // But since lastValue is set to previous growthRate, which is 0, so result is [0, NaN]
-    const result = service.computeGrowthRate(0, items);
+    const result = service.computeGrowthRate(0, Currency.USD, items);
     expect(result[0]).toBe(0);
     expect(result[1]).toBe(Infinity);
   });
@@ -116,7 +130,7 @@ describe('SummarizeService', () => {
     // A: ((-100-100)/100)*100 = -200
     // B: ((-50--100)/-100)*100 = (-50+100)/-100*100 = 50/-100*100 = -50
     // C: ((0--50)/-50)*100 = (50/-50)*100 = -100
-    const result = service.computeGrowthRate(100, items);
+    const result = service.computeGrowthRate(100, Currency.USD, items);
     expect(result).toEqual([-200, -50, -100]);
   });
 
@@ -125,62 +139,62 @@ describe('SummarizeService', () => {
     // lastValue = 0
     // A: index 0, lastValue 0 => 0
     // B: lastValue = previous growthRate (0), ((0-0)/0)*100 = NaN
-    const result = service.computeGrowthRate(0, items);
+    const result = service.computeGrowthRate(0, Currency.USD, items);
     expect(result[0]).toBe(0);
     expect(result[1]).toBeNaN();
   });
 
   it('should handle empty array in computeGrowthRate', () => {
-    expect(service.computeGrowthRate(100, [])).toEqual([]);
+    expect(service.computeGrowthRate(100, Currency.USD, [])).toEqual([]);
   });
 
   it('should handle single item in computeGrowthRate', () => {
     const items = [50];
     // ((50-100)/100)*100 = -50
-    const result = service.computeGrowthRate(100, items);
+    const result = service.computeGrowthRate(100, Currency.USD, items);
     expect(result).toEqual([-50]);
   });
 
   it('should summarize year values correctly', () => {
     const items = [
-      { classify: 'A', values: [1, 2, 3] },
-      { classify: 'B', values: [4, 5, 6] },
-      { classify: 'C', values: [7, 8, 9] }
+      { classify: 'A', currency: Currency.USD, values: [1, 2, 3] },
+      { classify: 'B', currency: Currency.USD, values: [4, 5, 6] },
+      { classify: 'C', currency: Currency.USD, values: [7, 8, 9] }
     ];
     // [1+4+7, 2+5+8, 3+6+9] = [12, 15, 18]
-    const result = service.summarizeYear(items);
+    const result = service.summarizeMatrix(items);
     expect(result).toEqual([12, 15, 18]);
   });
 
   it('should handle empty array in summarizeYear', () => {
-    expect(service.summarizeYear([])).toEqual([]);
+    expect(service.summarizeMatrix([])).toEqual([]);
   });
 
   it('should handle items with different length values arrays', () => {
     const items = [
-      { classify: 'A', values: [1, 2] },
-      { classify: 'B', values: [3, 4, 5] }
+      { classify: 'A', currency: Currency.USD, values: [1, 2] },
+      { classify: 'B', currency: Currency.USD, values: [3, 4, 5] }
     ];
     // [1+3, 2+4, 0+5] = [4, 6, 5]
-    const result = service.summarizeYear(items);
+    const result = service.summarizeMatrix(items);
     expect(result).toEqual([4, 6, 5]);
   });
 
   it('should handle negative and zero values in summarizeYear', () => {
     const items = [
-      { classify: 'A', values: [0, -2, 3] },
-      { classify: 'B', values: [-1, 2, 0] }
+      { classify: 'A', currency: Currency.USD, values: [0, -2, 3] },
+      { classify: 'B', currency: Currency.USD, values: [-1, 2, 0] }
     ];
     // [0+(-1), -2+2, 3+0] = [-1, 0, 3]
-    const result = service.summarizeYear(items);
+    const result = service.summarizeMatrix(items);
     expect(result).toEqual([-1, 0, 3]);
   });
 
   it('should handle single item in summarizeYear', () => {
     const items = [
-      { classify: 'A', values: [10, 20, 30] }
+      { classify: 'A', currency: Currency.USD, values: [10, 20, 30] }
     ];
-    const result = service.summarizeYear(items);
+    const result = service.summarizeMatrix(items);
     expect(result).toEqual([10, 20, 30]);
   });
 
@@ -199,7 +213,7 @@ describe('SummarizeService', () => {
     const incomes = [10, 20, 10];
     const withdrawals = [5, 10, 5];
     const contributions = [15, 10, 5];
-    const result = service.computeVariation(lastValue, values, incomes, withdrawals, contributions);
+    const result = service.computeVariation(lastValue, Currency.USD, values, incomes, withdrawals, contributions);
     expect(result).toEqual([20, 30, -10]);
   });
 
@@ -209,7 +223,7 @@ describe('SummarizeService', () => {
     const incomes = [0, 0];
     const withdrawals = [0, 0];
     const contributions = [0, 0];
-    const result = service.computeVariation(lastValue, values, incomes, withdrawals, contributions);
+    const result = service.computeVariation(lastValue, Currency.USD, values, incomes, withdrawals, contributions);
     expect(result[0]).toBe(0);
     expect(result[1]).toBe(10);
   });
@@ -220,12 +234,12 @@ describe('SummarizeService', () => {
     const incomes = [0, 0, 0];
     const withdrawals = [0, 0, 0];
     const contributions = [0, 0, 0];
-    const result = service.computeVariation(lastValue, values, incomes, withdrawals, contributions);
+    const result = service.computeVariation(lastValue, Currency.USD, values, incomes, withdrawals, contributions);
     expect(result).toEqual([0, -10, 20]);
   });
 
   it('should handle empty array in computeVariation', () => {
-    expect(service.computeVariation(100, [], [], [], [])).toEqual([]);
+    expect(service.computeVariation(100, Currency.USD, [], [], [], [])).toEqual([]);
   });
 
   it('should compute variation rate correctly', () => {
@@ -239,7 +253,7 @@ describe('SummarizeService', () => {
     const lastValue = 100;
     const variations = [120, 60, 180];
     const incomes = [10, 20, 30];
-    const result = service.computeVariationRate(lastValue, variations, incomes);
+    const result = service.computeVariationRate(lastValue, Currency.USD, variations, incomes);
     expect(result).toEqual([109.09, 42.86, 200.00]);
   });
 
@@ -247,7 +261,7 @@ describe('SummarizeService', () => {
     const lastValue = 0;
     const variations = [50, 100];
     const incomes = [0, 0];
-    const result = service.computeVariationRate(lastValue, variations, incomes);
+    const result = service.computeVariationRate(lastValue, Currency.USD, variations, incomes);
     expect(result[0]).toBe(0);
     expect(result[1]).toBe(200);
   });
@@ -256,14 +270,14 @@ describe('SummarizeService', () => {
     const lastValue = 0;
     const variations = [0, -10, 10];
     const incomes = [0, 0, 0];
-    const result = service.computeVariationRate(lastValue, variations, incomes);
+    const result = service.computeVariationRate(lastValue, Currency.USD, variations, incomes);
     expect(result[0]).toBe(0);
     expect(result[1]).toBe(-Infinity);
     expect(result[2]).toBe(-100);
   });
 
   it('should handle empty array in computeVariationRate', () => {
-    expect(service.computeVariationRate(100, [], [])).toEqual([]);
+    expect(service.computeVariationRate(100, Currency.USD, [], [])).toEqual([]);
   });
 
   it('should compute variation accumulated correctly', () => {
