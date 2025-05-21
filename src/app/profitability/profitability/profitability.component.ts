@@ -1,6 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { ProfitabilityService } from '../../service/profitalibilty.service';
-import { CellChangeEvent, GridData } from '../../utils/component/financial-grid/financial-gird.model';
+import { AggregatedTransactionsRows, ProfitabilityService } from '../../service/profitalibilty.service';
+import { CellChangeEvent, CellData, GridData, RowData } from '../../utils/component/financial-grid/financial-gird.model';
 import { FinancialGridComponent } from '../../utils/component/financial-grid/financial-grid.component';
 import { PortfolioEvolutionChartComponent } from '../../components/portfolio-evolution-chart/portfolio-evolution-chart.component';
 import { getYear } from 'date-fns';
@@ -10,6 +10,7 @@ import { ClassifyService } from '../../service/classify.service';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faCircleChevronLeft, faCircleChevronRight } from '@fortawesome/free-solid-svg-icons';
 import { MatButtonModule } from '@angular/material/button';
+import { MonthsNumberArray } from '../../model/investment.model';
 
 @Component({
   selector: 'app-profitability',
@@ -42,7 +43,7 @@ export class ProfitabilityComponent {
   selectedYear = this.profitabilityService.selectedYear;
   
   portfolioEvolutionData = computed(() => {
-    const evolutionData = this.profitabilityService.portfolioEvolutionData();
+    const evolutionData = this.computeEvolutionData(this.profitabilityService.profitabilityTotal());
     if (!evolutionData) {
       return null;
     }
@@ -62,21 +63,39 @@ export class ProfitabilityComponent {
     return entries;
   });
 
-  accumulatedData = this.profitabilityService.accumulatedData;
-  
-  financialGridData = computed(() => this.profitabilityService.financialGridData() as GridData);
+  accumulatedData = computed(() => this.computeAccumulatedData(this.profitabilityService.accumulatedValues()));
+
+  financialGridData = computed(() => {
+    const aggregatedTransactionsRows = this.profitabilityService.aggregatedTransactionsRows();
+    const profitabilityRows = this.profitabilityService.profitabilityRowsData();
+
+    if (!aggregatedTransactionsRows || !profitabilityRows) {
+      return null;
+    }
+
+    return this.computeFinancialGrid(
+      aggregatedTransactionsRows,
+      Object.values(profitabilityRows)
+    );
+  });
 
   cellChanged(event: CellChangeEvent) {
     console.log('Cell changed:', event);
   }
 
-  contributionGridData = computed(() => this.profitabilityService.contributionGridData() as GridData);
+  contributionGridData = computed(() => this.equityContributionGridData(this.profitabilityService.equityContributionRows()));
 
-  growthGridData = computed(() => this.profitabilityService.growthGridData() as GridData);
+  growthGridData = computed(() => this.computeGrowthGridData({
+    growth: this.profitabilityService.growthRateValues(),
+    variance: this.profitabilityService.varianceValues(),
+    varianceRate: this.profitabilityService.varianceRateValues(),
+    accumulated: this.profitabilityService.accumulatedValues(),
+    yield: this.profitabilityService.yieldValues()
+  }));
 
-  isLoading = computed(() => !this.profitabilityService.financialGridData() 
-    || !this.profitabilityService.contributionGridData()
-    || !this.profitabilityService.growthGridData());
+  isLoading = computed(() => !this.financialGridData()
+    || !this.contributionGridData()
+    || !this.growthGridData());
 
   onContributionCellChanged(event: CellChangeEvent) {
     console.log('Contribution cell changed:', event);
@@ -84,7 +103,6 @@ export class ProfitabilityComponent {
   }
 
   financialGridCellChanged(event: CellChangeEvent) {
-    const value = event.value as number || 0;
     this.profitabilityService.updateFinancialGridData(event);
   }
 
@@ -98,12 +116,130 @@ export class ProfitabilityComponent {
     this.selectedYear.set(year);
   }
 
-  // // Dados simulados para o gráfico
-  // portfolioEvolutionData = [
-  //   { name: '2021', value: 50000 },
-  //   { name: '2022', value: 75000 },
-  //   { name: '2023', value: 100000 },
-  //   { name: '2024', value: 125000 }
-  // ];
-}
+  constructor() {}
 
+  private computeGrowthGridData(data: { growth: number[]; variance: number[] | null; varianceRate: number[] | null; accumulated: number[] | null; yield: number[] | null; }): GridData | null {
+    const { growth, variance, varianceRate, accumulated, yield: yieldRate } = data;
+    if (!growth || !variance || !varianceRate || !accumulated || !yieldRate) {
+      return null;
+    }
+
+    // Compute the growth grid data
+    const growthGridData: GridData = {
+      title: 'Crescimento',
+      months: this.profitabilityService.months(),
+      rows: [
+        { label: 'CRESCIMENTO', disabled: true, operation: 'none', cells: this.convertToDisabledCellData(growth) },
+        { label: 'VAR', disabled: true, operation: 'none', cells: this.convertToDisabledCellData(variance) },
+        { label: 'VAR%', disabled: true, operation: 'none', cells: this.convertToDisabledCellData(varianceRate), suffix: '%' },
+        { label: 'ACUMULADO', disabled: true, operation: 'none', cells: this.convertToDisabledCellData(accumulated) },
+        { label: 'RENDIMENTO', disabled: true, operation: 'none', cells: this.convertToDisabledCellData(yieldRate), suffix: '%' }
+      ]
+    };
+
+    return growthGridData;
+  }
+
+  private convertToDisabledCellData(values: number[]): CellData[] {
+    return values.map(value => ({
+      value: value !== null ? Math.round(value * 100) / 100 : null,
+      disabled: true
+    }));
+  }
+
+  /**
+   * A computed property that generates data for the contribution grid.
+   * 
+   * This property calculates and returns an object containing the title, 
+   * months, and rows of data for the grid. The rows are composed of 
+   * contributions, accumulated contributions, and incomes, if available.
+   * 
+   * The computation depends on the following:
+   * - Ensures that the source service data is loaded before proceeding.
+   * - Aggregates transaction rows to extract contributions and incomes.
+   * - Calculates accumulated contributions based on the contributions data.
+   * 
+   * @returns An object containing:
+   * - `title`: A string representing the title of the grid.
+   * - `months`: An array of months derived from the `months()` method.
+   * - `rows`: An array of row data, including contributions, accumulated contributions, and incomes.
+   *           Returns `null` if the source service data is not loaded.
+   */
+  private equityContributionGridData (equityContributionRows: RowData[] | null) {
+    if (!equityContributionRows) {
+      return null;
+    }
+
+    return {
+      title: 'Aportes e Proventos',
+      months: this.profitabilityService.months(),
+      rows: equityContributionRows
+    };
+  }
+
+  /**
+   * A computed property that provides data for the portfolio evolution chart.
+   * 
+   * This property calculates the evolution of the portfolio's value over time.
+   * If the source data is not loaded, it returns `null`. If the total profitability
+   * data is unavailable or empty, it returns a default object with a label and an
+   * array of 12 zero values. Otherwise, it returns an object containing the label
+   * and the calculated total values.
+   * 
+   * @returns An object containing the label and an array of values representing
+   *          the portfolio's evolution, or `null` if the source data is not loaded.
+   */
+  computeEvolutionData(total: MonthsNumberArray) {
+    if (!total?.length) {
+      return {
+        label: 'Evolução do Patrimônio',
+        values: Array(12).fill(0) as MonthsNumberArray,
+      };
+    }
+
+    return {
+      label: 'Evolução do Patrimônio',
+      values: total
+    };
+  }
+
+  /**
+   * A computed property that provides accumulated profitability data.
+   * 
+   * This property calculates and returns an object containing a label and an array of values
+   * representing the accumulated profitability. If the source data is not loaded or the 
+   * financial metric rows are unavailable, it defaults to a label of "Rentabilidade Acumulada"
+   * and an array of 12 zeros.
+   * 
+   * @readonly
+   * @returns An object with the following structure:
+   * - `label`: A string indicating the label for the accumulated profitability.
+   * - `values`: An array of numbers representing the accumulated profitability values, 
+   *   normalized to percentages (divided by 100).
+   */
+  private computeAccumulatedData(accumulatedValues: number[] | null) {
+    if (!accumulatedValues) {
+      return {
+        label: 'Rentabilidade Acumulada',
+        values: Array(12).fill(0) as number[],
+      };
+    }
+
+    return {
+      label: 'Rentabilidade Acumulada',
+      values: accumulatedValues.map(value => value / 100),
+    };
+  };
+
+  private computeFinancialGrid(aggregatedTransactionsRows: AggregatedTransactionsRows<RowData>, profitabilityRows: RowData[]): GridData | null {
+    return {
+      title: 'Rendimentos e Resgates',
+      months: this.profitabilityService.months(),
+      rows: profitabilityRows.concat(
+        aggregatedTransactionsRows?.sell || [],
+        aggregatedTransactionsRows?.withdrawals || []
+      )
+    };
+  }
+
+}
