@@ -10,7 +10,9 @@
     ],
     "esModuleInterop": true,
     "emitDecoratorMetadata": false, 
-    "isolatedModules": true
+    "isolatedModules": true,
+    "module": "esnext",
+    "target": "es2017",
   },
   "files": [],
   "include": [
